@@ -16,6 +16,8 @@
 ## Compression
 
 * [Page 1](compression/page-1.md)
+* [Clients](compression/clients/README.md)
+  * [JavaScript / TypeScript](compression/clients/javascript-typescript.md)
 * [Developing Programs](compression/developing-programs.md)
 
 ## Advanced concepts
