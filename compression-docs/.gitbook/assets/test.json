@@ -1,0 +1,95 @@
+openapi: 3.0.3
+info:
+  title: photon-indexer
+  description: Solana indexer for general compression
+  license:
+    name: Apache-2.0
+  version: 0.4.0
+servers:
+- url: http://127.0.0.1
+paths:
+  /:
+    summary: getCompressedAccountsByOwner
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - jsonrpc
+              - id
+              - method
+              - params
+              properties:
+                id:
+                  type: string
+                  description: An ID to identify the request.
+                  enum:
+                  - string
+                jsonrpc:
+                  type: string
+                  description: The version of the JSON-RPC protocol.
+                  enum:
+                  - '2.0'
+                method:
+                  type: string
+                  description: The name of the DAS method to invoke.
+                  enum:
+                  - getCompressedAccountsByOwner
+                params:
+                  type: array
+                  items:
+                    type: object
+                  description: ''
+                  maxItems: 2
+                  minItems: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - context
+                - value
+                properties:
+                  context:
+                    $ref: '#/components/schemas/Context'
+                  value:
+                    $ref: '#/components/schemas/PaginatedAccountList'
+components:
+  schemas:
+    Context:
+      type: object
+      required:
+      - slot
+      properties:
+        slot:
+          type: integer
+          format: int64
+          minimum: 0
+      additionalProperties: false
+    Hash:
+      type: string
+      format: byte
+      description: A 32-byte hash represented as a base58 string.
+    PaginatedAccountList:
+      type: object
+      required:
+      - items
+      properties:
+        cursor:
+          allOf:
+          - $ref: '#/components/schemas/Hash'
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'
+      additionalProperties: false
+    SerializablePubkey:
+      type: string
+      format: byte
+      description: A Solana public key represented as a base58 string
