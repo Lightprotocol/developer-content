@@ -9,7 +9,7 @@ servers:
 - url: http://127.0.0.1
 paths:
   /:
-    summary: getCompressedAccount
+    summary: getCompressedAccountsByOwner
     post:
       requestBody:
         content:
@@ -36,10 +36,14 @@ paths:
                   type: string
                   description: The name of the DAS method to invoke.
                   enum:
-                  - getCompressedAccount
+                  - getCompressedAccountsByOwner
                 params:
-                  $ref: '#/components/schemas/Hash'
-        required: true
+                  type: array
+                  items:
+                    type: object
+                  description: ''
+                  maxItems: 2
+                  minItems: 2
       responses:
         '200':
           description: ''
@@ -54,7 +58,7 @@ paths:
                   context:
                     $ref: '#/components/schemas/Context'
                   value:
-                    $ref: '#/components/schemas/Account'
+                    $ref: '#/components/schemas/PaginatedAccountList'
 components:
   schemas:
     Account:
@@ -113,31 +117,6 @@ components:
       type: string
       format: byte
       description: A 32-byte hash represented as a base58 string.
-    Limit:
-      type: integer
-      format: int64
-      minimum: 0
-    MerkleProofWithContext:
-      type: object
-      required:
-      - proof
-      - leafIndex
-      - hash
-      - merkleTree
-      properties:
-        hash:
-          $ref: '#/components/schemas/Hash'
-        leafIndex:
-          type: integer
-          format: int32
-          minimum: 0
-        merkleTree:
-          $ref: '#/components/schemas/SerializablePubkey'
-        proof:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hash'
-      additionalProperties: false
     PaginatedAccountList:
       type: object
       required:
@@ -156,83 +135,3 @@ components:
       type: string
       format: byte
       description: A Solana public key represented as a base58 string.
-    TokenAcccount:
-      type: object
-      required:
-      - hash
-      - owner
-      - mint
-      - amount
-      - isNative
-      - frozen
-      - data
-      - discriminator
-      - lamports
-      properties:
-        address:
-          allOf:
-          - $ref: '#/components/schemas/SerializablePubkey'
-          nullable: true
-        amount:
-          type: integer
-          format: int64
-          minimum: 0
-        closeAuthority:
-          allOf:
-          - $ref: '#/components/schemas/SerializablePubkey'
-          nullable: true
-        data:
-          type: string
-          format: binary
-        delegate:
-          allOf:
-          - $ref: '#/components/schemas/SerializablePubkey'
-          nullable: true
-        discriminator:
-          type: integer
-          format: int64
-          minimum: 0
-        frozen:
-          type: boolean
-        hash:
-          $ref: '#/components/schemas/Hash'
-        isNative:
-          type: boolean
-        lamports:
-          type: integer
-          format: int64
-          minimum: 0
-        mint:
-          $ref: '#/components/schemas/SerializablePubkey'
-        owner:
-          $ref: '#/components/schemas/SerializablePubkey'
-        seq:
-          type: integer
-          format: int64
-          nullable: true
-          minimum: 0
-        tree:
-          allOf:
-          - $ref: '#/components/schemas/SerializablePubkey'
-          nullable: true
-      additionalProperties: false
-    TokenAccountBalance:
-      type: object
-      required:
-      - amount
-      properties:
-        amount:
-          type: string
-      additionalProperties: false
-    TokenAccountList:
-      type: object
-      required:
-      - items
-      properties:
-        cursor:
-          type: string
-          nullable: true
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/TokenAcccount'

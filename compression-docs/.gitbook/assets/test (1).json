@@ -61,48 +61,6 @@ paths:
                     $ref: '#/components/schemas/PaginatedAccountList'
 components:
   schemas:
-    Account:
-      type: object
-      required:
-      - hash
-      - discriminator
-      - data
-      - owner
-      - lamports
-      - slotUpdated
-      properties:
-        address:
-          allOf:
-          - $ref: '#/components/schemas/SerializablePubkey'
-          nullable: true
-        data:
-          type: string
-        discriminator:
-          type: integer
-          format: int64
-          minimum: 0
-        hash:
-          $ref: '#/components/schemas/Hash'
-        lamports:
-          type: integer
-          format: int64
-          minimum: 0
-        owner:
-          $ref: '#/components/schemas/SerializablePubkey'
-        seq:
-          type: integer
-          format: int64
-          nullable: true
-          minimum: 0
-        slotUpdated:
-          type: integer
-          format: int64
-          minimum: 0
-        tree:
-          allOf:
-          - $ref: '#/components/schemas/SerializablePubkey'
-          nullable: true
-      additionalProperties: false
     Context:
       type: object
       required:
@@ -134,4 +92,4 @@ components:
     SerializablePubkey:
       type: string
       format: byte
-      description: A Solana public key represented as a base58 string.
+      description: A Solana public key represented as a base58 string
