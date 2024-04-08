@@ -4,6 +4,8 @@
 
 **S**tateless **S**olana **P**rogram. also known as "Compressed Program". A Smart contract that interacts with ZK-compressed state via the LightLayer. This includes regular Anchor programs that fully execute on-chain as well as programs that run custom off-chain computation over compressed state.
 
+
+
 ### Compressed State / Light State
 
 Regular Solana state lives in on-chain accounts. Since accounts are always loaded into RAM of the Solana network, developers must pay for rent exemption at account creation, which locks SOL for the time that the account exists. The amount of lamports that need to be stored in the account depends on the size of the account.
@@ -30,6 +32,14 @@ One difference to regular Solana accounts is that the `address` field is optiona
 
 The optional unique `address` allows for verifiable uniqueness guarantees of compressed state, which can be useful for applications that require non-fungible state.
 
+Every transaction specifies which state trees it reads from (input) and writes to (output).&#x20;
+
+When writing to a compressed account, the protocol consumes the current state and creates the new state.
+
+`input (current) -> state transition -> output (new)`
+
+A single transaction can read from _`n`_ compressed account inputs, and write to _`m`_ compressed account outputs, inheriting Solana's parallelism.
+
 
 
 ### Merkle tree / State tree
@@ -42,22 +52,17 @@ Light consists of a 'forest' of state trees. Each state tree has a corresponding
 
 ### Forester node
 
-Every transaction specifies which state trees it reads from (input) and writes to (output).&#x20;
+The protocol must invalidate the consumed state whenever a transaction consumes compressed account inputs. This is achieved by storing the consumed compressed account identifier hashes in an on-chain nullifier queue account. Each state tree has an associated nullifier queue. These queues have a specified length (default: n = 4800). When the queue is full, transactions involving input state from the respective state tree will fail. To ensure the liveness of the LightLayer, off-chain keepers (called Foresters) must periodically empty these queues.
 
-When writing to a compressed account, the protocol consumes the current state and creates the new state.
+To do so, Foresters asynchronously update the respective leaves in the state tree with zero values and remove the leaves hashes from the nullifier queue.
 
-`input (current) -> state transition -> output (new)`
-
-A single transaction can read from _`n`_ compressed account inputs, and write to _`m`_ compressed account outputs, inheriting Solana's parallelism.
+The nullification process is trustless and permissionless.&#x20;
 
 
 
 ### Validity proof / ZKP
 
-Validity proofs mathematically prove the correctness of input state that is read by a transaction. \
-
-
-
+At the system level, validity proofs mathematically prove the correctness of the input state that is read by a transaction.&#x20;
 
 
 
