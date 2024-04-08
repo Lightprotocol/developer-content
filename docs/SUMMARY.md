@@ -17,6 +17,7 @@
 * [SSP Guide](developers/ssp-guide.md)
 * [JSON RPC Methods](developers/json-rpc-methods.md)
 * [Clients](developers/clients/README.md)
+  * [Rust](developers/clients/rust.md)
   * [JavaScript / TypeScript](developers/clients/javascript-typescript.md)
 * [Developing Programs](developers/developing-programs.md)
 * [Computing over Light State with custom ZKPs](developers/computing-over-light-state-with-custom-zkps.md)
