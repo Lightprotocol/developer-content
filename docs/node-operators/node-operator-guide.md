@@ -6,12 +6,8 @@ Operators, who can be either individuals or organizations, play an active role i
 
 There are three different types of nodes within Light:
 
-**Forrester nodes -** plant and update public and program-owned state trees.
+**Forrester nodes** plant and update public and program-owned state trees on behalf of developers and users.
 
-**Prover nodes -** allow app and wallet developers to outsource validity proof generation.
+**Prover nodes** allow app and wallet developers to outsource validity proof generation.
 
-**RPC nodes - -** index the chain and enable app developers to create transactions that interact with Light state.
-
-
-
-<mark style="background-color:blue;">More coming soon</mark>
+**RPC nodes** index the chain and enable app developers to create transactions that interact with Light state.
