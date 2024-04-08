@@ -18,7 +18,7 @@ By default, the underlying "raw" state gets permanently stored on the Solana led
 
 
 
-To achieve this and to inherit the parallelism of Solana, all state compressed via the LightLayer is stored in _n_ state trees, known as concurrent Merkle trees. Each piece of data that gets created and consumed in a transaction represents a leaf of a state tree. all leaves are hashed together such that only the final 32-byte hash needs to be stored on-chain.
+To achieve this and to inherit the parallelism of Solana, all state compressed via the LightLayer is stored in _n_ **state trees**, known as concurrent Merkle trees. Each piece of data that gets created and consumed in a transaction represents a leaf of a state tree. all leaves are hashed together such that only the final 32-byte hash needs to be stored on-chain.
 
 In order to verify the validity of many pieces of state (CompressedAccounts) inside a single Solana transaction, Light uses Zero-knowledge cryptography, allowing the client to compress all state proofs into one small validity proof with a constant size of 128 bytes.
 
@@ -28,13 +28,15 @@ In order to verify the validity of many pieces of state (CompressedAccounts) ins
 
 
 
+### Merkle tree / State tree
 
+Merkle trees are underlying data structure that allows for efficient verification of the integrity of state.
+
+Light consists of a 'forrest' of state trees. Each state tree has a corresponding on-chain account storing the tree's metadata and n recent root hashes (a root hash is the final 32-byte hash resulting from hashing together all current leaves of the tree). One state tree can have many leaves, for example, a tree of height 32 has a total capacity of 2\*\*32 (\~4B) leaves. Each leaf represents the hash of the state of a compressed account as emitted in a previous transaction.
+
+Every transaction specifies which state trees it reads from and writes to.
 
 ### Forrester node
-
-
-
-### Merkle tree / State tree
 
 
 

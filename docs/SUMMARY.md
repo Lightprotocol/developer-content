@@ -3,8 +3,9 @@
 ## Overview
 
 * [Introduction](README.md)
-* [Terminology](<README (1).md>)
-* [Core concepts](overview/core-concepts.md)
+* [Core concepts](overview/core-concepts/README.md)
+  * [Terminology](overview/core-concepts/terminology.md)
+  * [Lifecycle of a transaction](overview/core-concepts/lifecycle-of-a-transaction.md)
 
 ## Node Operators
 
