@@ -2,8 +2,8 @@
 
 ## Overview
 
-* [Terminology](README.md)
-* [Introduction](overview/introduction.md)
+* [Introduction](README.md)
+* [Terminology](<README (1).md>)
 * [Core concepts](overview/core-concepts.md)
 
 ## Node Operators
