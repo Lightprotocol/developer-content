@@ -60,6 +60,12 @@ The nullification process is trustless and permissionless.&#x20;
 
 
 
+### Photon node
+
+Photon is the canonical indexer implementation for the ZK Compression API, built and maintained by Helius Labs. You can access their open-source implementation here: [https://github.com/helius-labs/photon](https://github.com/helius-labs/photon).
+
+
+
 ### Validity proof / ZKP
 
 At the system level, validity proofs mathematically prove the correctness of the input state that is read by a transaction. One of the most important properties of the proofs used within Light is their succinctness (read: short. 256 bytes / 128 bytes compressed).&#x20;
