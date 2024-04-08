@@ -8,9 +8,11 @@
 
 ## Node Operators
 
-* [Page](node-operators/page.md)
+* [Node Operator Guide](node-operators/node-operator-guide.md)
 * [Run a node](node-operators/run-a-node/README.md)
-  * [Quick start](node-operators/run-a-node/quick-start.md)
+  * [Forrester Node](node-operators/run-a-node/forrester-node.md)
+  * [Prover Node](node-operators/run-a-node/prover-node.md)
+  * [RPC Node](node-operators/run-a-node/rpc-node.md)
 
 ## Developers
 
