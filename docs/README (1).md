@@ -2,9 +2,7 @@
 
 ### SSP / Compressed Program
 
-**S**tateless **S**olana **P**rogram. also known as "Compressed Program". Smart contracts that interact with state via the LightLayer. Includes regular anchor programs that fully execute on-chain as well as programs that run custom off-chain compute over Light state.
-
-
+**S**tateless **S**olana **P**rogram. also known as "Compressed Program". A Smart contract that interacts with ZK-compressed state via the LightLayer. This includes regular Anchor programs that fully execute on-chain as well as programs that run custom off-chain computation over compressed state.
 
 ### Compressed State / Light state
 
