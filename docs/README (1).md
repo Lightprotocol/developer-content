@@ -62,13 +62,13 @@ The nullification process is trustless and permissionless.&#x20;
 
 ### Validity proof / ZKP
 
-At the system level, validity proofs mathematically prove the correctness of the input state that is read by a transaction.&#x20;
+At the system level, validity proofs mathematically prove the correctness of the input state that is read by a transaction. One of the most important properties of the proofs used within Light is their succinctness (read: short. 256 bytes / 128 bytes compressed).&#x20;
 
 
 
 ### Groth16
 
-Groth16 is a Zero-Knowledge Proof (ZKP) system used within Light for efficient proof generation and verification. Proofs are short (256 bytes / 128 bytes compressed) which is important for on-chain verification on Solana. Groth16 proofs belong to the family of SNARKs. (**S**uccinct **N**on-interactive **Ar**guments of **K**nowledge).
+Groth16 is a Zero-Knowledge Proof (ZKP) system used within Light for efficient proof generation and verification. Groth16 proofs belong to the family of SNARKs. (**S**uccinct **N**on-interactive **Ar**guments of **K**nowledge).
 
 
 
