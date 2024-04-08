@@ -1,25 +1,22 @@
 # Table of contents
 
-## Light Documentation
+## Overview
 
 * [Terminology](README.md)
-* [Introduction](light-documentation/introduction.md)
-* [Core concepts](light-documentation/core-concepts.md)
-* [Run a node](light-documentation/run-a-node/README.md)
-  * [Quick start](light-documentation/run-a-node/quick-start.md)
+* [Introduction](overview/introduction.md)
+* [Core concepts](overview/core-concepts.md)
 
-## Photon
+## Node Operators
 
-* [Page](photon/page.md)
-* [JSON RPC Methods](photon/json-rpc-methods.md)
+* [Page](node-operators/page.md)
+* [Run a node](node-operators/run-a-node/README.md)
+  * [Quick start](node-operators/run-a-node/quick-start.md)
 
-## Compression
+## Developers
 
-* [Page 1](compression/page-1.md)
-* [Clients](compression/clients/README.md)
-  * [JavaScript / TypeScript](compression/clients/javascript-typescript.md)
-* [Developing Programs](compression/developing-programs.md)
-
-## Advanced concepts
-
-* [Verifying custom ZKPs over compressed state](advanced-concepts/verifying-custom-zkps-over-compressed-state.md)
+* [SSP Guide](developers/ssp-guide.md)
+* [JSON RPC Methods](developers/json-rpc-methods.md)
+* [Clients](developers/clients/README.md)
+  * [JavaScript / TypeScript](developers/clients/javascript-typescript.md)
+* [Developing Programs](developers/developing-programs.md)
+* [Computing over Light State with custom ZKPs](developers/computing-over-light-state-with-custom-zkps.md)
