@@ -11,9 +11,9 @@
 
 * [Node Operator Guide](node-operators/node-operator-guide.md)
 * [Run a node](node-operators/run-a-node/README.md)
-  * [Forrester Node](node-operators/run-a-node/forrester-node.md)
-  * [Prover Node](node-operators/run-a-node/prover-node.md)
-  * [RPC Node](node-operators/run-a-node/rpc-node.md)
+  * [Forester nodes](node-operators/run-a-node/forester-nodes.md)
+  * [Prover nodes](node-operators/run-a-node/prover-nodes.md)
+  * [RPC nodes](node-operators/run-a-node/rpc-nodes.md)
 
 ## Developers
 
