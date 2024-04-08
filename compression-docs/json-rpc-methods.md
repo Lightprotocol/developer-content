@@ -38,12 +38,6 @@
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountsByOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountsByOwner.yaml)
 {% endswagger %}
 
-### getTokenAccountBalance
-
-{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountBalance.yaml" path="/" method="post" %}
-[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountBalance.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountBalance.yaml)
-{% endswagger %}
-
 ### getTokenAccountsByOwner
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByOwner.yaml" path="/" method="post" %}
