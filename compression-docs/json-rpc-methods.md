@@ -1,12 +1,12 @@
 # JSON RPC Methods
 
-### getAccount
+### getCompressedAccount
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccount.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccount.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccount.yaml)
 {% endswagger %}
 
-### getBalance
+### getCompressedBalance
 
 
 
@@ -14,43 +14,43 @@
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedBalance.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedBalance.yaml)
 {% endswagger %}
 
-### getAccountProof
+### getCompressedAccountProof
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountProof.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountProof.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountProof.yaml)
 {% endswagger %}
 
-### getMultipleAccounts
+### getMultipleCompressedAccounts
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getMultipleCompressedAccounts.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getMultipleCompressedAccounts.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getMultipleCompressedAccounts.yaml)
 {% endswagger %}
 
-### getMultipleAccountProofs
+### getMultipleCompressedAccountProofs
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getMultipleCompressedAccountProofs.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getMultipleCompressedAccountProofs.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getMultipleCompressedAccountProofs.yaml)
 {% endswagger %}
 
-### getAccountsByOwner
+### getCompressedAccountsByOwner
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountsByOwner.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountsByOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountsByOwner.yaml)
 {% endswagger %}
 
-### getTokenAccountsByOwner
+### getCompressedTokenAccountsByOwner
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByOwner.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByOwner.yaml)
 {% endswagger %}
 
-### getTokenAccountsByDelegate
+### getCompressedTokenAccountsByDelegate
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByDelegate.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByDelegate.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByDelegate.yaml)
 {% endswagger %}
 
-### getTokenAccountBalance
+### getCompressedTokenAccountBalance
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountBalance.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountBalance.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountBalance.yaml)
