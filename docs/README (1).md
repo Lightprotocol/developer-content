@@ -8,7 +8,7 @@ A smart contract that interacts with ZK-compressed state via the LightLayer. Thi
 
 ### Compressed State / Light State
 
-State that is orders of magnitude cheaper than regular "uncompressed" state on Solana while preserving its security guarantees and utility.
+State that is orders of magnitude cheaper than regular "uncompressed" state while preserving the security, performance, and composability of the Solana L1.
 
 **Regular Solana state** lives in on-chain accounts. On-chain accounts are always loaded into the RAM of the Solana network and therefore incur a cost for the user. Users must pay for rent exemption at account creation by locking SOL based on the account size. This rent cost is prohibitive for applications and DePin networks where the incremental Lifetime Value of an individual user's on-chain state is lower than the cost of the state.
 
