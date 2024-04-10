@@ -2,11 +2,14 @@
 
 ### What is Light?
 
-Light is a protocol built on Solana that introduces ZK compression, a new primitive that enables the secure scaling of state and compute directly on the L1.
+Light is a protocol built on Solana introducing **ZK compression**, a new primitive that enables the secure scaling of state directly on the L1.
 
-**State**: Solana program developers can opt-in to compress their on-chain state via the LightLayer smart contracts, thereby reducing the cost of state by multiple orders of magnitude, while maintaining the security, performance, and composability of L1 execution and Data Availability.
+**Hyperscale state:** Solana users and program developers can opt-in to compress their on-chain state via the LightLayer smart contracts. This reduces state cost by orders of magnitude while preserving the security, performance, and composability of the Solana L1.\
+\
+**Expand the design space for computation**: Compressed state via the LightLayer natively supports custom ZK compute, enabling previously impossible computation designs on Solana.\
 
-**Compute**: State that is compressed via the LightLayer is natively compatible with arbitrary ZK computation, which can enable previously impossible types of computation and applications directly on the Solana L1.
+
+The LightLayer is being built in the [open](https://github.com/Lightprotocol/light-protocol). Stay up to date with the teams contributing to ZK compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
 
 
 
