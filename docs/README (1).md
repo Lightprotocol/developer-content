@@ -8,9 +8,7 @@ A smart contract that interacts with ZK-compressed state via the LightLayer. Thi
 
 ### Compressed State / Light State
 
-Regular Solana state lives in on-chain accounts. Since accounts are always loaded into the RAM of the Solana network, developers must pay for rent exemption at account creation, which locks SOL for the time the account exists. The amount of SOL that needs to be stored in the account depends on the size of the account.
-
-This cost is prohibitive for applications and DePin networks where the incremental Lifetime Value of an individual user's on-chain state is lower than the cost of the state.
+Regular Solana state lives in on-chain accounts. On-chain accounts are always loaded into the RAM of the Solana network and therefore incur a cost for the user. Users must pay for rent exemption at account creation by locking SOL based on the account size. This rent cost is prohibitive for applications and DePin networks where the incremental Lifetime Value of an individual user's on-chain state is lower than the cost of the state.
 
 With **compressed state**, only a much smaller root hash of the state (a unique fingerprint) is stored on-chain, while the underlying data is stored off-chain.&#x20;
 
@@ -18,7 +16,7 @@ Whenever a program or dApp interacts with compressed state, the Light smart cont
 
 By default, the underlying "raw" state gets permanently stored on the Solana ledger, thereby leveraging the security of the Solana blockchain for Data Availability (DA).
 
-To achieve this and to inherit Solana's parallelism, compressed state via the LightLayer is stored across _`n`_ **state trees**, known as concurrent Merkle trees. Each piece of data that gets created or consumed in a transaction represents a single leaf of a state tree. All tree leaves get recursively hashed together so that only the final 32-byte hash needs to be stored on-chain.
+To achieve this and to inherit Solana's parallelism, compressed state via the LightLayer is stored across _`n`_ **state trees** (concurrent Merkle trees). Each piece of data that is created or consumed in a transaction represents a single leaf of a state tree. All tree leaves get recursively hashed together so that only the tree's final 32-byte root hash needs to be stored on-chain.
 
 To verify the validity of many pieces of state (CompressedAccounts) inside a single Solana transaction, Light uses Zero-knowledge cryptography, enabling the client to compress all state proofs into one small validity proof with a constant size of 128 bytes.
 
@@ -36,17 +34,17 @@ Every transaction specifies which state trees it reads from (input) and writes t
 
 When writing to a compressed account, the protocol consumes the current state and creates the new state.
 
-`input (current) -> state transition -> output (new)`
+`input state (current) -> state transition -> output state (new)`
 
-A single transaction can read from _`n`_ compressed account inputs, and write to _`m`_ compressed account outputs, inheriting Solana's parallelism.
+A single transaction can read from _`n`_ (currently n≤8) compressed account inputs, and write to _`m`_ compressed account outputs, inheriting Solana's parallelism.
 
 
 
 ### Merkle tree / State tree
 
-Merkle trees are underlying data structure that allows for efficient verification of the integrity of the state.
+Merkle trees are the underlying data structure that allows for efficient verification of the integrity of the state.
 
-Light consists of a 'forest' of state trees. Each state tree has a corresponding on-chain account storing the tree's metadata and _`n`_ recent root hashes (a root hash is the final 32-byte hash resulting from hashing together all current leaves of the tree). One state tree can have many leaves, for example, a tree of height 32 has a total capacity of 2\*\*32 (\~4B) leaves. Each leaf represents the hash of the state of a compressed account as emitted in a previous transaction.
+Light consists of a 'forest' of state trees. Each state tree has a corresponding on-chain account storing a sparse Merkle tree, the tree's metadata, and _`n`_ recent root hashes (a root hash is the final 32-byte hash resulting from hashing together all current leaves of the tree). One state tree can have many leaves, for example, a tree of height 32 has a total capacity of 2\*\*32 (\~4B) leaves. Each leaf represents the hash of the state of a compressed account as emitted in a previous transaction.
 
 
 
