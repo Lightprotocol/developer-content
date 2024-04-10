@@ -9,7 +9,6 @@ Light is a protocol built on Solana introducing **ZK compression**, a new primit
 **Expand the design space for computation**: Compressed state via the LightLayer natively supports custom ZK compute, enabling previously impossible computation designs on Solana.\
 
 
-The LightLayer is being built in the [open](https://github.com/Lightprotocol/light-protocol). Stay up to date with the teams contributing to ZK compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
-
-
-
+{% hint style="info" %}
+The LightLayer is being built in the [open](https://github.com/Lightprotocol/light-protocol) and is currently in private alpha. Stay up to date with the teams contributing to ZK compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
+{% endhint %}
