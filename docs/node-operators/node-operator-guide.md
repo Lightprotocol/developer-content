@@ -1,8 +1,8 @@
-# Node Operator Guide
+# Node operator guide
 
-### What is a Node Operator within the LightLayer?[​](https://docs.eigenlayer.xyz/eigenlayer/operator-guides/operator-introduction#what-is-a-node-operator-within-eigenlayer) <a href="#what-is-a-node-operator-within-eigenlayer" id="what-is-a-node-operator-within-eigenlayer"></a>
+#### What is a Node Operator within the LightLayer?[​](https://docs.eigenlayer.xyz/eigenlayer/operator-guides/operator-introduction#what-is-a-node-operator-within-eigenlayer) <a href="#what-is-a-node-operator-within-eigenlayer" id="what-is-a-node-operator-within-eigenlayer"></a>
 
-Operators, who can be either individuals or organizations, play an active role in the Light protocol.&#x20;
+Operators, who can be either individuals or organizations, play an active role in the Light protocol.
 
 There are three different types of nodes within Light:
 

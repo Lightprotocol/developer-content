@@ -1,3 +1,3 @@
 # Rust
 
-<mark style="background-color:blue;">More coming soon</mark>
+<mark style="background-color:blue;">More coming soon.</mark>

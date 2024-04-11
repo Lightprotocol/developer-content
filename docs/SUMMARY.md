@@ -3,13 +3,13 @@
 ## Overview
 
 * [Introduction](README.md)
-* [Core concepts](overview/core-concepts.md)
-  * [Terminology](<README (1).md>)
+* [Core concepts](overview/core-concepts/README.md)
+  * [Terminology](overview/core-concepts/terminology.md)
   * [Lifecycle of a transaction](overview/core-concepts/lifecycle-of-a-transaction.md)
 
-## Node Operators
+## Node operators
 
-* [Node Operator Guide](node-operators/node-operator-guide.md)
+* [Node operator guide](node-operators/node-operator-guide.md)
 * [Run a node](node-operators/run-a-node/README.md)
   * [Forester nodes](node-operators/run-a-node/forester-nodes.md)
   * [Prover nodes](node-operators/run-a-node/prover-nodes.md)

@@ -1,3 +1,3 @@
-# Forrester Node
+# Forester nodes
 
-<mark style="background-color:blue;">More coming soon</mark>
+<mark style="background-color:blue;">More coming soon.</mark>

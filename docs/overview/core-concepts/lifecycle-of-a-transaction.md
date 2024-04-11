@@ -1,3 +1,3 @@
 # Lifecycle of a transaction
 
-<mark style="background-color:blue;">more coming soon.</mark>
+<mark style="background-color:blue;">More coming soon.</mark>
