@@ -56,6 +56,30 @@
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountBalance.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountBalance.yaml)
 {% endswagger %}
 
+### getSignaturesForCompressedAccount
+
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForCompressedAccount.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForCompressedAccount.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForCompressedAccount.yaml)
+{% endswagger %}
+
+### getSignaturesForAddress
+
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForAddress.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForAddress.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForAddress.yaml)
+{% endswagger %}
+
+### getSignaturesForOwner
+
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForOwner.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForOwner.yaml)
+{% endswagger %}
+
+### getSignaturesForTokenOwner
+
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForTokenOwner.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForTokenOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForTokenOwner.yaml)
+{% endswagger %}
+
 ### getHealth
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getHealth.yaml" path="/" method="post" %}
