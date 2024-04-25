@@ -68,45 +68,45 @@
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByOwner.yaml)
 {% endswagger %}
 
-### getSignaturesForCompressedAccount
-
-{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForCompressedAccount.yaml" path="/" method="post" %}
-[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForCompressedAccount.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForCompressedAccount.yaml)
-{% endswagger %}
-
 ### getTransaction
 
-{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getTransaction.yaml" path="/" method="post" %}
-[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getTransaction.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getTransaction.yaml)
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getTransactionWithCompressionInfo.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getTransactionWithCompressionInfo.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getTransactionWithCompressionInfo.yaml)
 {% endswagger %}
 
-### getSignaturesForAddress
+### getCompressionSignaturesForAccount
 
-{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForAddress.yaml" path="/" method="post" %}
-[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForAddress.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForAddress.yaml)
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAccount.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAccount.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAccount.yaml)
 {% endswagger %}
 
-### getSignaturesForOwner
+### getCompressionSignaturesForAddress
 
-{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForOwner.yaml" path="/" method="post" %}
-[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForOwner.yaml)
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAddress.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAddress.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAddress.yaml)
 {% endswagger %}
 
-### getSignaturesForTokenOwner
+### getCompressionSignaturesForOwner
 
-{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForTokenOwner.yaml" path="/" method="post" %}
-[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForTokenOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSignaturesForTokenOwner.yaml)
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForOwner.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForOwner.yaml)
 {% endswagger %}
 
-### getHealth
+### getCompressionSignaturesForTokenOwner
 
-{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getHealth.yaml" path="/" method="post" %}
-[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getHealth.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getHealth.yaml)
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForTokenOwner.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForTokenOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForTokenOwner.yaml)
 {% endswagger %}
 
-### getSlot
+### getIndexerHealth
 
-{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSlot.yaml" path="/" method="post" %}
-[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSlot.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getSlot.yaml)
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getIndexerHealth.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getIndexerHealth.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getIndexerHealth.yaml)
+{% endswagger %}
+
+### getIndexerSlot
+
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getIndexerSlot.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getIndexerSlot.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getIndexerSlot.yaml)
 {% endswagger %}
 
