@@ -12,7 +12,7 @@
 * [Node operator guide](node-operators/node-operator-guide.md)
 * [Run a node](node-operators/run-a-node/README.md)
   * [Forester nodes](node-operators/run-a-node/forester-nodes.md)
-  * [Prover node](node-operators/run-a-node/prover-node.md)
+  * [Prover node](node-operators/run-a-node/prover-nodes.md)
   * [RPC nodes](node-operators/run-a-node/rpc-nodes.md)
 
 ## Developers

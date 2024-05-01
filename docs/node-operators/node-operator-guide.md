@@ -6,7 +6,7 @@ Operators, who can be either individuals or organizations, play an active role i
 
 [**Forester nodes**](run-a-node/forester-nodes.md) plant and update public and program-owned state trees on behalf of developers and users.
 
-[**Prover nodes**](run-a-node/prover-node.md) allow app and wallet developers to outsource validity proof generation.
+[**Prover nodes**](run-a-node/prover-nodes.md) allow app and wallet developers to outsource validity proof generation.
 
 [**RPC nodes**](run-a-node/rpc-nodes.md) index the chain and enable app developers to build transactions that interact with Light state on Solana.
 
