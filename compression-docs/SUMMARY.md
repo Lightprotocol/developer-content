@@ -1,8 +1,10 @@
 # Table of contents
 
-* [Terminology](README.md)
+* [Introduction](README.md)
+* [Page](page.md)
+* [Terminology](<README (1).md>)
 * [JSON RPC Methods](json-rpc-methods.md)
-* [Introduction](introduction.md)
+* [Introduction](introduction-1.md)
 * [Core Concepts](core-concepts.md)
 * [Run a node](run-a-node/README.md)
   * [RPC](run-a-node/rpc.md)
