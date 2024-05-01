@@ -1,6 +1,6 @@
 # JSON RPC Methods
 
-_As per the_ [_canonical RPC implementation by Helius Labs_](https://github.com/helius-labs/photon)
+_For more info about the canonical ZK Compression RPC implementation by Helius Labs, refer to the_ [_open-source code base_](https://github.com/helius-labs/photon)_._
 
 ### getCompressedAccount
 
