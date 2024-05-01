@@ -8,7 +8,7 @@ All compressed "Light" state exists in a forest of state trees. State trees are 
 
 When a user transaction writes to a compressed account, the Light system program appends a new compressed account (the snapshot of the updated state) as a leaf to the state tree, effectively advancing the state root of said tree on Solana. One user transaction can write to multiple compressed accounts/ advance multiple state roots.&#x20;
 
-#### 1. Forester nodes dispose old state to ensure liveness
+#### 1. Forester nodes dispose of old state to ensure liveness
 
 When new state gets appended, old state needs to get nullified. To ensure atomicity as part of each user transaction the system program stores all nullified compressed account hashes on-chain inside the state tree's associated nullifier queue,  marking them as spent.
 
