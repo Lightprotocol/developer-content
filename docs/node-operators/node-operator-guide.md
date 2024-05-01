@@ -14,7 +14,7 @@ Operators, who can be either individuals or organizations, play an active role i
 
 Becoming an Operator in the Light ecosystem is permissionless. Any Solana address can register as a Forester node operator.&#x20;
 
-Prover nodes and RPC nodes can be operated together: in its default configuration, the canonical RPC node implementation by [Helius Labs](https://github.com/helius-labs/photon) bundles a prover node. The official RPC API specification supports proof generation via the `getValidityProof` endpoint making it easy to serve proofs together with regular PRC methods via the same port.
+Prover nodes and RPC nodes can be operated either standalone or together: in its default configuration, the canonical RPC node implementation by [Helius Labs](https://github.com/helius-labs/photon) bundles a prover node. The official RPC API specification supports proof generation via the `getValidityProof` endpoint making it easy to serve proofs together with regular PRC methods via the same port.
 
 
 
