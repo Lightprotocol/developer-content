@@ -1,10 +1,10 @@
 # Table of contents
 
 * [Introduction](README.md)
-  * [Page](introduction/page.md)
-* [Terminology](<README (1).md>)
-* [JSON RPC Methods](json-rpc-methods.md)
-* [Introduction](introduction.md)
+* [Getting Started](getting-started/README.md)
+  * [Creating Compressed Programs](getting-started/creating-compressed-programs.md)
+* [Indexer (Photon)](indexer-photon/README.md)
+  * [JSON RPC Methods](indexer-photon/json-rpc-methods.md)
 * [Core Concepts](core-concepts.md)
 * [Run a node](run-a-node/README.md)
   * [RPC](run-a-node/rpc.md)
@@ -13,3 +13,4 @@
   * [Rust](clients/rust.md)
   * [JavaScript / TypeScript](clients/javascript-typescript.md)
 * [Developing Programs](developing-programs.md)
+* [Terminology](<README (1).md>)
