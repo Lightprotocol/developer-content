@@ -1,11 +1,14 @@
 # Prover node
 
+Prover nodes allow users to outsource validity proof generation, enabling fast synchronous state transitions.&#x20;
 
+## Validity proofs
 
-Prover nodes allow users to outsource validity proof generation.
+Transactions that read from and write to compressed accounts must submit a validity proof to the chain.
 
-Every user transaction that spends compressed state (e.g. updating compressed accounts) must submit a validity proof to the chain. These validity proofs prove that given input state was previously appended to the state stress and is therefore valid, unspent state.\
-The Light system programs verify these validityProofs on-chain.
+At the system level, Light currently verifies two distinct types of validity proofs:
+
+<table><thead><tr><th>Proof type</th><th>Description</th><th data-hidden></th></tr></thead><tbody><tr><td><strong>Inclusion proof</strong></td><td>Prove that a specific compressed account is part of a state tree.  </td><td></td></tr><tr><td><strong>Exclusion proof</strong> </td><td>Prove that a specific PDA has not yet been created. Supports the full 256-bit address space. Useful for PDA-like uniqueness guarantees.</td><td></td></tr></tbody></table>
 
 ## Installation
 
