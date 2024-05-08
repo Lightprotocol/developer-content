@@ -1,16 +1,18 @@
 # Table of contents
 
-* [Introduction](README.md)
-* [Getting Started](getting-started/README.md)
-  * [Creating Compressed Programs](getting-started/creating-compressed-programs.md)
-* [Indexer (Photon)](indexer-photon/README.md)
-  * [JSON RPC Methods](indexer-photon/json-rpc-methods.md)
-* [Core Concepts](core-concepts.md)
-* [Run a node](run-a-node/README.md)
-  * [RPC](run-a-node/rpc.md)
-  * [Light node](run-a-node/light-node.md)
-* [Clients](clients/README.md)
-  * [Rust](clients/rust.md)
-  * [JavaScript / TypeScript](clients/javascript-typescript.md)
-* [Developing Programs](developing-programs.md)
-* [Terminology](<README (1).md>)
+## Introduction
+
+* [Overview](README.md)
+* [Core Concepts](introduction/core-concepts/README.md)
+  * [Compressed Account Model](introduction/core-concepts/compressed-account-model.md)
+  * [Lifecycle of a Transaction](introduction/core-concepts/lifecycle-of-a-transaction.md)
+  * [Tradeoffs](introduction/core-concepts/tradeoffs.md)
+
+## Node Operators
+
+* [Run a Node](node-operators/run-a-node.md)
+
+## Developers
+
+* [Intro to Development](developers/intro-to-development.md)
+* [JSON RPC Methods](developers/json-rpc-methods.md)

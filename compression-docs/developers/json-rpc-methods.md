@@ -1,5 +1,7 @@
 # JSON RPC Methods
 
+Below are all ZK compression methods extending Solana's default JSON RPC API. Helius Labs maintains the canonical RPC API and indexer implementation [here](https://github.com/helius-labs/photon).
+
 ### getCompressedAccount
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccount.yaml" path="/" method="post" %}
@@ -68,7 +70,7 @@
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedTokenAccountsByOwner.yaml)
 {% endswagger %}
 
-### getTransaction
+### getTransactionWithCompressionInfo
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getTransactionWithCompressionInfo.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getTransactionWithCompressionInfo.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getTransactionWithCompressionInfo.yaml)
