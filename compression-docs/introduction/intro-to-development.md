@@ -1,7 +1,7 @@
 ---
 description: >-
   Welcome! This guide has everything you need to know to start developing with
-  ZK compression on Solana.
+  ZK Compression on Solana.
 ---
 
 # Intro to Development
@@ -10,28 +10,20 @@ description: >-
 For the sake of brevity, the guide assumes you are familiar with the basics of Solana. If you aren't, we recommend reading the [Solana documentation](https://solana.com/docs/intro/dev) first.
 {% endhint %}
 
-## High-Level Developer Overview
-
-Developing with ZK compression is very similar to regular Solana development.
-
-Development can be broken down into two main parts:
-
-1. **On-chain program development**
-2. **Client development**
-
-On Solana, clients interact with on-chain programs via the [JSON RPC API](https://solana.com/docs/rpc).
-
-The **ZK compression RPC API** extends Solana's default JSON RPC API with additional endpoints that make it easy to read and interact with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](json-rpc-methods.md) section.
-
 ## What you'll need to get started
 
-To develop with ZK compression, you'll need different tools based on whether you are developing for client-side, on-chain programs, or both.
+Development with ZK compression on Solana consists of two main parts:&#x20;
+
+* [client development](intro-to-development.md#client-side-development)&#x20;
+* [on-chain program development](intro-to-development.md#on-chain-program-development)
+
+The glue between clients and on-chain programs is the ZK Compression RPC API. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](json-rpc-methods.md) section.
 
 ### Client-side development
 
 You can use SDKs in Rust and Typescript to interact with ZK compression:
 
-<table><thead><tr><th width="129">Language</th><th width="327">SDK</th><th>Description</th></tr></thead><tbody><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js">@lightprotocol/stateless.js</a></td><td>SDK to interact with the compression programs via the ZK compression RPC API</td></tr><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/compressed-token">@lightprotocol/compressed-token</a></td><td>SDK to interact with the compressed token program</td></tr><tr><td>Rust</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/compressed-pda/src/sdk">light-sdk</a></td><td>Rust client</td></tr></tbody></table>
+<table><thead><tr><th width="129">Language</th><th width="327">SDK</th><th>Description</th></tr></thead><tbody><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js">@lightprotocol/stateless.js</a></td><td>SDK to interact with compression programs via the ZK compression RPC API</td></tr><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/compressed-token">@lightprotocol/compressed-token</a></td><td>SDK to interact with the compressed token program</td></tr><tr><td>Rust</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/compressed-pda/src/sdk">light-sdk</a></td><td>Rust client</td></tr></tbody></table>
 
 You'll also need a connection with an RPC to interact with the network. You can either work with an RPC infrastructure provider that supports ZK compression or run your own RPC Node.
 
@@ -85,8 +77,7 @@ const fromKeypair = Keypair.generate();
 const toKeypair = Keypair.generate();
 const connection: Rpc = createRpc();
 
-
-const main = () => {
+(async () => {
 
     /// Fetch latest blockhash
     const { blockhash } = await connection.getLatestBlockhash();
@@ -111,9 +102,7 @@ const main = () => {
     /// Confirm 
     const txId = await sendAndConfirmTx(connection, tx);
 
-}
-
-main()
+})()
 ```
 
 To get started quickly with an end-to-end client for your application, check out the ZK compression [web](https://github.com/Lightprotocol/example-web-client) and [node](https://github.com/Lightprotocol/example-nodejs-client) examples on GitHub.
