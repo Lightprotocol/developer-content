@@ -3,16 +3,21 @@
 ## Introduction
 
 * [Overview](README.md)
-* [Core Concepts](introduction/core-concepts/README.md)
-  * [Compressed Account Model](introduction/core-concepts/compressed-account-model.md)
-  * [Lifecycle of a Transaction](introduction/core-concepts/lifecycle-of-a-transaction.md)
-  * [Tradeoffs](introduction/core-concepts/tradeoffs.md)
+* [Intro to Development](introduction/intro-to-development.md)
+* [JSON RPC Methods](introduction/json-rpc-methods.md)
+
+## Learn
+
+* [Core Concepts](learn/core-concepts/README.md)
+  * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
+  * [State Trees](learn/core-concepts/state-trees.md)
+  * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
+  * [Tradeoffs](learn/core-concepts/tradeoffs.md)
+
+## Developers
+
+* [TypeScript Client](developers/typescript-client.md)
 
 ## Node Operators
 
 * [Run a Node](node-operators/run-a-node.md)
-
-## Developers
-
-* [Intro to Development](developers/intro-to-development.md)
-* [JSON RPC Methods](developers/json-rpc-methods.md)

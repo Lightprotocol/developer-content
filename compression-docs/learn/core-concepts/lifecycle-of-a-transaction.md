@@ -18,7 +18,7 @@ In this example, we assume that the client previously created said compressed ac
 
 The custom Solana program executing the state transition Data -> Data' should require its client to pack the instructions efficiently. In the above scenario, the total data that's sent to the chain is: `address (same)`, `owner program (same)`, `data`, `data'-data`, `validity proof.`
 
-On-chain, the "output" compressed account representation for this is:
+The compressed account after its update looks like this:
 
 <figure><img src="../../.gitbook/assets/image (6).png" alt="" width="563"><figcaption><p>Full representation of a compressed account with PDA</p></figcaption></figure>
 
@@ -32,4 +32,4 @@ To write compressed state, the custom program invokes the protocol via CPI. The 
 4. Appends the new compressed account hash to the state tree and advances the tree's [state root](https://github.com/Lightprotocol/light-protocol/blob/main/programs/compressed-pda/src/invoke/processor.rs#L172-L181)
 5. [Emits](https://github.com/Lightprotocol/light-protocol/blob/main/programs/compressed-pda/src/invoke/processor.rs#L189-L195) the new "raw" compressed account state onto the ledger
 
-An[ RPC node](../../node-operators/run-a-node.md#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK compression RPC API](../../developers/json-rpc-methods.md).
+An[ RPC node](../../node-operators/run-a-node.md#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK compression RPC API](../../introduction/json-rpc-methods.md).

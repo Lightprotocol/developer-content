@@ -1,5 +1,15 @@
 # Run a Node
 
+## Running a Node for Local Development
+
+For local development, the [ZK compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/)  `test-validator` command starts a single-node Solana cluster with all relevant nodes (Photon RPC and Prover), system programs, accounts, and runtime features:
+
+```sh
+light test-validator
+```
+
+To connect to public networks (Devnet, Mainnet-Beta), you can either work with an RPC infrastructure provider that supports ZK compression, such as [Helius Labs](https://helius.xyz/) or run your own nodes:
+
 {% hint style="info" %}
 There are three different types of nodes:
 
@@ -10,15 +20,15 @@ There are three different types of nodes:
 Becoming an operator for any node type is permissionless.
 {% endhint %}
 
-## Photon Indexer node
+## Photon RPC Node
 
 RPC nodes index the compression programs, enabling clients to read and build transactions interacting with compressed state.
 
-The canonical compression indexer is named Photon. It can be run locally and requires minimal setup. You simply need to point it to an existing Solana RPC. See the Github [repo](https://github.com/helius-labs/photon) for more info:
+The canonical compression indexer is named Photon. It can be run locally and requires minimal setup. You just need to point it to an existing Solana RPC. See the Github [repo](https://github.com/helius-labs/photon) for more info:
 
 {% embed url="https://github.com/helius-labs/photon" %}
 
-## Prover node
+## Prover Node
 
 Provers can generate validity proofs for state inclusion on behalf of app and wallet developers.
 
@@ -28,7 +38,7 @@ Please refer to the Github repo for more info:
 
 {% embed url="https://github.com/Lightprotocol/light-protocol/tree/main/gnark-prover" %}
 
-## Light Forester node
+## Light Forester Node
 
 Developers may choose to have their program-owned state trees serviced by a network of Light Forester nodes. These nodes manage the creation, rollover, and updating of shared and program-owned state trees. Any Solana account can register as a Light Forester node operator.
 
