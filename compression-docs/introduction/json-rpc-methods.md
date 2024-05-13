@@ -100,7 +100,7 @@ Returns the transaction data for the transaction with the given signature along 
 
 ### getCompressionSignaturesForAccount
 
-Return the signatures of the transactions that closed or opened a compressed account with the given hash.
+Return the signatures of the transactions that closed or opened a compressed account with the given hash. This is a paginated endpoint.
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAccount.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAccount.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAccount.yaml)
@@ -108,7 +108,7 @@ Return the signatures of the transactions that closed or opened a compressed acc
 
 ### getCompressionSignaturesForAddress
 
-Return the signatures of the transactions that closed or opened a compressed account with the given address.
+Return the signatures of the transactions that closed or opened a compressed account with the given address. This is a paginated endpoint.
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAddress.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAddress.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForAddress.yaml)
@@ -116,7 +116,7 @@ Return the signatures of the transactions that closed or opened a compressed acc
 
 ### getCompressionSignaturesForOwner
 
-Returns the signatures of the transactions that have modified an owner's compressed accounts.
+Returns the signatures of the transactions that have modified an owner's compressed accounts. This is a paginated endpoint.
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForOwner.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForOwner.yaml)
@@ -124,10 +124,18 @@ Returns the signatures of the transactions that have modified an owner's compres
 
 ### getCompressionSignaturesForTokenOwner
 
-Returns the signatures of the transactions that have modified an owner's compressed token accounts.
+Returns the signatures of the transactions that have modified an owner's compressed token accounts. This is a paginated endpoint.
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForTokenOwner.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForTokenOwner.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressionSignaturesForTokenOwner.yaml)
+{% endswagger %}
+
+### getLatestCompressionSignatures
+
+Returns the signatures of the latest transactions that used the compression program. This is a paginated endpoint.
+
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getLatestCompressionSignatures.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getLatestCompressionSignatures.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getLatestCompressionSignatures.yaml)
 {% endswagger %}
 
 ### getIndexerHealth
