@@ -29,7 +29,7 @@ The compressed PDA account layout is similar to Solana's regular PDA account lay
 
 <figure><img src="../../.gitbook/assets/image (2).png" alt="" width="563"><figcaption><p>Compressed PDA Account with AccountData</p></figcaption></figure>
 
-The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a regular account's data field for the discriminator. This helps programs distinguish between different program-owned accounts. The default compressed account layout is opinionated in this regard and enforces a discriminator in the Data field. You can ignore the dataHash field for now; we cover its importance for ZK compression later.
+The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a regular account's data field for the discriminator. This helps programs distinguish between different program-owned accounts. The default compressed account layout is opinionated in this regard and enforces a discriminator in the Data field. You can ignore the dataHash field for now; we cover its importance for ZK Compression later.
 
 ### Address & Hash
 

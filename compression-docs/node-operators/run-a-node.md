@@ -2,13 +2,13 @@
 
 ## Running a Node for Local Development
 
-For local development, the [ZK compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/)  `test-validator` command starts a single-node Solana cluster with all relevant nodes (Photon RPC and Prover), system programs, accounts, and runtime features:
+For local development, the [ZK Compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/)  `test-validator` command starts a single-node Solana cluster with all relevant nodes (Photon RPC and Prover), system programs, accounts, and runtime features:
 
 ```sh
 light test-validator
 ```
 
-To connect to public networks (Devnet, Mainnet-Beta), you can either work with an RPC infrastructure provider that supports ZK compression, such as [Helius Labs](https://helius.xyz/) or run your own nodes:
+To connect to public networks (Devnet, Mainnet-Beta), you can either work with an RPC infrastructure provider that supports ZK Compression, such as [Helius Labs](https://helius.xyz/) or run your own nodes:
 
 {% hint style="info" %}
 There are three different types of nodes:
@@ -32,7 +32,7 @@ The canonical compression indexer is named Photon. It can be run locally and req
 
 Provers can generate validity proofs for state inclusion on behalf of app and wallet developers.
 
-**Prover nodes** can be operated either stand-alone or with an RPC node: in its default configuration, the canonical Photon RPC node implementation by [Helius Labs](https://github.com/helius-labs/photon) bundles a Prover node. The [ZK compression RPC API ](https://docs.lightprotocol.com/developers/json-rpc-methods)specification supports proof generation via the `getValidityProof` endpoint, making it easy to serve proofs using regular RPC methods via the same port.
+**Prover nodes** can be operated either stand-alone or with an RPC node: in its default configuration, the canonical Photon RPC node implementation by [Helius Labs](https://github.com/helius-labs/photon) bundles a Prover node. The [ZK Compression RPC API ](https://docs.lightprotocol.com/developers/json-rpc-methods)specification supports proof generation via the `getValidityProof` endpoint, making it easy to serve proofs using regular RPC methods via the same port.
 
 Please refer to the Github repo for more info:
 

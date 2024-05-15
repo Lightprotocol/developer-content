@@ -1,12 +1,12 @@
 # Lifecycle of a Transaction
 
-ZK compression transactions are fully compatible with Solana's Transaction and VersionedTransaction. There are three key nuances in building transactions with compressed accounts as compared to regular accounts:
+ZK Compression transactions are fully compatible with Solana's Transaction and VersionedTransaction. There are three key nuances in building transactions with compressed accounts as compared to regular accounts:
 
 * Instructions must specify the list of all compressed accounts being read or written to. To read or write to a compressed account, the instruction must send the current account state on-chain and prove its validity.
 * Each unique state tree that gets read or written to (via any compressed account) needs to be specified as per Solana's regular on-chain [account access lists](https://solana.com/docs/core/transactions#array-of-account-addresses).&#x20;
 * To read any compressed account state on-chain, the client must send a validity proof alongside the instruction data to the chain. Depending on your program logic, the validity proof can prove A) the validity of all specified read accounts and B) the non-existence of a specified PDA within the compressed address space, e.g., for creating a new compressed PDA account.
 
-We can express a compression transaction more generally as:
+We can express a transaction more generally as:
 
 `(state, validityProof) -> state transition -> state'`
 
@@ -32,4 +32,4 @@ To write compressed state, the custom program invokes the protocol via CPI. The 
 4. Appends the new compressed account hash to the state tree and advances the tree's [state root](https://github.com/Lightprotocol/light-protocol/blob/main/programs/compressed-pda/src/invoke/processor.rs#L172-L181)
 5. [Emits](https://github.com/Lightprotocol/light-protocol/blob/main/programs/compressed-pda/src/invoke/processor.rs#L189-L195) the new "raw" compressed account state onto the ledger
 
-An[ RPC node](../../node-operators/run-a-node.md#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK compression RPC API](../../introduction/json-rpc-methods.md).
+An[ RPC node](../../node-operators/run-a-node.md#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](../../introduction/json-rpc-methods.md).

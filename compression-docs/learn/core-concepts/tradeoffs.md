@@ -1,6 +1,6 @@
 # Tradeoffs
 
-Before using ZK compression to scale your application state, you should consider the tradeoffs of compressed accounts:
+Before using ZK Compression to scale your application state, you should consider the tradeoffs of compressed accounts:
 
 * [Larger Transaction Size](tradeoffs.md#larger-transaction-size)
 * [High Compute Unit Usage](tradeoffs.md#high-compute-unit-usage)
@@ -9,7 +9,7 @@ Before using ZK compression to scale your application state, you should consider
 ## General Recommendation
 
 {% hint style="info" %}
-Consider which accounts in your application benefit from ZK compression, and which don't. You can use both types for different parts of your application!
+Consider which accounts in your application benefit from ZK Compression, and which don't. You can use both types for different parts of your application!
 {% endhint %}
 
 You may prefer the account _not_ to be permanently compressed if:
@@ -22,7 +22,7 @@ You may prefer the account _not_ to be permanently compressed if:
 
 Solana's Transaction size limit is 1232 Bytes. Transactions exceeding this limit will fail.
 
-**ZK compression increases your transaction size in two ways:**
+**ZK Compression increases your transaction size in two ways:**
 
 * 128 Bytes for the validity proof\
   _constant size per transaction if you read from at least 1 compressed account._
@@ -62,4 +62,4 @@ Whenever a [transaction](lifecycle-of-a-transaction.md) writes to a compressed a
 
 ## Next Steps
 
-This covers most of the key concepts about ZK compression! Next, [build a program](../../introduction/intro-to-development.md#on-chain-program-development) or application with ZK compression or learn how to set up and [run](../../node-operators/run-a-node.md) your own node.
+This covers most of the key concepts about ZK Compression! Next, [build a program](../../introduction/intro-to-development.md#on-chain-program-development) or application with ZK Compression or learn how to set up and [run](../../node-operators/run-a-node.md) your own node.

@@ -12,7 +12,7 @@ For the sake of brevity, the guide assumes you are familiar with the basics of S
 
 ## What you'll need to get started
 
-Development with ZK compression on Solana consists of two main parts:&#x20;
+Development with ZK Compression on Solana consists of two main parts:&#x20;
 
 * [client development](intro-to-development.md#client-side-development)&#x20;
 * [on-chain program development](intro-to-development.md#on-chain-program-development)
@@ -21,14 +21,14 @@ The glue between clients and on-chain programs is the ZK Compression RPC API. It
 
 ### Client-side development
 
-You can use SDKs in Rust and Typescript to interact with ZK compression:
+You can use SDKs in Rust and Typescript to interact with ZK Compression:
 
-<table><thead><tr><th width="129">Language</th><th width="327">SDK</th><th>Description</th></tr></thead><tbody><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js">@lightprotocol/stateless.js</a></td><td>SDK to interact with compression programs via the ZK compression RPC API</td></tr><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/compressed-token">@lightprotocol/compressed-token</a></td><td>SDK to interact with the compressed token program</td></tr><tr><td>Rust</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/compressed-pda/src/sdk">light-sdk</a></td><td>Rust client</td></tr></tbody></table>
+<table><thead><tr><th width="129">Language</th><th width="327">SDK</th><th>Description</th></tr></thead><tbody><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js">@lightprotocol/stateless.js</a></td><td>SDK to interact with compression programs via the ZK Compression RPC API</td></tr><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/compressed-token">@lightprotocol/compressed-token</a></td><td>SDK to interact with the compressed token program</td></tr><tr><td>Rust</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/compressed-pda/src/sdk">light-sdk</a></td><td>Rust client</td></tr></tbody></table>
 
-You'll also need a connection with an RPC to interact with the network. You can either work with an RPC infrastructure provider that supports ZK compression or run your own RPC Node.
+You'll also need a connection with an RPC to interact with the network. You can either work with an RPC infrastructure provider that supports ZK Compression or run your own RPC Node.
 
 {% hint style="info" %}
-[Helius Labs](https://github.com/helius-labs) supports ZK compression and maintains its canonical RPC and Photon indexer implementation [here](https://github.com/helius-labs/photon).
+[Helius Labs](https://github.com/helius-labs) supports ZK Compression and maintains its canonical RPC and Photon indexer implementation [here](https://github.com/helius-labs/photon).
 
 Our local dev tooling supports Photon out of the box via the `light test-validator` command. To learn how to run a standalone Photon RPC node, visit the [Run a Node](../node-operators/run-a-node.md#photon-indexer-node) section.
 {% endhint %}
@@ -74,7 +74,7 @@ const {
 const { ComputeBudgetProgram, Keypair, PublicKey } = require("@solana/web3.js");
 
 const fromKeypair = Keypair.generate();
-const connection: Rpc = createRpc();
+const connection = createRpc();
 
 (async () => {
 
@@ -100,7 +100,7 @@ const connection: Rpc = createRpc();
     
     /// Confirm 
     const txId = await sendAndConfirmTx(connection, tx);
-
+    console.log(txId);
 })()
 ```
 

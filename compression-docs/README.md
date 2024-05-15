@@ -1,8 +1,8 @@
 # Overview
 
-## What is ZK compression?
+## What is ZK Compression?
 
-ZK compression is a new primitive built on Solana that enables secure scaling directly on the L1.
+ZK Compression is a new primitive built on Solana that enables secure scaling directly on the L1.
 
 Developers and users can opt to compress their on-chain state, reducing state costs **by orders of magnitude** while preserving the security, performance, and composability of the Solana L1.
 
@@ -20,8 +20,8 @@ Developers and users can opt to compress their on-chain state, reducing state co
 
 ## How to use this Documentation
 
-This documentation provides a high-level introduction to the ZK compression primitive and is a directory guiding you to relevant codebases, examples, and advanced guides.
+This documentation provides a high-level introduction to the ZK Compression primitive and is a directory guiding you to relevant codebases, examples, and advanced guides.
 
 {% hint style="info" %}
-The ZK compression primitive is being built in the open, and a public Testnet will soon be available. Stay up to date with the core teams contributing to ZK compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius Labs](https://twitter.com/heliuslabs).
+The ZK Compression primitive is being built in the open, and a public Testnet will soon be available. Stay up to date with the core teams contributing to ZK Compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius Labs](https://twitter.com/heliuslabs).
 {% endhint %}
