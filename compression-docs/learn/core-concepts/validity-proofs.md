@@ -1,6 +1,4 @@
-# ZK & Validity Proofs
-
-## Validity Proofs
+# Validity Proofs
 
 Validity proofs are succinct zero-knowledge proofs (ZKPs) that can prove the existence of $$𝑛$$ compressed accounts as leaves within $$𝑚$$ state trees while maintaining a constant 128-byte size.
 

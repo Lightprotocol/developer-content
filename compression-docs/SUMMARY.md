@@ -11,7 +11,7 @@
 * [Core Concepts](learn/core-concepts/README.md)
   * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
   * [State Trees](learn/core-concepts/state-trees.md)
-  * [ZK & Validity Proofs](learn/core-concepts/zk-and-validity-proofs.md)
+  * [Validity Proofs](learn/core-concepts/validity-proofs.md)
   * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
   * [Tradeoffs](learn/core-concepts/tradeoffs.md)
 
