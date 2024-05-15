@@ -74,7 +74,6 @@ const {
 const { ComputeBudgetProgram, Keypair, PublicKey } = require("@solana/web3.js");
 
 const fromKeypair = Keypair.generate();
-const toKeypair = Keypair.generate();
 const connection: Rpc = createRpc();
 
 (async () => {
@@ -117,11 +116,13 @@ You can write custom programs using ZK compression in Anchor or native Rust.
 
 First, you'll need to ensure your machine has Rust, the Solana CLI, and Anchor installed. If you haven't installed them, refer to this [setup guide](https://solana.com/developers/guides/getstarted/setup-local-development).
 
-We provide tooling that makes testing your on-chain program on a local Solana cluster easy:
+We provide tooling for testing your on-chain program on a local Solana cluster.
 
 [ZK Compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/README.md):  `light test-validator` automatically initializes a local Solana cluster with the compression programs, all necessary system accounts, and syscalls activated. By default, it also starts a local Photon RPC instance and Prover node.
 
 [Photon Explorer](https://photon.helius.xyz): Helius Labs' Explorer parses compression transactions into a human-readable format, which is great for debugging your program.
+
+<table><thead><tr><th width="285">Program</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/system">light-system-program</a></td><td>The system program. Validity proof verification ownership and sum checks.<br>Invoke to create/write to compressed accounts and PDAs.</td></tr><tr><td><a href="https://crates.io/crates/light-compressed-token">light-compressed-token</a></td><td>A compressed token implementation </td></tr><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/account-compression">account-compression</a></td><td>Implements state and address trees</td></tr></tbody></table>
 
 ## Build by Example
 
