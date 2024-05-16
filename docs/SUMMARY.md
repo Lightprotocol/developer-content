@@ -3,10 +3,14 @@
 ## Overview
 
 * [Introduction](README.md)
-* [Core concepts](overview/core-concepts/README.md)
-  * [Key Terms](overview/core-concepts/key-terms.md)
-  * [Compressed Account Model](overview/core-concepts/compressed-account-model.md)
-  * [Lifecycle of a transaction](overview/core-concepts/lifecycle-of-a-transaction.md)
+* [Key Terms](overview/key-terms.md)
+
+## Learn
+
+* [Architecture Overview](learn/architecture-overview.md)
+* [Core concepts](learn/core-concepts/README.md)
+  * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
+  * [Lifecycle of a transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
 
 ## Node operators
 
@@ -15,6 +19,7 @@
 
 ## Developers
 
+* [Intro to Development](developers/intro-to-development.md)
 * [Developing Programs](developers/developing-programs.md)
 * [JSON RPC Methods](developers/json-rpc-methods.md)
 * [Clients](developers/clients/README.md)
