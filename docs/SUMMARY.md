@@ -4,16 +4,14 @@
 
 * [Introduction](README.md)
 * [Core concepts](overview/core-concepts/README.md)
-  * [Terminology](overview/core-concepts/terminology.md)
+  * [Key Terms](overview/core-concepts/key-terms.md)
+  * [Compressed Account Model](overview/core-concepts/compressed-account-model.md)
   * [Lifecycle of a transaction](overview/core-concepts/lifecycle-of-a-transaction.md)
 
 ## Node operators
 
-* [Node operator guide](node-operators/node-operator-guide.md)
-* [Run a node](node-operators/run-a-node/README.md)
-  * [Forester nodes](node-operators/run-a-node/forester-nodes.md)
-  * [Prover node](node-operators/run-a-node/prover-nodes.md)
-  * [RPC nodes](node-operators/run-a-node/rpc-nodes.md)
+* [Node operator guide](node-operators/node-operator-guide/README.md)
+  * [Run a node](node-operators/node-operator-guide/run-a-node.md)
 
 ## Developers
 
