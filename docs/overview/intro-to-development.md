@@ -1,6 +1,6 @@
 # Intro to Development
 
-Welcome! This guide has everything you need to know to start developing with ZK Compression on Solana.
+Welcome! Light's core primitive is ZK Compression. This guide has everything you need to know to start developing with it.
 
 For the sake of brevity, the guide assumes you are familiar with the basics of Solana. If you aren't, we recommend reading the [Solana documentation](https://solana.com/docs/intro/dev) first.
 
@@ -8,10 +8,10 @@ For the sake of brevity, the guide assumes you are familiar with the basics of S
 
 Development with ZK Compression on Solana consists of two main parts:
 
-* [client development](https://www.zkcompression.com/introduction/intro-to-development#client-side-development)
-* [on-chain program development](https://www.zkcompression.com/introduction/intro-to-development#on-chain-program-development)
+* [client development](intro-to-development.md#client-side-development)
+* [on-chain program development](intro-to-development.md#on-chain-program-development)
 
-The glue between clients and on-chain programs is the ZK Compression RPC API. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](https://www.zkcompression.com/introduction/json-rpc-methods) section.
+The glue between clients and on-chain programs is the ZK Compression RPC API. It extends Solana's default JSON RPC API with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](json-rpc-methods.md) section.
 
 ### Client-side development <a href="#client-side-development" id="client-side-development"></a>
 
@@ -27,7 +27,7 @@ You'll also need a connection with an RPC to interact with the network. You can 
 
 [Helius Labs](https://github.com/helius-labs) supports ZK Compression and maintains its canonical RPC and Photon indexer implementation [here](https://github.com/helius-labs/photon).
 
-Our local dev tooling supports Photon out of the box via the `light test-validator` command. To learn how to run a standalone Photon RPC node, visit the [Run a Node](https://www.zkcompression.com/node-operators/run-a-node#photon-indexer-node) section.
+Our local dev tooling supports Photon out of the box via the `light test-validator` command. To learn how to run a standalone Photon RPC node, visit the[ Run a Node](../node-operators/node-operator-guide/run-a-node.md#photon-rpc-node-1) section.
 
 ### Quickstart <a href="#quickstart" id="quickstart"></a>
 
@@ -46,7 +46,7 @@ npm install --save \
 
 Copy
 
-```
+```typescript
 const stateless = require("@lightprotocol/stateless.js");
 
 // Rpc is a thin wrapper around a web3.js Connection
@@ -61,7 +61,7 @@ console.log(health);
 
 Copy
 
-```
+```typescript
 /// Compressing SOL
 const {
   LightSystemProgram,
@@ -110,7 +110,9 @@ To get started quickly with an end-to-end client for your application, check out
 
 ### On-chain program development <a href="#on-chain-program-development" id="on-chain-program-development"></a>
 
+{% hint style="info" %}
 The ZK compression primitive is the core of [the Light protocol](https://github.com/Lightprotocol). To leverage ZK compression, your custom program invokes the _Light system program_ via Cross-Program Invocation (CPI). For the sake of simplicity, we refer to this set of protocol smart contracts as _compression programs._
+{% endhint %}
 
 You can write custom programs using ZK compression in Anchor or native Rust.
 
@@ -152,4 +154,4 @@ Remember to include as much detail as possible in your question, and please use 
 
 ## Next steps <a href="#next-steps" id="next-steps"></a>
 
-You're now ready to start building with ZK compression! Head to the [Client Quickstart](https://www.zkcompression.com/developers/typescript-client) section, or [build ](https://www.zkcompression.com/introduction/intro-to-development#build-by-example)[a program](https://www.zkcompression.com/introduction/intro-to-development#build-by-example) and provide feedback!
+You're now ready to start building with ZK compression! Head to the [Client Quickstart](../developers/typescript-client.md) section, or build a program and provide feedback!
