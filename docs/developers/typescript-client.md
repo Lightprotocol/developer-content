@@ -1,8 +1,8 @@
-# JavaScript / TypeScript
+# TypeScript Client
 
 ## Stateless.js API Reference Guide <a href="#what-is-solana-web3-js" id="what-is-solana-web3-js"></a>
 
-The @lightprotocol/stateless.js library covers the [ZK Compression JSON RPC API](../json-rpc-methods.md). It aims to provide all the necessary functionality to interact with the ZK Compression primitive.
+The @lightprotocol/stateless.js library covers the [ZK Compression JSON RPC API](../overview/json-rpc-methods.md). It aims to provide all the necessary functionality to interact with the ZK Compression primitive.
 
 You can find the complete source for the `@lightprotocol/stateless.js` library [here](https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js).
 
@@ -46,7 +46,7 @@ console.log(health);
 // "Ok"
 ```
 
-The above example shows only a few of the methods on Rpc. Please visit the [JSON RPC Methods](../json-rpc-methods.md) section for the full list of compression endpoints.
+The above example shows only a few of the methods on Rpc. Please visit the [JSON RPC Methods](../overview/json-rpc-methods.md) section for the full list of compression endpoints.
 
 ## Quickstart <a href="#quickstart" id="quickstart"></a>
 
