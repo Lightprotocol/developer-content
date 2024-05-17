@@ -52,7 +52,7 @@ Each write operation incurs a small additional network cost. If you expect a sin
 Whenever a [transaction](lifecycle-of-a-transaction.md) writes to a compressed account, it nullifies the previous compressed account state and appends the new compressed account as a leaf to the state tree. Both of these actions incur costs that add to Solana's base fee.
 {% endhint %}
 
-* **Appending compressed account state to a state tree**: Typically \~100-200 lamports per new leaf (2tree\_depth×tree\_account\_rent\_cost×rollover\_threshold)(2tree\_depth×tree\_account\_rent\_cost×rollover\_threshold)
+* **Appending compressed account state to a state tree**: Typically \~100-200 lamports per new leaf (2^tree\_depth ×tree\_account\_rent\_cost×rollover\_threshold)
 * **Nullifying a leaf in a state tree**: The current default [forester node](../../node-operators/node-operator-guide/run-a-node.md#photon-rpc-node) implementation can nullify one leaf within one Solana transaction (5000 lamports base fee per nullified leaf).
 
 ## Next Steps <a href="#next-steps" id="next-steps"></a>
