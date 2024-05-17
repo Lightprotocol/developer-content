@@ -12,7 +12,7 @@ We can express a transaction more generally as:
 
 Here's what this looks like when updating a single compressed PDA account:
 
-<figure><img src="https://www.zkcompression.com/~gitbook/image?url=https%3A%2F%2F3488020389-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FDBJ4vLlhHTdkUGOiHxbB%252Fuploads%252FYlt1ftz6KJz3Zc0VLOIB%252Fimage.png%3Falt%3Dmedia%26token%3Df225cb5d-a1e9-40f0-b91c-289b5dbcf741&#x26;width=768&#x26;dpr=4&#x26;quality=100&#x26;sign=714b122431c0973b866f7144b6c80aa68b869280a8c7cec16da2985bf6945988" alt="" width="563"><figcaption><p>Simplified: Read and Write compressed accounts</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (3).png" alt="" width="563"><figcaption><p>Simplified: Read and Write compressed accounts</p></figcaption></figure>
 
 In this example, we assume that the client previously created said compressed account and thereafter fetched its compressed account info from an [RPC node](../../node-operators/node-operator-guide/run-a-node.md#photon-rpc-node-1).
 
@@ -20,7 +20,7 @@ The custom Solana program executing the state transition Data -> Data' should re
 
 The compressed account after its update looks like this:
 
-<figure><img src="https://www.zkcompression.com/~gitbook/image?url=https%3A%2F%2F3488020389-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FDBJ4vLlhHTdkUGOiHxbB%252Fuploads%252FBpJx0y1hjF3bTXmb3QhL%252Fimage.png%3Falt%3Dmedia%26token%3D272a064a-0b01-4508-9940-dfbe2134ca69&#x26;width=768&#x26;dpr=4&#x26;quality=100&#x26;sign=8e096ae7be73c7c54854bde4eb473a62e810dba9a692de105a0631d48fe14262" alt="" width="563"><figcaption><p>Full representation of a compressed account with PDA</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (4).png" alt=""><figcaption><p>Full representation of a compressed account with PDA</p></figcaption></figure>
 
 ### On-chain Protocol Execution <a href="#on-chain-protocol-execution" id="on-chain-protocol-execution"></a>
 
