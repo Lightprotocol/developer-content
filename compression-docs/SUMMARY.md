@@ -13,7 +13,7 @@
   * [State Trees](learn/core-concepts/state-trees.md)
   * [Validity Proofs](learn/core-concepts/validity-proofs.md)
   * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
-  * [Tradeoffs](learn/core-concepts/tradeoffs.md)
+  * [Limitations](learn/core-concepts/limitations.md)
 
 ## Developers
 

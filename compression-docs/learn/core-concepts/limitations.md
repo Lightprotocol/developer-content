@@ -1,10 +1,10 @@
-# Tradeoffs
+# Limitations
 
-Before using ZK Compression to scale your application state, you should consider the tradeoffs of compressed accounts:
+Before using ZK Compression to scale your application state, you should consider the limitations of compressed accounts:
 
-* [Larger Transaction Size](tradeoffs.md#larger-transaction-size)
-* [High Compute Unit Usage](tradeoffs.md#high-compute-unit-usage)
-* [Per-Transaction State Cost](tradeoffs.md#per-transaction-state-cost)
+* [Larger Transaction Size](limitations.md#larger-transaction-size)
+* [High Compute Unit Usage](limitations.md#high-compute-unit-usage)
+* [Per-Transaction State Cost](limitations.md#per-transaction-state-cost)
 
 ## General Recommendation
 

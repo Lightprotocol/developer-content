@@ -130,7 +130,7 @@ While you get started building with ZK compression, use these GitHub resources a
 
 * [Web example client](https://github.com/Lightprotocol/example-web-client)
 * [Node example client](https://github.com/Lightprotocol/example-nodejs-client)
-* [Token Escrow anchor program](https://github.com/Lightprotocol/light-protocol/tree/main/examples/token-escrow)
+* [Token Escrow anchor program](https://github.com/Lightprotocol/light-protocol/tree/light-v0.3.0/examples/token-escrow)
 
 ## Developer Environments
 
