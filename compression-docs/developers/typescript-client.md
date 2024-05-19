@@ -110,4 +110,4 @@ To get started building with examples, check out these GitHub repositories:
 
 * [Web example client](https://github.com/Lightprotocol/example-web-client)
 * [Node example client](https://github.com/Lightprotocol/example-nodejs-client)
-* [Token Escrow anchor program](https://github.com/Lightprotocol/light-protocol/tree/main/examples/token-escrow)
+* [Token escrow program example](https://github.com/Lightprotocol/light-protocol/tree/light-v0.3.0/examples/token-escrow)
