@@ -8,6 +8,7 @@
 
 ## Learn
 
+* [In a Nutshell](learn/in-a-nutshell.md)
 * [Core Concepts](learn/core-concepts/README.md)
   * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
   * [State Trees](learn/core-concepts/state-trees.md)
