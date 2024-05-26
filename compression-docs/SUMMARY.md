@@ -6,6 +6,10 @@
 * [Intro to Development](introduction/intro-to-development.md)
 * [JSON RPC Methods](introduction/json-rpc-methods.md)
 
+## Release Notes
+
+* [0.3.0](release-notes/0.3.0.md)
+
 ## Learn
 
 * [In a Nutshell](learn/in-a-nutshell.md)
