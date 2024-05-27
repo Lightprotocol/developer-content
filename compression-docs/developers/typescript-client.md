@@ -13,7 +13,7 @@ You can find the complete source for the `@lightprotocol/stateless.js` library [
 ```shell-session
 npm install --save \
     @lightprotocol/stateless.js \
-    @lightprotocol/cli \
+    @lightprotocol/zk-compression-cli \
     @solana/web3.js \
     @coral-xyz/anchor
 ```
@@ -28,10 +28,15 @@ The Rpc connection is used to interact with the [ZK Compression JSON RPC](../int
 
 **Example Usage**
 
+```sh
+# Start a local test-validator
+light test-validator
+```
+
 ```typescript
 const stateless = require("@lightprotocol/stateless.js");
  
-let connection = createRpc("http://127.0.0.1:8899");
+let connection = createRpc();
  
 let slot = await connection.getSlot();
 console.log(slot);
@@ -49,7 +54,7 @@ The above example shows only a few of the methods on Rpc. Please visit the [JSON
 
 ### Starting the test-validator for local development
 
-```
+```sh
 light test-validator 
 ```
 
@@ -57,8 +62,76 @@ This will start a single-node Solana cluster, an RPC node, and a prover node at 
 
 ### Creating and sending transactions
 
+#### Creating, minting, and transferring a Compressed Token
+
 ```typescript
-/// Compressing SOL
+import {
+  LightSystemProgram,
+  Rpc,
+  bn,
+  confirmTx,
+  createRpc,
+} from "@lightprotocol/stateless.js";
+import { createMint, mintTo, transfer } from "@lightprotocol/compressed-token";
+import { ComputeBudgetProgram, Keypair, PublicKey } from "@solana/web3.js";
+
+const payer = Keypair.generate();
+const tokenRecipient = Keypair.generate();
+const connection: Rpc = createRpc();
+
+const main = async () => {
+
+  /// airdrop lamports to pay fees
+  await confirmTx(
+      connection,
+      await connection.requestAirdrop(payer.publicKey, 10e9)
+  );
+  
+  await confirmTx(
+      connection,
+      await connection.requestAirdrop(tokenRecipient.publicKey, 1e6)
+  );
+
+
+  /// Create compressed-token mint
+  const { mint, transactionSignature } = await createMint(
+    connection,
+    payer,
+    payer,
+    9
+  );
+
+  /// Mint compressed tokens
+  const mintToTxId = await mintTo(
+    connection,
+    payer,
+    mint,
+    payer.publicKey,
+    payer,
+    1e9
+  );
+
+  /// Transfer compressed tokens
+  const transferTxId = await transfer(
+    connection,
+    payer,
+    mint,
+    7e8,
+    payer,
+    tokenRecipient.publicKey
+  );
+  
+  console.log("transfer txId", transferTxId)
+  
+}
+
+main()
+```
+
+#### Compressing SOL
+
+```typescript
+
 const {
   LightSystemProgram,
   Rpc,
@@ -77,7 +150,7 @@ const toKeypair = Keypair.generate();
 /// Rpc, by default, connects to the local nodes started via 'light test-validator' 
 const connection: Rpc = createRpc();
 
-const main = () => {
+const main = async () => {
 
     const { blockhash } = await connection.getLatestBlockhash();
 

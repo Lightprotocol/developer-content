@@ -41,16 +41,22 @@ Our local dev tooling supports Photon out of the box via the `light test-validat
 npm install --save \
     @lightprotocol/stateless.js \
     @solana/web3.js \
-    @coral-xyz/anchor
+    @coral-xyz/anchor \
+    @lightprotocol/zk-compression-cli
 ```
 
 #### Creating an Rpc connection
+
+```sh
+# Start a local test validator
+light test-validator
+```
 
 ```typescript
 const stateless = require("@lightprotocol/stateless.js");
 
 // Rpc is a thin wrapper around a web3.js Connection
-let connection : = stateless.createRpc("http://zk-testnet.helius.dev:8784");
+let connection : = stateless.createRpc();
  
 let health = await connection.getIndexerHealth(slot);
 console.log(health);
