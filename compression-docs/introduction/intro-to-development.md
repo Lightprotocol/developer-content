@@ -110,6 +110,8 @@ const connection = createRpc();
 })()
 ```
 
+You can find a quickstart guide for creating and transferring compressed-tokens [here](../developers/typescript-client.md#quickstart).
+
 To get started quickly with an end-to-end client for your application, check out the ZK compression [web](https://github.com/Lightprotocol/example-web-client) and [node](https://github.com/Lightprotocol/example-nodejs-client) examples on GitHub.
 
 ### On-chain program development
