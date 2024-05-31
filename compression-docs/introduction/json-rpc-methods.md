@@ -28,7 +28,7 @@ Returns the total balance of the owner's compressed accounts.
 
 ### getCompressedAccountProof
 
-Returns a proof that is used by the compression program to verify that the account is valid.
+Returns a proof the compression program uses to verify that the account is valid.
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountProof.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountProof.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getCompressedAccountProof.yaml)
@@ -44,10 +44,18 @@ Returns multiple compressed accounts with the given addresses or hashes.
 
 ### getMultipleCompressedAccountProofs
 
-Returns multiple proofs that are used by the compression program to verify that the accounts are valid.
+Returns multiple proofs used by the compression program to verify the accounts' validity.
 
 {% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getMultipleCompressedAccountProofs.yaml" path="/" method="post" %}
 [https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getMultipleCompressedAccountProofs.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getMultipleCompressedAccountProofs.yaml)
+{% endswagger %}
+
+### getValidityProof
+
+Returns a single ZK Proof used by the compression program to verify the accounts' validity.
+
+{% swagger src="https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getValidityProof.yaml" path="/" method="post" %}
+[https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getValidityProof.yaml](https://raw.githubusercontent.com/helius-labs/photon/main/src/openapi/specs/getValidityProof.yaml)
 {% endswagger %}
 
 ### getCompressedAccountsByOwner
