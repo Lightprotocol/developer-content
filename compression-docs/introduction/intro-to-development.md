@@ -12,6 +12,8 @@ For the sake of brevity, the guide assumes you are familiar with the basics of S
 
 ## What you'll need to get started
 
+First things first, you do **not** need to understand ZK to master ZK Compression!
+
 Development with ZK Compression on Solana consists of two main parts:&#x20;
 
 * [client development](intro-to-development.md#client-side-development)&#x20;
@@ -40,6 +42,7 @@ Our local dev tooling supports Photon out of the box via the `light test-validat
 ```shell-session
 npm install --save \
     @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
     @solana/web3.js \
     @coral-xyz/anchor \
     @lightprotocol/zk-compression-cli
@@ -63,51 +66,70 @@ console.log(health);
 // "Ok"
 ```
 
-#### Creating and sending transactions
+#### Minting and transferring compressed tokens
 
 ```typescript
-/// Compressing SOL
-const {
+import {
   LightSystemProgram,
   Rpc,
-  buildAndSignTx,
-  compress,
+  bn,
+  confirmTx,
   createRpc,
-  defaultTestStateTreeAccounts,
-  sendAndConfirmTx,
-} = require("@lightprotocol/stateless.js");
+} from "@lightprotocol/stateless.js";
+import { createMint, mintTo, transfer } from "@lightprotocol/compressed-token";
+import { ComputeBudgetProgram, Keypair, PublicKey } from "@solana/web3.js";
 
-const { ComputeBudgetProgram, Keypair, PublicKey } = require("@solana/web3.js");
+const payer = Keypair.generate();
+const tokenRecipient = Keypair.generate();
+const connection: Rpc = createRpc();
 
-const fromKeypair = Keypair.generate();
-const connection = createRpc();
+const main = async () => {
 
-(async () => {
+  /// airdrop lamports to pay fees
+  await confirmTx(
+      connection,
+      await connection.requestAirdrop(payer.publicKey, 10e9)
+  );
+  
+  await confirmTx(
+      connection,
+      await connection.requestAirdrop(tokenRecipient.publicKey, 1e6)
+  );
 
-    /// Fetch latest blockhash
-    const { blockhash } = await connection.getLatestBlockhash();
 
-    /// Compress lamports to self
-    const ix = await LightSystemProgram.compress({
-        payer: fromKeypair.publicKey,
-        toAddress: fromKeypair.publicKey,
-        lamports: 1_000_000_000,
-        outputStateTree: defaultTestStateTreeAccounts().merkleTree, 
-    });
+  /// Create compressed-token mint
+  const { mint, transactionSignature } = await createMint(
+    connection,
+    payer,
+    payer,
+    9
+  );
 
-    
-    /// Create a VersionedTransaction and sign it
-    const tx = buildAndSignTx(
-        [ComputeBudgetProgram.setComputeUnitLimit({ units: 1_200_000 }), ix],
-        fromKeypair,
-        blockhash,
-        [],
-    );
-    
-    /// Confirm 
-    const txId = await sendAndConfirmTx(connection, tx);
-    console.log(txId);
-})()
+  /// Mint compressed tokens
+  const mintToTxId = await mintTo(
+    connection,
+    payer,
+    mint,
+    payer.publicKey,
+    payer,
+    1e9
+  );
+
+  /// Transfer compressed tokens
+  const transferTxId = await transfer(
+    connection,
+    payer,
+    mint,
+    7e8,
+    payer,
+    tokenRecipient.publicKey
+  );
+  
+  console.log("transfer txId", transferTxId)
+  
+}
+
+main()
 ```
 
 You can find a quickstart guide for creating and transferring compressed-tokens [here](../developers/typescript-client.md#quickstart).
