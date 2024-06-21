@@ -1,7 +1,8 @@
 # Testnet Addresses
 
 {% hint style="success" %}
-Our first public ZK Testnet is now live!
+Our first public ZK Testnet is now live! \
+Note that this is not the public Solana Devnet. Solana Devnet support is coming soon. Until then, please use the network addresses listed below.
 {% endhint %}
 
 ### Relevant URLs
