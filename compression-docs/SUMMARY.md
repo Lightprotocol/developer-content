@@ -21,6 +21,7 @@
 
 ## Developers
 
+* [Testnet Addresses](developers/testnet-addresses.md)
 * [TypeScript Client](developers/typescript-client.md)
 * [JSON RPC Methods](developers/json-rpc-methods.md)
 
