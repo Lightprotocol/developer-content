@@ -24,7 +24,7 @@ Becoming an operator for any node type is permissionless.
 
 RPC nodes index the compression programs, enabling clients to read and build transactions interacting with compressed state.
 
-The canonical compression indexer is named Photon. It can be run locally and requires minimal setup. You just need to point it to an existing Solana RPC. See the Github [repo](https://github.com/helius-labs/photon) for more info:
+The canonical compression indexer is named Photon. It can be run locally and requires minimal setup. You need to point it to an existing Solana RPC. See the Github [repo](https://github.com/helius-labs/photon) for more info:
 
 {% embed url="https://github.com/helius-labs/photon" %}
 
@@ -40,8 +40,10 @@ Please refer to the Github repo for more info:
 
 ## Light Forester Node
 
-Developers may choose to have their program-owned state trees serviced by a network of Light Forester nodes. These nodes manage the creation, rollover, and updating of shared and program-owned state trees. Any Solana account can register as a Light Forester node operator.
+Developers may choose to have their program-owned state trees serviced by a network of Light Forester nodes. These nodes manage the creation, rollover, and updating of shared and program-owned state trees.
 
-Servicing program-owned state trees is permissionless, so you can self-host a standalone node.
+{% hint style="info" %}
+On ZK-Testnet, only shared state trees are supported end-to-end. Once full program-owned state tree support gets rolled out, you can service your program-owned state trees permissionlessly, i.e., self-host a standalone node.
+{% endhint %}
 
-{% embed url="https://github.com/Lightprotocol/light-protocol/tree/sergey/crank-server" %}
+{% embed url="https://github.com/Lightprotocol/light-protocol/tree/main/forester" %}
