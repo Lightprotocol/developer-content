@@ -19,7 +19,7 @@ Development with ZK Compression on Solana consists of two main parts:&#x20;
 * [client development](intro-to-development.md#client-side-development)&#x20;
 * [on-chain program development](intro-to-development.md#on-chain-program-development)
 
-The glue between clients and on-chain programs is the ZK Compression RPC API. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](json-rpc-methods.md) section.
+The glue between clients and on-chain programs is the ZK Compression RPC API. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods.md) section.
 
 ### Client-side development
 
@@ -67,6 +67,10 @@ console.log(health);
 ```
 
 #### Minting and transferring compressed tokens
+
+{% hint style="info" %}
+This example uses the **compressed token program**, which is built using ZK Compression and offers an SPL-compatible token layout.
+{% endhint %}
 
 ```typescript
 import {

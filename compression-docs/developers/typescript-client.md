@@ -2,7 +2,7 @@
 
 ## Stateless.js API Reference Guide <a href="#what-is-solana-web3-js" id="what-is-solana-web3-js"></a>
 
-The @lightprotocol/stateless.js library covers the  [ZK Compression JSON RPC API](../introduction/json-rpc-methods.md). It aims to provide all the necessary functionality to interact with the ZK Compression primitive.
+The @lightprotocol/stateless.js library covers the  [ZK Compression JSON RPC API](json-rpc-methods.md). It aims to provide all the necessary functionality to interact with the ZK Compression primitive.
 
 You can find the complete source for the `@lightprotocol/stateless.js` library [here](https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js).
 
@@ -24,7 +24,7 @@ npm install --save \
 
 [Source Documentation](https://github.com/Lightprotocol/light-protocol/blob/main/js/stateless.js/src/rpc.ts)
 
-The Rpc connection is used to interact with the [ZK Compression JSON RPC](../introduction/json-rpc-methods.md). It's a thin wrapper extending Solana's Connection. You can use Rpc to get compressed account info, build compression transactions, and use regular Connection methods such as confirm transactions, get account info, and more.
+The Rpc connection is used to interact with the [ZK Compression JSON RPC](json-rpc-methods.md). It's a thin wrapper extending Solana's Connection. You can use Rpc to get compressed account info, build compression transactions, and use regular Connection methods such as confirm transactions, get account info, and more.
 
 **Example Usage**
 
@@ -48,7 +48,7 @@ console.log(health);
 
 ```
 
-The above example shows only a few of the methods on Rpc. Please visit the [JSON RPC Methods](../introduction/json-rpc-methods.md) section for the full list of compression endpoints.
+The above example shows only a few of the methods on Rpc. Please visit the [JSON RPC Methods](json-rpc-methods.md) section for the full list of compression endpoints.
 
 ## Quickstart
 
@@ -63,6 +63,10 @@ This will start a single-node Solana cluster, an RPC node, and a prover node at 
 ### Creating and sending transactions
 
 #### Creating, minting, and transferring a Compressed Token
+
+{% hint style="info" %}
+This example uses the **compressed token program**, which is built using ZK Compression and offers an SPL-compatible token layout.
+{% endhint %}
 
 ```typescript
 import {
@@ -129,6 +133,8 @@ main()
 ```
 
 #### Compressing SOL
+
+You can also directly interact with the Light system program to transfer compressed SOL and create compressed accounts and compressed PDAs.
 
 ```typescript
 

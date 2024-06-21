@@ -26,7 +26,7 @@ Developers and users can opt to compress their on-chain state, reducing state co
 
 _**Compression**_**:**  Only the [state roots](learn/core-concepts/state-trees.md) (small fingerprints of all [compressed accounts](learn/core-concepts/compressed-account-model.md)) are stored in on-chain accounts. The underlying data is stored on the cheaper Solana ledger.
 
-_**ZK**_**:** The protocol uses small zero-knowledge proofs ([validity proofs](learn/core-concepts/validity-proofs.md)) to ensure the integrity of the compressed state. This is all done under the hood. You can fetch validity proofs from [RPC providers](introduction/json-rpc-methods.md) that support ZK Compression.\
+_**ZK**_**:** The protocol uses small zero-knowledge proofs ([validity proofs](learn/core-concepts/validity-proofs.md)) to ensure the integrity of the compressed state. This is all done under the hood. You can fetch validity proofs from [RPC providers](developers/json-rpc-methods.md) that support ZK Compression.\
 
 
 ## How to use this Documentation

@@ -4,7 +4,6 @@
 
 * [Overview](README.md)
 * [Intro to Development](introduction/intro-to-development.md)
-* [JSON RPC Methods](introduction/json-rpc-methods.md)
 
 ## Release Notes
 
@@ -23,6 +22,7 @@
 ## Developers
 
 * [TypeScript Client](developers/typescript-client.md)
+* [JSON RPC Methods](developers/json-rpc-methods.md)
 
 ## Node Operators
 
