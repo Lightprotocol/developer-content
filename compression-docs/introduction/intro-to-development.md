@@ -27,6 +27,8 @@ You can use SDKs in Rust and Typescript to interact with ZK Compression:
 
 <table><thead><tr><th width="129">Language</th><th width="327">SDK</th><th>Description</th></tr></thead><tbody><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js">@lightprotocol/stateless.js</a></td><td>SDK to interact with compression programs via the ZK Compression RPC API</td></tr><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/compressed-token">@lightprotocol/compressed-token</a></td><td>SDK to interact with the compressed token program.</td></tr><tr><td>Rust</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/compressed-pda/src/sdk">light-sdk</a></td><td>Rust client</td></tr></tbody></table>
 
+#### RPC Connection
+
 You'll also need a connection with an RPC to interact with the network. You can either work with an RPC infrastructure provider that supports ZK Compression or run your own RPC Node.
 
 {% hint style="info" %}
