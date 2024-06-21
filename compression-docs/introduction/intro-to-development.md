@@ -156,7 +156,7 @@ We provide tooling for testing your on-chain program on a local Solana cluster.
 
 [ZK Compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/README.md):  `light test-validator` automatically initializes a local Solana cluster with the compression programs, all necessary system accounts, and syscalls activated. By default, it also starts a local Photon RPC instance and Prover node.
 
-[Photon Explorer](https://photon.helius.xyz): Helius Labs' Explorer parses compression transactions into a human-readable format, which is great for debugging your program.
+[Photon Explorer](https://photon.helius.dev): Helius Labs' Explorer parses compression transactions into a human-readable format, which is great for debugging your program.
 
 <table><thead><tr><th width="285">Program</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/system">light-system-program</a></td><td>The system program. It enforces the compressed account layout with ownership and sum checks and verifies the validity of your input state.<br>Invoke it to create/write to compressed accounts and PDAs.</td></tr><tr><td><a href="https://crates.io/crates/light-compressed-token">light-compressed-token</a></td><td>A compressed token implementation built on top of ZK Compression. It enforces a SPL-compatible token layout and allows for arbitrary compression/decompression between this and the SPL standard.</td></tr><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/account-compression">account-compression</a></td><td>Implements state and address trees. Used by the Light System program.</td></tr></tbody></table>
 
