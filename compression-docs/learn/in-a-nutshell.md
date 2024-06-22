@@ -2,7 +2,7 @@
 
 ## High-level System Overview
 
-1. **Off-Chain State Storage:** State is stored off-chain, e.g., as logs on the Solana ledger, resulting in no [rent](https://solana.com/docs/intro/rent) cost.
+1. **State is stored as call data in the Solana ledger,** resulting in no rent cost.
 2. **Transaction specify state:** Transactions define the state they access (read/write) and include it in the transaction payload.
 3. **State Validation:**
    1. Solana Programs [invoke](https://solana.com/docs/core/cpi) the Protocol System Program to update compressed state.
