@@ -26,17 +26,16 @@ npm install --save \
 
 The Rpc connection is used to interact with the [ZK Compression JSON RPC](json-rpc-methods.md). It's a thin wrapper extending Solana's Connection. You can use Rpc to get compressed account info, build compression transactions, and use regular Connection methods such as confirm transactions, get account info, and more.
 
-**Example Usage**
-
-```sh
-# Start a local test-validator
-light test-validator
-```
+**Example Usage with Testnet**
 
 ```typescript
 const stateless = require("@lightprotocol/stateless.js");
  
-let connection = createRpc();
+const connection: stateless.Rpc = stateless.createRpc(
+  "https://zk-testnet.helius.dev:8899", // rpc
+  "https://zk-testnet.helius.dev:8784", // zk compression rpc
+  "https://zk-testnet.helius.dev:3001" // prover
+);
  
 let slot = await connection.getSlot();
 console.log(slot);
@@ -72,38 +71,39 @@ This example uses the **compressed token program**, which is built using ZK Comp
 import {
   LightSystemProgram,
   Rpc,
-  bn,
   confirmTx,
   createRpc,
 } from "@lightprotocol/stateless.js";
 import { createMint, mintTo, transfer } from "@lightprotocol/compressed-token";
-import { ComputeBudgetProgram, Keypair, PublicKey } from "@solana/web3.js";
+import { Keypair } from "@solana/web3.js";
 
 const payer = Keypair.generate();
 const tokenRecipient = Keypair.generate();
+
+/// Localnet 
 const connection: Rpc = createRpc();
 
 const main = async () => {
-
   /// airdrop lamports to pay fees
   await confirmTx(
-      connection,
-      await connection.requestAirdrop(payer.publicKey, 10e9)
-  );
-  
-  await confirmTx(
-      connection,
-      await connection.requestAirdrop(tokenRecipient.publicKey, 1e6)
+    connection,
+    await connection.requestAirdrop(payer.publicKey, 10e9)
   );
 
+  await confirmTx(
+    connection,
+    await connection.requestAirdrop(tokenRecipient.publicKey, 1e6)
+  );
 
   /// Create compressed-token mint
   const { mint, transactionSignature } = await createMint(
     connection,
     payer,
-    payer,
+    payer.publicKey,
     9
   );
+
+  console.log(`create-mint  success! txId: ${transactionSignature}`);
 
   /// Mint compressed tokens
   const mintToTxId = await mintTo(
@@ -115,6 +115,8 @@ const main = async () => {
     1e9
   );
 
+  console.log(`mint-to      success! txId: ${mintToTxId}`);
+
   /// Transfer compressed tokens
   const transferTxId = await transfer(
     connection,
@@ -124,12 +126,11 @@ const main = async () => {
     payer,
     tokenRecipient.publicKey
   );
-  
-  console.log("transfer txId", transferTxId)
-  
-}
 
-main()
+  console.log(`transfer     success! txId: ${transferTxId}`);
+};
+
+main();
 ```
 
 #### Compressing SOL
@@ -137,52 +138,56 @@ main()
 You can also directly interact with the Light system program to transfer compressed SOL and create compressed accounts and compressed PDAs.
 
 ```typescript
+import { confirmTx } from "@lightprotocol/stateless.js";
 
+/// Compressing SOL
 const {
   LightSystemProgram,
-  Rpc,
   buildAndSignTx,
-  compress,
-  confirmTx,
   createRpc,
   defaultTestStateTreeAccounts,
   sendAndConfirmTx,
 } = require("@lightprotocol/stateless.js");
 
-const { ComputeBudgetProgram, Keypair, PublicKey } = require("@solana/web3.js");
+const { ComputeBudgetProgram, Keypair } = require("@solana/web3.js");
 
 const fromKeypair = Keypair.generate();
-const toKeypair = Keypair.generate();
-/// Rpc, by default, connects to the local nodes started via 'light test-validator' 
-const connection: Rpc = createRpc();
 
-const main = async () => {
+/// Localnet
+const connection = createRpc();
 
-    const { blockhash } = await connection.getLatestBlockhash();
 
-    /// Compress lamports to self
-    const ix = await LightSystemProgram.compress({
-        payer: fromKeypair.publicKey,
-        toAddress: fromKeypair.publicKey,
-        lamports: 1_000_000_000,
-        outputStateTree: defaultTestStateTreeAccounts().merkleTree, 
-    });
 
-    
-    /// Create a VersionedTransaction and sign it
-    const tx = buildAndSignTx(
-        [ComputeBudgetProgram.setComputeUnitLimit({ units: 1_200_000 }), ix],
-        fromKeypair,
-        blockhash,
-        [],
-    );
-    
-    /// Confirm 
-    const txId = await sendAndConfirmTx(connection, tx);
+(async () => {
+  /// Airdrop lamports to pay tx fees
+  await confirmTx(
+    connection,
+    await connection.requestAirdrop(fromKeypair.publicKey, 10e9)
+  );
 
-}
+  /// Fetch latest blockhash
+  const { blockhash } = await connection.getLatestBlockhash();
 
-main()
+  /// Compress lamports to self
+  const ix = await LightSystemProgram.compress({
+    payer: fromKeypair.publicKey,
+    toAddress: fromKeypair.publicKey,
+    lamports: 1_000_000_000,
+    outputStateTree: defaultTestStateTreeAccounts().merkleTree,
+  });
+
+  /// Create a VersionedTransaction and sign it
+  const tx = buildAndSignTx(
+    [ComputeBudgetProgram.setComputeUnitLimit({ units: 1_200_000 }), ix],
+    fromKeypair,
+    blockhash,
+    []
+  );
+
+  /// Confirm
+  const txId = await sendAndConfirmTx(connection, tx);
+  console.log("Transaction Signature:", txId);
+})();
 ```
 
 To get started building with examples, check out these GitHub repositories:
