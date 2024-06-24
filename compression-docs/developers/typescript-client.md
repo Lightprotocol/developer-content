@@ -30,21 +30,23 @@ The Rpc connection is used to interact with the [ZK Compression JSON RPC](json-r
 
 ```typescript
 const stateless = require("@lightprotocol/stateless.js");
- 
-const connection: stateless.Rpc = stateless.createRpc(
+
+const connection = stateless.createRpc(
   "https://zk-testnet.helius.dev:8899", // rpc
   "https://zk-testnet.helius.dev:8784", // zk compression rpc
   "https://zk-testnet.helius.dev:3001" // prover
 );
- 
-let slot = await connection.getSlot();
-console.log(slot);
-// 93186439
- 
-let health = await connection.getIndexerHealth(slot);
-console.log(health);
-// "Ok"
 
+async function main() {
+  let slot = await connection.getSlot();
+  console.log(slot);
+
+  let health = await connection.getIndexerHealth(slot);
+  console.log(health);
+  // "Ok"
+}
+
+main();
 ```
 
 The above example shows only a few of the methods on Rpc. Please visit the [JSON RPC Methods](json-rpc-methods.md) section for the full list of compression endpoints.

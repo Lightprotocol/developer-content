@@ -62,6 +62,8 @@ npm install --save \
   "https://zk-testnet.helius.dev:8784", // zk compression rpc
   "https://zk-testnet.helius.dev:3001" // prover
 );
+
+console.log("connection", connection);
 </code></pre>
 
 #### Using Localnet
@@ -74,12 +76,18 @@ light test-validator
 ```typescript
 const stateless = require("@lightprotocol/stateless.js");
 
-// Rpc is a thin wrapper around a web3.js Connection
-let connection : = stateless.createRpc();
- 
-let health = await connection.getIndexerHealth(slot);
-console.log(health);
-// "Ok"
+const connection = stateless.createRpc();
+
+async function main() {
+  let slot = await connection.getSlot();
+  console.log(slot);
+
+  let health = await connection.getIndexerHealth(slot);
+  console.log(health);
+  // "Ok"
+}
+
+main();
 ```
 
 #### Minting and transferring compressed tokens
