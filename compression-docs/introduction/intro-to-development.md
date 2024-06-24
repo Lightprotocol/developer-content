@@ -45,13 +45,13 @@ The code samples work! You can copy & paste them into your IDE or terminal and r
 
 #### Installation (node.js, web)
 
-<table><thead><tr><th width="183">Package Manager </th><th>Command</th></tr></thead><tbody><tr><td>NPM</td><td><pre><code>npm install --save \
+<table><thead><tr><th width="183">Package Manager </th><th>Command</th></tr></thead><tbody><tr><td>NPM</td><td><pre class="language-sh"><code class="lang-sh">npm install --save \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
     @solana/web3.js \
     @coral-xyz/anchor \
     @lightprotocol/zk-compression-cli
-</code></pre></td></tr><tr><td>Yarn</td><td><p></p><pre class="language-shellscript"><code class="lang-shellscript">yarn add \
+</code></pre></td></tr><tr><td>Yarn</td><td><p></p><pre class="language-sh"><code class="lang-sh">yarn add \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
     @solana/web3.js \

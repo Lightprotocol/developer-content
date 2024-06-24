@@ -10,13 +10,18 @@ You can find the complete source for the `@lightprotocol/stateless.js` library [
 
 **For use in Node.js or a web application**
 
-```shell-session
-npm install --save \
+<table><thead><tr><th width="201">Package Manager</th><th>Command</th></tr></thead><tbody><tr><td>NPM</td><td><pre class="language-sh"><code class="lang-sh">npm install --save \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @coral-xyz/anchor \
+    @lightprotocol/zk-compression-cli
+</code></pre></td></tr><tr><td>Yarn</td><td><pre class="language-sh"><code class="lang-sh">yarn add \
     @lightprotocol/stateless.js \
     @lightprotocol/zk-compression-cli \
     @solana/web3.js \
     @coral-xyz/anchor
-```
+</code></pre></td></tr></tbody></table>
 
 ## Basics
 
