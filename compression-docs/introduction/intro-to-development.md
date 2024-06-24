@@ -52,6 +52,20 @@ npm install --save \
 
 #### Creating an Rpc connection
 
+<pre class="language-typescript"><code class="lang-typescript">import {
+  Rpc,
+  createRpc,
+} from "@lightprotocol/stateless.js";
+
+<strong>const connection: Rpc = createRpc(
+</strong>  "https://zk-testnet.helius.dev:8899", // rpc
+  "https://zk-testnet.helius.dev:8784", // zk compression rpc
+  "https://zk-testnet.helius.dev:3001" // prover
+);
+</code></pre>
+
+#### Using Localnet
+
 ```sh
 # Start a local test validator
 light test-validator
@@ -78,38 +92,42 @@ This example uses the **compressed token program**, which is built using ZK Comp
 import {
   LightSystemProgram,
   Rpc,
-  bn,
   confirmTx,
   createRpc,
 } from "@lightprotocol/stateless.js";
 import { createMint, mintTo, transfer } from "@lightprotocol/compressed-token";
-import { ComputeBudgetProgram, Keypair, PublicKey } from "@solana/web3.js";
+import { Keypair } from "@solana/web3.js";
 
 const payer = Keypair.generate();
 const tokenRecipient = Keypair.generate();
-const connection: Rpc = createRpc();
+
+const connection: Rpc = createRpc(
+  "https://zk-testnet.helius.dev:8899", // rpc
+  "https://zk-testnet.helius.dev:8784", // zk compression rpc
+  "https://zk-testnet.helius.dev:3001" // prover
+);
 
 const main = async () => {
-
   /// airdrop lamports to pay fees
   await confirmTx(
-      connection,
-      await connection.requestAirdrop(payer.publicKey, 10e9)
-  );
-  
-  await confirmTx(
-      connection,
-      await connection.requestAirdrop(tokenRecipient.publicKey, 1e6)
+    connection,
+    await connection.requestAirdrop(payer.publicKey, 10e9)
   );
 
+  await confirmTx(
+    connection,
+    await connection.requestAirdrop(tokenRecipient.publicKey, 1e6)
+  );
 
   /// Create compressed-token mint
   const { mint, transactionSignature } = await createMint(
     connection,
     payer,
-    payer,
+    payer.publicKey,
     9
   );
+
+  console.log(`create-mint  success! txId: ${transactionSignature}`);
 
   /// Mint compressed tokens
   const mintToTxId = await mintTo(
@@ -121,6 +139,8 @@ const main = async () => {
     1e9
   );
 
+  console.log(`mint-to      success! txId: ${mintToTxId}`);
+
   /// Transfer compressed tokens
   const transferTxId = await transfer(
     connection,
@@ -130,12 +150,11 @@ const main = async () => {
     payer,
     tokenRecipient.publicKey
   );
-  
-  console.log("transfer txId", transferTxId)
-  
-}
 
-main()
+  console.log(`transfer     success! txId: ${transferTxId}`);
+};
+
+main();
 ```
 
 You can find a quickstart guide for creating and transferring compressed-tokens [here](../developers/typescript-client.md#quickstart).
