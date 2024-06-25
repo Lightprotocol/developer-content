@@ -17,7 +17,6 @@
 ## Developers
 
 * [TypeScript Client](developers/typescript-client.md)
-* [Developing Programs](developers/developing-programs.md)
 * [Advanced: Computing over Light State with custom ZKPs](developers/advanced-computing-over-light-state-with-custom-zkps.md)
 
 ## Node operators
