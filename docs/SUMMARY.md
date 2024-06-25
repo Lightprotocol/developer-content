@@ -16,6 +16,7 @@
 
 ## Developers
 
+* [Testnet Addresses](developers/testnet-addresses.md)
 * [TypeScript Client](developers/typescript-client.md)
 * [Advanced: Computing over Light State with custom ZKPs](developers/advanced-computing-over-light-state-with-custom-zkps.md)
 
