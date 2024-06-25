@@ -1,5 +1,9 @@
 # Computing over Light State with custom ZKPs
 
-All state that is compressed via Light Protocol natively enables efficient computation via ZKPs.
+{% hint style="info" %}
+This is an advanced section; if you don't need custom off-chain compute for your application, you can safely disregard this section.
+{% endhint %}
 
-If you can describe or translate your computation into a groth16 circuit, you can run that computation over all Solana L1 state that was compressed via Light. This prevents state fragmentation while enabling previously impossible types of applications and computation designs on Solana.
+If you want to use custom off-chain compute with compressed accounts, you need to verify a custom ZKP in your on-chain program.&#x20;
+
+Fortunately, all state compressed via Light Protocol is stored in Poseidon hash Merkle trees, so you can compute over all the existing compressed state efficiently.
