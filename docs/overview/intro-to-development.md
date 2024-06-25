@@ -122,8 +122,6 @@ We provide tooling for testing your on-chain program on a local Solana cluster.
 
 [ZK Compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/README.md): `light test-validator` automatically initializes a local Solana cluster with the compression programs, all necessary system accounts, and syscalls activated. By default, it also starts a local Photon RPC instance and Prover node.
 
-[Photon Explorer](https://photon.helius.xyz/): Helius Labs' Explorer parses compression transactions into a human-readable format, which is great for debugging your program.
-
 | Program                                                                                                       | Description                                                                                                                       |
 | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | [light-system-program](https://github.com/Lightprotocol/light-protocol/tree/main/programs/system)             | The system program. Validity proof verification ownership and sum checks. Invoke to create/write to compressed accounts and PDAs. |
