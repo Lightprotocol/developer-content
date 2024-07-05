@@ -32,4 +32,4 @@ Provers can generate validity proofs for state inclusion on behalf of app and wa
 
 Please refer to the Github repo for more info:
 
-{% embed url="https://github.com/Lightprotocol/light-protocol/tree/main/gnark-prover" %}
+{% embed url="https://github.com/Lightprotocol/light-protocol/tree/main/light-prover" %}
