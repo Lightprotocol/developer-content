@@ -1,13 +1,8 @@
 # Testnet Addresses
 
-{% hint style="success" %}
-Our first public ZK Testnet is now live! \
-Note that this is not the public Solana Devnet. Solana Devnet support is coming soon. Until then, please use the network addresses listed below.
-{% endhint %}
-
 ### Relevant URLs
 
-<table data-header-hidden><thead><tr><th></th><th></th><th data-hidden></th></tr></thead><tbody><tr><td>Network address (RPC)</td><td> <a href="https://zk-testnet.helius.dev:8899/">https://zk-testnet.helius.dev:8899</a> </td><td></td></tr><tr><td>Photon RPC API</td><td> <a href="https://zk-testnet.helius.dev:8784/">https://zk-testnet.helius.dev:8784</a></td><td></td></tr><tr><td>Prover</td><td> <a href="https://zk-testnet.helius.dev:3001/">https://zk-testnet.helius.dev:3001</a></td><td></td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th></th><th></th><th data-hidden></th></tr></thead><tbody><tr><td>Network address (RPC)</td><td><a href="https://devnet.helius-rpc.com/?api-key=%3Capi_key%3E">https://devnet.helius-rpc.com?api-key=&#x3C;api_key></a></td><td></td></tr><tr><td>Photon RPC API</td><td><a href="https://devnet.helius-rpc.com/?api-key=%3Capi_key%3E">https://devnet.helius-rpc.com?api-key=&#x3C;api_key></a></td><td></td></tr></tbody></table>
 
 ### Program IDs and Accounts
 

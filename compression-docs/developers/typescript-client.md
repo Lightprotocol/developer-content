@@ -31,16 +31,15 @@ You can find the complete source for the `@lightprotocol/stateless.js` library [
 
 The Rpc connection is used to interact with the [ZK Compression JSON RPC](json-rpc-methods.md). It's a thin wrapper extending Solana's Connection. You can use Rpc to get compressed account info, build compression transactions, and use regular Connection methods such as confirm transactions, get account info, and more.
 
-**Example Usage with Testnet**
+**Example Usage with Devnet**
 
 ```typescript
 const stateless = require("@lightprotocol/stateless.js");
 
-const connection = stateless.createRpc(
-  "https://zk-testnet.helius.dev:8899", // rpc
-  "https://zk-testnet.helius.dev:8784", // zk compression rpc
-  "https://zk-testnet.helius.dev:3001" // prover
-);
+
+// Helius exposes Solana and Photon RPC endpoints through a single URL
+const HELIUS_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
+const connection: Rpc = createRpc(HELIUS_ENDPOINT, HELIUS_ENDPOINT)
 
 async function main() {
   let slot = await connection.getSlot();
@@ -162,8 +161,6 @@ const fromKeypair = Keypair.generate();
 
 /// Localnet
 const connection = createRpc();
-
-
 
 (async () => {
   /// Airdrop lamports to pay tx fees
