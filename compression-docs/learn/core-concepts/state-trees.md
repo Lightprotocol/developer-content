@@ -12,7 +12,7 @@ The hash of each [compressed account](compressed-account-model.md) is stored as 
 
 <figure><img src="../../.gitbook/assets/Screenshot 2024-05-10 at 06.37.41.png" alt=""><figcaption><p>Each compressed account hash is a leaf in the state tree</p></figcaption></figure>
 
-Note that each compressed account hash includes the Public Key of the State tree's respective on-chain account (`State tree hash`) and the compressed account's position in the tree (`leafIndex`). This ensures that each account hash is globally unique.
+Note that each compressed account hash includes the Public Key of the state tree's respective on-chain account (`state tree hash`) and the compressed account's position in the tree (`leafIndex`). This ensures that each account hash is globally unique.
 
-Each state tree has a corresponding on-chain State tree account that stores only the tree's final root hash and other metadata. Storing the final tree root hash on-chain allows the protocol to efficiently verify the validity of any leaf (compressed account) in the tree. The raw state can thus be stored as calldata in the much cheaper Solana ledger space while preserving the security guarantees of the Solana L1.
+Each state tree has a corresponding on-chain state tree account that stores only the tree's final root hash and other metadata. Storing the final tree root hash on-chain allows the protocol to efficiently verify the validity of any leaf (compressed account) in the tree. The raw state can thus be stored as calldata in the much cheaper Solana ledger space while preserving the security guarantees of the Solana L1.
 

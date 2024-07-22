@@ -1,6 +1,6 @@
 # Lifecycle of a Transaction
 
-ZK Compression transactions are fully compatible with Solana's Transaction and VersionedTransaction. There are three key nuances in building transactions with compressed accounts as compared to regular accounts:
+ZK Compression transactions are fully compatible with Solana's Transaction and Versioned Transaction formats. There are three key nuances in building transactions with compressed accounts as compared to regular accounts:
 
 * Instructions must specify the list of all compressed accounts being read or written to. To read or write to a compressed account, the instruction must send the current account state on-chain and prove its validity.
 * Each unique state tree that gets read or written to (via any compressed account) needs to be specified as per Solana's regular on-chain [account access lists](https://solana.com/docs/core/transactions#array-of-account-addresses).&#x20;

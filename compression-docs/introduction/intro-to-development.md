@@ -7,21 +7,21 @@ description: >-
 # Intro to Development
 
 {% hint style="info" %}
-For the sake of brevity, the guide assumes you are familiar with the basics of Solana. If you aren't, we recommend reading the [Solana documentation](https://solana.com/docs/intro/dev) first.
+For the sake of brevity, the guide assumes you are familiar with the basics of Solana. If you aren't, we recommend reading the [Solana documentation](https://solana.com/docs/intro/dev) and [_The Solana Programming Model: An Introduction to Developing on Solana_](https://www.helius.dev/blog/the-solana-programming-model-an-introduction-to-developing-on-solana) first
 {% endhint %}
 
-## What you'll need to get started
+## What You'll Need to Get Started
 
 First things first, you do **not** need to understand ZK to master ZK Compression!
 
 Development with ZK Compression on Solana consists of two main parts:&#x20;
 
-* [client development](intro-to-development.md#client-side-development)&#x20;
-* [on-chain program development](intro-to-development.md#on-chain-program-development)
+* [Client development](intro-to-development.md#client-side-development)&#x20;
+* [On-chain program development](intro-to-development.md#on-chain-program-development)
 
-The glue between clients and on-chain programs is the ZK Compression RPC API. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods.md) section.
+The [ZK Compression RPC API](../developers/json-rpc-methods.md) is the glue between clients and on-chain programs. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods.md) section.
 
-### Client-side development
+### Client-side Development
 
 You can use SDKs in Rust and Typescript to interact with ZK Compression:
 
@@ -59,7 +59,7 @@ The code samples work! You can copy & paste them into your IDE or terminal and r
     @lightprotocol/zk-compression-cli
 </code></pre></td></tr></tbody></table>
 
-#### Creating an Rpc connection
+#### Creating an RPC Connection
 
 <pre class="language-typescript"><code class="lang-typescript">import {
   Rpc,
@@ -97,7 +97,7 @@ async function main() {
 main();
 ```
 
-#### Minting and transferring compressed tokens
+#### Minting and Transferring Compressed Tokens
 
 {% hint style="info" %}
 This example uses the **compressed token program**, which is built using ZK Compression and offers an SPL-compatible token layout.
@@ -121,7 +121,7 @@ const HELIUS_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
 const connection: Rpc = createRpc(HELIUS_ENDPOINT, HELIUS_ENDPOINT)
 
 const main = async () => {
-  /// airdrop lamports to pay fees
+  /// Airdrop lamports to pay fees
   await confirmTx(
     connection,
     await connection.requestAirdrop(payer.publicKey, 10e9)
@@ -154,7 +154,7 @@ const main = async () => {
 
   console.log(`mint-to      success! txId: ${mintToTxId}`);
 
-  /// Transfer compressed tokens
+  /// Transfer compressed tokens from payer to tokenRecipient's pubkey
   const transferTxId = await transfer(
     connection,
     payer,
@@ -174,7 +174,7 @@ You can find a quickstart guide for creating and transferring compressed-tokens 
 
 To get started quickly with an end-to-end client for your application, check out the ZK compression [web](https://github.com/Lightprotocol/example-web-client) and [node](https://github.com/Lightprotocol/example-nodejs-client) examples on GitHub.
 
-### On-chain program development
+### On-chain Program Development
 
 {% hint style="info" %}
 The ZK compression primitive is the core of [the Light protocol](https://github.com/Lightprotocol). To leverage ZK compression, your custom program invokes the _Light system program_ via Cross-Program Invocation (CPI). For the sake of simplicity, we refer to this set of protocol smart contracts as _compression programs._
@@ -202,11 +202,11 @@ While you get started building with ZK compression, use these GitHub resources a
 
 Today, you can build with ZK compression on Localnet. This is a local Solana cluster that you run on your machine using `light test-validator`. A public Devnet will become available soon.
 
-## Getting support
+## Getting Support
 
 For the best support, head to the:
 
-* [Solana Stackexchange](https://solana.stackexchange.com/) for Solana-specific questions
+* [Solana StackExchange](https://solana.stackexchange.com/) for Solana-specific questions
 * [Light Developer Discord](https://discord.gg/CYvjBgzRFP) for program-related questions
 * [Helius Developer Discord](https://discord.gg/Uzzf6a7zKr) for RPC-related questions
 
