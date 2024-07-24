@@ -7,6 +7,7 @@
 
 ## Release Notes
 
+* [0.5.0 - Solana Devnet](release-notes/0.5.0-solana-devnet.md)
 * [0.4.0](release-notes/0.4.0.md)
 * [0.3.0](release-notes/0.3.0.md)
 
