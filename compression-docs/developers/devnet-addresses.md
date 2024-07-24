@@ -1,8 +1,22 @@
-# Testnet Addresses
+# Devnet Addresses
 
-### Relevant URLs
+### Devnet URLs
 
 <table data-header-hidden><thead><tr><th></th><th></th><th data-hidden></th></tr></thead><tbody><tr><td>Network address (RPC)</td><td><a href="https://devnet.helius-rpc.com/?api-key=%3Capi_key%3E">https://devnet.helius-rpc.com?api-key=&#x3C;api_key></a></td><td></td></tr><tr><td>Photon RPC API</td><td><a href="https://devnet.helius-rpc.com/?api-key=%3Capi_key%3E">https://devnet.helius-rpc.com?api-key=&#x3C;api_key></a></td><td></td></tr></tbody></table>
+
+
+
+### zkTestnet URLs (deprecated)
+
+{% hint style="info" %}
+Note: zkTestnet has been deprecated in favor of our **Solana Devnet** deployment. Please use The public Solana Devnet Cluster for further development.
+{% endhint %}
+
+<table><thead><tr><th width="249"></th><th></th></tr></thead><tbody><tr><td>Network address (RPC)</td><td><a href="https://zk-testnet.helius.dev:8899">https://zk-testnet.helius.dev:8899</a> (deprecated)</td></tr><tr><td>Photon RPC API</td><td><a href="https://zk-testnet.helius.dev:8899">https://zk-testnet.helius.dev:8784</a> (deprecated)</td></tr><tr><td>Prover</td><td><a href="https://zk-testnet.helius.dev:8899">https://zk-testnet.helius.dev:3001</a> (deprecated)</td></tr></tbody></table>
+
+
+
+
 
 ### Program IDs and Accounts
 
