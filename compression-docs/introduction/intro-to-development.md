@@ -19,7 +19,7 @@ Development with ZK Compression on Solana consists of two main parts:&#x20;
 * [Client development](intro-to-development.md#client-side-development)&#x20;
 * [On-chain program development](intro-to-development.md#on-chain-program-development)
 
-The [ZK Compression RPC API](../developers/json-rpc-methods.md) is the glue between clients and on-chain programs. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods.md) section.
+The [ZK Compression RPC API](../developers/json-rpc-methods/) is the glue between clients and on-chain programs. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods/) section.
 
 ### Client-side Development
 

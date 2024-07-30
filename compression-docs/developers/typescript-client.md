@@ -2,7 +2,7 @@
 
 ## Stateless.js API Reference Guide <a href="#what-is-solana-web3-js" id="what-is-solana-web3-js"></a>
 
-The @lightprotocol/stateless.js library covers the  [ZK Compression JSON RPC API](json-rpc-methods.md). It aims to provide all the necessary functionality to interact with the ZK Compression primitive.
+The @lightprotocol/stateless.js library covers the  [ZK Compression JSON RPC API](json-rpc-methods/). It aims to provide all the necessary functionality to interact with the ZK Compression primitive.
 
 You can find the complete source for the `@lightprotocol/stateless.js` library [here](https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js).
 
@@ -29,7 +29,7 @@ You can find the complete source for the `@lightprotocol/stateless.js` library [
 
 [Source Documentation](https://github.com/Lightprotocol/light-protocol/blob/main/js/stateless.js/src/rpc.ts)
 
-The Rpc connection is used to interact with the [ZK Compression JSON RPC](json-rpc-methods.md). It's a thin wrapper extending Solana's Connection. You can use Rpc to get compressed account info, build compression transactions, and use regular Connection methods such as confirm transactions, get account info, and more.
+The Rpc connection is used to interact with the [ZK Compression JSON RPC](json-rpc-methods/). It's a thin wrapper extending Solana's Connection. You can use Rpc to get compressed account info, build compression transactions, and use regular Connection methods such as confirm transactions, get account info, and more.
 
 **Example Usage with Devnet**
 
@@ -53,7 +53,7 @@ async function main() {
 main();
 ```
 
-The above example shows only a few of the methods on Rpc. Please visit the [JSON RPC Methods](json-rpc-methods.md) section for the full list of compression endpoints.
+The above example shows only a few of the methods on Rpc. Please visit the [JSON RPC Methods](json-rpc-methods/) section for the full list of compression endpoints.
 
 ## Quickstart
 

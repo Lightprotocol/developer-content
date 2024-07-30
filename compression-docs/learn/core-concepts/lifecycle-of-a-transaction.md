@@ -32,4 +32,4 @@ To write compressed state, a custom caller program must invoke the Light system 
 4. [Appends](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L240-L249) the new compressed account hash to the state tree and advances the tree's state root.
 5. [Emits](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L269-L276) the new "raw" compressed account state onto the Solana ledger.
 
-An[ RPC node](../../node-operators/run-a-node.md#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](../../developers/json-rpc-methods.md).
+An[ RPC node](../../node-operators/run-a-node.md#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](../../developers/json-rpc-methods/).

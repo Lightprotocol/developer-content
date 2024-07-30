@@ -9,4 +9,4 @@
       1. **The protocol** [**validates**](core-concepts/validity-proofs.md) **the state** (validity of read state, sum checks, ownership checks).
       2. **The protocol enforces a schema:** Classic Accounts → Compressed Accounts: [Compressed accounts](core-concepts/compressed-account-model.md) have a layout similar to classic accounts.
 4. **State Updates:** At the end of a transaction, the new state is recorded as a log on the Solana ledger.
-5. [**Photon RPC Nodes**](../node-operators/run-a-node.md#photon-rpc-node)**:** These nodes index and persist the logs, making the compressed account state available to clients via the [ZK Compression RPC API](../developers/json-rpc-methods.md).
+5. [**Photon RPC Nodes**](../node-operators/run-a-node.md#photon-rpc-node)**:** These nodes index and persist the logs, making the compressed account state available to clients via the [ZK Compression RPC API](../developers/json-rpc-methods/).
