@@ -25,7 +25,7 @@
 
 * [Devnet Addresses](developers/devnet-addresses.md)
 * [TypeScript Client](developers/typescript-client.md)
-* [Integration with Wallets](developers/integration-with-wallets.md)
+* [Add Compressed Token Support to Your Wallet](developers/add-compressed-token-support-to-your-wallet.md)
 * [JSON RPC Methods](developers/json-rpc-methods/README.md)
   * [getCompressedAccount](developers/json-rpc-methods/getcompressedaccount.md)
   * [getCompressedBalance](developers/json-rpc-methods/getcompressedbalance.md)
