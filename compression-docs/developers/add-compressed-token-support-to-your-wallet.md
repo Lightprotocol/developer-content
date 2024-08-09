@@ -305,4 +305,4 @@ const amount = bn(1e8);
 
 ## Support
 
-For additional support or questions, please refer to our [documentation](https://www.zkcompression.com), or contact Swen or Mert on Telegram or via [email](mailto:friends@lightprotocol.com).
+For additional support or questions, please refer to our [documentation](https://www.zkcompression.com) or contact [Swen](https://t.me/swen\_light) or [Mert](https://t.me/mert\_helius) on Telegram or via [email](mailto:friends@lightprotocol.com).
