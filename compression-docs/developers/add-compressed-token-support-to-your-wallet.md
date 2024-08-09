@@ -1,6 +1,6 @@
 # Add Compressed Token Support to Your Wallet
 
-This section is for browser extension wallets that want to support the compressed token specification on Solana.
+This guide describes how to add **compressed token** support to your browser extension wallet.
 
 {% hint style="info" %}
 _Key benefits of compressed tokens:_
