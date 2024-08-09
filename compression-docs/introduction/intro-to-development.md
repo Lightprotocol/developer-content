@@ -67,8 +67,9 @@ The code samples work! You can copy & paste them into your IDE or terminal and r
 } from "@lightprotocol/stateless.js";
 
 // Helius exposes Solana and Photon RPC endpoints through a single URL
-const HELIUS_ENDPOINT = "https://devnet.helius-rpc.com?api-key=&#x3C;api_key>";
-<strong>const connection: Rpc = createRpc(HELIUS_ENDPOINT, HELIUS_ENDPOINT)
+const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=&#x3C;api_key>";
+const PHOTON_ENDPOINT = RPC_ENDPOINT;
+<strong>const connection: Rpc = createRpc(RPC_ENDPOINT, PHOTON_ENDPOINT)
 </strong>
 console.log("connection", connection);
 </code></pre>
@@ -116,9 +117,10 @@ import { Keypair } from "@solana/web3.js";
 const payer = Keypair.generate();
 const tokenRecipient = Keypair.generate();
 
-// Helius exposes Solana and Photon RPC endpoints through a single URL
-const HELIUS_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
-const connection: Rpc = createRpc(HELIUS_ENDPOINT, HELIUS_ENDPOINT)
+// Helius exposes Solana and compression RPC endpoints through a single URL
+const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
+const COMPRESSION_RPC_ENDPOINT = RPC_ENDPOINT;
+const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT)
 
 const main = async () => {
   /// Airdrop lamports to pay fees

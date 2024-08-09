@@ -37,9 +37,10 @@ The Rpc connection is used to interact with the [ZK Compression JSON RPC](json-r
 const stateless = require("@lightprotocol/stateless.js");
 
 
-// Helius exposes Solana and Photon RPC endpoints through a single URL
-const HELIUS_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
-const connection: Rpc = createRpc(HELIUS_ENDPOINT, HELIUS_ENDPOINT)
+// Helius exposes Solana and compression RPC endpoints through a single URL
+const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
+const COMPRESSION_RPC_ENDPOINT = RPC_ENDPOINT;
+const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT)
 
 async function main() {
   let slot = await connection.getSlot();

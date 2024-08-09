@@ -33,9 +33,9 @@ import {
   createRpc,
 } from "@lightprotocol/stateless.js";
 
-const RPC_ENDPOINT = "<https://devnet.helius-rpc.com?api-key=><api_key>";
+const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
 const COMPRESSION_RPC_ENDPOINT = RPC_ENDPOINT;
-const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT);
+const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT)
 ```
 
 <details>
@@ -82,7 +82,8 @@ main();
 import { Rpc, createRpc } from '@lightprotocol/stateless.js';
 import { PublicKey } from 'solana/web3.js';
 
-const RPC_ENDPOINT = '<https://devnet.helius-rpc.com?api-key=><api_key>';
+// Helius exposes the Solana and compression RPC endpoints through a single URL
+const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
 const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
 const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 
@@ -101,7 +102,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 import { Rpc, createRpc } from '@lightprotocol/stateless.js';
 import { PublicKey } from 'solana/web3.js';
 
-const RPC_ENDPOINT = '<https://devnet.helius-rpc.com?api-key=><api_key>';
+const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
 const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
 const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 
@@ -109,8 +110,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
     // 1. Fetch signatures for the user.
     //
     // Returns confirmed signatures for compression transactions involving the
-    // specified account owner forward in time from genesis to the most recent
-    // confirmed block.
+    // specified account owner.
     const signatures =
         await connection.getCompressionSignaturesForOwner(publicKey);
     console.log(signatures);
@@ -190,7 +190,7 @@ const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_ENDPOINT);
 import { Rpc, createRpc, bn } from '@lightprotocol/stateless.js';
 import { CompressedTokenProgram, selectMinCompressedTokenAccountsForTransfer } from '@lightprotocol/compressed-token';
 
-const RPC_ENDPOINT = '<https://devnet.helius-rpc.com?api-key=><api_key>';
+const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
 const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
 const publicKey = PUBLIC_KEY;
 const recipient = RECIPIENT_PUBLIC_KEY;
@@ -241,14 +241,14 @@ import { Rpc, createRpc, bn } from '@lightprotocol/stateless.js';
 import { CompressedTokenProgram, selectMinCompressedTokenAccountsForTransfer } from '@lightprotocol/compressed-token';
 import { createAssociatedTokenAccount } from '@solana/spl-token';
 
-const RPC_ENDPOINT = '<https://devnet.helius-rpc.com?api-key=><api_key>';
+const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
 const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
 const publicKey = PUBLIC_KEY;
 const mint = MINT_KEYPAIR.publicKey;
 const amount = bn(1e8);
 
 (async () => {
-    // 0. Create ATA for user if it doesn't exist yet.
+    // 0. Create associated token account for user if it doesn't exist yet.
     const ata = await createAssociatedTokenAccount(
         connection,
         PAYER,
