@@ -1,11 +1,11 @@
-# Integration with Wallets
+# Add Compressed Token Support to Your Wallet
 
 This section is for browser extension wallets that want to support the compressed token specification on Solana.
 
 {% hint style="info" %}
 _Key benefits of compressed tokens:_
 
-* Compressed accounts are up to 5000x cheaper than uncompressed accounts.
+* Up to 5000x cheaper than uncompressed accounts.
 * Compatible with existing programs via atomic compression and decompression between SPL <> Compressed-token.
 {% endhint %}
 
