@@ -132,7 +132,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 import { Keypair } from "@solana/web3.js";
 
 const PAYER = Keypair.generate();
-const PUBLIC_KEY = payer.publicKey;
+const PUBLIC_KEY = PAYER.publicKey;
 const MINT_KEYPAIR = Keypair.generate();
 const RECIPIENT_PUBLIC_KEY = Keypair.generate().publicKey.toBase58();
 ```
