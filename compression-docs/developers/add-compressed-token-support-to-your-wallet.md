@@ -108,14 +108,18 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 
 (async () => {
     // 1. Fetch signatures for the user.
-    //
     // Returns confirmed signatures for compression transactions involving the
     // specified account owner.
     const signatures =
         await connection.getCompressionSignaturesForOwner(publicKey);
     console.log(signatures);
 
-    // 2. Fetch transactions...
+    // 2. Fetch transactions with compression info.
+    // Returns pre- and post-compressed token balances grouped by owner.
+    const parsedTransaction = 
+        await connection.getTransactionWithCompressionInfo(signatures[0].signature)
+    console.log(parsedTransaction)
+    
 })();
 ```
 
