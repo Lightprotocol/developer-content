@@ -20,9 +20,13 @@ Note: zkTestnet has been deprecated in favor of our **Solana Devnet** deployment
 
 ### Program IDs and Accounts
 
-<table><thead><tr><th width="248"></th><th></th></tr></thead><tbody><tr><td>Light System Program</td><td><strong>H5sFv8VwWmjxHYS2GB4fTDsK7uTtnRT4WiixtHrET3bN</strong></td></tr><tr><td>Compressed Token Program</td><td><strong>HXVfQ44ATEi9WBKLSCCwM54KokdkzqXci9xCQ7ST9SYN</strong></td></tr><tr><td>Account Compression Program</td><td><strong>CbjvJc1SNx1aav8tU49dJGHu8EUdzQJSMtkjDmV8miqK</strong></td></tr><tr><td>Shared Public State Tree</td><td><strong>5bdFnXU47QjzGpzHfXnxcEi5WXyxzEAZzd1vrE39bf1W</strong></td></tr><tr><td>Shared Public Nullifier Queue</td><td><strong>44J4oDXpjPAbzHCSc24q7NEiPekss4sAbLd8ka4gd9CZ</strong></td></tr><tr><td>Shared Public Address Tree</td><td><strong>C83cpRN6oaafjNgMQJvaYgAz592EP5wunKvbokeTKPLn</strong></td></tr><tr><td>Shared Public Address Queue:</td><td><strong>HNjtNrjt6irUPYEgxhx2Vcs42koK9fxzm3aFLHVaaRWz</strong></td></tr></tbody></table>
+<table><thead><tr><th width="248"></th><th></th></tr></thead><tbody><tr><td>Light System Program</td><td><strong>H5sFv8VwWmjxHYS2GB4fTDsK7uTtnRT4WiixtHrET3bN</strong></td></tr><tr><td>Compressed Token Program</td><td><strong>HXVfQ44ATEi9WBKLSCCwM54KokdkzqXci9xCQ7ST9SYN</strong></td></tr><tr><td>Account Compression Program</td><td><strong>CbjvJc1SNx1aav8tU49dJGHu8EUdzQJSMtkjDmV8miqK</strong></td></tr><tr><td>Shared Public State Tree</td><td><strong>5bdFnXU47QjzGpzHfXnxcEi5WXyxzEAZzd1vrE39bf1W</strong></td></tr><tr><td>Shared Public Nullifier Queue</td><td><strong>44J4oDXpjPAbzHCSc24q7NEiPekss4sAbLd8ka4gd9CZ</strong></td></tr><tr><td>Shared Public Address Tree</td><td><strong>C83cpRN6oaafjNgMQJvaYgAz592EP5wunKvbokeTKPLn</strong></td></tr><tr><td>Shared Public Address Queue</td><td><strong>HNjtNrjt6irUPYEgxhx2Vcs42koK9fxzm3aFLHVaaRWz</strong></td></tr></tbody></table>
 
-&#x20;
+{% hint style="info" %}
+You can use lookup tables to reduce your transaction size. We provide a default lookup table on Devnet that you can use that covers the above default program IDs and accounts:
+{% endhint %}
+
+<table><thead><tr><th width="264"></th><th></th></tr></thead><tbody><tr><td>Default Lookup Table #1</td><td><strong>DA35UyyzGTonmEjsbw1VGRACpKxbKUPS2DvrG193QYHC</strong></td></tr></tbody></table>
 
 \
 
