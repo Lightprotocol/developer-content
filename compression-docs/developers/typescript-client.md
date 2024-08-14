@@ -195,6 +195,49 @@ const connection = createRpc();
 })();
 ```
 
+#### Creating lookup tables
+
+{% hint style="info" %}
+For public networks such as Devnet, we provide shared lookup tables for Light's common program IDs and accounts. You can find the latest addresses [here](devnet-addresses.md#lookup-tables).
+{% endhint %}
+
+```typescript
+import { Rpc, confirmTx, createRpc } from "@lightprotocol/stateless.js";
+import { createTokenProgramLookupTable } from "@lightprotocol/compressed-token";
+import { Keypair, PublicKey} from "@solana/web3.js";
+import { RPC_ENDPOINT } from "./constants";
+const payer = Keypair.generate();
+const authority = payer;
+const additionalTokenMints : PublicKey[] = [];
+const additionalAccounts : PublicKey[] = [];
+
+// Localnet
+const connection: Rpc = createRpc();
+
+const main = async () => {
+  /// airdrop lamports to pay gas and rent
+  await confirmTx(
+    connection,
+    await connection.requestAirdrop(payer.publicKey, 1e7)
+  );
+
+  /// Create LUT
+  const { address } = await createTokenProgramLookupTable(
+    connection,
+    payer,
+    authority,
+    additionalTokenMints,
+    additionalAccounts
+  );
+
+  console.log("Created lookup table:", address.toBase58());
+};
+
+main();
+```
+
+
+
 To get started building with examples, check out these GitHub repositories:
 
 * [Web example client](https://github.com/Lightprotocol/example-web-client)

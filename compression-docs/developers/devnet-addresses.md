@@ -22,11 +22,55 @@ Note: zkTestnet has been deprecated in favor of our **Solana Devnet** deployment
 
 <table><thead><tr><th width="248"></th><th></th></tr></thead><tbody><tr><td>Light System Program</td><td><strong>H5sFv8VwWmjxHYS2GB4fTDsK7uTtnRT4WiixtHrET3bN</strong></td></tr><tr><td>Compressed Token Program</td><td><strong>HXVfQ44ATEi9WBKLSCCwM54KokdkzqXci9xCQ7ST9SYN</strong></td></tr><tr><td>Account Compression Program</td><td><strong>CbjvJc1SNx1aav8tU49dJGHu8EUdzQJSMtkjDmV8miqK</strong></td></tr><tr><td>Shared Public State Tree</td><td><strong>5bdFnXU47QjzGpzHfXnxcEi5WXyxzEAZzd1vrE39bf1W</strong></td></tr><tr><td>Shared Public Nullifier Queue</td><td><strong>44J4oDXpjPAbzHCSc24q7NEiPekss4sAbLd8ka4gd9CZ</strong></td></tr><tr><td>Shared Public Address Tree</td><td><strong>C83cpRN6oaafjNgMQJvaYgAz592EP5wunKvbokeTKPLn</strong></td></tr><tr><td>Shared Public Address Queue</td><td><strong>HNjtNrjt6irUPYEgxhx2Vcs42koK9fxzm3aFLHVaaRWz</strong></td></tr></tbody></table>
 
+### Lookup Tables
+
 {% hint style="info" %}
-You can use lookup tables to reduce your transaction size. We provide a default lookup table on Devnet that you can use that covers the above default program IDs and accounts:
+You can use lookup tables to reduce your transaction size. We provide a pre-initialized lookup table on Devnet that covers the Light's program IDs and accounts
 {% endhint %}
 
 <table><thead><tr><th width="264"></th><th></th></tr></thead><tbody><tr><td>Default Lookup Table #1</td><td><strong>DA35UyyzGTonmEjsbw1VGRACpKxbKUPS2DvrG193QYHC</strong></td></tr></tbody></table>
+
+You can also create your own lookup table. We provide a helper function that initializes your table with Light's default program ids and accounts.
+
+```bash
+# For localnet, start your light test-validator using the CLI
+light test-validator
+```
+
+```typescript
+import { Rpc, confirmTx, createRpc } from "@lightprotocol/stateless.js";
+import { createTokenProgramLookupTable } from "@lightprotocol/compressed-token";
+import { Keypair, PublicKey} from "@solana/web3.js";
+import { RPC_ENDPOINT } from "./constants";
+const payer = Keypair.generate();
+const authority = payer;
+const additionalTokenMints : PublicKey[] = [];
+const additionalAccounts : PublicKey[] = [];
+
+// Localnet
+const connection: Rpc = createRpc();
+
+const main = async () => {
+  /// airdrop lamports to pay gas and rent
+  await confirmTx(
+    connection,
+    await connection.requestAirdrop(payer.publicKey, 1e7)
+  );
+
+  /// Create LUT
+  const { address } = await createTokenProgramLookupTable(
+    connection,
+    payer,
+    authority,
+    additionalTokenMints,
+    additionalAccounts
+  );
+
+  console.log("Created lookup table:", address.toBase58());
+};
+
+main();
+```
 
 \
 
