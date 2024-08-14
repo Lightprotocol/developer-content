@@ -25,7 +25,7 @@ Note: zkTestnet has been deprecated in favor of our **Solana Devnet** deployment
 ### Lookup Tables
 
 {% hint style="info" %}
-You can use lookup tables to reduce your transaction size. We provide a pre-initialized lookup table on Devnet that covers the Light's program IDs and accounts
+You can use lookup tables to reduce your transaction size. We provide a pre-initialized lookup table on Devnet that covers the Light's program IDs and accounts:
 {% endhint %}
 
 <table><thead><tr><th width="264"></th><th></th></tr></thead><tbody><tr><td>Default Lookup Table #1</td><td><strong>DA35UyyzGTonmEjsbw1VGRACpKxbKUPS2DvrG193QYHC</strong></td></tr></tbody></table>
