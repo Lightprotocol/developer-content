@@ -1,7 +1,7 @@
 ---
 description: >-
   Returns the signatures of the transactions that have modified an owner's
-  compressed token accounts. This is a paginated endpoint.
+  compressed token accounts. This is a paginated endpoint
 coverY: 0
 ---
 

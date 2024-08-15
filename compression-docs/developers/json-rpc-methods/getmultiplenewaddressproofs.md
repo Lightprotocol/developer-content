@@ -1,6 +1,6 @@
 # getMultipleNewAddressProofs
 
-Returns proofs that the new addresses are not taken already and can be created.
+Returns proofs that the new addresses are not taken already and can be created
 
 &#x20;
 

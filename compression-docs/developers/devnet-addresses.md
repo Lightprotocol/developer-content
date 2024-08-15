@@ -2,21 +2,17 @@
 
 ### Devnet URLs
 
-<table data-header-hidden><thead><tr><th></th><th></th><th data-hidden></th></tr></thead><tbody><tr><td>Network address (RPC)</td><td><a href="https://devnet.helius-rpc.com/?api-key=%3Capi_key%3E">https://devnet.helius-rpc.com?api-key=&#x3C;api_key></a></td><td></td></tr><tr><td>Photon RPC API</td><td><a href="https://devnet.helius-rpc.com/?api-key=%3Capi_key%3E">https://devnet.helius-rpc.com?api-key=&#x3C;api_key></a></td><td></td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th></th><th></th><th data-hidden></th></tr></thead><tbody><tr><td>Network Address (RPC)</td><td><a href="https://devnet.helius-rpc.com/?api-key=%3Capi_key%3E">https://devnet.helius-rpc.com?api-key=&#x3C;api_key></a></td><td></td></tr><tr><td>Photon RPC API</td><td><a href="https://devnet.helius-rpc.com/?api-key=%3Capi_key%3E">https://devnet.helius-rpc.com?api-key=&#x3C;api_key></a></td><td></td></tr></tbody></table>
 
 
 
 ### zkTestnet URLs (deprecated)
 
 {% hint style="info" %}
-Note: zkTestnet has been deprecated in favor of our **Solana Devnet** deployment. Please use The public Solana Devnet Cluster for further development.
+Note: zkTestnet has been deprecated in favor of our **Solana Devnet** deployment. Please use the public Solana Devnet Cluster for further development
 {% endhint %}
 
 <table><thead><tr><th width="249"></th><th></th></tr></thead><tbody><tr><td>Network address (RPC)</td><td><a href="https://zk-testnet.helius.dev:8899">https://zk-testnet.helius.dev:8899</a> (deprecated)</td></tr><tr><td>Photon RPC API</td><td><a href="https://zk-testnet.helius.dev:8899">https://zk-testnet.helius.dev:8784</a> (deprecated)</td></tr><tr><td>Prover</td><td><a href="https://zk-testnet.helius.dev:8899">https://zk-testnet.helius.dev:3001</a> (deprecated)</td></tr></tbody></table>
-
-
-
-
 
 ### Program IDs and Accounts
 
@@ -25,9 +21,9 @@ Note: zkTestnet has been deprecated in favor of our **Solana Devnet** deployment
 ### Lookup Tables
 
 {% hint style="info" %}
-You can use lookup tables to reduce your transaction size. We provide a pre-initialized lookup table on Devnet that covers the Light's program IDs and accounts:
+[Lookup tables](https://solana.com/docs/advanced/lookup-tables) can be used with compressed accounts to reduce your transaction size. We provide a pre-initialized lookup table on Devnet that covers the Light's program IDs and accounts:
 {% endhint %}
 
 <table><thead><tr><th width="264"></th><th></th></tr></thead><tbody><tr><td>Default Lookup Table #1</td><td><strong>DA35UyyzGTonmEjsbw1VGRACpKxbKUPS2DvrG193QYHC</strong></td></tr></tbody></table>
 
-You can also create your own lookup tables. We provide a helper function that initializes your table with Light's default program IDs and accounts. A guide is available [here](typescript-client.md#creating-lookup-tables).
+You can also create your own lookup tables. We provide a helper function that initializes your table with Light's default program IDs and accounts. We also have [the following guide on creating lookup tables](https://www.zkcompression.com/developers/typescript-client#creating-lookup-tables) in the TypeScript Client section

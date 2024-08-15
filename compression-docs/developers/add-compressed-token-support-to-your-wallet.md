@@ -1,19 +1,19 @@
 # Add Compressed Token Support to Your Wallet
 
-This guide describes how to add **compressed token** support to your browser extension wallet.
+The following page describes how to add **compressed token** support to your browser extension wallet
 
 {% hint style="info" %}
 _Key benefits of compressed tokens:_
 
-* Up to 5000x cheaper than uncompressed accounts.
-* Compatible with existing programs via atomic compression and decompression between SPL <> Compressed-token.
+* Up to **5000x** cheaper than uncompressed accounts
+* Compatible with existing programs via atomic compression and decompression between SPL <> Compressed tokens
 {% endhint %}
 
 ## Integration Steps
 
 ### 1. Install the SDK
 
-<table><thead><tr><th width="215">Package Manager</th><th>Command</th></tr></thead><tbody><tr><td>NPM</td><td><pre class="language-bash"><code class="lang-bash">npm install --save \
+<table><thead><tr><th width="215">Package Manager</th><th>Command</th></tr></thead><tbody><tr><td>npm</td><td><pre class="language-bash"><code class="lang-bash">npm install --save \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
     @solana/web3.js \
@@ -72,29 +72,26 @@ async function main() {
 main();
 ```
 
-
-
 </details>
 
 ### 3. Display Compressed Token Balances
 
-```typescript
-import { Rpc, createRpc } from '@lightprotocol/stateless.js';
+<pre class="language-typescript"><code class="lang-typescript">import { Rpc, createRpc } from '@lightprotocol/stateless.js';
 import { PublicKey } from 'solana/web3.js';
 
-// Helius exposes the Solana and compression RPC endpoints through a single URL
-const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
+<strong>/// Helius exposes the Solana and compression RPC endpoints through a single URL
+</strong>const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=&#x3C;api_key>';
 const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
 const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 
 (async () => {
-    // Returns balance for owner per mint.
+    // Returns balance for owner per mint
     // Can optionally apply filter: {mint, limit, cursor}
     const balances =
         await connection.getCompressedTokenBalancesByOwner(publicKey);
     console.log(balances);
 })();
-```
+</code></pre>
 
 ### 4. Get Compression Signature History By Owner
 
@@ -107,17 +104,17 @@ const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
 const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 
 (async () => {
-    // 1. Fetch signatures for the user.
+    // 1. Fetch signatures for the user
     //
     // Returns confirmed signatures for compression transactions involving the
-    // specified account owner.
+    // specified account owner
     const signatures =
         await connection.getCompressionSignaturesForOwner(publicKey);
     console.log(signatures);
 
-    // 2. Fetch transactions with compression info.
+    // 2. Fetch transactions with compression info
     //
-    // Returns pre- and post-compressed token balances grouped by owner.
+    // Returns pre- and post-compressed token balances grouped by owner
     const parsedTransaction = 
         await connection.getTransactionWithCompressionInfo(signatures[0].signature)
     console.log(parsedTransaction)
@@ -187,8 +184,6 @@ const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_ENDPOINT);
 })();
 ```
 
-
-
 </details>
 
 ```typescript
@@ -203,24 +198,24 @@ const mint = MINT_KEYPAIR.publicKey;
 const amount = bn(1e8);
 
 (async () => {
-    // 1. Fetch latest token account state.
+    // 1. Fetch latest token account state
     const compressedTokenAccounts =
         await connection.getCompressedTokenAccountsByOwner(publicKey, {
             mint,
         });
 
-    // 2. Select accounts to transfer from based on the transfer amount.
+    // 2. Select accounts to transfer from based on the transfer amount
     const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
         compressedTokenAccounts,
         amount,
     );
 
-    // 3. Fetch recent validity proof.
+    // 3. Fetch recent validity proof
     const proof = await connection.getValidityProof(
         inputAccounts.map(account => bn(account.compressedAccount.hash)),
     );
 
-    // 4. Create transfer instruction.
+    // 4. Create transfer instruction
     const ix = await CompressedTokenProgram.transfer({
         payer: publicKey,
         inputCompressedTokenAccounts: inputAccounts,
@@ -239,7 +234,7 @@ const amount = bn(1e8);
 
 <details>
 
-<summary><strong>Decompress and compress SPL tokens</strong></summary>
+<summary><strong>Decompress and Compress SPL Tokens</strong></summary>
 
 ```typescript
 import { Rpc, createRpc, bn } from '@lightprotocol/stateless.js';
@@ -253,7 +248,7 @@ const mint = MINT_KEYPAIR.publicKey;
 const amount = bn(1e8);
 
 (async () => {
-    // 0. Create associated token account for user if it doesn't exist yet.
+    // 0. Create an associated token account for the user if it doesn't exist
     const ata = await createAssociatedTokenAccount(
         connection,
         PAYER,
@@ -261,24 +256,24 @@ const amount = bn(1e8);
         publicKey,
     );
 
-    // 1. Fetch latest compressed token account state.
+    // 1. Fetch the latest compressed token account state
     const compressedTokenAccounts =
         await connection.getCompressedTokenAccountsByOwner(publicKey, {
             mint,
         });
 
-    // 2. Select accounts to transfer from based on the transfer amount.
+    // 2. Select accounts to transfer from based on the transfer amount
     const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
         compressedTokenAccounts,
         amount,
     );
 
-    // 3. Fetch recent validity proof.
+    // 3. Fetch recent validity proof
     const proof = await connection.getValidityProof(
         inputAccounts.map(account => bn(account.compressedAccount.hash)),
     );
 
-    // 4. Create decompress instruction.
+    // 4. Create the decompress instruction
     const decompressIx = await CompressedTokenProgram.decompress({
         payer: publicKey,
         inputCompressedTokenAccounts: inputAccounts,
@@ -288,7 +283,7 @@ const amount = bn(1e8);
         recentValidityProof: proof.compressedProof,
     });
 
-    // 5. Create compress instruction.
+    // 5. Create the compress instruction
     const compressIx = await CompressedTokenProgram.compress({
         payer: publicKey,
         owner: publicKey,
@@ -298,7 +293,7 @@ const amount = bn(1e8);
         mint,
     });
 
-    // 6. Sign and send transaction with sequential decompression and compression.
+    // 6. Sign and send the transaction with sequential decompression and compression
 })();
 ```
 
@@ -306,8 +301,10 @@ const amount = bn(1e8);
 
 ## Best Practices
 
-* Provide clear UI indicators for compressed vs. uncompressed SPL tokens.
+* **Clear UI Indicators —** Provide clear visual distinctions between compressed and uncompressed SPL tokens
+* **Transaction History** — Provide detailed transaction histories for compressed tokens, including compression-specific details like state root updates
+* **Decompression and Compression** — Provide a clear path for users to convert between compressed and uncompressed tokens when needed
 
 ## Support
 
-For additional support or questions, please refer to our [documentation](https://www.zkcompression.com) or contact [Swen](https://t.me/swen\_light) or [Mert](https://t.me/mert\_helius) on Telegram or via [email](mailto:friends@lightprotocol.com).
+For additional support or questions, please refer to our [documentation](https://www.zkcompression.com) or contact [Swen](https://t.me/swen\_light) or [Mert](https://t.me/mert\_helius) on Telegram or via [email](mailto:friends@lightprotocol.com)

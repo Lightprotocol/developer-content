@@ -1,40 +1,43 @@
 ---
 description: >-
   Welcome! This guide has everything you need to know to start developing with
-  ZK Compression on Solana.
+  ZK Compression on Solana
 ---
 
 # Intro to Development
 
 {% hint style="info" %}
-For the sake of brevity, the guide assumes you are familiar with the basics of Solana. If you aren't, we recommend reading the [Solana documentation](https://solana.com/docs/intro/dev) and [_The Solana Programming Model: An Introduction to Developing on Solana_](https://www.helius.dev/blog/the-solana-programming-model-an-introduction-to-developing-on-solana) first
+For the sake of brevity, this guide assumes you are familiar with the basics of Solana. If you aren't, we recommend reading the [Solana documentation](https://solana.com/docs/intro/dev) and [_The Solana Programming Model: An Introduction to Developing on Solana_](https://www.helius.dev/blog/the-solana-programming-model-an-introduction-to-developing-on-solana) first
 {% endhint %}
 
 ## What You'll Need to Get Started
 
-First things first, you do **not** need to understand ZK to master ZK Compression!
+First things first, _you do **not** need to understand ZK to master ZK Compression_! However, for those interested in learning the fundamentals and their applications on Solana, we recommend reading the following:
+
+* [Zero-Knowledge Proofs: An Introduction to the Fundamentals](https://www.helius.dev/blog/zero-knowledge-proofs-an-introduction-to-the-fundamentals)
+* [Zero-Knowledge Proofs: Its Applications on Solana](https://www.helius.dev/blog/zero-knowledge-proofs-its-applications-on-solana)
 
 Development with ZK Compression on Solana consists of two main parts:&#x20;
 
 * [Client development](intro-to-development.md#client-side-development)&#x20;
 * [On-chain program development](intro-to-development.md#on-chain-program-development)
 
-The [ZK Compression RPC API](../developers/json-rpc-methods/) is the glue between clients and on-chain programs. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods/) section.
+The [ZK Compression RPC API](../developers/json-rpc-methods/) is the glue between clients and on-chain programs. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods/) section
 
-### Client-side Development
+### A Quick Intro to Client-side Development
 
-You can use SDKs in Rust and Typescript to interact with ZK Compression:
+The following TypeScript and Rust SDKs are used to interact with ZK Compression:
 
-<table><thead><tr><th width="129">Language</th><th width="327">SDK</th><th>Description</th></tr></thead><tbody><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js">@lightprotocol/stateless.js</a></td><td>SDK to interact with compression programs via the ZK Compression RPC API</td></tr><tr><td>Typescript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/compressed-token">@lightprotocol/compressed-token</a></td><td>SDK to interact with the compressed token program.</td></tr><tr><td>Rust</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/compressed-pda/src/sdk">light-sdk</a></td><td>Rust client</td></tr></tbody></table>
+<table><thead><tr><th width="129">Language</th><th width="327">SDK</th><th>Description</th></tr></thead><tbody><tr><td>TypeScript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js">@lightprotocol/stateless.js</a></td><td>SDK to interact with compression programs via the ZK Compression RPC API</td></tr><tr><td>TypeScript</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/js/compressed-token">@lightprotocol/compressed-token</a></td><td>SDK to interact with the compressed token program</td></tr><tr><td>Rust</td><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/compressed-pda/src/sdk">light-sdk</a></td><td>Rust client</td></tr></tbody></table>
 
 #### RPC Connection
 
-You'll also need a connection with an RPC to interact with the network. You can either work with an RPC infrastructure provider that supports ZK Compression or run your own RPC Node.
+An RPC connection is needed to interact with the network. You can either work with an RPC infrastructure provider that supports ZK Compression or run your own RPC Node
 
 {% hint style="info" %}
-[Helius Labs](https://github.com/helius-labs) supports ZK Compression and maintains its canonical RPC and Photon indexer implementation [here](https://github.com/helius-labs/photon).
+[Helius Labs](https://github.com/helius-labs) supports ZK Compression and maintains its canonical RPC and [Photon indexer implementation](https://github.com/helius-labs/photon)
 
-Our local dev tooling supports Photon out of the box via the `light test-validator` command. To learn how to run a standalone Photon RPC node, visit the [Run a Node](../node-operators/run-a-node.md#photon-indexer-node) section.
+Our local dev tooling supports Photon out of the box via the `light test-validator` command. To learn how to run a standalone Photon RPC node, visit the [Run a Node](../node-operators/run-a-node.md#photon-indexer-node) section
 {% endhint %}
 
 ### Quickstart
@@ -43,7 +46,7 @@ Our local dev tooling supports Photon out of the box via the `light test-validat
 The code samples work! You can copy & paste them into your IDE or terminal and run!
 {% endhint %}
 
-#### Installation (node.js, web)
+#### Installation (Node.js, web)
 
 <table><thead><tr><th width="183">Package Manager </th><th>Command</th></tr></thead><tbody><tr><td>NPM</td><td><pre class="language-sh"><code class="lang-sh">npm install --save \
     @lightprotocol/stateless.js \
@@ -117,7 +120,7 @@ import { Keypair } from "@solana/web3.js";
 const payer = Keypair.generate();
 const tokenRecipient = Keypair.generate();
 
-// Helius exposes Solana and compression RPC endpoints through a single URL
+/// Helius exposes Solana and compression RPC endpoints through a single URL
 const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
 const COMPRESSION_RPC_ENDPOINT = RPC_ENDPOINT;
 const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT)
@@ -134,75 +137,73 @@ const main = async () => {
     await connection.requestAirdrop(tokenRecipient.publicKey, 1e6)
   );
 
-  /// Create compressed-token mint
+  /// Create compressed token mint
   const { mint, transactionSignature } = await createMint(
     connection,
     payer,
     payer.publicKey,
-    9
+    9 // Number of decimals
   );
 
   console.log(`create-mint  success! txId: ${transactionSignature}`);
 
-  /// Mint compressed tokens
+  /// Mint compressed tokens to the payer's account
   const mintToTxId = await mintTo(
     connection,
     payer,
     mint,
-    payer.publicKey,
+    payer.publicKey, // Destination
     payer,
-    1e9
+    1e9 // Amount
   );
 
-  console.log(`mint-to      success! txId: ${mintToTxId}`);
+  console.log(`Minted 1e9 tokens to ${payer.publicKey} was a success!`);
+  console.log(`txId: ${mintToTxId}`);
 
   /// Transfer compressed tokens from payer to tokenRecipient's pubkey
   const transferTxId = await transfer(
     connection,
     payer,
     mint,
-    7e8,
-    payer,
-    tokenRecipient.publicKey
+    7e8, // Amount
+    payer, // Owner
+    tokenRecipient.publicKey // To address
   );
 
-  console.log(`transfer     success! txId: ${transferTxId}`);
+  console.log(`Transfer of 7e8 ${mint} to ${tokenRecipient.publicKey} was a success!`);
+  console.log(`txId: ${transferTxId}`);
 };
 
 main();
 ```
 
-You can find a quickstart guide for creating and transferring compressed-tokens [here](../developers/typescript-client.md#quickstart).
-
-To get started quickly with an end-to-end client for your application, check out the ZK compression [web](https://github.com/Lightprotocol/example-web-client) and [node](https://github.com/Lightprotocol/example-nodejs-client) examples on GitHub.
+A quick start guide for creating and transferring compressed tokens is available in the [section on the TypeScript Client](https://www.zkcompression.com/developers/typescript-client#creating-and-sending-transactions)
 
 ### On-chain Program Development
 
 {% hint style="info" %}
-The ZK compression primitive is the core of [the Light protocol](https://github.com/Lightprotocol). To leverage ZK compression, your custom program invokes the _Light system program_ via Cross-Program Invocation (CPI). For the sake of simplicity, we refer to this set of protocol smart contracts as _compression programs._
+The ZK Compression primitive is the core of [the Light protocol](https://github.com/Lightprotocol). To leverage ZK Compression, your custom program invokes the _Light system program_ via Cross-Program Invocation (CPI). For the sake of simplicity, we refer to this set of protocol smart contracts as _compression programs._
 {% endhint %}
 
-You can write custom programs using ZK compression in Anchor or native Rust.
+You can write custom programs using ZK compression in Anchor or native Rust
 
-First, you'll need to ensure your machine has Rust, the Solana CLI, and Anchor installed. If you haven't installed them, refer to this [setup guide](https://solana.com/developers/guides/getstarted/setup-local-development).
+First, ensure your development environment has [Rust](https://www.rust-lang.org/tools/install), [the Solana CLI](https://docs.solanalabs.com/cli/install), and [Anchor](https://www.anchor-lang.com/docs/installation) installed. If you haven't installed them, refer to this [setup guide](https://solana.com/developers/guides/getstarted/setup-local-development)
 
-We provide tooling for testing your on-chain program on a local Solana cluster.
+We provide tooling for testing your on-chain program on a local Solana cluster. The `light test-validator` command, available with the [ZK Compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/README.md), automatically initializes a local Solana cluster with the compression programs, all necessary system accounts, and syscalls activated. By default, it also starts a local Photon RPC instance and Prover node
 
-[ZK Compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/README.md):  `light test-validator` automatically initializes a local Solana cluster with the compression programs, all necessary system accounts, and syscalls activated. By default, it also starts a local Photon RPC instance and Prover node.
-
-<table><thead><tr><th width="285">Program</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/system">light-system-program</a></td><td>The system program. It enforces the compressed account layout with ownership and sum checks and verifies the validity of your input state.<br>Invoke it to create/write to compressed accounts and PDAs.</td></tr><tr><td><a href="https://crates.io/crates/light-compressed-token">light-compressed-token</a></td><td>A compressed token implementation built on top of ZK Compression. It enforces a SPL-compatible token layout and allows for arbitrary compression/decompression between this and the SPL standard.</td></tr><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/account-compression">account-compression</a></td><td>Implements state and address trees. Used by the Light System program.</td></tr></tbody></table>
+<table><thead><tr><th width="285">Program</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/system">light-system-program</a></td><td><p>The system program. It enforces the compressed account layout with ownership and sum checks and verifies the validity of your input state<br></p><p>It is also invoked to create/write to compressed accounts and PDAs</p></td></tr><tr><td><a href="https://crates.io/crates/light-compressed-token">light-compressed-token</a></td><td>A compressed token implementation built on top of ZK Compression. It enforces a SPL-compatible token layout and allows for arbitrary compression/decompression between this and the SPL standard</td></tr><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/account-compression">account-compression</a></td><td>Implements state and address trees. It is used by the Light System program</td></tr></tbody></table>
 
 ## Build by Example
 
-While you get started building with ZK compression, use these GitHub resources available to help accelerate your journey:
+While you get started building with ZK Compression, use these GitHub resources available to help accelerate your journey:
 
-* [Web example client](https://github.com/Lightprotocol/example-web-client)
-* [Node example client](https://github.com/Lightprotocol/example-nodejs-client)
-* [Token Escrow anchor program](https://github.com/Lightprotocol/light-protocol/tree/light-v0.3.0/examples/token-escrow)
+* [Web Example Client](https://github.com/Lightprotocol/example-web-client)
+* [Node Example Client](https://github.com/Lightprotocol/example-nodejs-client)
+* [Token Escrow Anchor Program](https://github.com/Lightprotocol/light-protocol/tree/light-v0.3.0/examples/token-escrow)
 
 ## Developer Environments
 
-Today, you can build with ZK compression on Localnet. This is a local Solana cluster that you run on your machine using `light test-validator`. A public Devnet will become available soon.
+ZK Compression is currently available on Localnet, using `light test-validator`, and Devnet
 
 ## Getting Support
 
@@ -214,6 +215,6 @@ For the best support, head to the:
 
 Remember to include as much detail as possible in your question, and please use text (not screenshots) to show error messages so other people with the same problem can find your question!
 
-## Next steps
+## Next Steps
 
-You're now ready to start building with ZK compression! Head to the [Client Quickstart](../developers/typescript-client.md) section, or [build ](intro-to-development.md#build-by-example)[a program](intro-to-development.md#build-by-example) and provide feedback!
+You're now ready to start building with ZK Compression! Head to the [Client Quickstart](../developers/typescript-client.md) section, or [build ](intro-to-development.md#build-by-example)[a program](intro-to-development.md#build-by-example) and provide feedback!

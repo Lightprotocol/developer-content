@@ -2,9 +2,7 @@
 
 ## Stateless.js API Reference Guide <a href="#what-is-solana-web3-js" id="what-is-solana-web3-js"></a>
 
-The @lightprotocol/stateless.js library covers the  [ZK Compression JSON RPC API](json-rpc-methods/). It aims to provide all the necessary functionality to interact with the ZK Compression primitive.
-
-You can find the complete source for the `@lightprotocol/stateless.js` library [here](https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js).
+The [@lightprotocol/stateless.js library](https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js) covers the [ZK Compression JSON RPC API](json-rpc-methods/). It aims to provide all the necessary functionality to interact with the ZK Compression primitive
 
 ## Installation
 
@@ -29,7 +27,7 @@ You can find the complete source for the `@lightprotocol/stateless.js` library [
 
 [Source Documentation](https://github.com/Lightprotocol/light-protocol/blob/main/js/stateless.js/src/rpc.ts)
 
-The Rpc connection is used to interact with the [ZK Compression JSON RPC](json-rpc-methods/). It's a thin wrapper extending Solana's Connection. You can use Rpc to get compressed account info, build compression transactions, and use regular Connection methods such as confirm transactions, get account info, and more.
+The `Rpc` connection is used to interact with the [ZK Compression JSON RPC](json-rpc-methods/). It's a thin wrapper extending [Solana's web3.js `Connection` class](https://solana-labs.github.io/solana-web3.js/classes/Connection.html). You can use `Rpc` to get compressed account info, build compression transactions, and use regular `Connection` methods such as confirm transactions, get account info, and more
 
 **Example Usage with Devnet**
 
@@ -37,7 +35,7 @@ The Rpc connection is used to interact with the [ZK Compression JSON RPC](json-r
 const stateless = require("@lightprotocol/stateless.js");
 
 
-// Helius exposes Solana and compression RPC endpoints through a single URL
+/// Helius exposes Solana and compression RPC endpoints through a single URL
 const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
 const COMPRESSION_RPC_ENDPOINT = RPC_ENDPOINT;
 const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT)
@@ -54,21 +52,21 @@ async function main() {
 main();
 ```
 
-The above example shows only a few of the methods on Rpc. Please visit the [JSON RPC Methods](json-rpc-methods/) section for the full list of compression endpoints.
+The example above shows only a few of the methods on `Rpc`. Visit the [JSON RPC Methods](json-rpc-methods/) section for the full list of compression endpoints
 
 ## Quickstart
 
-### Starting the test-validator for local development
+### Starting the test-validator for Local Development
 
 ```sh
 light test-validator 
 ```
 
-This will start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001.&#x20;
+The command above will start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001, respectively&#x20;
 
-### Creating and sending transactions
+### Creating and Sending Transactions
 
-#### Creating, minting, and transferring a Compressed Token
+#### Creating, Minting, and Transferring a Compressed Token
 
 {% hint style="info" %}
 This example uses the **compressed token program**, which is built using ZK Compression and offers an SPL-compatible token layout.
@@ -91,7 +89,7 @@ const tokenRecipient = Keypair.generate();
 const connection: Rpc = createRpc();
 
 const main = async () => {
-  /// airdrop lamports to pay fees
+  /// Airdrop lamports to pay fees
   await confirmTx(
     connection,
     await connection.requestAirdrop(payer.publicKey, 10e9)
@@ -102,39 +100,41 @@ const main = async () => {
     await connection.requestAirdrop(tokenRecipient.publicKey, 1e6)
   );
 
-  /// Create compressed-token mint
+  /// Create a compressed token mint
   const { mint, transactionSignature } = await createMint(
     connection,
     payer,
     payer.publicKey,
-    9
+    9 // Number of decimals
   );
 
   console.log(`create-mint  success! txId: ${transactionSignature}`);
 
-  /// Mint compressed tokens
+  /// Mint compressed tokens to the payer's account
   const mintToTxId = await mintTo(
     connection,
     payer,
     mint,
-    payer.publicKey,
+    payer.publicKey, // Destination
     payer,
-    1e9
+    1e9 // Amount
   );
 
-  console.log(`mint-to      success! txId: ${mintToTxId}`);
+  console.log(`Minted 1e9 tokens to ${payer.publicKey} was a success!`);
+  console.log(`txId: ${mintToTxId}`);
 
   /// Transfer compressed tokens
   const transferTxId = await transfer(
     connection,
     payer,
     mint,
-    7e8,
-    payer,
-    tokenRecipient.publicKey
+    7e8, // Amount
+    payer, // Owner
+    tokenRecipient.publicKey // To address
   );
 
-  console.log(`transfer     success! txId: ${transferTxId}`);
+  console.log(`Transfer of 7e8 ${mint} to ${tokenRecipient.publicKey} was a success!`);
+  console.log(`txId: ${transferTxId}`);
 };
 
 main();
@@ -195,10 +195,10 @@ const connection = createRpc();
 })();
 ```
 
-#### Creating lookup tables
+#### Creating Lookup Tables
 
 {% hint style="info" %}
-For public networks such as Devnet, we provide shared lookup tables for Light's common program IDs and accounts. You can find the latest addresses [here](devnet-addresses.md#lookup-tables).
+For public networks such as Devnet, we provide [shared lookup tables](devnet-addresses.md#lookup-tables) for Light's common program IDs and accounts
 {% endhint %}
 
 ```typescript
@@ -236,10 +236,8 @@ const main = async () => {
 main();
 ```
 
-
-
 To get started building with examples, check out these GitHub repositories:
 
-* [Web example client](https://github.com/Lightprotocol/example-web-client)
-* [Node example client](https://github.com/Lightprotocol/example-nodejs-client)
-* [Token escrow program example](https://github.com/Lightprotocol/light-protocol/tree/light-v0.3.0/examples/token-escrow)
+* [Web Example Client](https://github.com/Lightprotocol/example-web-client)
+* [Node Example Client](https://github.com/Lightprotocol/example-nodejs-client)
+* [Token Escrow Program Example](https://github.com/Lightprotocol/light-protocol/tree/light-v0.3.0/examples/token-escrow)
