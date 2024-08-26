@@ -61,11 +61,12 @@ After the judges complete individual evaluations, they will discuss and choose t
 
 <summary>What are the rules?</summary>
 
-The Solana Foundation Rules apply.&#x20;
+The [Solana Foundation Rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply.&#x20;
 
 Additionally, to be eligible to score in the ZK Compression Summer side track, your project must:
 
 * Use compressed tokens or compressed accounts in some capacity.
+* Be registered in the side track [registration form](https://docs.google.com/forms/d/e/1FAIpQLSd774tBYWagIQ1OQSMZtqzPdDCSMiTEtOBrqbNvlo7mVVkWfg/viewform?usp=sf\_link) before October 2, 2024.
 
 </details>
 
@@ -73,11 +74,11 @@ Additionally, to be eligible to score in the ZK Compression Summer side track, y
 
 <summary>Where can i access developer resources?</summary>
 
-* Official [ZK Compression documentation](../)
-* The [Light Protocol Monorepo](https://github.com/lightprotocol/light-protocol)
-* Example [programs](https://github.com/Lightprotocol/light-protocol/tree/main/examples).
-* Example clients ([web](https://github.com/Lightprotocol/example-web-client), [node](https://github.com/Lightprotocol/example-nodejs-client)).
-* Introductory [Blog](https://www.helius.dev/blog/solana-builders-zk-compression) posts.
+* [ZK Compression documentation](../)
+* [Light Protocol Monorepo](https://github.com/lightprotocol/light-protocol)
+* [Example programs](https://github.com/Lightprotocol/light-protocol/tree/main/examples)
+* Example clients ([web](https://github.com/Lightprotocol/example-web-client), [node](https://github.com/Lightprotocol/example-nodejs-client))
+* Introductory [Blog](https://www.helius.dev/blog/solana-builders-zk-compression) posts
 
 </details>
 
@@ -85,7 +86,7 @@ Additionally, to be eligible to score in the ZK Compression Summer side track, y
 
 <summary>Where can I find ideas?</summary>
 
-We encourage you to build things that you're innately excited about building.
+We encourage you to build things that you're excited about building.&#x20;
 
 For inspiration, we have compiled a list of interesting ideas [here](https://github.com/Lightprotocol/zk-compression-summer-hackathon/tree/main?tab=readme-ov-file).
 
@@ -96,6 +97,6 @@ For inspiration, we have compiled a list of interesting ideas [here](https://git
 <summary>Where can I ask technical questions?</summary>
 
 1. Check out the [Light](https://discord.gg/CYvjBgzRFP) and [Helius](https://discord.gg/Uzzf6a7zKr) Developer Discord servers!
-2. We're also hosting [office hours](https://calendly.com/swen-sch/30-min-chat?month=2024-09) for teams working with ZK Compression.
+2. We also host [office hours](https://calendly.com/swen-sch/30-min-chat?month=2024-09) for teams or individuals working with ZK Compression.
 
 </details>
