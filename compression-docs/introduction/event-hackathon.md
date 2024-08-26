@@ -14,15 +14,7 @@ ZK Compression Summer is a dedicated side track for the [Solana Radar Hackathon]
 
 ## Schedule
 
-{% hint style="info" %}
-We're hosting [office hours](https://calendly.com/swen-sch/30-min-chat) during the Hackathon.
-{% endhint %}
-
-<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Early Bird Registration</td><td>26 Aug 2024</td><td>02 Sep 2024</td></tr><tr><td>Global Radar Hackathon </td><td>02 Sep 2024</td><td>02 Oct 2024 </td></tr><tr><td>Judging</td><td>02 Oct 2024</td><td>08 Oct 2024</td></tr></tbody></table>
-
-
-
-
+<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Early Bird Registration</td><td>26 Aug 2024</td><td>02 Sep 2024</td></tr><tr><td>Global Radar Hackathon</td><td>02 Sep 2024</td><td>02 Oct 2024 </td></tr><tr><td>Judging</td><td>02 Oct 2024</td><td>08 Oct 2024</td></tr></tbody></table>
 
 ## FAQ
 
@@ -73,13 +65,7 @@ ZK Compression can be applied to almost all projects, but it is particularly hel
 
 <summary>Where can I ask technical questions?</summary>
 
-Check out the [Light](https://discord.gg/CYvjBgzRFP) and [Helius](https://discord.gg/Uzzf6a7zKr) Developer Discord servers!\
-
-
-When asking for help, please include:
-
-* A detailed description of what you're trying to achieve
-* Source code, if possible
-* The text of any errors you encountered, with stacktraces if available.
+1. Check out the [Light](https://discord.gg/CYvjBgzRFP) and [Helius](https://discord.gg/Uzzf6a7zKr) Developer Discord servers!
+2. We're also hosting [office hours](https://calendly.com/swen-sch/30-min-chat?month=2024-09) for teams working with ZK Compression.
 
 </details>
