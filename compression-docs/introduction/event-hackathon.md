@@ -31,7 +31,7 @@ _Register For the ZK Compression Side Track_ [_here_](https://docs.google.com/fo
 
 <details>
 
-<summary>What are the Rules?</summary>
+<summary>What are the rules?</summary>
 
 The Solana Foundation Rules apply.&#x20;
 
@@ -43,7 +43,7 @@ Addtionally, to be eligible to score in the ZK Compression Summer side track, yo
 
 <details>
 
-<summary>Where can i access Developer resources?</summary>
+<summary>Where can i access developer resources?</summary>
 
 * Official [ZK Compression documentation](../)
 * The [Light Protocol Monorepo](https://github.com/lightprotocol/light-protocol)
