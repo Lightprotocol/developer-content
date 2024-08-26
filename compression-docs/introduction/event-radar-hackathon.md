@@ -25,7 +25,7 @@ ZK Compression Summer is a dedicated side track for the [Solana Radar hackathon]
 
 ## Judging
 
-The Radar Hackathon's [submission rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply. To be eligible for the side track, participants must register in the project registration form shared above and submit their project to the Radar Hackathon before 2nd October. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation.
+The Radar Hackathon's [submission rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply. To be eligible for the side track, participants must register in the project registration form shared above and submit their project to the Radar Hackathon before October 2, 2024. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation.
 
 Teams and individuals are evaluated on the following criteria:
 
