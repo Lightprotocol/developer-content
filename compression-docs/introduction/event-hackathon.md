@@ -3,9 +3,7 @@
 <figure><img src="../.gitbook/assets/Group 632668.png" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
-ZK Compression Summer is a dedicated side track for the [Solana Radar Hackathon](https://www.colosseum.org/radar).\
-\
-_Register For the ZK Compression Side Track_ [_here_](https://docs.google.com/forms/d/e/1FAIpQLSd774tBYWagIQ1OQSMZtqzPdDCSMiTEtOBrqbNvlo7mVVkWfg/viewform)_._
+ZK Compression Summer is a dedicated side track for the [Solana Radar Hackathon](https://www.colosseum.org/radar).
 {% endhint %}
 
 ## How to Participate
