@@ -4,6 +4,7 @@
 
 * [Overview](README.md)
 * [Intro to Development](introduction/intro-to-development.md)
+* [🗓️ Event: Hackathon](introduction/event-hackathon.md)
 
 ## Release Notes
 
