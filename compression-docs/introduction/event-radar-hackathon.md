@@ -47,7 +47,7 @@ After the judges complete individual evaluations, they will discuss and choose t
 | All participants who submit a project that fulfills the eligibility criteria | $100        |
 
 {% hint style="info" %}
-All winners also get personal Go-to-Market help and VC intros from [Mert](https://x.com/0xMert\_)!
+All winners also receive personal help with Go-to-Market strategy and VC intros from [Mert](https://x.com/0xMert\_)!
 {% endhint %}
 
 ## FAQ
