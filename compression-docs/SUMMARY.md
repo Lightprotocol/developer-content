@@ -4,7 +4,7 @@
 
 * [Overview](README.md)
 * [Intro to Development](introduction/intro-to-development.md)
-* [🗓️ Event: Radar Hackathon](introduction/event-radar-hackathon.md)
+* [🗓️ Event: Solana Zero Hackathon](introduction/event-solana-zero-hackathon.md)
 
 ## Release Notes
 

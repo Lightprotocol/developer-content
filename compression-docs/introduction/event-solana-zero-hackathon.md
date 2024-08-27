@@ -1,9 +1,9 @@
-# 🗓️ Event: Radar Hackathon
+# 🗓️ Event: Solana Zero Hackathon
 
 <figure><img src="../.gitbook/assets/Group 632668.png" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
-ZK Compression Summer is a dedicated side track for the [Solana Radar hackathon](https://www.colosseum.org/radar).
+Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://www.colosseum.org/radar).
 {% endhint %}
 
 ## How to Participate
@@ -67,7 +67,7 @@ All winners will also receive personal help with VC intros and Go-to-Market stra
 
 The [Solana Foundation Rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply.&#x20;
 
-Additionally, to be eligible to score in the ZK Compression Summer side track, your project must:
+Additionally, to be eligible to score in Solana Zero, your project must:
 
 * Use compressed tokens or compressed accounts in some capacity.
 * Be registered in the side track [registration form](https://docs.google.com/forms/d/e/1FAIpQLSd774tBYWagIQ1OQSMZtqzPdDCSMiTEtOBrqbNvlo7mVVkWfg/viewform?usp=sf\_link) before October 2, 2024.
@@ -101,6 +101,6 @@ For inspiration, we have compiled a list of interesting ideas [here](https://git
 <summary>Where can I ask technical questions?</summary>
 
 1. Check out the [Light](https://discord.gg/CYvjBgzRFP) and [Helius](https://discord.gg/Uzzf6a7zKr) Developer Discord servers!
-2. We also host [office hours](https://calendly.com/swen-sch/30-min-chat?month=2024-09) for teams or individuals working with ZK Compression.
+2. We also host [office hours](https://calendly.com/swen-sch/30-min-chat?month=2024-09) for teams or individuals participating in the hackathon.
 
 </details>
