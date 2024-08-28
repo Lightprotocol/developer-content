@@ -1,6 +1,6 @@
 # 🗓️ Event: Solana Zero Hackathon
 
-<figure><img src="../.gitbook/assets/Group 632668.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/solanazero-banner Large.jpeg" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://www.colosseum.org/radar).
@@ -14,7 +14,7 @@ Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://w
 
 ## Schedule
 
-<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Registration</td><td>26 Aug 2024</td><td>02 Sep 2024</td></tr><tr><td>Global Radar Hackathon</td><td>02 Sep 2024</td><td>02 Oct 2024 </td></tr><tr><td>Judging</td><td>02 Oct 2024</td><td>08 Oct 2024</td></tr></tbody></table>
+<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Registration</td><td>26 Aug 2024</td><td>02 Sep 2024</td></tr><tr><td>Global Hackathon</td><td>02 Sep 2024</td><td>02 Oct 2024 </td></tr><tr><td>Judging</td><td>02 Oct 2024</td><td>08 Oct 2024</td></tr></tbody></table>
 
 ## Resources
 
@@ -41,9 +41,9 @@ After the judges complete individual evaluations, they will discuss and choose t
 
 | Place                                                                        | Prize       |
 | ---------------------------------------------------------------------------- | ----------- |
-| First Place                                                                  | $15k + Swag |
-| Second Place                                                                 | $7k + Swag  |
-| Third Place                                                                  | $3k + Swag  |
+| First Place                                                                  | $25k + Swag |
+| Second Place                                                                 | $10k + Swag |
+| Third Place                                                                  | $5k + Swag  |
 | All participants who submit a project that fulfills the eligibility criteria | $100        |
 
 {% hint style="info" %}
@@ -71,6 +71,8 @@ Additionally, to be eligible to score in Solana Zero, your project must:
 
 * Use compressed tokens or compressed accounts in some capacity.
 * Be registered in the side track [registration form](https://docs.google.com/forms/d/e/1FAIpQLSd774tBYWagIQ1OQSMZtqzPdDCSMiTEtOBrqbNvlo7mVVkWfg/viewform?usp=sf\_link) before October 2, 2024.
+* Each participant can have a maximum of 1 project submission count towards scoring in the Solana Zero side track.
+* Please note that the $100 participation bounty is awarded at our sole discretion, particularly as a measure to prevent Sybil attacks.
 
 </details>
 
