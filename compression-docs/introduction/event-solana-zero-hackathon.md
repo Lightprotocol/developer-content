@@ -9,8 +9,12 @@ Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://w
 ## How to Participate
 
 1. Use ZK Compression in your [Radar hackathon](https://www.colosseum.org/radar) project.
-2. Let us know by registering [here](https://airtable.com/app4qvjZ4TdQlSHIy/pagL0Gw7PzCrNwKAW/form).
+2. Register for Solana Zero below (or using this [link](https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP\_phdDC8hS00810WfsgLA/viewform?usp=sf\_link)).
 3. You are now eligible to score in the side track in addition to the other Radar hackathon tracks. :tada:
+
+{% embed url="https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP_phdDC8hS00810WfsgLA/viewform?usp=sf_link" fullWidth="true" %}
+Register for Solana Zero here.
+{% endembed %}
 
 ## Schedule
 
@@ -57,7 +61,7 @@ All winners will also receive personal help with VC intros and Go-to-Market stra
 <summary>How do I register?</summary>
 
 1. Register for the Radar hackathon [**here**](https://arena.colosseum.org/signup)**.**
-2. Let us know your hackathon (COLOSSEUM) username [**here**](https://airtable.com/app4qvjZ4TdQlSHIy/pagL0Gw7PzCrNwKAW/form) before Oct 2.
+2. Let us know your hackathon (COLOSSEUM) username in the form above or via this [link](https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP\_phdDC8hS00810WfsgLA/viewform?usp=sf\_link) before Oct 2.
 
 </details>
 
