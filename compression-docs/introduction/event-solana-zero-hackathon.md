@@ -1,6 +1,6 @@
 # 🗓️ Event: Solana Zero Hackathon
 
-<figure><img src="../.gitbook/assets/solanazero-banner Large.jpeg" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/solanazero-banner Large 2.jpeg" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://www.colosseum.org/radar).
