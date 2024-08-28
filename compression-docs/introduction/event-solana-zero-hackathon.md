@@ -12,7 +12,7 @@ Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://w
 2. Register for Solana Zero below (or using this [link](https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP\_phdDC8hS00810WfsgLA/viewform?usp=sf\_link)).
 3. You are now eligible to score in the side track in addition to the other Radar hackathon tracks. :tada:
 
-{% embed url="https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP_phdDC8hS00810WfsgLA/viewform?usp=sf_link" fullWidth="true" %}
+{% embed url="https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP_phdDC8hS00810WfsgLA/viewform?usp=sf_link" fullWidth="false" %}
 Register for Solana Zero here.
 {% endembed %}
 
