@@ -9,7 +9,7 @@ Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://w
 ## How to Participate
 
 1. Use ZK Compression in your [Radar hackathon](https://www.colosseum.org/radar) project.
-2. Let us know by registering [here](https://forms.gle/cnkm1izkNo3v1UdF8).
+2. Let us know by registering [here](https://t.me/swen\_light).
 3. You are now eligible to score in the side track in addition to the other Radar hackathon tracks. :tada:
 
 ## Schedule
