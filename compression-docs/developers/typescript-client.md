@@ -195,7 +195,7 @@ const connection = createRpc();
 })();
 ```
 
-#### Creating Lookup Tables
+### Creating Lookup Tables
 
 {% hint style="info" %}
 For public networks such as Devnet, we provide [shared lookup tables](devnet-addresses.md#lookup-tables) for Light's common program IDs and accounts
