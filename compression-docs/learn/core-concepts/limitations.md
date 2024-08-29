@@ -40,7 +40,7 @@ System CU usage:
 Higher CU usage can:
 
 * **Lead to usage limits** — the total CU limit per transaction is 1,400,000 CU, and the per-block write lock limit per State tree is 12,000,000 CU
-* **Require your users to increase their** [**priority fee**](https://solana.com/developers/guides/advanced/how-to-use-priority-fees) **during congestion** — whenever Solana's global per-block CU limit (50,000,000 CU) is reached, validator clients may prioritize transactions with higher per-CU priority fees
+* **Require your users to increase their** [**priority fee**](https://solana.com/developers/guides/advanced/how-to-use-priority-fees) **during congestion** — whenever Solana's global per-block CU limit (48,000,000 CU) is reached, validator clients may prioritize transactions with higher per-CU priority fees
 
 ## State Cost Per Transaction&#x20;
 
