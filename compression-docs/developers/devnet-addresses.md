@@ -26,6 +26,6 @@ Note: zkTestnet has been deprecated in favor of our **Solana Devnet** deployment
 [Lookup tables](https://solana.com/docs/advanced/lookup-tables) can be used with compressed accounts to reduce your transaction size. We provide a pre-initialized lookup table on Devnet that covers the Light's program IDs and accounts:
 {% endhint %}
 
-<table><thead><tr><th width="264"></th><th></th></tr></thead><tbody><tr><td>Default Lookup Table #1</td><td><strong>DA35UyyzGTonmEjsbw1VGRACpKxbKUPS2DvrG193QYHC</strong></td></tr></tbody></table>
+<table><thead><tr><th width="264"></th><th></th></tr></thead><tbody><tr><td>Default Lookup Table #1</td><td><strong>qAJZMgnQJ8G6vA3WRcjD9Jan1wtKkaCFWLWskxJrR5V</strong></td></tr></tbody></table>
 
-You can also create your own lookup tables. We provide a helper function that initializes your table with Light's default program IDs and accounts. We also have [the following guide on creating lookup tables](https://www.zkcompression.com/developers/typescript-client#creating-lookup-tables) in the TypeScript Client section
+You can also create your own lookup tables. We provide a helper function that initializes your table with Light's default program IDs and accounts. We also have [the following guide on creating lookup tables](https://www.zkcompression.com/developers/typescript-client#creating-lookup-tables) in the TypeScript Client section.
