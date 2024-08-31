@@ -7,22 +7,26 @@ description: >-
 # Intro to Development
 
 {% hint style="info" %}
-For the sake of brevity, this guide assumes you are familiar with the basics of Solana. If you aren't, we recommend reading the [Solana documentation](https://solana.com/docs/intro/dev) and [_The Solana Programming Model: An Introduction to Developing on Solana_](https://www.helius.dev/blog/the-solana-programming-model-an-introduction-to-developing-on-solana) first
+For the sake of brevity, this guide assumes you are familiar with the basics of Solana. If you aren't, we recommend reading the following:
+
+* [Solana documentation](https://solana.com/docs/intro/dev)
+* [The Solana Programming Model: An Introduction to Developing on Solana](https://www.helius.dev/blog/the-solana-programming-model-an-introduction-to-developing-on-solana).
+
+\
+Further, you **do not need** to understand ZK to master ZK Compression! However, if you are interested in learning the fundamentals, we recommend reading the following:
+
+* [Zero-Knowledge Proofs: An Introduction to the Fundamentals](https://www.helius.dev/blog/zero-knowledge-proofs-an-introduction-to-the-fundamentals)
+* [Zero-Knowledge Proofs: Its Applications on Solana](https://www.helius.dev/blog/zero-knowledge-proofs-its-applications-on-solana)
 {% endhint %}
 
 ## What You'll Need to Get Started
 
-First things first, _you do **not** need to understand ZK to master ZK Compression_! However, for those interested in learning the fundamentals and their applications on Solana, we recommend reading the following:
-
-* [Zero-Knowledge Proofs: An Introduction to the Fundamentals](https://www.helius.dev/blog/zero-knowledge-proofs-an-introduction-to-the-fundamentals)
-* [Zero-Knowledge Proofs: Its Applications on Solana](https://www.helius.dev/blog/zero-knowledge-proofs-its-applications-on-solana)
-
 Development with ZK Compression on Solana consists of two main parts:&#x20;
 
-* [Client development](intro-to-development.md#client-side-development)&#x20;
+* [Client development](intro-to-development.md#client-side-development)
 * [On-chain program development](intro-to-development.md#on-chain-program-development)
 
-The [ZK Compression RPC API](../developers/json-rpc-methods/) is the glue between clients and on-chain programs. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the full list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods/) section
+The [ZK Compression RPC API](../developers/json-rpc-methods/) is the glue between clients and on-chain programs. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the complete list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods/) section.
 
 ### A Quick Intro to Client-side Development
 
@@ -32,12 +36,12 @@ The following TypeScript and Rust SDKs are used to interact with ZK Compression:
 
 #### RPC Connection
 
-An RPC connection is needed to interact with the network. You can either work with an RPC infrastructure provider that supports ZK Compression or run your own RPC Node
+An RPC connection is needed to interact with the network. You can either work with an RPC infrastructure provider that supports ZK Compression or run your own RPC Node.
 
 {% hint style="info" %}
-[Helius Labs](https://github.com/helius-labs) supports ZK Compression and maintains its canonical RPC and [Photon indexer implementation](https://github.com/helius-labs/photon)
+[Helius Labs](https://github.com/helius-labs) supports ZK Compression and maintains its canonical RPC and [Photon indexer implementation](https://github.com/helius-labs/photon).
 
-Our local dev tooling supports Photon out of the box via the `light test-validator` command. To learn how to run a standalone Photon RPC node, visit the [Run a Node](../node-operators/run-a-node.md#photon-indexer-node) section
+Our local dev tooling supports Photon out of the box via the `light test-validator` command. To learn how to run a standalone Photon RPC node, visit the [Run a Node](../node-operators/run-a-node.md#photon-indexer-node) section.
 {% endhint %}
 
 ### Quickstart
@@ -177,19 +181,17 @@ const main = async () => {
 main();
 ```
 
-A quick start guide for creating and transferring compressed tokens is available in the [section on the TypeScript Client](https://www.zkcompression.com/developers/typescript-client#creating-and-sending-transactions)
-
 ### On-chain Program Development
 
 {% hint style="info" %}
 The ZK Compression primitive is the core of [the Light protocol](https://github.com/Lightprotocol). To leverage ZK Compression, your custom program invokes the _Light system program_ via Cross-Program Invocation (CPI). For the sake of simplicity, we refer to this set of protocol smart contracts as _compression programs._
 {% endhint %}
 
-You can write custom programs using ZK compression in Anchor or native Rust
+You can write custom programs using ZK compression in Anchor or native Rust.
 
-First, ensure your development environment has [Rust](https://www.rust-lang.org/tools/install), [the Solana CLI](https://docs.solanalabs.com/cli/install), and [Anchor](https://www.anchor-lang.com/docs/installation) installed. If you haven't installed them, refer to this [setup guide](https://solana.com/developers/guides/getstarted/setup-local-development)
+First, ensure your development environment has [Rust](https://www.rust-lang.org/tools/install), [the Solana CLI](https://docs.solanalabs.com/cli/install), and [Anchor](https://www.anchor-lang.com/docs/installation) installed. If you haven't installed them, refer to this [setup guide](https://solana.com/developers/guides/getstarted/setup-local-development).
 
-We provide tooling for testing your on-chain program on a local Solana cluster. The `light test-validator` command, available with the [ZK Compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/README.md), automatically initializes a local Solana cluster with the compression programs, all necessary system accounts, and syscalls activated. By default, it also starts a local Photon RPC instance and Prover node
+We provide tooling for testing your on-chain program on a local Solana cluster. The `light test-validator` command, available with the [ZK Compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/README.md), automatically initializes a local Solana cluster with the compression programs, all necessary system accounts, and syscalls activated. By default, it also starts a local Photon RPC instance and Prover node.
 
 <table><thead><tr><th width="285">Program</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/system">light-system-program</a></td><td><p>The system program. It enforces the compressed account layout with ownership and sum checks and verifies the validity of your input state<br></p><p>It is also invoked to create/write to compressed accounts and PDAs</p></td></tr><tr><td><a href="https://crates.io/crates/light-compressed-token">light-compressed-token</a></td><td>A compressed token implementation built on top of ZK Compression. It enforces a SPL-compatible token layout and allows for arbitrary compression/decompression between this and the SPL standard</td></tr><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/account-compression">account-compression</a></td><td>Implements state and address trees. It is used by the Light System program</td></tr></tbody></table>
 
@@ -203,7 +205,7 @@ While you get started building with ZK Compression, use these GitHub resources a
 
 ## Developer Environments
 
-ZK Compression is currently available on Localnet, using `light test-validator`, and Devnet
+ZK Compression is currently available on Localnet, using `light test-validator`, and Devnet.
 
 ## Getting Support
 
