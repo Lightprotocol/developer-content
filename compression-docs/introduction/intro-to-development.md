@@ -10,7 +10,7 @@ description: >-
 For the sake of brevity, this guide assumes you are familiar with the basics of Solana. If you aren't, we recommend reading the following:
 
 * [Solana documentation](https://solana.com/docs/intro/dev)
-* [The Solana Programming Model: An Introduction to Developing on Solana](https://www.helius.dev/blog/the-solana-programming-model-an-introduction-to-developing-on-solana).
+* [The Solana Programming Model: An Introduction to Developing on Solana](https://www.helius.dev/blog/the-solana-programming-model-an-introduction-to-developing-on-solana)
 
 \
 Further, you **do not need** to understand ZK to master ZK Compression! However, if you are interested in learning the fundamentals, we recommend reading the following:
