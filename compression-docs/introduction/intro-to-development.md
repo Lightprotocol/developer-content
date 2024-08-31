@@ -1,7 +1,7 @@
 ---
 description: >-
   Welcome! This guide has everything you need to know to start developing with
-  ZK Compression on Solana
+  ZK Compression on Solana.
 ---
 
 # Intro to Development
@@ -189,7 +189,7 @@ The ZK Compression primitive is the core of [the Light protocol](https://github.
 
 You can write custom programs using ZK compression in Anchor or native Rust.
 
-First, ensure your development environment has [Rust](https://www.rust-lang.org/tools/install), [the Solana CLI](https://docs.solanalabs.com/cli/install), and [Anchor](https://www.anchor-lang.com/docs/installation) installed. If you haven't installed them, refer to this [setup guide](https://solana.com/developers/guides/getstarted/setup-local-development).
+First, ensure your development environment has installed Rust, the Solana CLI, and Anchor. If you haven't installed them, refer to this [setup guide](https://solana.com/developers/guides/getstarted/setup-local-development).
 
 We provide tooling for testing your on-chain program on a local Solana cluster. The `light test-validator` command, available with the [ZK Compression CLI](https://github.com/Lightprotocol/light-protocol/blob/main/cli/README.md), automatically initializes a local Solana cluster with the compression programs, all necessary system accounts, and syscalls activated. By default, it also starts a local Photon RPC instance and Prover node.
 
