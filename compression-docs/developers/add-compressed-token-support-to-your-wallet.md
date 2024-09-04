@@ -77,7 +77,7 @@ main();
 ### 3. Display Compressed Token Balances
 
 <pre class="language-typescript"><code class="lang-typescript">import { Rpc, createRpc } from '@lightprotocol/stateless.js';
-import { PublicKey } from 'solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 
 <strong>/// Helius exposes the Solana and compression RPC endpoints through a single URL
 </strong>const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=&#x3C;api_key>';
@@ -97,7 +97,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 
 ```typescript
 import { Rpc, createRpc } from '@lightprotocol/stateless.js';
-import { PublicKey } from 'solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 
 const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
 const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
@@ -206,7 +206,7 @@ const amount = bn(1e8);
 
     // 2. Select accounts to transfer from based on the transfer amount
     const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
-        compressedTokenAccounts,
+        compressedTokenAccounts.items,
         amount,
     );
 
