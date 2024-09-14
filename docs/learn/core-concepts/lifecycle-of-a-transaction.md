@@ -14,7 +14,7 @@ Here's what this looks like when updating a single compressed PDA account:
 
 <figure><img src="../../.gitbook/assets/image (3).png" alt="" width="563"><figcaption><p>Simplified: Read and Write compressed accounts</p></figcaption></figure>
 
-In this example, we assume that the client previously created said compressed account and thereafter fetched its compressed account info from an [RPC node](../../node-operators/node-operator-guide/run-a-node.md#photon-rpc-node-1).
+In this example, we assume that the client previously created said compressed account and thereafter fetched its compressed account info from an [RPC node](../../node-operators/run-a-node.md#photon-rpc-node-1).
 
 The custom Solana program executing the state transition Data -> Data' should require its client to pack the instructions efficiently. In the above scenario, the total data that's sent to the chain is: `address (same)`, `owner program (same)`, `data`, `data'-data`, `validity proof.`
 
@@ -22,14 +22,14 @@ The compressed account after its update looks like this:
 
 <figure><img src="../../.gitbook/assets/image (4).png" alt=""><figcaption><p>Full representation of a compressed account with PDA</p></figcaption></figure>
 
-### On-chain Protocol Execution <a href="#on-chain-protocol-execution" id="on-chain-protocol-execution"></a>
+## On-chain Protocol Execution
 
-To write compressed state, the custom program invokes the protocol via CPI. The protocol then does the following:
+To write compressed state, a custom caller program must invoke the Light System Program via CPI. The system program then does the following:
 
-1. The protocol [verifies the validity proof](https://github.com/Lightprotocol/light-protocol/blob/main/programs/compressed-pda/src/invoke/verify\_state\_proof.rs#L180)
-2. The protocol runs relevant checks ([sum check](https://github.com/Lightprotocol/light-protocol/blob/main/programs/compressed-pda/src/invoke/processor.rs#L54C5-L60C8), etc.)
-3. [Nullifies](https://github.com/Lightprotocol/light-protocol/blob/main/programs/compressed-pda/src/invoke/processor.rs#L153-L158) the "old" leaf of the compressed account that is being written to
-4. Appends the new compressed account hash to the state tree and advances the tree's [state root](https://github.com/Lightprotocol/light-protocol/blob/main/programs/compressed-pda/src/invoke/processor.rs#L172-L181)
-5. [Emits](https://github.com/Lightprotocol/light-protocol/blob/main/programs/compressed-pda/src/invoke/processor.rs#L189-L195) the new "raw" compressed account state onto the ledger
+1. Runs relevant checks ([sum check](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L64-L70), etc.)
+2. [Verifies the validity proof](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/verify\_state\_proof.rs#L184-L190)&#x20;
+3. [Nullifies](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L203-L208) the "old" leaf of the compressed account that is being written to
+4. [Appends](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L240-L249) the new compressed account hash to the state tree and advances the tree's state root
+5. [Emits](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L269-L276) the new "raw" compressed account state onto the Solana ledger
 
-An RPC node then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](../../overview/json-rpc-methods.md).
+An[ RPC node](../../node-operators/run-a-node.md#photon-rpc-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](../../developers/json-rpc-methods/)
