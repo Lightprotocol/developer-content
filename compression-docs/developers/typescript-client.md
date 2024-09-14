@@ -236,6 +236,8 @@ const main = async () => {
 main();
 ```
 
+### Examples
+
 To get started building with examples, check out these GitHub repositories:
 
 * [Web Example Client](https://github.com/Lightprotocol/example-web-client)

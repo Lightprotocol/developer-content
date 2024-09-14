@@ -51,8 +51,12 @@
   * [getLatestNonVotingSignatures](developers/json-rpc-methods/getlatestnonvotingsignatures.md)
   * [getIndexerSlot](developers/json-rpc-methods/getindexerslot.md)
   * [getIndexerHealth](developers/json-rpc-methods/getindexerhealth.md)
-* [Security](developers/security.md)
 
 ## Node Operators
 
 * [Run a Node](node-operators/run-a-node.md)
+
+## resources
+
+* [Security](resources/security.md)
+* [Privacy Policy](resources/privacy-policy.md)
