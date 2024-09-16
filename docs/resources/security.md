@@ -6,15 +6,13 @@ hidden: true
 
 ### Bug Bounty
 
-Light Protocol is hosting a perpetual bug bounty program in cooperation with Immunefi.
-
-Register here.
+Light Protocol is hosting a bug bounty program in cooperation with Immunefi.
 
 ### Security Audits
 
 The Light protocol programs were audited by independent security firms Neodyme and OtterSec.
 
-* Zellic audit report (September '24)
+* Zellic audit report (September '24, to be published)
 * [Neodyme audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/neodyme\_v1\_audit.pdf) (August '24)&#x20;
 * [OtterSec audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/ottersec\_v1\_audit.pdf) (July '24)
 
@@ -27,7 +25,7 @@ You can find all information about the Trusted Setup Ceremony for the groth16 ci
 
 
 {% hint style="info" %}
-For additional information on Light Protocol's security policy, read [here](https://github.com/Lightprotocol/light-protocol/blob/main/SECURITY.md). \
+**For additional information on Light Protocol's security policy, read** [**here**](https://github.com/Lightprotocol/light-protocol/blob/main/SECURITY.md)**.** \
 \
 To report security issues please send an e-mail to [security@lightprotocol.com](mailto:security@lightprotocol.com).
 
