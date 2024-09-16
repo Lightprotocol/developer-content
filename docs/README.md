@@ -1,5 +1,11 @@
 # Overview
 
+<div data-full-width="false">
+
+<figure><img src=".gitbook/assets/Group 632704.jpg" alt=""><figcaption></figcaption></figure>
+
+</div>
+
 ## What is Light Protocol? <a href="#what-is-light" id="what-is-light"></a>
 
 Light is a protocol built on Solana that introduces **ZK compression,** a primitive that enables secure scaling directly on the L1.&#x20;
