@@ -14,7 +14,7 @@ Here's what this looks like when updating a single compressed PDA account:
 
 <figure><img src="../../.gitbook/assets/image (3).png" alt="" width="563"><figcaption><p>Simplified: Read and Write compressed accounts</p></figcaption></figure>
 
-In this example, we assume that the client previously created said compressed account and thereafter fetched its compressed account info from an [RPC node](../../node-operators/run-a-node.md#photon-rpc-node-1).
+In this example, we assume that the client previously created said compressed account and thereafter fetched its compressed account info from an [RPC node](broken-reference).
 
 The custom Solana program executing the state transition Data -> Data' should require its client to pack the instructions efficiently. In the above scenario, the total data that's sent to the chain is: `address (same)`, `owner program (same)`, `data`, `data'-data`, `validity proof.`
 
@@ -32,4 +32,4 @@ To write compressed state, a custom caller program must invoke the Light System 
 4. [Appends](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L240-L249) the new compressed account hash to the state tree and advances the tree's state root
 5. [Emits](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L269-L276) the new "raw" compressed account state onto the Solana ledger
 
-An[ RPC node](../../node-operators/run-a-node.md#photon-rpc-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](../../developers/json-rpc-methods/)
+An[ RPC node](https://www.zkcompression.com/node-operators/run-a-node#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](https://www.zkcompression.com/developers/json-rpc-methods)

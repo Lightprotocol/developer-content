@@ -11,7 +11,7 @@ ZK compressed state is stored in compressed accounts. Compressed accounts are si
 * Each compressed account can be identified by its hash
 * Each write to a compressed account changes its hash
 * An `address` can optionally be set as a permanent unique ID of the compressed account
-* All compressed accounts are stored in [sparse state trees](broken-reference). Only the tree's state root (i.e., a small fingerprint of all compressed accounts) is stored in the on-chain account space
+* All compressed accounts are stored in [sparse state trees](state-trees.md). Only the tree's state root (i.e., a small fingerprint of all compressed accounts) is stored in the on-chain account space
 
 These differences allow the protocol to store states as calldata in the less expensive Solana ledger space instead of costly on-chain account space
 
@@ -44,5 +44,5 @@ Instead, each compressed account can be identified by its hash, regardless of wh
 
 By definition, whenever the data of a compressed account changes, its hash changes. This impacts how developers interact with fungible state:
 
-* Check out the [examples](../../introduction/intro-to-development.md#build-by-example) section to see what using hashes instead of addresses looks like in practice
+* Check out the [examples](https://www.zkcompression.com/introduction/intro-to-development#build-by-example) section in the ZK Compression documentation to see what using hashes instead of addresses looks like in practice
 * Visit the [State Trees](state-trees.md) section to understand why using the account's hash as its ID makes sense for the compression protocol

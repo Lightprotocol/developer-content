@@ -1,8 +1,12 @@
 # Overview
 
+{% hint style="info" %}
+This documentation provides a high-level introduction to Light Protocol, and is a directory guiding you to start developing with it. In depth documentation for developers is provided at [https://www.zkcompression.com](https://www.zkcompression.com).
+{% endhint %}
+
 ## What is Light Protocol? <a href="#what-is-light" id="what-is-light"></a>
 
-Light is a protocol built on Solana that introduces **ZK compression,** a primitive that enables secure scaling directly on the L1.
+Light is a protocol built on Solana that introduces **ZK compression,** a primitive that enables secure scaling directly on the L1.&#x20;
 
 ## **Why build with Light?**
 
@@ -19,7 +23,7 @@ Light is a protocol built on Solana that introduces **ZK compression,** a primit
 | 100-byte PDA Account | \~ 0.0016 SOL   | \~ 0.00001 SOL (160x cheaper)  |
 | 100 Token Accounts   | \~ 0.2 SOL      | \~ 0.00004 SOL (5000x cheaper) |
 
-### Core Features <a href="#core-features" id="core-features"></a>
+## Core Features <a href="#core-features" id="core-features"></a>
 
 | **Minimal state cost**        | Securely stores state on cheaper ledger space instead of the more expensive account space, allowing apps to scale to millions of users.                                 |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -27,16 +31,12 @@ Light is a protocol built on Solana that introduces **ZK compression,** a primit
 | **Composable**                | Solana programs can mix and match between compressed and regular on-chain state, allowing atomic interaction with multiple programs, accounts, and compressed accounts. |
 | **Custom ZK compute**         | Leverage Light's on-chain contracts and plumbing, and tap into global, unified ZK-friendly state.                                                                       |
 
-#### ZK and Compression in a Nutshell: <a href="#zk-and-compression-in-a-nutshell" id="zk-and-compression-in-a-nutshell"></a>
+## ZK and Compression in a Nutshell: <a href="#zk-and-compression-in-a-nutshell" id="zk-and-compression-in-a-nutshell"></a>
 
 _**Compression**_**:** Only the [state roots](learn/core-concepts/state-trees.md) (small fingerprints of all [compressed accounts](learn/core-concepts/compressed-account-model.md)) are stored in on-chain accounts. The underlying data is stored on the cheaper Solana ledger.
 
-_**ZK**_**:** The protocol uses small zero-knowledge proofs (validity proofs) to ensure the integrity of the compressed state. This is all done under the hood. You can fetch validity proofs from [RPC providers](developers/json-rpc-methods/) that support ZK Compression.
-
-## How to use this Documentation
-
-This documentation provides a high-level introduction to the ZK Compression primitive and is a directory guiding you to relevant codebases, examples, and advanced guides.
+_**ZK**_**:** The protocol uses small zero-knowledge proofs (validity proofs) to ensure the integrity of the compressed state. This is all done under the hood. You can fetch validity proofs from [RPC providers](https://www.zkcompression.com/introduction/intro-to-development#rpc-connection) that support ZK Compression.
 
 {% hint style="info" %}
-Light Protocol is being built in the [open](https://github.com/Lightprotocol/light-protocol), and devnet is live! Stay up-to-date with the teams contributing to ZK compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
+Light Protocol is being built in the [open](https://github.com/Lightprotocol/light-protocol), and [public Testnet](https://www.zkcompression.com/developers/devnet-addresses) is live! Stay up-to-date on X with the teams contributing to ZK compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
 {% endhint %}

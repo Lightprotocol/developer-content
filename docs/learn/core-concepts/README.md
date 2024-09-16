@@ -1,6 +1,6 @@
 # Core concepts
 
-ZK Compression is a new primitive on Solana that drastically reduces on-chain state costs while maintaining security, composability, and performance. ZK Compression allows developers to efficiently scale their applications to millions of users with the help of zero-knowledge proofs.
+Light Protocol's core primitive ZK Compression drastically reduces on-chain state costs while maintaining security, composability, and performance. ZK Compression allows developers to efficiently scale their applications to millions of users with the help of zero-knowledge proofs.
 
 In the following sections, we'll dive into the core concepts that make ZK Compression possible:
 

@@ -14,6 +14,7 @@ Register here.
 
 The Light protocol programs were audited by independent security firms Neodyme and OtterSec.
 
+* Zellic audit report (September '24)
 * [Neodyme audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/neodyme\_v1\_audit.pdf) (August '24)&#x20;
 * [OtterSec audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/ottersec\_v1\_audit.pdf) (July '24)
 
