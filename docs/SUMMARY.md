@@ -3,6 +3,7 @@
 ## Introduction
 
 * [Overview](README.md)
+* [ZK Compression](introduction/zk-compression.md)
 * [🗓️ Event: Solana Zero Hackathon](introduction/event-solana-zero-hackathon.md)
 
 ## Learn
@@ -17,20 +18,19 @@
 
 ## Developers
 
-* [ZK Compression](developers/zk-compression.md)
 * [Advanced: Computing over Light State with custom ZKPs](developers/advanced-computing-over-light-state-with-custom-zkps.md)
 * [Devnet Addresses](developers/devnet-addresses.md)
 
 ## Release Notes
 
-* [0.6.0](release-notes/0.6.0.md)
-* [0.5.0](release-notes/0.5.0.md)
-* [0.4.0](release-notes/0.4.0.md)
-* [0.3.0](release-notes/0.3.0.md)
+* [0.6.0](developers/release-notes/0.6.0.md)
+* [0.5.0](developers/release-notes/0.5.0.md)
+* [0.4.0](developers/release-notes/0.4.0.md)
+* [0.3.0](developers/release-notes/0.3.0.md)
 
 ## resources
 
 * [Security](resources/security.md)
+* [Privacy Policy](resources/privacy-policy.md)
 * [Terms of Use](resources/terms-of-use.md)
 * [Terms of Use - Website](resources/terms-of-use-website.md)
-* [Privacy Policy](resources/privacy-policy.md)
