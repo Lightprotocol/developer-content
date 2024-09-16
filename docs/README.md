@@ -37,7 +37,9 @@ _**ZK**_**:** The protocol uses small zero-knowledge proofs (validity proofs) to
 
 ## How to use this documentation
 
-This documentation provides a high-level introduction to Light Protocol, and is a directory guiding you how to start developing with it.
+This documentation provides a high-level introduction to Light Protocol, and is a directory guiding you how to start developing with it. The in depth developer documentation can be found on [https://www.zkcompression.com](https://www.zkcompression.com).
+
+###
 
 {% hint style="info" %}
 Light Protocol is being built in the [open](https://github.com/Lightprotocol/light-protocol), and [public Testnet](https://www.zkcompression.com/developers/devnet-addresses) is live! Stay up-to-date on X with the teams contributing to ZK compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
