@@ -3,7 +3,7 @@
 Light's core primitive is **ZK Compression**. This section is a directory guiding you to the relevant codebases, examples, and advanced guides.
 
 {% hint style="info" %}
-We're hosting in-depth documentation and guides at [zkcompression.com](https://www.zkcompression.com) togheter with the Helius team.
+We're hosting in-depth documentation and guides at [zkcompression.com](https://www.zkcompression.com) together with the Helius team.
 {% endhint %}
 
 ### 1. Intro to development
