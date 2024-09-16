@@ -219,7 +219,7 @@ While you get started building with ZK compression, use these GitHub resources a
 
 ## Developer Environments <a href="#developer-environments" id="developer-environments"></a>
 
-ZK Compression is currently available on Mainnet, using `light test-validator`, and Devnet.
+ZK Compression is currently available on Localnet, using `light test-validator`, and Devnet.
 
 ## Getting support <a href="#getting-support" id="getting-support"></a>
 
