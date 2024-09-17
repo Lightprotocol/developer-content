@@ -88,7 +88,7 @@ Additionally, to be eligible to score in Solana Zero, your project must:
 
 <summary>Where can i access developer resources?</summary>
 
-* [ZK Compression documentation](broken-reference)
+* [ZK Compression documentation](zk-compression.md)
 * [Light Protocol Monorepo](https://github.com/lightprotocol/light-protocol)
 * [Example programs](https://github.com/Lightprotocol/light-protocol/tree/main/examples)
 * Example clients ([web](https://github.com/Lightprotocol/example-web-client), [node](https://github.com/Lightprotocol/example-nodejs-client))
