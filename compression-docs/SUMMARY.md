@@ -8,6 +8,7 @@
 
 ## Release Notes
 
+* [1.0.0 - Mainnet-Beta](release-notes/1.0.0-mainnet-beta.md)
 * [0.6.0](release-notes/0.6.0.md)
 * [0.5.0](release-notes/0.5.0.md)
 * [0.4.0](release-notes/0.4.0.md)
