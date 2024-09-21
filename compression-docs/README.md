@@ -18,7 +18,7 @@ Developers and users can opt to compress their on-chain state, reducing state co
 
 ## Core Features
 
-<table><thead><tr><th width="248"></th><th></th></tr></thead><tbody><tr><td><strong>Minimal state cost</strong></td><td>Securely stores state on cheaper <a href="https://solana.com/docs/terminology#ledger">ledger</a> space instead of the more expensive account space, allowing apps to scale to millions of users</td></tr><tr><td><strong>L1 security &#x26; performance</strong></td><td>Execution and data availability on Solana, preserving the performance and security guarantees of the L1</td></tr><tr><td><strong>Composable</strong></td><td>Solana programs can mix and match between compressed and regular on-chain state, allowing atomic interaction with multiple programs, accounts, and compressed accounts</td></tr></tbody></table>
+<table><thead><tr><th width="248"></th><th></th></tr></thead><tbody><tr><td><strong>Minimal state cost</strong></td><td>Securely stores state on cheaper <a href="https://solana.com/docs/terminology#ledger">ledger</a> space instead of the more expensive account space, allowing apps to scale to millions of users.</td></tr><tr><td><strong>L1 security &#x26; performance</strong></td><td>Execution and data availability on Solana, preserving the performance and security guarantees of the L1</td></tr><tr><td><strong>Composable</strong></td><td>Solana programs can mix and match between compressed and regular on-chain state, allowing atomic interaction with multiple programs, accounts, and compressed accounts.</td></tr></tbody></table>
 
 ## ZK and Compression in a Nutshell:
 
@@ -28,8 +28,8 @@ _**ZK**_**:** The protocol uses small zero-knowledge proofs ([validity proofs](l
 
 ## How to use this Documentation
 
-This documentation provides a high-level introduction to the ZK Compression primitive and is a directory guiding you to relevant codebases, examples, and advanced guides.
+This documentation introduces the ZK Compression primitive and is a directory guiding you to relevant codebases, examples, and advanced guides.
 
 {% hint style="info" %}
-The ZK Compression primitive is being built in the open, and our first [public Testnet](developers/devnet-addresses.md) is now live! Stay up to date with the core teams contributing to ZK Compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius Labs](https://twitter.com/heliuslabs).
+The ZK Compression primitive is being built in the open, and Mainnet-Beta is now live! Stay up to date with the core teams contributing to ZK Compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
 {% endhint %}
