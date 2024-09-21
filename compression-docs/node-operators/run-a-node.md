@@ -42,8 +42,4 @@ Please refer to the Github repo for more info:
 
 Developers may choose to have their program-owned state trees serviced by a network of Light Forester nodes. These nodes manage the creation, rollover, and updating of shared and program-owned state trees.
 
-{% hint style="info" %}
-On ZK-Testnet, only shared state trees are supported end-to-end. Once full program-owned state tree support gets rolled out, you can service your program-owned state trees permissionlessly, i.e., self-host a standalone node.
-{% endhint %}
-
 {% embed url="https://github.com/Lightprotocol/light-protocol/tree/main/forester" %}
