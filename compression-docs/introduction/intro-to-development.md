@@ -11,12 +11,6 @@ For the sake of brevity, this guide assumes you are familiar with the basics of 
 
 * [Solana documentation](https://solana.com/docs/intro/dev)
 * [The Solana Programming Model: An Introduction to Developing on Solana](https://www.helius.dev/blog/the-solana-programming-model-an-introduction-to-developing-on-solana)
-
-\
-Further, you **do not need** to understand ZK to master ZK Compression! However, if you are interested in learning the fundamentals, we recommend reading the following:
-
-* [Zero-Knowledge Proofs: An Introduction to the Fundamentals](https://www.helius.dev/blog/zero-knowledge-proofs-an-introduction-to-the-fundamentals)
-* [Zero-Knowledge Proofs: Its Applications on Solana](https://www.helius.dev/blog/zero-knowledge-proofs-its-applications-on-solana)
 {% endhint %}
 
 ## What You'll Need to Get Started
@@ -205,18 +199,18 @@ While you get started building with ZK Compression, use these GitHub resources a
 
 ## Developer Environments
 
-ZK Compression is currently available on Localnet, using `light test-validator`, and Devnet.
+ZK Compression is available on Localnet using `light test-validator`, Devnet, and Mainnet-Beta.
 
 ## Getting Support
 
 For the best support, head to the:
 
 * [Solana StackExchange](https://solana.stackexchange.com/) for Solana-specific questions
-* [Light Developer Discord](https://discord.gg/CYvjBgzRFP) for program-related questions
+* [Light Developer Discord](https://discord.gg/CYvjBgzRFP) for program and client-related questions
 * [Helius Developer Discord](https://discord.gg/Uzzf6a7zKr) for RPC-related questions
 
 Remember to include as much detail as possible in your question, and please use text (not screenshots) to show error messages so other people with the same problem can find your question!
 
 ## Next Steps
 
-You're now ready to start building with ZK Compression! Head to the [Client Quickstart](../developers/typescript-client.md) section, or [build ](intro-to-development.md#build-by-example)[a program](intro-to-development.md#build-by-example) and provide feedback!
+You're now ready to start building with ZK Compression! Head to the [Client Quickstart](../developers/typescript-client.md) section, or [build ](intro-to-development.md#build-by-example)[a program](intro-to-development.md#build-by-example)!

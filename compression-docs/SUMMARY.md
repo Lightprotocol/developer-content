@@ -25,7 +25,7 @@
 
 ## Developers
 
-* [Devnet Addresses](developers/devnet-addresses.md)
+* [Protocol Addresses and URLs](developers/protocol-addresses-and-urls.md)
 * [TypeScript Client](developers/typescript-client.md)
 * [Add Compressed Token Support to Your Wallet](developers/add-compressed-token-support-to-your-wallet.md)
 * [JSON RPC Methods](developers/json-rpc-methods/README.md)
