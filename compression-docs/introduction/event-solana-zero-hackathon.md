@@ -6,19 +6,17 @@
 Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://www.colosseum.org/radar).
 {% endhint %}
 
-## How to Participate
+## Submissions are now open!
 
-1. Use ZK Compression in your [Radar hackathon](https://www.colosseum.org/radar) project.
-2. Register for Solana Zero below (or using this [link](https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP\_phdDC8hS00810WfsgLA/viewform?usp=sf\_link)).
-3. You are now eligible to score in the side track in addition to the other Radar hackathon tracks. :tada:
+1. Use ZK Compression in your hackathon project
+2. Submit your project [here](https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/) or via the link below by September 8th.
+3. You are now eligible to score in Solana Zero! :tada:
 
-{% embed url="https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP_phdDC8hS00810WfsgLA/viewform?usp=sf_link" fullWidth="false" %}
-Register for Solana Zero here.
-{% endembed %}
+{% embed url="https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/" %}
 
 ## Schedule
 
-<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Registration</td><td>26 Aug 2024</td><td>02 Sep 2024</td></tr><tr><td>Global Hackathon</td><td>02 Sep 2024</td><td>02 Oct 2024 </td></tr><tr><td>Judging</td><td>02 Oct 2024</td><td>08 Oct 2024</td></tr></tbody></table>
+<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Registration</td><td>26 Aug 2024</td><td>02 Sep 2024</td></tr><tr><td>Global Hackathon</td><td>02 Sep 2024</td><td>02Oct 2024 </td></tr><tr><td>Submissions (<a href="https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/">submit here</a>)</td><td>02 Oct 2024</td><td>08 Oct 2024</td></tr><tr><td>Judging</td><td>08 Oct 2024</td><td>15 Oct 2024</td></tr></tbody></table>
 
 ## Resources
 
@@ -29,7 +27,7 @@ Register for Solana Zero here.
 
 ## Judging
 
-The Radar Hackathon's [submission rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply. To be eligible for the side track, participants must register in the project registration form shared above and submit their project to the Radar Hackathon before October 2, 2024. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation.
+To be eligible for Solana Zero prizes, participants must submit their project to the Hackathon before October 8, 2024. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation. Additionally, the Radar Hackathon's [submission rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply.
 
 Teams and individuals are evaluated on the following criteria:
 
@@ -58,10 +56,9 @@ All winners will also receive personal help with VC intros and Go-to-Market stra
 
 <details>
 
-<summary>How do I register?</summary>
+<summary>How do I submit?</summary>
 
-1. Register for the Radar hackathon [**here**](https://arena.colosseum.org/signup)**.**
-2. Let us know your hackathon (COLOSSEUM) username in the form above or via this [link](https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP\_phdDC8hS00810WfsgLA/viewform?usp=sf\_link) before Oct 2.
+1. Submit your project [here](https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/) by October 08.
 
 </details>
 
@@ -74,9 +71,9 @@ The [Solana Foundation Rules](https://www.colosseum.org/\_app/immutable/assets/S
 Additionally, to be eligible to score in Solana Zero, your project must:
 
 * Use compressed tokens or compressed accounts in some capacity.
-* Be registered in the side track registration form before October 2, 2024.
+* Submit by October 08.
 * Each participant can have a maximum of 1 project submission count towards scoring in the Solana Zero side track.
-* Please note that the $100 participation bounty is awarded at our sole discretion, particularly as a measure to prevent Sybil attacks.
+* Please note that the prizes and the $100 participation bounty is awarded at our sole discretion, particularly as a measure to prevent Sybil attacks.
 
 </details>
 
