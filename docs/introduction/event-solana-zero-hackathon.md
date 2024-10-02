@@ -6,23 +6,21 @@
 Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://www.colosseum.org/radar).
 {% endhint %}
 
-### How to Participate <a href="#how-to-participate" id="how-to-participate"></a>
+## Submissions are now open! <a href="#submissions-are-now-open" id="submissions-are-now-open"></a>
 
-1. Use ZK Compression in your [Radar hackathon](https://www.colosseum.org/radar) project.
-2. Register for Solana Zero below (or using this [link](https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP\_phdDC8hS00810WfsgLA/viewform?usp=sf\_link)).
-3. You are now eligible to score in the side track in addition to the other Radar hackathon tracks. ​:tada:
+1. Use ZK Compression in your hackathon project
+2. Submit your project [here](https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/) or via the link below by September 8th.
+3. You are now eligible to score in Solana Zero! 🎉
 
-{% embed url="https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP_phdDC8hS00810WfsgLA/viewform?usp=sf_link" fullWidth="false" %}
-Register for Solana Zero here.
-{% endembed %}
+{% embed url="https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/" %}
 
 ### Schedule <a href="#schedule" id="schedule"></a>
 
-| Text             | Start       | End         |
-| ---------------- | ----------- | ----------- |
-| Registration     | 26 Aug 2024 | 02 Sep 2024 |
-| Global Hackathon | 02 Sep 2024 | 02 Oct 2024 |
-| Judging          | 02 Oct 2024 | 08 Oct 2024 |
+| Text                                                                                              | Start       | End         |
+| ------------------------------------------------------------------------------------------------- | ----------- | ----------- |
+| Global Hackathon                                                                                  | 02 Sep 2024 | 02 Oct 2024 |
+| Submissions ([submit here](https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/)) | 02 Oct 2024 | 08 Oct 2024 |
+| Judging                                                                                           | 08 Oct 2024 | 15 Oct 2024 |
 
 ## Resources
 
@@ -33,7 +31,7 @@ Register for Solana Zero here.
 
 ## Judging
 
-The Radar Hackathon's [submission rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply. To be eligible for the side track, participants must register in the project registration form shared above and submit their project to the Radar Hackathon before October 2, 2024. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation.
+The Radar Hackathon's [submission rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply. To be eligible for the side track, participants must register in the project registration form shared above and submit their project to the Radar Hackathon before October 8, 2024. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation.
 
 Teams and individuals are evaluated on the following criteria:
 
@@ -62,10 +60,9 @@ All winners will also receive personal help with VC intros and Go-to-Market stra
 
 <details>
 
-<summary>How do I register?</summary>
+<summary>How do I submit?</summary>
 
-1. Register for the Radar hackathon [**here**](https://arena.colosseum.org/signup)**.**
-2. Let us know your hackathon (COLOSSEUM) username in the form above or via this [link](https://docs.google.com/forms/d/e/1FAIpQLSdOtRQRLTS6xdbypl9pwZ9FJEN-hP\_phdDC8hS00810WfsgLA/viewform?usp=sf\_link) before Oct 2.
+1. Submit your project [here](https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/) by October 08.
 
 </details>
 
@@ -78,7 +75,7 @@ The [Solana Foundation Rules](https://www.colosseum.org/\_app/immutable/assets/S
 Additionally, to be eligible to score in Solana Zero, your project must:
 
 * Use compressed tokens or compressed accounts in some capacity.
-* Be registered in the side track registration form before October 2, 2024.
+* Be submitted by October 8, 2024.
 * Each participant can have a maximum of 1 project submission count towards scoring in the Solana Zero side track.
 * Please note that the $100 participation bounty is awarded at our sole discretion, particularly as a measure to prevent Sybil attacks.
 
@@ -111,6 +108,5 @@ For inspiration, we have compiled a list of interesting ideas [here](https://git
 <summary>Where can I ask technical questions?</summary>
 
 1. Check out the [Light](https://discord.gg/CYvjBgzRFP) and [Helius](https://discord.gg/Uzzf6a7zKr) Developer Discord servers!
-2. We also host [office hours](https://calendly.com/swen-sch/30-min-chat?month=2024-09) for teams or individuals participating in the hackathon.
 
 </details>

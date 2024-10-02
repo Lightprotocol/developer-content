@@ -3,12 +3,12 @@
 Light's core primitive is **ZK Compression**. This section is a directory guiding you to the relevant codebases, examples, and advanced guides.
 
 {% hint style="info" %}
-We're hosting in-depth documentation and guides at [zkcompression.com](https://www.zkcompression.com) together with the Helius team.
+We're hosting in-depth documentation and guides at [zkcompression.com](https://www.zkcompression.com) with the Helius team.
 {% endhint %}
 
 ### 1. Learn
 
-First things first: explore our core concepts and get a protocol overview, to understand the fundamentals of ZK Compression.
+Explore our core concepts and get an overview of the protocol to understand the fundamentals of ZK Compression.
 
 {% embed url="https://www.zkcompression.com/learn/in-a-nutshell" %}
 
@@ -20,7 +20,7 @@ This guide has everything you need to know to start developing with ZK Compressi
 
 ### 3. TypeScript Client
 
-Our TypeScript library provides the tools you need to interact with ZK Compression using the JSON RPC API. It aims to provide all the necessary functionality to interact with the ZK Compression primitive.
+Our TypeScript library provides the tools you need to interact with ZK Compression using the JSON RPC API.
 
 {% embed url="https://www.zkcompression.com/developers/typescript-client" %}
 
@@ -38,7 +38,7 @@ These pages outline all ZK Compression methods extending Solana's [default JSON 
 
 ### 6. Run a Node for ZK Compression
 
-This section covers setting up a node for Local and public Development. For public networks (i.e., Devnet, Mainnet-Beta), you can either work with an RPC infrastructure provider that supports ZK Compression, such as [Helius Labs](https://helius.xyz/), or run your own nodes (Photon RPC, Prover, or Forester).&#x20;
+This section covers setting up a node for development on public Networks. For public networks (i.e., Devnet, Mainnet-Beta), you can either work with an RPC infrastructure provider that supports ZK Compression, such as [Helius Labs](https://helius.xyz/), or run your own nodes (Photon RPC, Prover, or Forester).&#x20;
 
 {% embed url="https://www.zkcompression.com/node-operators/run-a-node" %}
 _Becoming an operator for any node type is permissionless._
