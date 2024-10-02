@@ -27,7 +27,7 @@ Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://w
 
 ## Judging
 
-To be eligible for Solana Zero prizes, participants must submit their project to the Hackathon before October 8, 2024. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation. Additionally, the Radar Hackathon's [submission rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply.
+Participants must submit their project to the hackathon before October 8, 2024, to be eligible for Solana Zero prizes. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation. Additionally, the Radar Hackathon's [submission rules](https://www.colosseum.org/\_app/immutable/assets/Solana%20Radar%20Hackathon%20Official%20Rules%202024.8c044e21.pdf) apply.
 
 Teams and individuals are evaluated on the following criteria:
 
