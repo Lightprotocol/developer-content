@@ -6,11 +6,10 @@
 Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://www.colosseum.org/radar).
 {% endhint %}
 
-## Submissions are now open! <a href="#submissions-are-now-open" id="submissions-are-now-open"></a>
+## Submissions are now closed! <a href="#submissions-are-now-open" id="submissions-are-now-open"></a>
 
-1. Use ZK Compression in your hackathon project
-2. Submit your project [here](https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/) or via the link below by September 8th.
-3. You are now eligible to score in Solana Zero! 🎉
+1. Use ZK Compression in your hackathon project.
+2. If you did submit your project here or via the link below by September 8th, you can score in Solana Zero! 🎉
 
 {% embed url="https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/" %}
 
