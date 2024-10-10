@@ -6,17 +6,16 @@
 Solana Zero is a dedicated side track for the [Solana Radar hackathon](https://www.colosseum.org/radar).
 {% endhint %}
 
-## Submissions are now open!
+## Submissions are now closed!
 
 1. Use ZK Compression in your hackathon project
-2. Submit your project [here](https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/) or via the link below by October 8th.
-3. You are now eligible to score in Solana Zero! :tada:
+2. If you did submit your project [here](https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/) or via the link below by October 8th, you are eligible to score in Solana Zero! :tada:
 
 {% embed url="https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/" %}
 
 ## Schedule
 
-<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Global Hackathon</td><td>02 Sep 2024</td><td>02 Oct 2024 </td></tr><tr><td>Submissions (<a href="https://earn.superteam.fun/listings/hackathon/solana-zero-hackathon/">submit here</a>)</td><td>02 Oct 2024</td><td>08 Oct 2024</td></tr><tr><td>Judging</td><td>08 Oct 2024</td><td>15 Oct 2024</td></tr></tbody></table>
+<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Global Hackathon</td><td>02 Sep 2024</td><td>02 Oct 2024 </td></tr><tr><td>Submissions</td><td>02 Oct 2024</td><td>08 Oct 2024</td></tr><tr><td>Judging</td><td>08 Oct 2024</td><td>15 Oct 2024</td></tr></tbody></table>
 
 ## Resources
 
