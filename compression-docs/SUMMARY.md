@@ -35,6 +35,7 @@
   * [getCompressedBalance](developers/json-rpc-methods/getcompressedbalance.md)
   * [getCompressedTokenAccountBalance](developers/json-rpc-methods/getcompressedtokenaccountbalance.md)
   * [getCompressedBalanceByOwner](developers/json-rpc-methods/getcompressedbalancebyowner.md)
+  * [getCompressedMintTokenHolders](developers/json-rpc-methods/getcompressedminttokenholders.md)
   * [getCompressedTokenBalancesByOwner](developers/json-rpc-methods/getcompressedtokenbalancesbyowner.md)
   * [getCompressedAccountsByOwner](developers/json-rpc-methods/getcompressedaccountsbyowner.md)
   * [getMultipleCompressedAccounts](developers/json-rpc-methods/getmultiplecompressedaccounts.md)
