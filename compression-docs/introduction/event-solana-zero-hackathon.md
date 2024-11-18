@@ -1,3 +1,7 @@
+---
+hidden: true
+---
+
 # 🗓️ Event: Solana Zero Hackathon
 
 <figure><img src="../.gitbook/assets/solanazero-banner Large 2.jpeg" alt=""><figcaption></figcaption></figure>
