@@ -9,10 +9,11 @@
 ## Release Notes
 
 * [1.0.0 - Mainnet-Beta](release-notes/1.0.0-mainnet-beta.md)
-* [0.6.0](release-notes/0.6.0.md)
-* [0.5.0](release-notes/0.5.0.md)
-* [0.4.0](release-notes/0.4.0.md)
-* [0.3.0](release-notes/0.3.0.md)
+* [0.x.x](release-notes/0.x.x/README.md)
+  * [0.6.0](release-notes/0.x.x/0.6.0.md)
+  * [0.5.0](release-notes/0.x.x/0.5.0.md)
+  * [0.4.0](release-notes/0.x.x/0.4.0.md)
+  * [0.3.0](release-notes/0.x.x/0.3.0.md)
 
 ## Learn
 
@@ -28,6 +29,7 @@
 
 * [Protocol Addresses and URLs](developers/protocol-addresses-and-urls.md)
 * [TypeScript Client](developers/typescript-client.md)
+* [Token-2022 Support](developers/token-2022-support.md)
 * [Add Compressed Token Support to Your Wallet](developers/add-compressed-token-support-to-your-wallet.md)
 * [Create programs with the program-template](developers/create-programs-with-the-program-template.md)
 * [JSON RPC Methods](developers/json-rpc-methods/README.md)
