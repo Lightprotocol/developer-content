@@ -14,6 +14,10 @@ All other extensions are not yet supported.
 
 ## Minting, compressing, and transferring tokens with Token-2022 Metadata
 
+{% hint style="info" %}
+You need versions ≥ `v0.17.0` for both the `@lightprotocol/stateless.js` and `@lightprotocol/compressed-token` TypeScript SDKs.
+{% endhint %}
+
 ```typescript
 import { Rpc, confirmTx, createRpc } from "@lightprotocol/stateless.js";
 import {
