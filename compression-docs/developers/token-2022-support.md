@@ -179,5 +179,6 @@ const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
 })();
 ```
 
-
-
+{% hint style="info" %}
+For further reference, check out this node [example](https://github.com/Lightprotocol/example-nodejs-client/blob/main/src/scripts/mint-spl-22.ts).
+{% endhint %}
