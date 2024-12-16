@@ -18,7 +18,7 @@ All other extensions are not yet supported.
 You need the following SDK versions:
 
 * `@lightprotocol/stateless.js`  ≥ 0.17.0&#x20;
-* `@lightprotocol/compressed-token`  ≥ v0.17.0&#x20;
+* `@lightprotocol/compressed-token`  ≥ 0.17.0&#x20;
 * `@solana/web3.js` ≥ 1.95.3
 {% endhint %}
 
