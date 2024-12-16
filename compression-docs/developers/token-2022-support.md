@@ -1,6 +1,6 @@
 # Token-2022 Support
 
-You can compress token-22 accounts that belong to mints with the following mint-extensions:
+You can compress token-2022 accounts of mints with the following mint-extensions:
 
 * MetadataPointer
 * TokenMetadata
