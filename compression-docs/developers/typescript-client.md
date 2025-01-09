@@ -2,23 +2,19 @@
 
 ## Stateless.js API Reference Guide <a href="#what-is-solana-web3-js" id="what-is-solana-web3-js"></a>
 
-The [@lightprotocol/stateless.js library](https://github.com/Lightprotocol/light-protocol/tree/main/js/stateless.js) covers the [ZK Compression JSON RPC API](json-rpc-methods/). It aims to provide all the necessary functionality to interact with the ZK Compression primitive
+The [@lightprotocol/stateless.js library](https://www.npmjs.com/package/@lightprotocol/stateless.js) lets you build Javascript clients that interact with the ZK Compression primitive via the [ZK Compression JSON RPC API](json-rpc-methods/).
 
 ## Installation
-
-**For use in Node.js or a web application**
 
 <table><thead><tr><th width="201">Package Manager</th><th>Command</th></tr></thead><tbody><tr><td>NPM</td><td><pre class="language-sh"><code class="lang-sh">npm install --save \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
     @solana/web3.js \
-    @coral-xyz/anchor \
     @lightprotocol/zk-compression-cli
 </code></pre></td></tr><tr><td>Yarn</td><td><pre class="language-sh"><code class="lang-sh">yarn add \
     @lightprotocol/stateless.js \
     @lightprotocol/zk-compression-cli \
     @solana/web3.js \
-    @coral-xyz/anchor
 </code></pre></td></tr></tbody></table>
 
 ## Basics
@@ -38,7 +34,8 @@ const stateless = require("@lightprotocol/stateless.js");
 /// Helius exposes Solana and compression RPC endpoints through a single URL
 const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
 const COMPRESSION_RPC_ENDPOINT = RPC_ENDPOINT;
-const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT)
+const PROVER_ENDPOINT = RPC_ENDPOINT
+const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT, PROVER_ENDPOINT)
 
 async function main() {
   let slot = await connection.getSlot();
@@ -52,7 +49,7 @@ async function main() {
 main();
 ```
 
-The example above shows only a few of the methods on `Rpc`. Visit the [JSON RPC Methods](json-rpc-methods/) section for the full list of compression endpoints
+Visit the [JSON RPC Methods](json-rpc-methods/) section for the full list of compression endpoints supported in `Rpc` .
 
 ## Quickstart
 
@@ -62,7 +59,7 @@ The example above shows only a few of the methods on `Rpc`. Visit the [JSON RPC 
 light test-validator 
 ```
 
-The command above will start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001, respectively&#x20;
+The command above will start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001.
 
 ### Creating and Sending Transactions
 
@@ -140,7 +137,7 @@ const main = async () => {
 main();
 ```
 
-#### Compressing SOL
+#### Compressed SOL
 
 You can also directly interact with the Light system program to transfer compressed SOL and create compressed accounts and compressed PDAs.
 
@@ -198,7 +195,7 @@ const connection = createRpc();
 ### Creating Lookup Tables
 
 {% hint style="info" %}
-For public networks such as Devnet, we provide [shared lookup tables](addresses-and-urls.md#lookup-tables) for Light's common program IDs and accounts
+For public networks, we provide [shared lookup tables](addresses-and-urls.md#lookup-tables) for Light's common program IDs and accounts
 {% endhint %}
 
 ```typescript
