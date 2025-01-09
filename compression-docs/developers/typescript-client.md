@@ -13,8 +13,8 @@ The [@lightprotocol/stateless.js library](https://www.npmjs.com/package/@lightpr
     @lightprotocol/zk-compression-cli
 </code></pre></td></tr><tr><td>Yarn</td><td><pre class="language-sh"><code class="lang-sh">yarn add \
     @lightprotocol/stateless.js \
-    @lightprotocol/zk-compression-cli \
     @solana/web3.js \
+    @lightprotocol/zk-compression-cli
 </code></pre></td></tr></tbody></table>
 
 ## Basics
@@ -23,7 +23,7 @@ The [@lightprotocol/stateless.js library](https://www.npmjs.com/package/@lightpr
 
 [Source Documentation](https://github.com/Lightprotocol/light-protocol/blob/main/js/stateless.js/src/rpc.ts)
 
-The `Rpc` connection is used to interact with the [ZK Compression JSON RPC](json-rpc-methods/). It's a thin wrapper extending [Solana's web3.js `Connection` class](https://solana-labs.github.io/solana-web3.js/classes/Connection.html). You can use `Rpc` to get compressed account info, build compression transactions, and use regular `Connection` methods such as confirm transactions, get account info, and more
+The `Rpc` connection is used to interact with the [ZK Compression JSON RPC](json-rpc-methods/). It's a thin wrapper extending [Solana's web3.js `Connection` class](https://solana-labs.github.io/solana-web3.js/classes/Connection.html) with compression-related endpoints, such as `getCompressedAccount`, `getCompressedTokenBalancesByOwner`, and more.
 
 **Example Usage with Devnet**
 
@@ -135,61 +135,6 @@ const main = async () => {
 };
 
 main();
-```
-
-#### Compressed SOL
-
-You can also directly interact with the Light system program to transfer compressed SOL and create compressed accounts and compressed PDAs.
-
-```typescript
-import { confirmTx } from "@lightprotocol/stateless.js";
-
-/// Compressing SOL
-const {
-  LightSystemProgram,
-  buildAndSignTx,
-  createRpc,
-  defaultTestStateTreeAccounts,
-  sendAndConfirmTx,
-} = require("@lightprotocol/stateless.js");
-
-const { ComputeBudgetProgram, Keypair } = require("@solana/web3.js");
-
-const fromKeypair = Keypair.generate();
-
-/// Localnet
-const connection = createRpc();
-
-(async () => {
-  /// Airdrop lamports to pay tx fees
-  await confirmTx(
-    connection,
-    await connection.requestAirdrop(fromKeypair.publicKey, 10e9)
-  );
-
-  /// Fetch latest blockhash
-  const { blockhash } = await connection.getLatestBlockhash();
-
-  /// Compress lamports to self
-  const ix = await LightSystemProgram.compress({
-    payer: fromKeypair.publicKey,
-    toAddress: fromKeypair.publicKey,
-    lamports: 1_000_000_000,
-    outputStateTree: defaultTestStateTreeAccounts().merkleTree,
-  });
-
-  /// Create a VersionedTransaction and sign it
-  const tx = buildAndSignTx(
-    [ComputeBudgetProgram.setComputeUnitLimit({ units: 1_200_000 }), ix],
-    fromKeypair,
-    blockhash,
-    []
-  );
-
-  /// Confirm
-  const txId = await sendAndConfirmTx(connection, tx);
-  console.log("Transaction Signature:", txId);
-})();
 ```
 
 ### Creating Lookup Tables
