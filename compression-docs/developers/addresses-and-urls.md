@@ -20,4 +20,4 @@
 
 <table><thead><tr><th width="260"></th><th></th></tr></thead><tbody><tr><td>Lookup Table #1 (Mainnet)</td><td><strong>9NYFyEqPkyXUhkerbGHXUXkvb4qpzeEdHuGpgbgpH1NJ</strong></td></tr><tr><td>Lookup Table #1 (Devnet)</td><td><strong>qAJZMgnQJ8G6vA3WRcjD9Jan1wtKkaCFWLWskxJrR5V</strong></td></tr></tbody></table>
 
-If you want to extend a custom lookup table with accounts commonly used by Light Protocol, we provide a helper function [here](https://www.zkcompression.com/developers/typescript-client#creating-lookup-tables).
+If you need to extend a custom lookup table with accounts commonly used by Light Protocol, we provide a helper function [here](https://www.zkcompression.com/developers/typescript-client#creating-lookup-tables).
