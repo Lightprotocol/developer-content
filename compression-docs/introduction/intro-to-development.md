@@ -50,13 +50,11 @@ The code samples work! You can copy & paste them into your IDE or terminal and r
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
     @solana/web3.js \
-    @coral-xyz/anchor \
     @lightprotocol/zk-compression-cli
 </code></pre></td></tr><tr><td>Yarn</td><td><p></p><pre class="language-sh"><code class="lang-sh">yarn add \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
     @solana/web3.js \
-    @coral-xyz/anchor \
     @lightprotocol/zk-compression-cli
 </code></pre></td></tr></tbody></table>
 
@@ -70,7 +68,8 @@ The code samples work! You can copy & paste them into your IDE or terminal and r
 // Helius exposes Solana and Photon RPC endpoints through a single URL
 const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=&#x3C;api_key>";
 const PHOTON_ENDPOINT = RPC_ENDPOINT;
-<strong>const connection: Rpc = createRpc(RPC_ENDPOINT, PHOTON_ENDPOINT)
+const PROVER_ENDPOINT = RPC_ENDPOINT;
+<strong>const connection: Rpc = createRpc(RPC_ENDPOINT, PHOTON_ENDPOINT, PROVER_ENDPOINT)
 </strong>
 console.log("connection", connection);
 </code></pre>
@@ -120,8 +119,9 @@ const tokenRecipient = Keypair.generate();
 
 /// Helius exposes Solana and compression RPC endpoints through a single URL
 const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
-const COMPRESSION_RPC_ENDPOINT = RPC_ENDPOINT;
-const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT)
+const COMPRESSION_ENDPOINT = RPC_ENDPOINT;
+const PROVER_ENDPOINT = RPC_ENDPOINT;
+const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_ENDPOINT, PROVER_ENDPOINT)
 
 const main = async () => {
   /// Airdrop lamports to pay fees

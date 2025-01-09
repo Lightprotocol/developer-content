@@ -16,13 +16,11 @@ _Key benefits of compressed tokens:_
 <table><thead><tr><th width="215">Package Manager</th><th>Command</th></tr></thead><tbody><tr><td>npm</td><td><pre class="language-bash"><code class="lang-bash">npm install --save \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
-    @solana/web3.js \
-    @coral-xyz/anchor
+    @solana/web3.js
 </code></pre></td></tr><tr><td>Yarn</td><td><pre class="language-bash"><code class="lang-bash">yarn add \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
-    @solana/web3.js \
-    @coral-xyz/anchor
+    @solana/web3.js
 </code></pre></td></tr></tbody></table>
 
 ### 2. **Create an RPC Connection**
@@ -34,8 +32,9 @@ import {
 } from "@lightprotocol/stateless.js";
 
 const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
-const COMPRESSION_RPC_ENDPOINT = RPC_ENDPOINT;
-const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_RPC_ENDPOINT)
+const COMPRESSION_ENDPOINT = RPC_ENDPOINT;
+const PROVER_ENDPOINT = RPC_ENDPOINT;
+const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_ENDPOINT, PROVER_ENDPOINT)
 ```
 
 <details>
@@ -81,7 +80,7 @@ import { PublicKey } from '@solana/web3.js';
 
 <strong>/// Helius exposes the Solana and compression RPC endpoints through a single URL
 </strong>const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=&#x3C;api_key>';
-const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
+const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
 const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 
 (async () => {
@@ -191,7 +190,7 @@ import { Rpc, createRpc, bn } from '@lightprotocol/stateless.js';
 import { CompressedTokenProgram, selectMinCompressedTokenAccountsForTransfer } from '@lightprotocol/compressed-token';
 
 const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
-const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
+const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
 const publicKey = PUBLIC_KEY;
 const recipient = RECIPIENT_PUBLIC_KEY;
 const mint = MINT_KEYPAIR.publicKey;
@@ -242,7 +241,7 @@ import { CompressedTokenProgram, selectMinCompressedTokenAccountsForTransfer } f
 import { createAssociatedTokenAccount } from '@solana/spl-token';
 
 const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
-const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
+const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
 const publicKey = PUBLIC_KEY;
 const mint = MINT_KEYPAIR.publicKey;
 const amount = bn(1e8);
@@ -302,9 +301,9 @@ const amount = bn(1e8);
 ## Best Practices
 
 * **Clear UI Indicators —** Provide clear visual distinctions between compressed and uncompressed SPL tokens
-* **Transaction History** — Provide detailed transaction histories for compressed tokens, including compression-specific details like state root updates
+* **Transaction History** — Provide detailed transaction histories for compressed tokens
 * **Decompression and Compression** — Provide a clear path for users to convert between compressed and uncompressed tokens when needed
 
 ## Support
 
-For additional support or questions, please refer to our [documentation](https://www.zkcompression.com) or contact [Swen](https://t.me/swen\_light) or [Mert](https://t.me/mert\_helius) on Telegram or via [email](mailto:friends@lightprotocol.com)
+For additional support or questions, please refer to our [documentation](https://www.zkcompression.com) or contact [Swen](https://t.me/swen_light) or [Mert](https://t.me/mert_helius) on Telegram or via [email](mailto:friends@lightprotocol.com).
