@@ -53,7 +53,7 @@ Visit the [JSON RPC Methods](json-rpc-methods/) section for the full list of com
 
 ## Quickstart
 
-### Starting the test-validator for Local Development
+### Starting the `test-validator` for Local Development
 
 ```sh
 light test-validator 
