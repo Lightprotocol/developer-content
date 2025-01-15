@@ -1,4 +1,4 @@
-# Token-2022 Support
+# Using Token-2022
 
 You can compress token-2022 accounts of mints with the following mint-extensions:
 
@@ -11,6 +11,10 @@ You can compress token-2022 accounts of mints with the following mint-extensions
 * TokenGroupMember
 
 All other extensions are not yet supported.
+
+{% hint style="info" %}
+If you need another Mint extension to be supported, [let us know](https://t.me/swen_light)!
+{% endhint %}
 
 ## Minting, compressing, and transferring tokens with Token-2022 Metadata
 
