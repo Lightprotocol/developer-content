@@ -13,7 +13,7 @@ You can compress token-2022 accounts of mints with the following mint-extensions
 All other extensions are not yet supported.
 
 {% hint style="info" %}
-If you need another Mint extension to be supported, [let us know](https://t.me/swen_light)!
+If you require support for other mint-extensions, [let us know](https://t.me/swen_light)!
 {% endhint %}
 
 ## Minting, compressing, and transferring tokens with Token-2022 Metadata
