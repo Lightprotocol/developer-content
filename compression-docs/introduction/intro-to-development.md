@@ -20,7 +20,7 @@ Development with ZK Compression on Solana consists of two main parts:&#x20;
 * [Client development](intro-to-development.md#client-side-development)
 * [On-chain program development](intro-to-development.md#on-chain-program-development)
 
-The [ZK Compression RPC API](../developers/json-rpc-methods/) is the glue between clients and on-chain programs. It extends Solana's default [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed state. To view the complete list of supported endpoints, visit the [JSON RPC Methods](../developers/json-rpc-methods/) section.
+The [ZK Compression RPC API](../developers/json-rpc-methods/) is the glue between clients and on-chain programs. It extends Solana's [JSON RPC API](https://solana.com/docs/rpc) with additional endpoints for interacting with ZK compressed accounts. You can view the complete list of supported endpoints [here](../developers/json-rpc-methods/).
 
 ### A Quick Intro to Client-side Development
 
@@ -30,7 +30,7 @@ The following TypeScript and Rust SDKs are used to interact with ZK Compression:
 
 #### RPC Connection
 
-An RPC connection is needed to interact with the network. You can either work with an RPC infrastructure provider that supports ZK Compression or run your own RPC Node.
+You need an RPC connection to interact with the network. You can either work with an RPC infrastructure provider that supports ZK Compression or run your own RPC Node.
 
 {% hint style="info" %}
 [Helius Labs](https://github.com/helius-labs) supports ZK Compression and maintains its canonical RPC and [Photon indexer implementation](https://github.com/helius-labs/photon).
@@ -41,22 +41,42 @@ Our local dev tooling supports Photon out of the box via the `light test-validat
 ### Quickstart
 
 {% hint style="info" %}
-The code samples work! You can copy & paste them into your IDE or terminal and run!
+The code samples work! You can copy & paste them into your IDE and run!
 {% endhint %}
 
 #### Installation (Node.js, web)
 
-<table><thead><tr><th width="183">Package Manager </th><th>Command</th></tr></thead><tbody><tr><td>NPM</td><td><pre class="language-sh"><code class="lang-sh">npm install --save \
+{% tabs %}
+{% tab title="npm" %}
+```bash
+npm install -g @lightprotocol/zk-compression-cli && \
+npm install --save \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
-    @solana/web3.js \
-    @lightprotocol/zk-compression-cli
-</code></pre></td></tr><tr><td>Yarn</td><td><p></p><pre class="language-sh"><code class="lang-sh">yarn add \
+    @solana/web3.js
+```
+{% endtab %}
+
+{% tab title="yarn" %}
+```bash
+yarn global add @lightprotocol/zk-compression-cli && \
+yarn add \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
-    @solana/web3.js \
-    @lightprotocol/zk-compression-cli
-</code></pre></td></tr></tbody></table>
+    @solana/web3.js
+```
+{% endtab %}
+
+{% tab title="pnpm" %}
+```bash
+pnpm add -g @lightprotocol/zk-compression-cli && \
+pnpm add \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js
+```
+{% endtab %}
+{% endtabs %}
 
 #### Creating an RPC Connection
 
