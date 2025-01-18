@@ -44,7 +44,7 @@ Our local dev tooling supports Photon out of the box via the `light test-validat
 The code samples work! You can copy & paste them into your IDE and run!
 {% endhint %}
 
-#### Installation (Node.js, web)
+#### Installation (Node.js, Web)
 
 {% tabs %}
 {% tab title="npm" %}
