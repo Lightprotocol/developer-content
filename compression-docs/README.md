@@ -6,7 +6,7 @@
 
 ZK Compression is a new primitive on Solana that enables you to build applications at scale.
 
-Developers and users can compress their on-chain state, reducing state costs **by orders of magnitude** while preserving the security, performance, and composability of the Solana L1.
+Developers and users can compress their on-chain state, reducing data storage costs **by orders of magnitude** while preserving the security, performance, and composability of the Solana L1.
 
 
 
