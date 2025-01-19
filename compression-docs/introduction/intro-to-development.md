@@ -198,7 +198,7 @@ main();
 ### On-chain Program Development
 
 {% hint style="info" %}
-The ZK Compression primitive is the core of [the Light protocol](https://github.com/Lightprotocol). To leverage ZK Compression, your custom program invokes the _Light system program_ via Cross-Program Invocation (CPI). For the sake of simplicity, we refer to this set of protocol smart contracts as _compression programs._
+The ZK Compression primitive is the core of [the Light protocol](https://github.com/Lightprotocol). To leverage ZK Compression, your custom program invokes the _Light system program_ via Cross-Program Invocation (CPI).&#x20;
 {% endhint %}
 
 You can write custom programs using ZK compression in Anchor or native Rust.
