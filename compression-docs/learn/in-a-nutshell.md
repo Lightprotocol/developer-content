@@ -3,7 +3,7 @@
 ## High-level System Overview
 
 1. **State is stored as call data in** [**Solana's ledger**](https://www.helius.dev/blog/all-you-need-to-know-about-compression-on-solana#state-vs-ledger)**,** resulting in very low rent cost
-2. **Transactions specify state:** Transactions define the state they access (read/write) and include it in the transaction payload
+2. **Transactions specify the state they access** (read/write) and include it in the transaction payload
 3. **State Validation:**
    1. Solana Programs [invoke](https://solana.com/docs/core/cpi) the [Light Protocol System Program](../developers/addresses-and-urls.md#program-ids-and-accounts-from-27th-aug-2024-onward) to update compressed state
       1. **The protocol** [**validates**](core-concepts/validity-proofs.md) **the state** (validity of existing state, sum checks, ownership checks)
