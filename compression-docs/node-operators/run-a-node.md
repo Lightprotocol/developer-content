@@ -22,17 +22,17 @@ _Becoming an operator for any node type is permissionless_
 
 ## Photon RPC Node
 
-RPC nodes index the compression programs, enabling clients to read and build transactions interacting with compressed state
+RPC nodes index the Light Protocol programs, enabling clients to read and build transactions interacting with compressed state.
 
-The canonical compression indexer is named Photon. It can be run locally and requires minimal setup, which must be pointed to an existing Solana RPC. See the Github [repo](https://github.com/helius-labs/photon) for more info:
+The canonical ZK Compression indexer is named Photon. It can be run locally and requires minimal setup, which must be pointed to an existing Solana RPC. See the Github [repo](https://github.com/helius-labs/photon) for more info:
 
 {% embed url="https://github.com/helius-labs/photon" %}
 
 ## Prover Node
 
-Provers can generate validity proofs for state inclusion on behalf of app and wallet developers
+Provers generate validity proofs for state inclusion on behalf of app developers
 
-**Prover nodes** can be operated either stand-alone or with an RPC node: in its default configuration, the canonical Photon RPC node implementation by [Helius Labs](https://github.com/helius-labs/photon) bundles a Prover node. The [ZK Compression RPC API ](https://docs.lightprotocol.com/developers/json-rpc-methods)specification supports proof generation via the `getValidityProof` endpoint, making it easy to serve proofs using regular RPC methods via the same port
+**Prover nodes** can be operated either stand-alone or with an RPC node: in its default configuration, the Photon RPC node implementation by [Helius Labs](https://github.com/helius-labs/photon) bundles a Prover node. The [ZK Compression RPC API ](https://docs.lightprotocol.com/developers/json-rpc-methods)specification supports proof generation via the `getValidityProof` endpoint, making it easy to serve proofs using regular RPC methods via the same port.
 
 Please refer to the Github repo for more info:
 
