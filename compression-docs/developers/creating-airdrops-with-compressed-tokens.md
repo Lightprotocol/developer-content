@@ -4,7 +4,7 @@
 
 **By the end of this guide, you'll have implemented a fully functioning, programmatic airdrop.**
 
-:bulb: Further below, we provide an advanced section for custom [decompress/claims](creating-airdrops-with-compressed-tokens.md#decompress-claim) and [native Jupiter swaps](creating-airdrops-with-compressed-tokens.md#native-swap-via-jup-api) with zk-compressed tokens.
+:bulb: Further below, we provide an advanced section for custom [Decompress/claims](creating-airdrops-with-compressed-tokens.md#advanced-decompress-claim) and [native Jupiter swaps](creating-airdrops-with-compressed-tokens.md#native-swap-via-jup-api) with zk-compressed tokens.
 
 {% hint style="info" %}
 _Key benefits of compressed tokens:_
@@ -26,10 +26,10 @@ For programmatic airdrops with more control, keep reading. :point\_down:
 
 </details>
 
-The high level is this:
+The high level overview is this:
 
 1. Mint/Send the to-be-airdropped SPL tokens to a wallet you control.
-2. Create batches of instructions based on a list of recipients and amounts
+2. Create batches of instructions based on a list of recipients and amounts.
 3. Build transactions from these instruction batches, then sign, send, and confirm them.
 
 {% hint style="info" %}
@@ -513,12 +513,12 @@ const recipients = [
 })();
 ```
 
-Ensure you have all the necessary `.env` variables set up. You can now run your code and execute the airdrop!
+Ensure that you have all the necessary `.env` variables set up. You can now run your code and execute the airdrop!
 
 ## Advanced: Decompress / Claim
 
 {% hint style="info" %}
-Compressed tokens are supported in major Solana wallets like Phantom and Backpack. Still, to customize airdrops or claims, you can let users decompress to SPL via your UI, which is useful if their wallets don’t support ZK compression. Here's how:
+Compressed tokens are supported in major Solana wallets like Phantom and Backpack. Still, to customize airdrops or claims, you can let users decompress to SPL via your UI, which is helpful if their wallets don’t support ZK compression. Here's how:point\_down:
 {% endhint %}
 
 <details>
@@ -582,9 +582,9 @@ const amount = bn(1e5);
 
 * Set priority fees dynamically for decompression. Learn more [here](https://docs.helius.dev/guides/sending-transactions-on-solana#summary).
 
-## Native Swap via Jup-api
+## Native Swap via Jup-API
 
-* If you have a custom UI, you can let users swap compressed tokens using the Jup-api. You can find an example implementation demo [here](https://github.com/Lightprotocol/example-jupiter-swap-node).
+* If you have a custom UI, you can let users swap compressed tokens using the Jup-API. You can find an example implementation demo [here](https://github.com/Lightprotocol/example-jupiter-swap-node).
 
 ***
 
