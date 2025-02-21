@@ -447,9 +447,6 @@ const recipients = [
 ].map((address) => new PublicKey(address));
 
 (async () => {
-  // provide from previous steps
-  // const mint = new PublicKey("FLEaDiqyipcu3fHiiohMJiGzzmJRmbEAJzfUfqjCFTu9");
-
   /// Create an SPL mint + register it for compression.
   const { mint, transactionSignature } = await createMint(
     connection,
@@ -518,7 +515,7 @@ Ensure that you have all the necessary `.env` variables set up. You can now run 
 ## Advanced: Decompress / Claim
 
 {% hint style="info" %}
-Compressed tokens are supported in major Solana wallets like Phantom and Backpack. Still, to customize airdrops or claims, you can let users decompress to SPL via your UI, which is helpful if their wallets don’t support ZK compression. Here's how:point\_down:
+Compressed tokens are supported in major Solana wallets like Phantom and Backpack. Still, you can let users decompress to SPL via your Frontend (FE) to customize claims, which is helpful if their wallets don’t support ZK compression. Here's how:point\_down:
 {% endhint %}
 
 <details>
@@ -584,7 +581,7 @@ const amount = bn(1e5);
 
 ## Native Swap via Jup-API
 
-* If you have a custom UI, you can let users swap compressed tokens using the Jup-API. You can find an example implementation demo [here](https://github.com/Lightprotocol/example-jupiter-swap-node).
+* If you have a custom FE, you can let users swap compressed tokens using the Jup-API. You can find an example implementation demo [here](https://github.com/Lightprotocol/example-jupiter-swap-node).
 
 ***
 
