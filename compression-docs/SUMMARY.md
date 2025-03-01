@@ -53,9 +53,9 @@
   * [getIndexerSlot](developers/json-rpc-methods/getindexerslot.md)
   * [getIndexerHealth](developers/json-rpc-methods/getindexerhealth.md)
 * [Addresses and URLs](developers/addresses-and-urls.md)
+* [Creating Airdrops with Compressed Tokens](developers/creating-airdrops-with-compressed-tokens.md)
 * [Using Token-2022](developers/using-token-2022.md)
 * [Add Compressed Token Support to Your Wallet](developers/add-compressed-token-support-to-your-wallet.md)
-* [Creating Airdrops with Compressed Tokens](developers/creating-airdrops-with-compressed-tokens.md)
 * [Create programs with the program-template](developers/create-programs-with-the-program-template.md)
 
 ## Node Operators
