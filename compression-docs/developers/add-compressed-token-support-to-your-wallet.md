@@ -32,9 +32,7 @@ import {
 } from "@lightprotocol/stateless.js";
 
 const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
-const COMPRESSION_ENDPOINT = RPC_ENDPOINT;
-const PROVER_ENDPOINT = RPC_ENDPOINT;
-const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_ENDPOINT, PROVER_ENDPOINT)
+const connection: Rpc = createRpc(RPC_ENDPOINT)
 ```
 
 <details>
