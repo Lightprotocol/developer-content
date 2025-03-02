@@ -75,22 +75,22 @@ main();
 
 ### 3. Display Compressed Token Balances
 
-<pre class="language-typescript"><code class="lang-typescript">import { Rpc, createRpc } from '@lightprotocol/stateless.js';
+```typescript
+import { Rpc, createRpc } from '@lightprotocol/stateless.js';
 import { PublicKey } from '@solana/web3.js';
 
-<strong>/// Helius exposes the Solana and compression RPC endpoints through a single URL
-</strong>const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=&#x3C;api_key>';
-const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
+const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
+const connection: Rpc = createRpc(RPC_ENDPOINT);
 const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 
 (async () => {
     // Returns balance for owner per mint
     // Can optionally apply filter: {mint, limit, cursor}
     const balances =
-        await connection.getCompressedTokenBalancesByOwner(publicKey);
+        await connection.getCompressedTokenBalancesByOwnerV2(publicKey);
     console.log(balances);
 })();
-</code></pre>
+```
 
 ### 4. Get Compression Signature History By Owner
 
@@ -99,7 +99,7 @@ import { Rpc, createRpc } from '@lightprotocol/stateless.js';
 import { PublicKey } from '@solana/web3.js';
 
 const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
-const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
+const connection: Rpc = createRpc(RPC_ENDPOINT);
 const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 
 (async () => {
@@ -147,17 +147,10 @@ import { Rpc, confirmTx, createRpc } from '@lightprotocol/stateless.js';
 import { createMint, mintTo } from '@lightprotocol/compressed-token';
 
 const RPC_ENDPOINT = '<https://devnet.helius-rpc.com?api-key=><api_key>';
-const COMPRESSION_ENDPOINT =
-    '<https://devnet.helius-rpc.com?api-key=><api_key>';
-const connection: Rpc = createRpc(RPC_ENDPOINT, COMPRESSION_ENDPOINT);
+const connection: Rpc = createRpc(RPC_ENDPOINT);
 
+/// Airdrop tokens to PAYER beforehand.
 (async() => {
-    /// Airdrop lamports to pay fees.
-    await confirmTx(
-        connection,
-        await connection.requestAirdrop(PAYER.publicKey, 1e9),
-    );
-
     /// Create compressed-token mint
     const { mint, transactionSignature } = await createMint(
         connection,
