@@ -134,7 +134,7 @@ You now have a regular SPL token account owned by `PAYER` that holds all minted 
 
 ### 3. Distribute the tokens
 
-Next, you want to distribute the tokens from your distributor to all recipients.
+Next, you want to distribute the SPL tokens from your distributor to all recipients.
 
 {% hint style="info" %}
 Ensure you have the latest `@lightprotocol/stateless.js` and `@lightprotocol/compressed-token` versions `≥ 0.20.9`!
@@ -165,6 +165,7 @@ import dotenv from "dotenv";
 import bs58 from "bs58";
 dotenv.config();
 
+// Set these values in your .env file
 const RPC_ENDPOINT = process.env.RPC_ENDPOINT;
 const MINT_ADDRESS = new PublicKey(process.env.MINT_ADDRESS!);
 const PAYER_KEYPAIR = Keypair.fromSecretKey(
@@ -176,13 +177,12 @@ const PAYER_KEYPAIR = Keypair.fromSecretKey(
     const connection: Rpc = createRpc(RPC_ENDPOINT);
     const mintAddress = MINT_ADDRESS;
     const payer = PAYER_KEYPAIR;
-
     const activeStateTrees = await connection.getCachedActiveStateTreeInfo();
 
     /// Pick a new tree for each transaction!
     const { tree } = pickRandomTreeAndQueue(activeStateTrees);
 
-    // Create an SPL token account for the sender.
+    // Get the SPL token account for the sender which you previously created
     // The sender will send tokens from this account to the recipients as compressed tokens.
     const sourceTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
       connection,
