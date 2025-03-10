@@ -28,7 +28,7 @@ For programmatic airdrops with more control, keep reading. :point\_down:
 
 The high level overview is this:
 
-1. Mint/Send the to-be-airdropped SPL tokens to a wallet you control.
+1. Mint and send the to-be-airdropped SPL tokens to a wallet you control.
 2. Create batches of instructions based on a list of recipients and amounts.
 3. Build transactions from these instruction batches, then sign, send, and confirm them.
 
@@ -88,7 +88,7 @@ import {
 } from "@solana/spl-token";
 
 
-// Create RPC Connection
+/// Create RPC Connection
 const RPC_ENDPOINT = 'https://mainnet.helius-rpc.com?api-key=<api_key>';
 const connection: Rpc = createRpc(RPC_ENDPOINT);
 const PAYER = Keypair.fromSecretKey(<private_key>);
@@ -124,7 +124,7 @@ const PAYER = Keypair.fromSecretKey(<private_key>);
         mint,
         ata.address,
         PAYER.publicKey,
-        10e9 * 1e9 // 10_000_000_000 * decimals
+        1e9 * 1e9 // 1b * decimals
       );
     console.log(`mint-to success! txId: ${mintToTxId}`);
 })();
