@@ -262,7 +262,13 @@ const amount = bn(1e8);
     const proof = await connection.getValidityProof(
         inputAccounts.map(account => bn(account.compressedAccount.hash)),
     );
+    
+    // 4. Fetch active state tree infos
+    const activeStateTrees = await connection.getCachedActiveStateTreeInfo();
 
+
+    const { tree } = pickRandomTreeAndQueue(activeStateTrees);
+    
     // 4. Create the decompress instruction
     const decompressIx = await CompressedTokenProgram.decompress({
         payer: publicKey,
@@ -271,7 +277,13 @@ const amount = bn(1e8);
         amount,
         recentInputStateRootIndices: proof.rootIndices,
         recentValidityProof: proof.compressedProof,
+        outputStateTree: tree
     });
+    
+    // 6. Build, sign, and send the decompress transaction...
+    
+    
+    const { tree } = pickRandomTreeAndQueue(activeStateTrees);
 
     // 5. Create the compress instruction
     const compressIx = await CompressedTokenProgram.compress({
@@ -281,9 +293,10 @@ const amount = bn(1e8);
         toAddress: publicKey,
         amount,
         mint,
+        outputStateTree: tree
     });
 
-    // 6. Sign and send the transaction with sequential decompression and compression
+    // 6. Build, sign and send the compress transaction...
 })();
 ```
 
