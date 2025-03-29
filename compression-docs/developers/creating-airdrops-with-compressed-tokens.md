@@ -147,8 +147,7 @@ Ensure you have the latest `@lightprotocol/stateless.js` and `@lightprotocol/com
 <summary><strong>Simple airdrop script</strong></summary>
 
 ```typescript
-import * as web3 from "@solana/web3.js";
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { Keypair, PublicKey, ComputeBudgetProgram } from "@solana/web3.js";
 import { CompressedTokenProgram } from "@lightprotocol/compressed-token";
 import {
   bn,
@@ -173,17 +172,15 @@ const PAYER_KEYPAIR = Keypair.fromSecretKey(
 );
 
 (async () => {
-  try {
     const connection: Rpc = createRpc(RPC_ENDPOINT);
     const mintAddress = MINT_ADDRESS;
     const payer = PAYER_KEYPAIR;
+    const owner = payer;
     const activeStateTrees = await connection.getCachedActiveStateTreeInfo();
 
-    /// Pick a new tree for each transaction!
+    /// Pick a new tree for each transaction.
     const { tree } = pickRandomTreeAndQueue(activeStateTrees);
-
-    // Get the SPL token account for the sender which you previously created
-    // The sender will send tokens from this account to the recipients as compressed tokens.
+    
     const sourceTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
       connection,
       payer,
@@ -196,14 +193,14 @@ const PAYER_KEYPAIR = Keypair.fromSecretKey(
     // 5 recipients = 170_000 CU
     const airDropAddresses = [
       "GMPWaPPrCeZPse5kwSR3WUrqYAPrVZBSVwymqh7auNW7",
-    ].map((address) => new web3.PublicKey(address));
+    ].map((address) => new PublicKey(address));
 
-    const amount = bn(111); // each recipient will receive 111 tokens
+    const amount = bn(111); 
     
-    const instructions: web3.TransactionInstruction[] = [];
+    const instructions = []; 
     instructions.push(
-      web3.ComputeBudgetProgram.setComputeUnitLimit({ units: 120_000 }),
-      web3.ComputeBudgetProgram.setComputeUnitPrice({
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 120_000 }),
+      ComputeBudgetProgram.setComputeUnitPrice({
         // Replace this with a dynamic priority_fee based on network conditions.
         microLamports: calculateComputeUnitPrice(20_000, 120_000),
       })
@@ -211,8 +208,8 @@ const PAYER_KEYPAIR = Keypair.fromSecretKey(
     
     const compressInstruction = await CompressedTokenProgram.compress({
       payer: payer.publicKey,
-      owner: payer.publicKey,
-      source: sourceTokenAccount.address, // here, the owner of this account is also the payer.
+      owner: owner.publicKey,
+      source: sourceTokenAccount.address,
       toAddress: airDropAddresses,
       amount: airDropAddresses.map(() => amount),
       mint: mintAddress,
@@ -220,19 +217,6 @@ const PAYER_KEYPAIR = Keypair.fromSecretKey(
     });
     instructions.push(compressInstruction);
 
-    // Use zk-compression LUT for your network
-    // https://www.zkcompression.com/developers/protocol-addresses-and-urls#lookup-tables
-    const lookupTableAddress = new web3.PublicKey(
-      "9NYFyEqPkyXUhkerbGHXUXkvb4qpzeEdHuGpgbgpH1NJ" // mainnet
-    );
-
-    // Get the lookup table account state
-    const lookupTableAccount = (
-      await connection.getAddressLookupTable(lookupTableAddress)
-    ).value!;
-
-    // Sign the transaction with the payer and owner keypair
-    const owner = payer;
     const additionalSigners = dedupeSigner(payer, [owner]);
     const { blockhash } = await connection.getLatestBlockhash();
 
@@ -243,19 +227,9 @@ const PAYER_KEYPAIR = Keypair.fromSecretKey(
       additionalSigners,
       [lookupTableAccount]
     );
-
-    const simulate = await connection.simulateTransaction(tx);
-    if (simulate.value.err) {
-      console.error("Simulation failed", simulate);
-    } else {
-      console.log("Simulation successful", simulate);
-    }
-    // Uncomment to send the transaction.
-    // const txId = await sendAndConfirmTx(connection, tx);
-    // console.log(`txId: ${txId}`);
-  } catch (e) {
-    console.error(`Compression failed:`, e);
-  }
+    
+    const txId = await sendAndConfirmTx(connection, tx);
+    console.log(`txId: ${txId}`); 
 })();
 ```
 
