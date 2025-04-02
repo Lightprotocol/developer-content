@@ -26,10 +26,10 @@ The compressed account after its update looks like this:
 
 To write compressed state, a custom caller program must invoke the Light System Program via CPI. The system program then does the following:
 
-1. Runs relevant checks ([sum check](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L64-L70), etc.)
-2. [Verifies the validity proof](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/verify\_state\_proof.rs#L184-L190)&#x20;
-3. [Nullifies](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L203-L208) the "old" leaf of the compressed account that is being written to
-4. [Appends](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L240-L249) the new compressed account hash to the state tree and advances the tree's state root
-5. [Emits](https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/invoke/processor.rs#L269-L276) the new "raw" compressed account state onto the Solana ledger
+1. Runs relevant checks ([sum check](https://github.com/Lightprotocol/light-protocol/blob/v.1.0.0/programs/system/src/invoke/verify_state_proof.rs#L204-L210), etc.)
+2. [Verifies the validity proof](https://github.com/Lightprotocol/light-protocol/blob/v.1.0.0/programs/system/src/invoke/processor.rs#L209-L214)&#x20;
+3. [Nullifies](https://github.com/Lightprotocol/light-protocol/blob/v.1.0.0/programs/system/src/invoke/processor.rs#L209-L214) the "old" leaf of the compressed account that is being written to
+4. [Appends](https://github.com/Lightprotocol/light-protocol/blob/v.1.0.0/programs/system/src/invoke/processor.rs#L245-L254) the new compressed account hash to the state tree and advances the tree's state root
+5. [Emits](https://github.com/Lightprotocol/light-protocol/blob/v.1.0.0/programs/system/src/invoke/processor.rs#L272-L279) the new compressed account state onto the Solana ledger
 
 An[ RPC node](../../node-operators/run-a-node.md#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](../../developers/json-rpc-methods/)
