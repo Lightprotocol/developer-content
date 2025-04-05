@@ -2,14 +2,12 @@
 
 **ZK Compression is the most efficient way to distribute your SPL tokens.**&#x20;
 
-**By the end of this guide, you'll have implemented a fully functioning, programmatic airdrop.**
-
-:bulb: Further below, we provide an advanced section for custom [Decompress/claims](creating-airdrops-with-compressed-tokens.md#advanced-decompress-claim) and [native Jupiter swaps](creating-airdrops-with-compressed-tokens.md#native-swap-via-jup-api) with zk-compressed tokens.
+**By the end of this guide, you'll have built a fully functioning, programmatic airdrop.**
 
 {% hint style="info" %}
 _Key benefits of compressed tokens:_
 
-* Up to **5000x** cheaper than regular tokens
+* Up to 5000x cheaper than regular tokens
 * Supported by leading Solana wallets, including Phantom and Backpack
 * Compatible with existing programs via atomic compression and decompression between SPL <> Compressed tokens
 {% endhint %}
@@ -26,7 +24,7 @@ For programmatic airdrops with more control, keep reading. :point\_down:
 
 </details>
 
-The high level overview is this:
+The high-level overview is this:
 
 1. Mint and send the to-be-airdropped SPL tokens to a wallet you control.
 2. Create batches of instructions based on a list of recipients and amounts.
@@ -618,7 +616,7 @@ Ensure that you have all the necessary `.env` variables set up. You can now run 
 ## Advanced: Decompress / Claim
 
 {% hint style="info" %}
-Compressed tokens are supported in major Solana wallets like Phantom and Backpack. Still, you can let users decompress to SPL via your Frontend (FE) to customize claims, which is helpful if their wallets don’t support ZK compression. Here's how:point\_down:
+Compressed tokens are supported in major Solana wallets like Phantom and Backpack. Still, you can let users decompress to SPL via your Frontend (FE) to customize claims. Here's how:point\_down:
 {% endhint %}
 
 <details>
@@ -684,7 +682,7 @@ const amount = bn(1e5);
 
 ## Native Swap via Jup-API
 
-* If you have a custom FE, you can let users swap compressed tokens using the Jup-API. You can find an example implementation demo [here](https://github.com/Lightprotocol/example-jupiter-swap-node).
+* If you have a custom FE, you can let users swap compressed tokens using the Jup-API. An example implementation demo is available [here](https://github.com/Lightprotocol/example-jupiter-swap-node).
 
 ***
 
