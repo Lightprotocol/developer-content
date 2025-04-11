@@ -68,8 +68,8 @@ Additionally, to be eligible to score in the "1000x Hackathon", your project mus
 
 * Use compressed tokens or compressed accounts in some capacity.
 * Submit by May 16.
-* Each participant can have a maximum of 1 project submission count towards scoring in the "1000x hackathon" side track.
-* Please note that we award the prizes and the $100 participation bounty at our sole discretion. In particular, We reserve the right not to award the participation bounty if a submission is deemed insufficient in effort or quality.
+* Each participant can have a maximum of 1 project submission count towards scoring in the "1000x hackathon".
+* Please note that we award the prizes and the $100 participation bounty at our sole discretion. We reserve the right not to award the participation bounty if a submission is deemed insufficient in effort or quality.
 
 </details>
 
