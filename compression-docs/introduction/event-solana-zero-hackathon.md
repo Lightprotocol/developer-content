@@ -41,12 +41,12 @@ After the judges complete individual evaluations, they will discuss and choose t
 
 ## Side Track Prizes
 
-| Place                                                                        | Prize                      |
-| ---------------------------------------------------------------------------- | -------------------------- |
-| First Place                                                                  | 1 winner up to $10k + Swag |
-| Second Place                                                                 | 1 team of $7.5k + Swag     |
-| Third Place                                                                  | 2 teams of $5k each        |
-| All participants who submit a project that fulfills the eligibility criteria | $100                       |
+| Place                                                                        | Prize |
+| ---------------------------------------------------------------------------- | ----- |
+| First Place                                                                  | tba   |
+| Second Place                                                                 | tba   |
+| Third Place                                                                  | tba   |
+| All participants who submit a project that fulfills the eligibility criteria | tba   |
 
 {% hint style="info" %}
 All winners will also receive personal help with VC intros and Go-to-Market strategy from [Mert](https://x.com/0xMert_)!
