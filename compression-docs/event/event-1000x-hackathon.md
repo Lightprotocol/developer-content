@@ -35,7 +35,7 @@ Teams and individuals are evaluated on the following criteria:
 
 After the judges complete individual evaluations, they will discuss and choose the winners based on the project's weighted scores.
 
-## Side Track Prizes
+## Prizes
 
 | Place                                                                        | Prize |
 | ---------------------------------------------------------------------------- | ----- |
