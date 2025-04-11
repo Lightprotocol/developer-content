@@ -1,7 +1,7 @@
 # 🗓️ Event: 1000x Hackathon
 
 {% hint style="info" %}
-1000x is a dedicated side track for the Solana Breakout Hackathon.
+1000x runs in parallel to the Solana Breakout Hackathon. You can submit your project to Breakout and 1000x.
 {% endhint %}
 
 ## Sign-ups are now open!
