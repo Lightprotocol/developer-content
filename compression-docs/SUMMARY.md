@@ -4,7 +4,7 @@
 
 * [Overview](README.md)
 * [Intro to Development](introduction/intro-to-development.md)
-* [🗓️ Event: Solana Zero Hackathon](introduction/event-solana-zero-hackathon.md)
+* [🗓️ Event: 1000x Hackathon](introduction/event-1000x-hackathon.md)
 
 ## Release Notes
 
