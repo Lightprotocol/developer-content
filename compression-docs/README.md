@@ -6,7 +6,7 @@
 
 ZK Compression is a new primitive on Solana that enables you to build applications at scale.
 
-Developers and users can compress their on-chain state, reducing data storage costs **by orders of magnitude** while preserving the security, performance, and composability of the Solana L1.
+Developers and users can compress their on-chain state, reducing data storage costs **by orders of magnitude** while preserving the Solana L1's security, performance, and composability.
 
 
 
@@ -31,5 +31,5 @@ _**ZK**_**:** The protocol uses small zero-knowledge proofs ([validity proofs](l
 This documentation introduces the ZK Compression primitive and guides you to relevant codebases and examples.
 
 {% hint style="info" %}
-The ZK Compression primitive is being built in the open, and Mainnet-Beta is now live! Stay up to date with the core teams contributing to ZK Compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
+ZK Compression is being built in the open, and Mainnet-Beta is live! Stay up to date with the core teams contributing to ZK Compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
 {% endhint %}

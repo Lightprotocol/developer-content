@@ -1,17 +1,13 @@
----
-hidden: true
----
-
 # 🗓️ Event: 1000x Hackathon
 
 {% hint style="info" %}
-Solana 1000x is a dedicated side track for the Solana Breakout Hackathon.
+1000x is a dedicated side track for the Solana Breakout Hackathon.
 {% endhint %}
 
-## Submissions are now open!
+## Sign-ups are now open!
 
 1. Use ZK Compression in your hackathon project
-2. Sign up here (link tba) to signal your participation
+2. Sign up [here](https://docs.google.com/forms/d/e/1FAIpQLSekwFXBe009nO1fIgUHQfiAU0ILRN8y2O1XUm1qoJRZYGus-g/viewform?usp=header) to signal your participation
 3. You're now eligible to win prizes in this track
 
 ## Schedule
@@ -49,7 +45,7 @@ After the judges complete individual evaluations, they will discuss and choose t
 | All participants who submit a project that fulfills the eligibility criteria | tba   |
 
 {% hint style="info" %}
-All winners will also receive personal help with VC intros and Go-to-Market strategy from [Mert](https://x.com/0xMert_)!
+Winners will also receive help for Go-to-Market strategy from [Mert](https://x.com/0xMert_)!
 {% endhint %}
 
 ## FAQ
@@ -58,7 +54,7 @@ All winners will also receive personal help with VC intros and Go-to-Market stra
 
 <summary>How do I submit?</summary>
 
-1. Submit your project here (link tba) by May 16.
+1. Submit your project [here](https://docs.google.com/forms/d/e/1FAIpQLSekwFXBe009nO1fIgUHQfiAU0ILRN8y2O1XUm1qoJRZYGus-g/viewform?usp=header) by May 16.
 
 </details>
 
@@ -85,6 +81,9 @@ Additionally, to be eligible to score in the "1000x Hackathon", your project mus
 * [Light Protocol Monorepo](https://github.com/lightprotocol/light-protocol)
 * [Example programs](https://github.com/Lightprotocol/light-protocol/tree/main/examples)
 * Example clients ([web](https://github.com/Lightprotocol/example-web-client), [node](https://github.com/Lightprotocol/example-nodejs-client))
+
+- [Integration guides](https://www.zkcompression.com/developers/creating-airdrops-with-compressed-tokens)
+
 * Introductory [Blog](https://www.helius.dev/blog/solana-builders-zk-compression) posts
 
 </details>
@@ -95,7 +94,7 @@ Additionally, to be eligible to score in the "1000x Hackathon", your project mus
 
 We encourage you to build things that you're excited about building.&#x20;
 
-For inspiration, we have compiled a list of interesting ideas [here](https://github.com/Lightprotocol/zk-compression-summer-hackathon/tree/main?tab=readme-ov-file).
+For inspiration, we have compiled a list of interesting ideas [here](https://github.com/Lightprotocol/1000x-hackathon/).
 
 </details>
 
