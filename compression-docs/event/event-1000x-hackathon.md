@@ -8,7 +8,7 @@
 
 1. Use ZK Compression in your hackathon project
 2. Sign up [here](https://docs.google.com/forms/d/e/1FAIpQLSekwFXBe009nO1fIgUHQfiAU0ILRN8y2O1XUm1qoJRZYGus-g/viewform?usp=header) to signal your participation
-3. You're now eligible to win prizes in this track
+3. You're now eligible to win prizes in 1000x
 
 ## Schedule
 
@@ -45,7 +45,7 @@ After the judges complete individual evaluations, they will discuss and choose t
 | All participants who submit a project that fulfills the eligibility criteria | tba   |
 
 {% hint style="info" %}
-Winners will also receive help for Go-to-Market strategy from [Mert](https://x.com/0xMert_)!
+Winners will also receive help with Go-to-Market strategy from [Mert](https://x.com/0xMert_)!
 {% endhint %}
 
 ## FAQ
