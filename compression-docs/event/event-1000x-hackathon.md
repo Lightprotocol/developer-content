@@ -1,6 +1,6 @@
 # 🗓️ Event: 1000x Hackathon
 
-<figure><img src="../.gitbook/assets/1000xHackathon_banner.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/zkcompression_1000x_banner.png" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 1000x runs in parallel to the Solana Breakout Hackathon. You can submit your project to Breakout and 1000x.
