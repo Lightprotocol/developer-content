@@ -39,12 +39,12 @@ After the judges complete individual evaluations, they will discuss and choose t
 
 ## Prizes
 
-| Place                                                                        | Prize |
-| ---------------------------------------------------------------------------- | ----- |
-| First Place                                                                  | tba   |
-| Second Place                                                                 | tba   |
-| Third Place                                                                  | tba   |
-| All participants who submit a project that fulfills the eligibility criteria | tba   |
+| Place                                                                        | Prize                  |
+| ---------------------------------------------------------------------------- | ---------------------- |
+| First Place                                                                  | $10k + Swag            |
+| Second Place                                                                 | $5k + Swag             |
+| Third Place                                                                  | 2 teams á $2.5k + Swag |
+| All participants who submit a project that fulfills the eligibility criteria | $100                   |
 
 {% hint style="info" %}
 Winners will also receive help with Go-to-Market strategy from [Mert](https://x.com/0xMert_)!
