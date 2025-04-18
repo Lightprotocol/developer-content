@@ -14,7 +14,7 @@
 
 ## Schedule
 
-<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Global Online Hackathon</td><td>14 Apr 2025</td><td>16 May 2025</td></tr><tr><td>Best POAP interface Deadline</td><td>-</td><td><strong>09 May 2025</strong></td></tr><tr><td>Best cToken x Solana Pay Deadline</td><td>.</td><td><strong>09 May 2025</strong></td></tr><tr><td>Main Track Submissions</td><td>09 May 2025</td><td>16 May 2025</td></tr><tr><td>Judging</td><td>16 May 2025</td><td></td></tr></tbody></table>
+<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Global Online Hackathon</td><td>14 Apr 2025</td><td>16 May 2025</td></tr><tr><td>Best POP interface Deadline</td><td>-</td><td><strong>09 May 2025</strong></td></tr><tr><td>Best cToken x Solana Pay Deadline</td><td>.</td><td><strong>09 May 2025</strong></td></tr><tr><td>Main Track Submissions</td><td>09 May 2025</td><td>16 May 2025</td></tr><tr><td>Judging</td><td>16 May 2025</td><td></td></tr></tbody></table>
 
 ## Resources
 
@@ -35,7 +35,7 @@ Teams and individuals are evaluated on the following criteria:
 * Design
 * Extensibility
 
-The Solana Foundation cPoap and cPay prizes are subject to dedicated requirements listed below\*.&#x20;
+The Solana Foundation cPop and cPay prizes are subject to dedicated requirements listed below\*.&#x20;
 
 After the judges complete individual evaluations, they will discuss and choose the winners based on the project's weighted scores.
 
@@ -46,12 +46,12 @@ After the judges complete individual evaluations, they will discuss and choose t
 | First Place                                                                  | $10k + Swag                                  |
 | Second Place                                                                 | $5k + Swag                                   |
 | Third Place                                                                  | 2 teams á $2k + Swag                         |
-| Best cPOAP interface\*                                                       | Total $15k + 2 tickets for Solana Accelerate |
+| Best cPOP interface\*                                                        | Total $15k + 2 tickets for Solana Accelerate |
 | Best cToken integration for Solana Pay\*                                     | $2k + 2 tickets for Solana Accelerate        |
 | All participants who submit a project that fulfills the eligibility criteria | $100                                         |
 
 {% hint style="info" %}
-\*The Solana Foundation is sponsoring a dedicated prize pool for the best cToken POAP interface:
+\*The Solana Foundation is sponsoring a dedicated prize pool for the best cToken Proof-of-Participation (POP) interface:
 
 The interface should:
 
