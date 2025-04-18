@@ -14,7 +14,7 @@
 
 ## Schedule
 
-<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Global Online Hackathon</td><td>14 Apr 2025</td><td>16 May 2025</td></tr><tr><td>Submissions</td><td>09 May 2025</td><td>16 May 2025</td></tr><tr><td>Judging</td><td>16 May 2025</td><td></td></tr></tbody></table>
+<table><thead><tr><th width="348"></th><th>Start</th><th>End</th></tr></thead><tbody><tr><td>Best POAP interface Deadline</td><td>14 April 2025</td><td><strong>09 May 2025</strong></td></tr><tr><td>Global Online Hackathon</td><td>14 Apr 2025</td><td>16 May 2025</td></tr><tr><td>Submissions</td><td>09 May 2025</td><td>16 May 2025</td></tr><tr><td>Judging</td><td>16 May 2025</td><td></td></tr></tbody></table>
 
 ## Resources
 
