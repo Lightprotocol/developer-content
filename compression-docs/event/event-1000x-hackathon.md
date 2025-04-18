@@ -1,6 +1,6 @@
 # 🗓️ Event: 1000x Hackathon
 
-<figure><img src="../.gitbook/assets/zkcompression_1000x_banner.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/1000x_35_banner (1).png" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 1000x runs in parallel to the Solana Breakout Hackathon. You can submit your project to Breakout and 1000x.
@@ -35,19 +35,28 @@ Teams and individuals are evaluated on the following criteria:
 * Design
 * Extensibility
 
+The Solana Foundation cPoap and cPay prizes are subject to dedicated requirements listed below\*.&#x20;
+
 After the judges complete individual evaluations, they will discuss and choose the winners based on the project's weighted scores.
 
 ## Prizes
 
-| Place                                                                        | Prize                |
-| ---------------------------------------------------------------------------- | -------------------- |
-| First Place                                                                  | $10k + Swag          |
-| Second Place                                                                 | $5k + Swag           |
-| Third Place                                                                  | 2 teams á $2k + Swag |
-| All participants who submit a project that fulfills the eligibility criteria | $100                 |
+| Place                                                                        | Prize                                                        |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| First Place                                                                  | $10k + Swag                                                  |
+| Second Place                                                                 | $5k + Swag                                                   |
+| Third Place                                                                  | 2 teams á $2k + Swag                                         |
+| Best cPOAP interface\*                                                       | Top 3 teams split $15k + 2 tickets for Solana Accelerate NYC |
+| Best cToken integration into Solana Pay\*                                    | $2k                                                          |
+| All participants who submit a project that fulfills the eligibility criteria | $100                                                         |
 
 {% hint style="info" %}
-Winners will also receive help with Go-to-Market strategy from [Mert](https://x.com/0xMert_)!
+\*The Solana Foundation is sponsoring a dedicated prize pool for the best cToken POAP interface:
+
+The interface should:
+
+* Let creators mint experience tokens (cTokens for airdrops)
+* Let attendees claim them by scanning a QR code
 {% endhint %}
 
 ## FAQ
@@ -71,6 +80,7 @@ Additionally, to be eligible to score in the "1000x Hackathon", your project mus
 * Use compressed tokens or compressed accounts in some capacity.
 * Submit by May 16.
 * Each participant can have a maximum of 1 project submission count towards scoring in the "1000x hackathon".
+* The Solana Foundation cPoap and cPay prizes are subject to dedicated requirements\*.
 * Please note that we award the prizes and the $100 participation bounty at our sole discretion. We reserve the right not to award the participation bounty if a submission is deemed insufficient in effort or quality.
 
 </details>
