@@ -41,14 +41,14 @@ After the judges complete individual evaluations, they will discuss and choose t
 
 ## Prizes
 
-| Place                                                                        | Prize                                                        |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| First Place                                                                  | $10k + Swag                                                  |
-| Second Place                                                                 | $5k + Swag                                                   |
-| Third Place                                                                  | 2 teams á $2k + Swag                                         |
-| Best cPOAP interface\*                                                       | Top 3 teams split $15k + 2 tickets for Solana Accelerate NYC |
-| Best cToken integration into Solana Pay\*                                    | $2k                                                          |
-| All participants who submit a project that fulfills the eligibility criteria | $100                                                         |
+| Place                                                                        | Prize                                            |
+| ---------------------------------------------------------------------------- | ------------------------------------------------ |
+| First Place                                                                  | $10k + Swag                                      |
+| Second Place                                                                 | $5k + Swag                                       |
+| Third Place                                                                  | 2 teams á $2k + Swag                             |
+| Best cPOAP interface\*                                                       | Total $15k + 2 tickets for Solana Accelerate NYC |
+| Best cToken integration for Solana Pay\*                                     | $2k + 2 tickets for Solana Accelerate            |
+| All participants who submit a project that fulfills the eligibility criteria | $100                                             |
 
 {% hint style="info" %}
 \*The Solana Foundation is sponsoring a dedicated prize pool for the best cToken POAP interface:
