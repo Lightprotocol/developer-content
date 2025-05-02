@@ -18,10 +18,12 @@
 
 ## Resources
 
+{% hint style="info" %}
+We have compiled a list of interesting ideas to explore during the 1000x Hackathon that can serve as inspiration: [Project Ideas](https://github.com/Lightprotocol/1000x-hackathon/blob/main/ideas.md).
+{% endhint %}
+
 * [ZK Compression documentation](https://www.zkcompression.com/)
-* [Example token-escrow program](https://github.com/Lightprotocol/light-protocol/tree/main/examples/token-escrow/programs/token-escrow/src/escrow_with_pda)
 * [Discord chat for the hackathon](https://discord.com/invite/qCv4Y7uYmh)
-* [Project ideas](https://github.com/Lightprotocol/zk-compression-summer-hackathon/blob/main/ideas.md)
 
 ## Judging
 
