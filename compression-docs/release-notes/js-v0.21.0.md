@@ -40,11 +40,7 @@ const compressIx = await CompressedTokenProgram.compress({
 ### New - Decompress
 
 ```typescript
-// 1. Fetch & select stateTreeInfo
-const treeInfos = await rpc.getStateTreeInfos();
-const treeInfo = selectStateTreeInfo(treeInfos);
-
-// 2. Fetch & select tokenPoolInfo
+// 1. Fetch & select tokenPoolInfo
 const infos = await getTokenPoolInfos(rpc, mint);
 const selectedInfos = selectTokenPoolInfosForDecompression(
     infos,
@@ -53,7 +49,6 @@ const selectedInfos = selectTokenPoolInfosForDecompression(
 
 const ix = await CompressedTokenProgram.decompress({
     // ...
-    outputStateTreeInfo: treeInfo,
     tokenPoolInfos: selectedInfos,
 });
 ```
