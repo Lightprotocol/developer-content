@@ -12,13 +12,12 @@ If you need help migrating, we're happy to assist you. Please reach out to the t
 
 You can find working code snippets [here](https://www.zkcompression.com/developers/add-compressed-token-support-to-your-wallet#advanced-integration).
 
-### TL;DR:
+## Compress
 
-```typescript
-// old
+<pre class="language-typescript"><code class="lang-typescript">// old
 const activeStateTrees = await connection.getCachedActiveStateTreeInfo();
-const { tree } = pickRandomTreeAndQueue(activeStateTrees);
-
+<strong>const { tree } = pickRandomTreeAndQueue(activeStateTrees);
+</strong>
 const compressIx = await CompressedTokenProgram.compress({
     outputStateTree: tree,
 });
@@ -35,29 +34,43 @@ const compressIx = await CompressedTokenProgram.compress({
     outputStateTreeInfo: treeInfo,
     tokenPoolInfo,
 });
-```
+</code></pre>
 
-### New - Decompress
+## Decompress
+
+**Old (v0.20.x)**
 
 ```typescript
-// 1. Fetch & select tokenPoolInfo
-const infos = await getTokenPoolInfos(rpc, mint);
-const selectedInfos = selectTokenPoolInfosForDecompression(
+// ...
+
+const stateTreeInfos = await rpc.getCachedActiveStateTreeInfo();
+const { tree } = pickRandomTreeAndQueue(stateTreeInfos)
+
+const ix = await CompressedTokenProgram.decompress({
+    ...rest,
+    outputStateTree: merkleTree,
+});
+```
+
+**New (v0.21.x)**
+
+```typescript
+// ...
+
+const tokenPoolInfos = await getTokenPoolInfos(rpc, mint);
+const selectedTokenPoolInfos = selectTokenPoolInfosForDecompression(
     infos,
     amount,
 );
 
 const ix = await CompressedTokenProgram.decompress({
-    // ...
-    tokenPoolInfos: selectedInfos,
+    ...rest
+    tokenPoolInfos: selectedTokenPoolInfos,
 });
 ```
 
 
 
-
-
-You can find a detailed list of all changes here:
+**You can find a detailed list of all changes here:**
 
 {% embed url="https://github.com/Lightprotocol/light-protocol/blob/b860d449b25d1943b4bc007717316913c9713be8/js/compressed-token/CHANGELOG.md" %}
-
