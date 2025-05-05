@@ -146,18 +146,22 @@ Ensure you have the latest `@lightprotocol/stateless.js` and `@lightprotocol/com
 
 ```typescript
 import { Keypair, PublicKey, ComputeBudgetProgram } from "@solana/web3.js";
-import { CompressedTokenProgram } from "@lightprotocol/compressed-token";
+import {
+  CompressedTokenProgram,
+  getTokenPoolInfos,
+  selectTokenPoolInfo,
+} from "@lightprotocol/compressed-token";
 import {
   bn,
   buildAndSignTx,
   calculateComputeUnitPrice,
   createRpc,
   dedupeSigner,
-  pickRandomTreeAndQueue,
   Rpc,
+  selectStateTreeInfo,
   sendAndConfirmTx,
 } from "@lightprotocol/stateless.js";
-import * as splToken from "@solana/spl-token";
+import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import dotenv from "dotenv";
 import bs58 from "bs58";
 dotenv.config();
@@ -170,65 +174,65 @@ const PAYER_KEYPAIR = Keypair.fromSecretKey(
 );
 
 (async () => {
-    const connection: Rpc = createRpc(RPC_ENDPOINT);
-    const mintAddress = MINT_ADDRESS;
-    const payer = PAYER_KEYPAIR;
-    const owner = payer;
-    const activeStateTrees = await connection.getCachedActiveStateTreeInfo();
+  const connection: Rpc = createRpc(RPC_ENDPOINT);
+  const mintAddress = MINT_ADDRESS;
+  const payer = PAYER_KEYPAIR;
+  const owner = payer;
 
-    /// Pick a new tree for each transaction.
-    const { tree } = pickRandomTreeAndQueue(activeStateTrees);
-    
-    const sourceTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
-      connection,
-      payer,
-      mintAddress,
-      payer.publicKey
-    );
+  /// Select a new tree for each transaction.
+  const activeStateTrees = await connection.getStateTreeInfos();
+  const treeInfo = selectStateTreeInfo(activeStateTrees);
 
-    // Airdrop to example recipient
-    // 1 recipient = 120_000 CU
-    // 5 recipients = 170_000 CU
-    const airDropAddresses = [
-      "GMPWaPPrCeZPse5kwSR3WUrqYAPrVZBSVwymqh7auNW7",
-    ].map((address) => new PublicKey(address));
+  /// Select a tokenpool info
+  const infos = await getTokenPoolInfos(connection, mintAddress);
+  const info = selectTokenPoolInfo(infos);
 
-    const amount = bn(111); 
-    
-    const instructions = []; 
-    instructions.push(
-      ComputeBudgetProgram.setComputeUnitLimit({ units: 120_000 }),
-      ComputeBudgetProgram.setComputeUnitPrice({
-        // Replace this with a dynamic priority_fee based on network conditions.
-        microLamports: calculateComputeUnitPrice(20_000, 120_000),
-      })
-    );
-    
-    const compressInstruction = await CompressedTokenProgram.compress({
-      payer: payer.publicKey,
-      owner: owner.publicKey,
-      source: sourceTokenAccount.address,
-      toAddress: airDropAddresses,
-      amount: airDropAddresses.map(() => amount),
-      mint: mintAddress,
-      outputStateTree: tree,
-    });
-    instructions.push(compressInstruction);
+  const sourceTokenAccount = await getOrCreateAssociatedTokenAccount(
+    connection,
+    payer,
+    mintAddress,
+    payer.publicKey
+  );
 
-    const additionalSigners = dedupeSigner(payer, [owner]);
-    const { blockhash } = await connection.getLatestBlockhash();
+  // Airdrop to example recipient
+  // 1 recipient = 120_000 CU
+  // 5 recipients = 170_000 CU
+  const airDropAddresses = ["GMPWaPPrCeZPse5kwSR3WUrqYAPrVZBSVwymqh7auNW7"].map(
+    (address) => new PublicKey(address)
+  );
 
-    const tx = buildAndSignTx(
-      instructions,
-      payer,
-      blockhash,
-      additionalSigners,
-      [lookupTableAccount]
-    );
-    
-    const txId = await sendAndConfirmTx(connection, tx);
-    console.log(`txId: ${txId}`); 
+  const amount = bn(111);
+
+  const instructions = [];
+  instructions.push(
+    ComputeBudgetProgram.setComputeUnitLimit({ units: 120_000 }),
+    ComputeBudgetProgram.setComputeUnitPrice({
+      // Replace this with a dynamic priority_fee based on network conditions.
+      microLamports: calculateComputeUnitPrice(20_000, 120_000),
+    })
+  );
+
+  const compressInstruction = await CompressedTokenProgram.compress({
+    payer: payer.publicKey,
+    owner: owner.publicKey,
+    source: sourceTokenAccount.address,
+    toAddress: airDropAddresses,
+    amount: airDropAddresses.map(() => amount),
+    mint: mintAddress,
+    tokenPoolInfo: info,
+    outputStateTreeInfo: treeInfo,
+  });
+  instructions.push(compressInstruction);
+
+  const additionalSigners = dedupeSigner(payer, [owner]);
+  const { blockhash } = await connection.getLatestBlockhash();
+
+  const tx = buildAndSignTx(instructions, payer, blockhash, additionalSigners);
+
+  const txId = await sendAndConfirmTx(connection, tx);
+  console.log(`txId: ${txId}`);
 })();
+
 ```
 
 </details>
@@ -241,11 +245,14 @@ First, create a helper that takes recipients and amounts and returns batches of 
 
 ```typescript
 // create-instructions.ts
-import { CompressedTokenProgram } from "@lightprotocol/compressed-token";
+import {
+  CompressedTokenProgram,
+  TokenPoolInfo,
+} from "@lightprotocol/compressed-token";
 import {
   bn,
-  ActiveTreeBundle,
-  pickRandomTreeAndQueue,
+  selectStateTreeInfo,
+  StateTreeInfo,
 } from "@lightprotocol/stateless.js";
 import {
   ComputeBudgetProgram,
@@ -259,7 +266,8 @@ interface CreateAirdropInstructionsParams {
   payer: PublicKey;
   sourceTokenAccount: PublicKey;
   mint: PublicKey;
-  stateTrees: ActiveTreeBundle[];
+  stateTreeInfos: StateTreeInfo[];
+  tokenPoolInfos: TokenPoolInfo[];
   maxRecipientsPerInstruction?: number;
   maxInstructionsPerTransaction?: number;
   computeUnitLimit?: number;
@@ -274,7 +282,8 @@ export async function createAirdropInstructions({
   payer,
   sourceTokenAccount,
   mint,
-  stateTrees,
+  stateTreeInfos,
+  tokenPoolInfos,
   maxRecipientsPerInstruction = 5,
   maxInstructionsPerTransaction = 3,
   computeUnitLimit = 500_000,
@@ -302,8 +311,9 @@ export async function createAirdropInstructions({
       );
     }
 
-    const { tree } = pickRandomTreeAndQueue(stateTrees);
-
+    const treeInfo = selectStateTreeInfo(stateTreeInfos);
+    const tokenPoolInfo = selectTokenPoolInfo(tokenPoolInfos);
+    
     for (let j = 0; j < maxInstructionsPerTransaction; j++) {
       const startIdx = i + j * maxRecipientsPerInstruction;
       const recipientBatch = recipients.slice(
@@ -320,7 +330,8 @@ export async function createAirdropInstructions({
         toAddress: recipientBatch,
         amount: recipientBatch.map(() => amountBn),
         mint,
-        outputStateTree: tree,
+        tokenPoolInfo,
+        outputStateTreeInfo: treeInfo,
       });
 
       instructions.push(compressIx);
@@ -511,7 +522,7 @@ import {
   createRpc,
   Rpc,
 } from "@lightprotocol/stateless.js";
-import { createMint } from "@lightprotocol/compressed-token";
+import { createMint, getTokenPoolInfos } from "@lightprotocol/compressed-token";
 import { getOrCreateAssociatedTokenAccount, mintTo } from "@solana/spl-token";
 import { createAirdropInstructions } from "./create-instructions";
 import { BatchResultType, signAndSendAirdropBatches } from "./sign-and-send";
@@ -579,7 +590,9 @@ const recipients = [
   );
   console.log(`mint-to success! txId: ${mintToTxId}`);
 
-  const activeStateTrees = await connection.getCachedActiveStateTreeInfo();
+  const stateTreeInfos = await connection.getStateTreeInfos();
+
+  const tokenPoolInfos = await getTokenPoolInfos(connection, mint);
 
   const instructionBatches = await createAirdropInstructions({
     amount: 1e6,
@@ -587,7 +600,8 @@ const recipients = [
     payer: PAYER.publicKey,
     sourceTokenAccount: ata.address,
     mint,
-    stateTrees: activeStateTrees,
+    stateTreeInfos,
+    tokenPoolInfos,
     computeUnitPrice: calculateComputeUnitPrice(10_000, 500_000),
   });
 
@@ -609,6 +623,7 @@ const recipients = [
 
   console.log("Airdrop process complete.");
 })();
+
 ```
 
 Ensure that you have all the necessary `.env` variables set up. You can now run your code and execute the airdrop!
@@ -624,54 +639,91 @@ Compressed tokens are supported in major Solana wallets like Phantom and Backpac
 <summary><strong>Decompress SPL Tokens</strong></summary>
 
 ```typescript
-import { Rpc, createRpc, bn } from '@lightprotocol/stateless.js';
-import { CompressedTokenProgram, selectMinCompressedTokenAccountsForTransfer } from '@lightprotocol/compressed-token';
-import { createAssociatedTokenAccount } from '@solana/spl-token';
+import {
+  bn,
+  buildAndSignTx,
+  sendAndConfirmTx,
+  dedupeSigner,
+  Rpc,
+  createRpc,
+} from "@lightprotocol/stateless.js";
+import { ComputeBudgetProgram } from "@solana/web3.js";
+import {
+  CompressedTokenProgram,
+  getTokenPoolInfos,
+  selectMinCompressedTokenAccountsForTransfer,
+  selectTokenPoolInfosForDecompression,
+} from "@lightprotocol/compressed-token";
+import { createAssociatedTokenAccount } from "@solana/spl-token";
 
-const RPC_ENDPOINT = 'https://mainnet.helius-rpc.com?api-key=<api_key>';
+
+// 0. Set these values
+const RPC_ENDPOINT = "https://mainnet.helius-rpc.com?api-key=<api_key>";
+const mint = <MINT_ADDRESS>;
+const payer = <PAYER_KEYPAIR>;
+
+const owner = payer;
+const amount = 1e5;
 const connection: Rpc = createRpc(RPC_ENDPOINT);
-const publicKey = PUBLIC_KEY;
-const mint = MINT_KEYPAIR.publicKey;
-const amount = bn(1e5);
 
 (async () => {
-    // 0. Create an associated token account for the user if it doesn't exist
-    const ata = await createAssociatedTokenAccount(
-        connection,
-        PAYER,
-        mint,
-        publicKey,
-    );
+  // 1. Create an associated token account for the user if it doesn't exist
+  const ata = await createAssociatedTokenAccount(
+    connection,
+    payer,
+    mint,
+    payer.publicKey
+  );
 
-    // 1. Fetch the latest compressed token account state
-    const compressedTokenAccounts =
-        await connection.getCompressedTokenAccountsByOwner(publicKey, {
-            mint,
-        });
-
-    // 2. Select accounts to transfer from based on the transfer amount
-    const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
-        compressedTokenAccounts,
-        amount,
-    );
-
-    // 3. Fetch recent validity proof
-    const proof = await connection.getValidityProof(
-        inputAccounts.map(account => bn(account.compressedAccount.hash)),
-    );
-
-    // 4. Create the decompress instruction
-    const decompressIx = await CompressedTokenProgram.decompress({
-        payer: publicKey,
-        inputCompressedTokenAccounts: inputAccounts,
-        toAddress: ata,
-        amount,
-        recentInputStateRootIndices: proof.rootIndices,
-        recentValidityProof: proof.compressedProof,
+  // 2. Fetch compressed token accounts
+  const compressedTokenAccounts =
+    await connection.getCompressedTokenAccountsByOwner(owner.publicKey, {
+      mint,
     });
 
-    // 6. Sign and send the transaction...
+  // 3. Select
+  const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
+    compressedTokenAccounts.items,
+    bn(amount)
+  );
+
+  // 4. Fetch validity proof
+  const proof = await connection.getValidityProof(
+    inputAccounts.map((account) => account.compressedAccount.hash)
+  );
+
+  // 5. Fetch token pool infos
+  const tokenPoolInfos = await getTokenPoolInfos(connection, mint);
+
+  // 6. Select
+  const selectedTokenPoolInfos = selectTokenPoolInfosForDecompression(
+    tokenPoolInfos,
+    amount
+  );
+
+  // 7. Build instruction
+  const ix = await CompressedTokenProgram.decompress({
+    payer: payer.publicKey,
+    inputCompressedTokenAccounts: inputAccounts,
+    toAddress: owner.publicKey,
+    amount,
+    tokenPoolInfos: selectedTokenPoolInfos,
+    recentInputStateRootIndices: proof.rootIndices,
+    recentValidityProof: proof.compressedProof,
+  });
+
+  // 8. Sign, send, and confirm
+  const { blockhash } = await connection.getLatestBlockhash();
+  const additionalSigners = dedupeSigner(payer, [owner]);
+  const signedTx = buildAndSignTx(
+    [ComputeBudgetProgram.setComputeUnitLimit({ units: 300_000 }), ix],
+    payer,
+    blockhash,
+    additionalSigners
+  );
+  return await sendAndConfirmTx(connection, signedTx);
 })();
+
 ```
 
 </details>

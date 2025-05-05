@@ -177,130 +177,236 @@ const connection: Rpc = createRpc(RPC_ENDPOINT);
 </details>
 
 ```typescript
-import { Rpc, createRpc, bn } from '@lightprotocol/stateless.js';
-import { CompressedTokenProgram, selectMinCompressedTokenAccountsForTransfer } from '@lightprotocol/compressed-token';
+import {
+  Rpc,
+  createRpc,
+  bn,
+  dedupeSigner,
+  sendAndConfirmTx,
+  buildAndSignTx,
+} from "@lightprotocol/stateless.js";
+import {
+  CompressedTokenProgram,
+  selectMinCompressedTokenAccountsForTransfer,
+} from "@lightprotocol/compressed-token";
+import { ComputeBudgetProgram, Keypair } from "@solana/web3.js";
 
-const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
-const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
-const publicKey = PUBLIC_KEY;
-const recipient = RECIPIENT_PUBLIC_KEY;
-const mint = MINT_KEYPAIR.publicKey;
+// 0. Set these values
+const RPC_ENDPOINT = "https://mainnet.helius-rpc.com?api-key=<api_key>";
+const mint = <MINT_ADDRESS>;
+const payer = <PAYER_KEYPAIR>;
+const owner = payer;
+
+const recipient = Keypair.generate();
 const amount = bn(1e8);
 
+const connection: Rpc = createRpc(RPC_ENDPOINT);
+
 (async () => {
-    // 1. Fetch latest token account state
-    const compressedTokenAccounts =
-        await connection.getCompressedTokenAccountsByOwner(publicKey, {
-            mint,
-        });
-
-    // 2. Select accounts to transfer from based on the transfer amount
-    const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
-        compressedTokenAccounts.items,
-        amount,
-    );
-
-    // 3. Fetch recent validity proof
-    const proof = await connection.getValidityProof(
-        inputAccounts.map(account => bn(account.compressedAccount.hash)),
-    );
-
-    // 4. Create transfer instruction
-    const ix = await CompressedTokenProgram.transfer({
-        payer: publicKey,
-        inputCompressedTokenAccounts: inputAccounts,
-        toAddress: recipient,
-        amount,
-        recentInputStateRootIndices: proof.rootIndices,
-        recentValidityProof: proof.compressedProof,
+  // 1. Fetch latest token account state
+  const compressedTokenAccounts =
+    await connection.getCompressedTokenAccountsByOwner(owner.publicKey, {
+      mint, 
     });
 
-    console.log(ix);
-    // 5. Sign and send...
+  // 2. Select accounts to transfer from based on the transfer amount
+  const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
+    compressedTokenAccounts.items,
+    amount
+  );
+
+  // 3. Fetch recent validity proof
+  const proof = await connection.getValidityProof(
+    inputAccounts.map((account) => account.compressedAccount.hash)
+  );
+
+  // 4. Create transfer instruction
+  const ix = await CompressedTokenProgram.transfer({
+    payer: payer.publicKey,
+    inputCompressedTokenAccounts: inputAccounts,
+    toAddress: recipient.publicKey,
+    amount,
+    recentInputStateRootIndices: proof.rootIndices,
+    recentValidityProof: proof.compressedProof,
+  });
+
+  console.log(ix);
+
+  // 8. Sign, send, and confirm...
+  const { blockhash } = await connection.getLatestBlockhash();
+  const additionalSigners = dedupeSigner(payer, [owner]);
+  const signedTx = buildAndSignTx(
+    [ComputeBudgetProgram.setComputeUnitLimit({ units: 300_000 }), ix],
+    payer,
+    blockhash,
+    additionalSigners
+  );
+  return await sendAndConfirmTx(connection, signedTx);
 })();
+
 ```
 
 ### Advanced Integration
 
 <details>
 
-<summary><strong>Decompress and Compress SPL Tokens</strong></summary>
+<summary><strong>Decompress SPL Tokens</strong></summary>
 
-```typescript
-import { Rpc, createRpc, bn } from '@lightprotocol/stateless.js';
-import { CompressedTokenProgram, selectMinCompressedTokenAccountsForTransfer } from '@lightprotocol/compressed-token';
-import { createAssociatedTokenAccount } from '@solana/spl-token';
+<pre class="language-typescript"><code class="lang-typescript">import {
+  bn,
+  buildAndSignTx,
+  sendAndConfirmTx,
+  dedupeSigner,
+  Rpc,
+  createRpc,
+} from "@lightprotocol/stateless.js";
+import { ComputeBudgetProgram } from "@solana/web3.js";
+import {
+  CompressedTokenProgram,
+  getTokenPoolInfos,
+  selectMinCompressedTokenAccountsForTransfer,
+  selectTokenPoolInfosForDecompression,
+} from "@lightprotocol/compressed-token";
 
-const RPC_ENDPOINT = 'https://devnet.helius-rpc.com?api-key=<api_key>';
-const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
-const publicKey = PUBLIC_KEY;
-const mint = MINT_KEYPAIR.publicKey;
-const amount = bn(1e8);
+// 0. Set these values.
+const connection: Rpc = createRpc("https://mainnet.helius-rpc.com?api-key=&#x3C;api_key>";);
+const payer = PAYER_KEYPAIR;
+const owner = PAYER_KEYPAIR;
+const mint = MINT_ADDRESS;
+const amount = 1e5;
 
 (async () => {
-    // 0. Create an associated token account for the user if it doesn't exist
-    const ata = await createAssociatedTokenAccount(
-        connection,
-        PAYER,
-        mint,
-        publicKey,
-    );
-
-    // 1. Fetch the latest compressed token account state
-    const compressedTokenAccounts =
-        await connection.getCompressedTokenAccountsByOwner(publicKey, {
-            mint,
-        });
-
-    // 2. Select accounts to transfer from based on the transfer amount
-    const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
-        compressedTokenAccounts,
-        amount,
-    );
-
-    // 3. Fetch recent validity proof
-    const proof = await connection.getValidityProof(
-        inputAccounts.map(account => bn(account.compressedAccount.hash)),
-    );
-    
-    // 4. Fetch active state tree infos
-    const activeStateTrees = await connection.getCachedActiveStateTreeInfo();
-
-
-    const { tree } = pickRandomTreeAndQueue(activeStateTrees);
-    
-    // 4. Create the decompress instruction
-    const decompressIx = await CompressedTokenProgram.decompress({
-        payer: publicKey,
-        inputCompressedTokenAccounts: inputAccounts,
-        toAddress: ata,
-        amount,
-        recentInputStateRootIndices: proof.rootIndices,
-        recentValidityProof: proof.compressedProof,
-        outputStateTree: tree
-    });
-    
-    // 6. Build, sign, and send the decompress transaction...
-    
-    
-    const { tree } = pickRandomTreeAndQueue(activeStateTrees);
-
-    // 5. Create the compress instruction
-    const compressIx = await CompressedTokenProgram.compress({
-        payer: publicKey,
-        owner: publicKey,
-        source: ata,
-        toAddress: publicKey,
-        amount,
-        mint,
-        outputStateTree: tree
+  // 1. Fetch compressed token accounts
+  const compressedTokenAccounts =
+    await connection.getCompressedTokenAccountsByOwner(owner.publicKey, {
+      mint,
     });
 
-    // 6. Build, sign and send the compress transaction...
+  // 2. Select
+  const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
+    compressedTokenAccounts.items,
+    bn(amount)
+  );
+
+  // 3. Fetch validity proof
+  const proof = await connection.getValidityProof(
+    inputAccounts.map((account) => account.compressedAccount.hash)
+  );
+
+  // 4. Fetch token pool infos
+  const tokenPoolInfos = await getTokenPoolInfos(connection, mint);
+
+  // 5. Select
+  const selectedTokenPoolInfos = selectTokenPoolInfosForDecompression(
+    tokenPoolInfos,
+    amount
+  );
+
+  // 6. Build instruction
+  const ix = await CompressedTokenProgram.decompress({
+    payer: payer.publicKey,
+    inputCompressedTokenAccounts: inputAccounts,
+    toAddress: owner.publicKey,
+    amount,
+    tokenPoolInfos: selectedTokenPoolInfos,
+    recentInputStateRootIndices: proof.rootIndices,
+    recentValidityProof: proof.compressedProof,
+  });
+  
+  
+  // 7. Sign, send, and confirm...
+  // Example with keypair:
+<strong>  const { blockhash } = await connection.getLatestBlockhash();
+</strong>  const additionalSigners = dedupeSigner(payer, [owner]);
+  const signedTx = buildAndSignTx(
+    [ComputeBudgetProgram.setComputeUnitLimit({ units: 300_000 }), ix],
+    payer,
+    blockhash,
+    additionalSigners
+  );
+
+  return await sendAndConfirmTx(connection, signedTx);
+})();
+</code></pre>
+
+</details>
+
+<details>
+
+<summary><strong>Compress SPL Tokens</strong></summary>
+
+```typescript
+import {
+  buildAndSignTx,
+  sendAndConfirmTx,
+  Rpc,
+  createRpc,
+  selectStateTreeInfo,
+} from "@lightprotocol/stateless.js";
+import { ComputeBudgetProgram } from "@solana/web3.js";
+import {
+  CompressedTokenProgram,
+  getTokenPoolInfos,
+  selectTokenPoolInfo,
+} from "@lightprotocol/compressed-token";
+import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
+
+// 0. Set these values.
+const connection: Rpc = createRpc(
+  "https://mainnet.helius-rpc.com?api-key=<api_key>"
+);
+  const payer = <PAYER_KEYPAIR>;
+  const mint = <MINT_ADDRESS>;
+const amount = 1e5;
+
+(async () => {
+  // 1. Get user ATA
+  const sourceTokenAccount = await getOrCreateAssociatedTokenAccount(
+    connection,
+    payer,
+    mint,
+    payer.publicKey
+  );
+
+  // 2. Fetch & Select treeInfos
+  const treeInfos = await connection.getStateTreeInfos();
+  const treeInfo = selectStateTreeInfo(treeInfos);
+
+  // 3. Fetch & Select tokenPoolInfo
+  const tokenPoolInfos = await getTokenPoolInfos(connection, mint);
+  const tokenPoolInfo = selectTokenPoolInfo(tokenPoolInfos);
+
+  // 4. Build compress instruction
+  const compressInstruction = await CompressedTokenProgram.compress({
+    payer: payer.publicKey,
+    owner: payer.publicKey,
+    source: sourceTokenAccount.address,
+    toAddress: payer.publicKey, // to self.
+    amount,
+    mint,
+    outputStateTreeInfo: treeInfo,
+    tokenPoolInfo,
+  });
+
+  // 5. Sign and send tx
+  // Example with Keypair:
+  const { blockhash } = await connection.getLatestBlockhash();
+  const tx = buildAndSignTx(
+    [
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 300_000 }),
+      compressInstruction,
+    ],
+    payer,
+    blockhash,
+    [payer]
+  );
+  await sendAndConfirmTx(connection, tx);
 })();
 ```
 
 </details>
+
+
 
 ## Best Practices
 
