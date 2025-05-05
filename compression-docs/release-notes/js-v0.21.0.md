@@ -10,7 +10,7 @@ If you need help migrating, we're happy to assist you. Please reach out to the t
 
 ## How to Migrate from v0.20.x
 
-You can find working code snippets [here](https://www.zkcompression.com/developers/add-compressed-token-support-to-your-wallet#advanced-integration).
+You can find working code snippets [here](https://www.zkcompression.com/developers/add-compressed-token-support-to-your-wallet#decompress-spl-tokens).
 
 ## Compress
 
