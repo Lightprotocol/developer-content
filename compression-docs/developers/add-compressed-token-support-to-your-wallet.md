@@ -293,16 +293,14 @@ const amount = 1e5;
     inputAccounts.map((account) => account.compressedAccount.hash)
   );
 
-  // 4. Fetch token pool infos
+  // 4. Fetch &#x26; Select tokenPoolInfos
   const tokenPoolInfos = await getTokenPoolInfos(connection, mint);
-
-  // 5. Select
   const selectedTokenPoolInfos = selectTokenPoolInfosForDecompression(
     tokenPoolInfos,
     amount
   );
 
-  // 6. Build instruction
+  // 5. Build instruction
   const ix = await CompressedTokenProgram.decompress({
     payer: payer.publicKey,
     inputCompressedTokenAccounts: inputAccounts,
@@ -314,7 +312,7 @@ const amount = 1e5;
   });
   
   
-  // 7. Sign, send, and confirm...
+  // 6. Sign, send, and confirm.
   // Example with keypair:
 <strong>  const { blockhash } = await connection.getLatestBlockhash();
 </strong>  const additionalSigners = dedupeSigner(payer, [owner]);
