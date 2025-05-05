@@ -10,9 +10,9 @@ If you need help migrating, we're happy to assist you. Please reach out to the t
 
 ## How to Migrate from v0.20.x
 
-### Compress
+You can find working code snippets [here](https://www.zkcompression.com/developers/add-compressed-token-support-to-your-wallet#advanced-integration).
 
-**Old Code**
+### TL;DR:
 
 ```typescript
 // old
@@ -20,46 +20,38 @@ const activeStateTrees = await connection.getCachedActiveStateTreeInfo();
 const { tree } = pickRandomTreeAndQueue(activeStateTrees);
 
 const compressIx = await CompressedTokenProgram.compress({
-    // ...
     outputStateTree: tree,
 });
-```
 
-**New Code**
 
-```typescript
-// 1. Fetch and select stateTreeInfo
+// New
 const treeInfos = await rpc.getStateTreeInfos();
 const treeInfo = selectStateTreeInfo(treeInfos);
 
-// 2. Fetch and select tokenPoolInfo
 const infos = await getTokenPoolInfos(rpc, mint);
 const tokenPoolInfo = selectTokenPoolInfo(infos);
 
 const compressIx = await CompressedTokenProgram.compress({
-    // ...
     outputStateTreeInfo: treeInfo,
     tokenPoolInfo,
 });
 ```
 
-### Decompress
+### New - Decompress
 
 ```typescript
-// 1. Fetch and select stateTreeInfo
+// 1. Fetch & select stateTreeInfo
 const treeInfos = await rpc.getStateTreeInfos();
 const treeInfo = selectStateTreeInfo(treeInfos);
 
-// 2. Fetch tokenPoolInfo
+// 2. Fetch & seect tokenPoolInfo
 const infos = await getTokenPoolInfos(rpc, mint);
-// Select explicitly for decompression
 const selectedInfos = selectTokenPoolInfosForDecompression(
     infos,
     amount,
 );
 
 const ix = await CompressedTokenProgram.decompress({
-    // ...
     outputStateTreeInfo: treeInfo,
     tokenPoolInfos: selectedInfos,
 });
