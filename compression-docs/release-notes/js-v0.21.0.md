@@ -48,7 +48,7 @@ const { tree } = pickRandomTreeAndQueue(stateTreeInfos)
 
 const ix = await CompressedTokenProgram.decompress({
     ...rest,
-    outputStateTree: merkleTree,
+    outputStateTree: tree,
 });
 ```
 
@@ -57,9 +57,9 @@ const ix = await CompressedTokenProgram.decompress({
 ```typescript
 // ...
 
-const tokenPoolInfos = await getTokenPoolInfos(rpc, mint);
+const poolInfos = await getTokenPoolInfos(rpc, mint);
 const selectedTokenPoolInfos = selectTokenPoolInfosForDecompression(
-    infos,
+    poolInfos,
     amount,
 );
 
