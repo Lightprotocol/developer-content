@@ -9,7 +9,7 @@
 ## Sign-ups are now open!
 
 1. Use ZK Compression in your hackathon project
-2. Sign up [here](https://docs.google.com/forms/d/e/1FAIpQLSekwFXBe009nO1fIgUHQfiAU0ILRN8y2O1XUm1qoJRZYGus-g/viewform?usp=header) to signal your participation
+2. Submissions are hosted on [ST Earn](https://earn.superteam.fun/listing/1000x-hackathon/). Make sure to submit before the respective Deadlines!
 3. You're now eligible to win prizes in 1000x
 
 ## Schedule
