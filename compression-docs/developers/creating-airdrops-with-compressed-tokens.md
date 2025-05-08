@@ -76,20 +76,95 @@ pnpm add \
 
 ### 2. Mint SPL tokens to yourself
 
+{% tabs %}
+{% tab title="Default" %}
 ```typescript
 import { Keypair } from '@solana/web3.js';
-import { Rpc, createRpc } from '@lightprotocol/stateless.js';
+import { createRpc } from '@lightprotocol/stateless.js';
+import {
+    createMint,
+    getOrCreateAssociatedTokenAccount,
+    mintTo,
+} from "@solana/spl-token";
+import { createTokenPool } from '@lightprotocol/compressed-token';
+import bs58 from "bs58";
+import dotenv from "dotenv";
+dotenv.config();
+
+
+// Set these values in your .env file
+const RPC_ENDPOINT = process.env.RPC_ENDPOINT!;
+const PAYER = Keypair.fromSecretKey(
+  bs58.decode(process.env.PAYER_KEYPAIR!)
+);
+// Create Rpc endpoint
+const connection = createRpc(RPC_ENDPOINT);
+
+
+(async() => {
+   
+    /// Create an SPL mint
+    const mint = await createMint(
+        connection,
+        PAYER,
+        PAYER.publicKey,
+        null,
+        9
+    );
+    console.log(`create-mint success! address: ${mint}`);
+
+    /// Register mint for compression
+    const poolTxId = await createTokenPool(connection, PAYER, mint);
+    console.log(`createTokenPool success: ${poolTxId}`);
+
+
+    /// Create an associated SPL token account for the sender (PAYER)
+    const ata = await getOrCreateAssociatedTokenAccount(
+        connection,
+        PAYER,
+        mint,
+        PAYER.publicKey
+    );
+    console.log(`ATA: ${ata.address.toBase58()}`);
+
+
+    /// Mint SPL tokens to the sender
+    const mintToTxId = await mintTo(
+        connection,
+        PAYER,
+        mint,
+        ata.address,
+        PAYER.publicKey,
+        1e9 * 1e9 // 1b * decimals
+      );
+    console.log(`mint-to success! txId: ${mintToTxId}`);
+})();
+```
+{% endtab %}
+
+{% tab title="With `createMint` helper" %}
+If you create a new mint, you can use the `createMint` helper from `@lightprotocol/compressed-token`. It creates the mint **and** registers it for compression.
+
+```typescript
+import { Keypair } from '@solana/web3.js';
+import { createRpc } from '@lightprotocol/stateless.js';
 import { createMint } from '@lightprotocol/compressed-token';
 import {
     getOrCreateAssociatedTokenAccount,
     mintTo,
 } from "@solana/spl-token";
+import bs58 from "bs58";
+import dotenv from "dotenv";
+dotenv.config();
 
+// Set these values in your .env file
+const RPC_ENDPOINT = process.env.RPC_ENDPOINT!;
+const PAYER = Keypair.fromSecretKey(
+  bs58.decode(process.env.PAYER_KEYPAIR!)
+);
+// Create Rpc endpoint
+const connection = createRpc(RPC_ENDPOINT);
 
-/// Create RPC Connection
-const RPC_ENDPOINT = 'https://mainnet.helius-rpc.com?api-key=<api_key>';
-const connection: Rpc = createRpc(RPC_ENDPOINT);
-const PAYER = Keypair.fromSecretKey(<private_key>);
 
 (async() => {
    
@@ -99,7 +174,6 @@ const PAYER = Keypair.fromSecretKey(<private_key>);
         PAYER,
         PAYER.publicKey,
         9,
-        PAYER,
     );
     console.log(`create-mint success! txId: ${transactionSignature}`);
 
@@ -127,6 +201,8 @@ const PAYER = Keypair.fromSecretKey(<private_key>);
     console.log(`mint-to success! txId: ${mintToTxId}`);
 })();
 ```
+{% endtab %}
+{% endtabs %}
 
 You now have a regular SPL token account owned by `PAYER` that holds all minted tokens.
 
