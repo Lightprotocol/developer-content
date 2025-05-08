@@ -1,6 +1,6 @@
 # Add Compressed Token Support to Your Wallet
 
-The following page describes how to add **compressed token** support to your browser extension wallet
+The following page describes how to add **compressed token** support to your wallet application.
 
 {% hint style="info" %}
 _Key benefits of compressed tokens:_
@@ -124,32 +124,28 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 [json-rpc-methods](json-rpc-methods/)
 {% endcontent-ref %}
 
-### 5. Sending Compressed Tokens
-
-```typescript
-//To test the code snippets below, you need the following recurring keys.
-import { Keypair } from "@solana/web3.js";
-
-const PAYER = Keypair.generate();
-const PUBLIC_KEY = PAYER.publicKey;
-const MINT_KEYPAIR = Keypair.generate();
-const RECIPIENT_PUBLIC_KEY = Keypair.generate().publicKey.toBase58();
-```
+### 5. Send Compressed Tokens
 
 <details>
 
 <summary>Setup Test Mint</summary>
 
 ```typescript
+import { Keypair } from "@solana/web3.js";
 import { Rpc, confirmTx, createRpc } from '@lightprotocol/stateless.js';
 import { createMint, mintTo } from '@lightprotocol/compressed-token';
 
+// Set these values...
 const RPC_ENDPOINT = '<https://devnet.helius-rpc.com?api-key=><api_key>';
 const connection: Rpc = createRpc(RPC_ENDPOINT);
+const PAYER = Keypair.generate();
+const PUBLIC_KEY = PAYER.publicKey;
+const MINT_KEYPAIR = Keypair.generate();
+const RECIPIENT_PUBLIC_KEY = Keypair.generate().publicKey.toBase58();
 
 /// Airdrop tokens to PAYER beforehand.
 (async() => {
-    /// Create compressed-token mint
+    /// Create and register compressed-token mint
     const { mint, transactionSignature } = await createMint(
         connection,
         PAYER,
@@ -157,7 +153,6 @@ const connection: Rpc = createRpc(RPC_ENDPOINT);
         9,
         PAYER,
     );
-
     console.log(`create-mint success! txId: ${transactionSignature}`);
 
     /// Mint compressed tokens
@@ -229,8 +224,6 @@ const connection: Rpc = createRpc(RPC_ENDPOINT);
     recentInputStateRootIndices: proof.rootIndices,
     recentValidityProof: proof.compressedProof,
   });
-
-  console.log(ix);
 
   // 8. Sign, send, and confirm...
   const { blockhash } = await connection.getLatestBlockhash();
