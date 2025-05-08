@@ -130,7 +130,7 @@ const connection = createRpc(RPC_ENDPOINT);
 
   console.log(`txId: ${txId}`);
 
-  // registering the mint with the Compressed-Token program
+  // register the mint with the Compressed-Token program
   const txId2 = await createTokenPool(
     connection,
     payer,
