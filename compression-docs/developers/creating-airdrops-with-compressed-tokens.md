@@ -747,20 +747,22 @@ import {
   Rpc,
   createRpc,
 } from "@lightprotocol/stateless.js";
-import { ComputeBudgetProgram } from "@solana/web3.js";
+import { ComputeBudgetProgram, Keypair, PublicKey } from "@solana/web3.js";
 import {
   CompressedTokenProgram,
   getTokenPoolInfos,
   selectMinCompressedTokenAccountsForTransfer,
   selectTokenPoolInfosForDecompression,
 } from "@lightprotocol/compressed-token";
-import { createAssociatedTokenAccount } from "@solana/spl-token";
+import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
+import bs58 from "bs58";
+import dotenv from "dotenv";
+dotenv.config();
 
-
-// 0. Set these values
-const RPC_ENDPOINT = "https://mainnet.helius-rpc.com?api-key=<api_key>";
-const mint = <MINT_ADDRESS>;
-const payer = <PAYER_KEYPAIR>;
+// Set these values in your .env file
+const RPC_ENDPOINT = process.env.RPC_ENDPOINT;
+const mint = new PublicKey(process.env.MINT_ADDRESS!);
+const payer = Keypair.fromSecretKey(bs58.decode(process.env.PAYER_KEYPAIR!));
 
 const owner = payer;
 const amount = 1e5;
@@ -768,7 +770,7 @@ const connection: Rpc = createRpc(RPC_ENDPOINT);
 
 (async () => {
   // 1. Create an associated token account for the user if it doesn't exist
-  const ata = await createAssociatedTokenAccount(
+  const ata = await getOrCreateAssociatedTokenAccount(
     connection,
     payer,
     mint,
@@ -805,7 +807,7 @@ const connection: Rpc = createRpc(RPC_ENDPOINT);
   const ix = await CompressedTokenProgram.decompress({
     payer: payer.publicKey,
     inputCompressedTokenAccounts: inputAccounts,
-    toAddress: owner.publicKey,
+    toAddress: ata.address,
     amount,
     tokenPoolInfos: selectedTokenPoolInfos,
     recentInputStateRootIndices: proof.rootIndices,
