@@ -211,7 +211,7 @@ You now have a regular SPL token account owned by `PAYER` that holds all minted 
 Next, you want to distribute the SPL tokens from your distributor to all recipients.
 
 {% hint style="info" %}
-Ensure you have the latest `@lightprotocol/stateless.js` and `@lightprotocol/compressed-token` versions `≥ 0.20.9`!
+Ensure you have the latest `@lightprotocol/stateless.js` and `@lightprotocol/compressed-token` versions `≥ 0.21.0`!
 {% endhint %}
 
 #### A. Simple version
