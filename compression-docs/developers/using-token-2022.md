@@ -86,8 +86,6 @@ const connection = createRpc(RPC_ENDPOINT);
     await connection.requestAirdrop(payer.publicKey, 1e7)
   );
 
-  console.log("mint", mint.publicKey.toBase58());
-
   const mintLamports = await connection.getMinimumBalanceForRentExemption(
     mintLen + metadataLen
   );
