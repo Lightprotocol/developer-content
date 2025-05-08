@@ -21,16 +21,16 @@ If you require support for other mint-extensions, [let us know](https://t.me/swe
 {% hint style="info" %}
 You need the following SDK versions:
 
-* `@lightprotocol/stateless.js`  ≥ 0.17.0&#x20;
-* `@lightprotocol/compressed-token`  ≥ 0.17.0&#x20;
+* `@lightprotocol/stateless.js`  ≥ 0.21.0&#x20;
+* `@lightprotocol/compressed-token`  ≥ 0.21.0&#x20;
 * `@solana/web3.js` ≥ 1.95.3
 {% endhint %}
 
 ```typescript
-import { Rpc, confirmTx, createRpc } from "@lightprotocol/stateless.js";
+import { confirmTx, createRpc } from "@lightprotocol/stateless.js";
 import {
   compress,
-  CompressedTokenProgram,
+  createTokenPool,
   transfer,
 } from "@lightprotocol/compressed-token";
 import {
@@ -55,10 +55,14 @@ import {
   pack,
   TokenMetadata,
 } from "@solana/spl-token-metadata";
+import dotenv from "dotenv";
+import bs58 from "bs58";
+dotenv.config();
 
-const payer = PAYER_KEYPAIR; // ... set this
-const RPC_ENDPOINT = //... set this
-const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
+// set these values in your .env file
+const payer = Keypair.fromSecretKey(bs58.decode(process.env.PAYER_KEYPAIR!));
+const RPC_ENDPOINT = process.env.RPC_ENDPOINT!;
+const connection = createRpc(RPC_ENDPOINT);
 
 (async () => {
   const mint = Keypair.generate();
@@ -69,7 +73,7 @@ const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
     name: "name",
     symbol: "symbol",
     uri: "uri",
-    additional metadata: [["key", "value"]],
+    additionalMetadata: [["key", "value"]],
   };
 
   const mintLen = getMintLen([ExtensionType.MetadataPointer]);
@@ -81,6 +85,8 @@ const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
     connection,
     await connection.requestAirdrop(payer.publicKey, 1e7)
   );
+
+  console.log("mint", mint.publicKey.toBase58());
 
   const mintLamports = await connection.getMinimumBalanceForRentExemption(
     mintLen + metadataLen
@@ -115,21 +121,25 @@ const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
       uri: metadata.uri,
       mintAuthority: payer.publicKey,
       updateAuthority: payer.publicKey,
-    }),
-    // registering the mint with the Compressed-Token program
-    await CompressedTokenProgram.createTokenPool({
-      feePayer: payer.publicKey,
-      mint: mint.publicKey,
-      tokenProgramId: TOKEN_2022_PROGRAM_ID,
     })
   );
   const txId = await sendAndConfirmTransaction(connection, mintTransaction, [
     payer,
     mint,
   ]);
-  
+
   console.log(`txId: ${txId}`);
-  
+
+  // registering the mint with the Compressed-Token program
+  const txId2 = await createTokenPool(
+    connection,
+    payer,
+    mint.publicKey,
+    undefined,
+    TOKEN_2022_PROGRAM_ID
+  );
+  console.log(`register-mint success! txId: ${txId2}`);
+
   const ata = await getOrCreateAssociatedTokenAccount(
     connection,
     payer,
@@ -163,14 +173,10 @@ const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
     1e5,
     payer,
     ata.address,
-    payer.publicKey,
-    undefined,
-    undefined,
-    TOKEN_2022_PROGRAM_ID
+    payer.publicKey
   );
   console.log(`compressed-token success! txId: ${compressedTokenTxId}`);
 
-  // compressed transfers do not require the passing of a token program id.
   const transferCompressedTxId = await transfer(
     connection,
     payer,
@@ -181,8 +187,5 @@ const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
   );
   console.log(`transfer-compressed success! txId: ${transferCompressedTxId}`);
 })();
-```
 
-{% hint style="info" %}
-For further reference, check out this node [example](https://github.com/Lightprotocol/example-nodejs-client/blob/main/src/scripts/mint-spl-22.ts).
-{% endhint %}
+```
