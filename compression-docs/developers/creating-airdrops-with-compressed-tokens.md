@@ -313,11 +313,13 @@ const PAYER_KEYPAIR = Keypair.fromSecretKey(
 
 </details>
 
-#### B. Optimized for large-scale airdrops
+#### B. Optimized For large-scale airdrops
 
 First, create a helper that takes recipients and amounts and returns batches of instructions:
 
-### create-instructions.ts
+<details>
+
+<summary>1. create-instructions.ts</summary>
 
 ```typescript
 // create-instructions.ts
@@ -425,9 +427,15 @@ export async function createAirdropInstructions({
 }
 ```
 
+
+
+</details>
+
 Now, you can create the logic that signs and sends transactions in batches. For this, first add a helper method that refreshes Solana blockhashes in the background:
 
-### update-blockhash.ts
+<details>
+
+<summary>2. update-blockhash.ts</summary>
 
 ```typescript
 // update-blockhash.ts
@@ -468,9 +476,15 @@ export async function updateBlockhash(
 }
 ```
 
+
+
+</details>
+
 Then, add the helper that signs and sends the transactions using recent blockhashes.
 
-### sign-and-send.ts
+<details>
+
+<summary>3. sign-and-send.ts</summary>
 
 ```typescript
 // sign-and-send.ts
@@ -586,9 +600,15 @@ export async function* signAndSendAirdropBatches(
 }
 ```
 
+
+
+</details>
+
 Finally, put it all together in your main file:
 
-### airdrop.ts (main file)
+<details>
+
+<summary>airdrop.ts (entrypoint file)</summary>
 
 ```typescript
 // airdrop.ts
@@ -702,6 +722,10 @@ const recipients = [
 
 ```
 
+
+
+</details>
+
 Ensure that you have all the necessary `.env` variables set up. You can now run your code and execute the airdrop!
 
 ## Advanced: Decompress / Claim
@@ -810,10 +834,10 @@ const connection: Rpc = createRpc(RPC_ENDPOINT);
 
 ## Native Swap via Jup-API
 
-* If you have a custom FE, you can let users swap compressed tokens using the Jup-API. An example implementation demo is available [here](https://github.com/Lightprotocol/example-jupiter-swap-node).
+* If you have a custom FE, you can let users swap compressed tokens using the Jup-API. A reference implementation is available [here](https://github.com/Lightprotocol/example-jupiter-swap-node).
 
 ***
 
 ## Support
 
-For additional support or questions, please refer to our [documentation](https://www.zkcompression.com) or contact [Swen](https://t.me/swen_light) or [Mert](https://t.me/mert_helius) on Telegram or via [email](mailto:friends@lightprotocol.com).
+For additional support or questions, please refer to our [documentation](https://www.zkcompression.com), or contact [Swen](https://t.me/swen_light) or [Mert](https://t.me/mert_helius) on Telegram or via [email](mailto:friends@lightprotocol.com).
