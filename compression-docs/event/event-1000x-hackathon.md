@@ -13,9 +13,7 @@ Submit here:\
 \- [cPOP](https://earn.superteam.fun/listing/1000x-hackathon-best-cpop-interface/)
 {% endhint %}
 
-##
-
-## Sign-ups are now open!
+## Submissions are now open!
 
 1. Use ZK Compression in your hackathon project
 2. Submissions are hosted on [ST Earn](https://earn.superteam.fun/listing/1000x-hackathon/). Make sure to submit before the respective Deadlines!
