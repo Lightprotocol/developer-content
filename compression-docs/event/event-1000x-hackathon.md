@@ -6,6 +6,15 @@
 1000x runs in parallel to the Solana Breakout Hackathon. You can submit your project to Breakout and 1000x.
 {% endhint %}
 
+{% hint style="warning" %}
+Submissions for the cPOP and cSolanaPay prizes are **due Sunday, May 11 at 11:59 PM PST**.\
+Submit here:\
+\- [cToken x SolanaPay](https://earn.superteam.fun/listing/1000x-hackathon-best-ctoken-integration-for-solana-pay/)\
+\- [cPOP](https://earn.superteam.fun/listing/1000x-hackathon-best-cpop-interface/)
+{% endhint %}
+
+##
+
 ## Sign-ups are now open!
 
 1. Use ZK Compression in your hackathon project
