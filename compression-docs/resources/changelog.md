@@ -1,4 +1,6 @@
-# JS - v0.21.0
+# Changelog
+
+## &#x20;JS - v0.21.0
 
 This is a JS release for `@lightprotocol/stateless.js` and `@lightprotocol/compressed-token.`
 

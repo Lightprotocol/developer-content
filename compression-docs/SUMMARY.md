@@ -11,7 +11,6 @@
 
 ## Release Notes
 
-* [JS - v0.21.0](release-notes/js-v0.21.0.md)
 * [1.0.0 - Mainnet-Beta](release-notes/1.0.0-mainnet-beta.md)
 * [0.x.x](release-notes/0.x.x/README.md)
   * [0.6.0](release-notes/0.x.x/0.6.0.md)
@@ -68,5 +67,6 @@
 
 ## resources
 
+* [Changelog](resources/changelog.md)
 * [Security](resources/security.md)
 * [Privacy Policy](resources/privacy-policy.md)
