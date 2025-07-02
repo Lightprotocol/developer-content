@@ -5,29 +5,6 @@
 * [Overview](README.md)
 * [Intro to Development](introduction/intro-to-development.md)
 
-## Event
-
-* [🗓️ Event: 1000x Hackathon](event/event-1000x-hackathon.md)
-
-## Release Notes
-
-* [1.0.0 - Mainnet-Beta](release-notes/1.0.0-mainnet-beta.md)
-* [0.x.x](release-notes/0.x.x/README.md)
-  * [0.6.0](release-notes/0.x.x/0.6.0.md)
-  * [0.5.0](release-notes/0.x.x/0.5.0.md)
-  * [0.4.0](release-notes/0.x.x/0.4.0.md)
-  * [0.3.0](release-notes/0.x.x/0.3.0.md)
-
-## Learn
-
-* [In a Nutshell](learn/in-a-nutshell.md)
-* [Core Concepts](learn/core-concepts/README.md)
-  * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
-  * [State Trees](learn/core-concepts/state-trees.md)
-  * [Validity Proofs](learn/core-concepts/validity-proofs.md)
-  * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
-  * [Limitations](learn/core-concepts/limitations.md)
-
 ## Developers
 
 * [TypeScript Client](developers/typescript-client.md)
@@ -61,12 +38,28 @@
 * [Add Compressed Token Support to Your Wallet](developers/add-compressed-token-support-to-your-wallet.md)
 * [Create programs with the program-template](developers/create-programs-with-the-program-template.md)
 
+## Learn
+
+* [In a Nutshell](learn/in-a-nutshell.md)
+* [Core Concepts](learn/core-concepts/README.md)
+  * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
+  * [State Trees](learn/core-concepts/state-trees.md)
+  * [Validity Proofs](learn/core-concepts/validity-proofs.md)
+  * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
+  * [Limitations](learn/core-concepts/limitations.md)
+
 ## Node Operators
 
 * [Run a Node](node-operators/run-a-node.md)
 
 ## resources
 
-* [Changelog](resources/changelog.md)
+* [Changelog](resources/changelog/README.md)
+  * [JS - 0.21.0](resources/changelog/js-0.21.0.md)
+  * [Protocol - 1.0.0](resources/changelog/protocol-1.0.0.md)
+  * [0.6.0](resources/changelog/0.6.0.md)
+  * [0.5.0](resources/changelog/0.5.0.md)
+  * [0.4.0](resources/changelog/0.4.0.md)
+  * [0.3.0](resources/changelog/0.3.0.md)
 * [Security](resources/security.md)
 * [Privacy Policy](resources/privacy-policy.md)

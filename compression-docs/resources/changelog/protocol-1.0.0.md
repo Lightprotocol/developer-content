@@ -1,8 +1,4 @@
----
-hidden: true
----
-
-# 1.0.0 - Mainnet-Beta
+# Protocol - 1.0.0
 
 ## The 1.0.0 Release for Mainnet-Beta is here! <a href="#zk-testnet-is-here" id="zk-testnet-is-here"></a>
 
