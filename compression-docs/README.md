@@ -1,20 +1,14 @@
-# Overview
+# Welcome to ZK Compression
 
 <figure><img src=".gitbook/assets/Build_Anything.png" alt=""><figcaption></figcaption></figure>
 
 ## What is ZK Compression?
 
-ZK Compression is a new primitive on Solana that enables you to build applications at scale.
-
-Developers and users can compress their on-chain state, reducing data storage costs **by orders of magnitude** while preserving the Solana L1's security, performance, and composability.
-
-
+ZK Compression is a new account primitive that lets developers store tokens and PDAs on Solana at a fraction of the cost,  without sacrificing L1 performance or security.
 
 ## State Cost Reduction
 
 <table><thead><tr><th width="252">Creation Cost</th><th width="188">Regular Account</th><th>Compressed Account</th></tr></thead><tbody><tr><td>100-byte PDA Account</td><td>~ 0.0016 SOL</td><td>~ 0.00001 SOL (160x cheaper)</td></tr><tr><td>100 Token Accounts</td><td>~ 0.2 SOL</td><td>~ 0.00004 SOL (5000x cheaper)</td></tr></tbody></table>
-
-
 
 ## Core Features
 
@@ -31,5 +25,5 @@ _**ZK**_**:** The protocol uses small zero-knowledge proofs ([validity proofs](l
 This documentation introduces the ZK Compression primitive and guides you to relevant codebases and examples.
 
 {% hint style="info" %}
-ZK Compression is being built in the open, and Mainnet-Beta is live! Stay up to date with the core teams contributing to ZK Compression and its RPC implementation: [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
+ZK Compression and its RPC implementation is built by [Light](https://twitter.com/LightProtocol) and [Helius](https://twitter.com/heliuslabs).
 {% endhint %}
