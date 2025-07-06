@@ -1,10 +1,27 @@
-# Welcome to ZK Compression
+---
+layout:
+  width: default
+  title:
+    visible: false
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: false
+  pagination:
+    visible: true
+---
+
+# Overview
+
+## Welcome to ZK Compression
 
 <figure><img src=".gitbook/assets/Build_Anything.png" alt=""><figcaption></figcaption></figure>
 
 ## What is ZK Compression?
 
-ZK Compression is a new account primitive that lets developers store tokens and PDAs on Solana at a fraction of the cost,  without sacrificing L1 performance or security.
+ZK Compression is a new account primitive that lets developers store tokens and PDAs on Solana at a fraction of the cost, without sacrificing L1 performance or security.
 
 ## State Cost Reduction
 

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-* [Welcome to ZK Compression](README.md)
+* [Overview](README.md)
 * [Intro to Development](introduction/intro-to-development.md)
 
 ## Developers
