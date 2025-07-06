@@ -2,24 +2,22 @@
 layout:
   width: default
   title:
-    visible: false
+    visible: true
   description:
     visible: false
   tableOfContents:
     visible: true
   outline:
-    visible: false
+    visible: true
   pagination:
     visible: true
 ---
 
 # Overview
 
-## Welcome to ZK Compression
-
 <figure><img src=".gitbook/assets/Build_Anything.png" alt=""><figcaption></figcaption></figure>
 
-## What is ZK Compression?
+## Welcome to ZK Compression
 
 ZK Compression is a new account primitive that lets developers store tokens and PDAs on Solana at a fraction of the cost, without sacrificing L1 performance or security.
 
@@ -35,7 +33,7 @@ ZK Compression is a new account primitive that lets developers store tokens and 
 
 _**Compression**_**:**  Only the [state roots](learn/core-concepts/state-trees.md) (small fingerprints of all [compressed accounts](learn/core-concepts/compressed-account-model.md)) are stored in on-chain accounts. The underlying data is stored on the cheaper Solana ledger.
 
-_**ZK**_**:** The protocol uses small zero-knowledge proofs ([validity proofs](learn/core-concepts/validity-proofs.md)) to ensure the integrity of the compressed state. This is all done under the hood. You can fetch validity proofs from [RPC providers](introduction/intro-to-development.md#rpc-connection) that support ZK Compression.
+_**ZK**_**:** The protocol uses small zero-knowledge proofs ([validity proofs](learn/core-concepts/validity-proofs.md)) to ensure the integrity of the compressed state. This is all done under the hood. You can fetch validity proofs from [RPC providers](get-started/intro-to-development.md#rpc-connection) that support ZK Compression.
 
 ## How to Use This Documentation
 

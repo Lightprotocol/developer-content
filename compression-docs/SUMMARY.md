@@ -1,9 +1,9 @@
 # Table of contents
 
-## Introduction
+## Get Started
 
 * [Overview](README.md)
-* [Intro to Development](introduction/intro-to-development.md)
+* [Intro to Development](get-started/intro-to-development.md)
 
 ## Developers
 

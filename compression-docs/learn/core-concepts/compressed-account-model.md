@@ -44,5 +44,5 @@ Instead, each compressed account can be identified by its hash, regardless of wh
 
 By definition, whenever the data of a compressed account changes, its hash changes. This impacts how developers interact with fungible state:
 
-* Check out the [examples](../../introduction/intro-to-development.md#build-by-example) section to see what using hashes instead of addresses looks like in practice
+* Check out the [examples](../../get-started/intro-to-development.md#build-by-example) section to see what using hashes instead of addresses looks like in practice
 * Visit the [State Trees](state-trees.md) section to understand why using the account's hash as its ID makes sense for the compression protocol
