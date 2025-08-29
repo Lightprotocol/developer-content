@@ -1,0 +1,43 @@
+{
+  "name": "light-mcp",
+  "version": "1.1.2",
+  "description": "MCP server providing ZK Compression documentation search for AI-powered IDEs",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "light-mcp": "dist/cli.js"
+  },
+  "files": [
+    "dist/**/*",
+    "compression-docs/**/*",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "glob": "^10.3.10",
+    "gray-matter": "^4.0.3",
+    "fuse.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "tsx": "^4.0.0"
+  },
+  "keywords": ["mcp", "solana", "zk-compression"],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sweriko/developer-content.git"
+  },
+  "homepage": "https://github.com/sweriko/developer-content",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
