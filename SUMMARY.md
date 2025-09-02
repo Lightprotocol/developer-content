@@ -27,7 +27,6 @@
 ## Compressed PDAs
 
 * [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas.md)
-* [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas-1.md)
 * [Guides](compressed-pdas/guides/README.md)
   * [Program Template Eric](compressed-pdas/guides/program-template-eric.md)
   * [Regular vs Compressed PDA Implementation](compressed-pdas/guides/regular-vs-compressed-pda-implementation.md)
