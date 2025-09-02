@@ -1,65 +1,91 @@
 # Table of contents
 
-## Get Started
+* [Introduction](introduction.md)
+* [Quickstart](quickstart.md)
+* [Help](help.md)
 
-* [Overview](README.md)
-* [Intro to Development](get-started/intro-to-development.md)
+## Compressed Tokens
 
-## Developers
+* [Overview](compressed-tokens/overview.md)
+* [Cookbook](compressed-tokens/cookbook/README.md)
+  * [How to Create and Register a Mint Account for Compression](compressed-tokens/cookbook/how-to-create-and-register-a-mint-account-for-compression.md)
+  * [How to Create Compressed Token Accounts](compressed-tokens/cookbook/how-to-create-compressed-token-accounts.md)
+  * [How to Mint Compressed Tokens](compressed-tokens/cookbook/how-to-mint-compressed-tokens.md)
+  * [How to Transfer Compressed Token](compressed-tokens/cookbook/how-to-transfer-compressed-token.md)
+  * [How to compress and decompress SPL Tokens](compressed-tokens/cookbook/how-to-compress-and-decompress-spl-tokens.md)
+  * [How to Compress complete Token Accounts](compressed-tokens/cookbook/how-to-compress-complete-token-accounts.md)
+  * [How to Merge Compressed Token Accounts](compressed-tokens/cookbook/how-to-merge-compressed-token-accounts.md)
+  * [How to Create Compressed Token Pools for Mint Accounts](compressed-tokens/cookbook/how-to-create-compressed-token-pools-for-mint-accounts.md)
+  * [How to Transfer Compressed SOL](compressed-tokens/cookbook/how-to-transfer-compressed-sol.md)
+  * [How to approve and revoke delegate authority](compressed-tokens/cookbook/how-to-approve-and-revoke-delegate-authority.md)
+* [Advanced Guides](compressed-tokens/advanced-guides/README.md)
+  * [Create an Airdrop](compressed-tokens/advanced-guides/create-an-airdrop.md)
+  * [Add Wallet Support for Compressed Tokens](compressed-tokens/advanced-guides/add-wallet-support-for-compressed-tokens.md)
+  * [Use Token 2022 with Compression](compressed-tokens/advanced-guides/use-token-2022-with-compression.md)
 
-* [TypeScript Client](developers/typescript-client.md)
-* [JSON RPC Methods](developers/json-rpc-methods/README.md)
-  * [getCompressedAccount](developers/json-rpc-methods/getcompressedaccount.md)
-  * [getCompressedBalance](developers/json-rpc-methods/getcompressedbalance.md)
-  * [getCompressedTokenAccountBalance](developers/json-rpc-methods/getcompressedtokenaccountbalance.md)
-  * [getCompressedBalanceByOwner](developers/json-rpc-methods/getcompressedbalancebyowner.md)
-  * [getCompressedMintTokenHolders](developers/json-rpc-methods/getcompressedminttokenholders.md)
-  * [getCompressedTokenBalancesByOwnerV2](developers/json-rpc-methods/getcompressedtokenbalancesbyownerv2.md)
-  * [getCompressedAccountsByOwner](developers/json-rpc-methods/getcompressedaccountsbyowner.md)
-  * [getMultipleCompressedAccounts](developers/json-rpc-methods/getmultiplecompressedaccounts.md)
-  * [getCompressedTokenAccountsByOwner](developers/json-rpc-methods/getcompressedtokenaccountsbyowner.md)
-  * [getCompressedTokenAccountsByDelegate](developers/json-rpc-methods/getcompressedtokenaccountsbydelegate.md)
-  * [getTransactionWithCompressionInfo](developers/json-rpc-methods/gettransactionwithcompressioninfo.md)
-  * [getCompressedAccountProof](developers/json-rpc-methods/getcompressedaccountproof.md)
-  * [getMultipleCompressedAccountProofs](developers/json-rpc-methods/getmultiplecompressedaccountproofs.md)
-  * [getMultipleNewAddressProofs](developers/json-rpc-methods/getmultiplenewaddressproofs.md)
-  * [getValidityProof](developers/json-rpc-methods/getvalidityproof.md)
-  * [getCompressionSignaturesForAccount](developers/json-rpc-methods/getcompressionsignaturesforaccount.md)
-  * [getCompressionSignaturesForAddress](developers/json-rpc-methods/getcompressionsignaturesforaddress.md)
-  * [getCompressionSignaturesForOwner](developers/json-rpc-methods/getcompressionsignaturesforowner.md)
-  * [getCompressionSignaturesForTokenOwner](developers/json-rpc-methods/getcompressionsignaturesfortokenowner.md)
-  * [getLatestCompressionSignatures](developers/json-rpc-methods/getlatestcompressionsignatures.md)
-  * [getLatestNonVotingSignatures](developers/json-rpc-methods/getlatestnonvotingsignatures.md)
-  * [getIndexerSlot](developers/json-rpc-methods/getindexerslot.md)
-  * [getIndexerHealth](developers/json-rpc-methods/getindexerhealth.md)
-* [Addresses and URLs](developers/addresses-and-urls.md)
-* [Creating Airdrops with Compressed Tokens](developers/creating-airdrops-with-compressed-tokens.md)
-* [Using Token-2022](developers/using-token-2022.md)
-* [Add Compressed Token Support to Your Wallet](developers/add-compressed-token-support-to-your-wallet.md)
-* [Create programs with the program-template](developers/create-programs-with-the-program-template.md)
+## Compressed PDAs
+
+* [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas.md)
+* [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas-1.md)
+* [Guides](compressed-pdas/guides/README.md)
+  * [Program Template Eric](compressed-pdas/guides/program-template-eric.md)
+  * [Regular vs Compressed PDA Implementation](compressed-pdas/guides/regular-vs-compressed-pda-implementation.md)
+  * [Create and Update Accounts](compressed-pdas/guides/create-and-update-accounts.md)
+
+## Resources
+
+* [CLI Installation](resources/cli-installation.md)
+* [Addresses & URLs](resources/addresses-and-urls.md)
+* [JSON RPC methods](resources/json-rpc-methods/README.md)
+  * [getCompressedAccount](resources/json-rpc-methods/getcompressedaccount.md)
+  * [getCompressedAccountsByOwner](resources/json-rpc-methods/getcompressedaccountsbyowner.md)
+  * [getCompressedBalance](resources/json-rpc-methods/getcompressedbalance.md)
+  * [getCompressedBalanceByOwner](resources/json-rpc-methods/getcompressedbalancebyowner.md)
+  * [getCompressedMintTokenHolders](resources/json-rpc-methods/getcompressedminttokenholders.md)
+  * [getCompressedTokenAccountBalances](resources/json-rpc-methods/getcompressedtokenaccountbalances.md)
+  * [getCompressedTokenAccountByDelegate](resources/json-rpc-methods/getcompressedtokenaccountbydelegate.md)
+  * [getCompressedTokenAccountsByOwner](resources/json-rpc-methods/getcompressedtokenaccountsbyowner.md)
+  * [getCompressedTokenBalancesByOwner](resources/json-rpc-methods/getcompressedtokenbalancesbyowner.md)
+  * [getCompressionSignaturesForAccount](resources/json-rpc-methods/getcompressionsignaturesforaccount.md)
+  * [getCompressionSignaturesForAddress](resources/json-rpc-methods/getcompressionsignaturesforaddress.md)
+  * [getCompressionSignaturesForOwner](resources/json-rpc-methods/getcompressionsignaturesforowner.md)
+  * [getCompressionSignaturesForTokenOwner](resources/json-rpc-methods/getcompressionsignaturesfortokenowner.md)
+  * [getIndexerHealth](resources/json-rpc-methods/getindexerhealth.md)
+  * [getIndexerSlot](resources/json-rpc-methods/getindexerslot.md)
+  * [getLatestCompressionSignatures](resources/json-rpc-methods/getlatestcompressionsignatures.md)
+  * [getLatestNonVotingSignatures](resources/json-rpc-methods/getlatestnonvotingsignatures.md)
+  * [getMultipleCompressedAccounts](resources/json-rpc-methods/getmultiplecompressedaccounts.md)
+  * [getMultipleNewAddressProofs](resources/json-rpc-methods/getmultiplenewaddressproofs.md)
+  * [getTransactionWithCompressionInfo](resources/json-rpc-methods/gettransactionwithcompressioninfo.md)
+  * [getValidityProof](resources/json-rpc-methods/getvalidityproof.md)
+* SDKs
+  * [Client Development](resources/sdks/client-development.md)
+  * [Program Development](resources/sdks/program-development.md)
 
 ## Learn
 
-* [In a Nutshell](learn/in-a-nutshell.md)
+* [FAQ Overview](learn/faq-overview.md)
 * [Core Concepts](learn/core-concepts/README.md)
   * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
-  * [State Trees](learn/core-concepts/state-trees.md)
-  * [Validity Proofs](learn/core-concepts/validity-proofs.md)
   * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
   * [Limitations](learn/core-concepts/limitations.md)
+* [Node Operators](learn/node-operators.md)
 
-## Node Operators
+## References
 
-* [Run a Node](node-operators/run-a-node.md)
+* [Whitepaper](whitepaper.md)
 
-## resources
+## Changelog
 
-* [Changelog](resources/changelog/README.md)
-  * [JS - 0.21.0](resources/changelog/js-0.21.0.md)
-  * [Protocol - 1.0.0](resources/changelog/protocol-1.0.0.md)
-  * [0.6.0](resources/changelog/0.6.0.md)
-  * [0.5.0](resources/changelog/0.5.0.md)
-  * [0.4.0](resources/changelog/0.4.0.md)
-  * [0.3.0](resources/changelog/0.3.0.md)
-* [Security](resources/security.md)
-* [Privacy Policy](resources/privacy-policy.md)
+* [JS - 0.21.0](changelog/js-0.21.0.md)
+* [Protocol - 1.0.0](changelog/protocol-1.0.0.md)
+* [0.6.0](changelog/0.6.0.md)
+* [0.5.0](changelog/0.5.0.md)
+* [0.4.0](changelog/0.4.0.md)
+* [0.3.0](changelog/0.3.0.md)
+
+## Links
+
+* [GitHub](https://github.com/Lightprotocol/light-protocol)
+* [Discord](https://discord.com/invite/CYvjBgzRFP)
+* [Changelog](https://github.com/Lightprotocol/light-protocol/releases)

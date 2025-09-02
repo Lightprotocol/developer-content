@@ -1,4 +1,10 @@
+
+
 # Limitations
+
+***
+
+## Overview
 
 Before using ZK Compression to scale your application state, consider the following limitations of compressed accounts:
 
@@ -42,7 +48,7 @@ Higher CU usage can:
 * **Lead to usage limits:** The total CU limit per transaction is 1,400,000 CU, and the per-block write lock limit per State tree is 12,000,000 CU.
 * **Require your users to increase their** [**priority fee**](https://solana.com/developers/guides/advanced/how-to-use-priority-fees) **during congestion:** Whenever Solana's global per-block CU limit (48,000,000 CU) is reached, validator clients may prioritize transactions with higher per-CU priority fees.
 
-## State Cost Per Transaction&#x20;
+## State Cost per Transaction
 
 Each write operation incurs a small additional network cost. If you expect a single compressed account to amass a large amount of state updates, the lifetime cost of the compressed account may be higher than its uncompressed equivalent, which currently has a fixed per-byte rent cost at creation.
 
@@ -50,13 +56,22 @@ Each write operation incurs a small additional network cost. If you expect a sin
 Whenever a [transaction](lifecycle-of-a-transaction.md) writes to a compressed account, it nullifies the previous compressed account state and appends the new compressed account as a leaf to the state tree. Both of these actions incur costs that add to Solana's base fee.
 {% endhint %}
 
-<table><thead><tr><th width="150">Type</th><th width="178">Lamports</th><th>Notes</th></tr></thead><tbody><tr><td>Solana base fee</td><td>5000 per signature</td><td>Compensates validators for processing transactions</td></tr><tr><td>Write new compressed account state </td><td>~300 per leaf (default)</td><td>Depends on tree depth: <br><span class="math">\left( 2^{\text{tree\_depth}} \times \text{tree\_account\_rent\_cost} \times \text{rollover\_threshold} \right) </span><br>~300 for the default depth of <code>26</code></td></tr><tr><td>Nullify old compressed account state</td><td>5000 per transaction</td><td>Reimburses the cost of running a Forester transaction. The current default Forester node implementation can be found <a href="../../node-operators/run-a-node.md#light-forester-node">here</a></td></tr><tr><td>Create addresses</td><td>5000 per transaction</td><td>Same as nullify</td></tr></tbody></table>
+<table><thead><tr><th width="150">Type</th><th width="178">Lamports</th><th>Notes</th></tr></thead><tbody><tr><td>Solana base fee</td><td>5000 per signature</td><td>Compensates validators for processing transactions</td></tr><tr><td>Write new compressed account state </td><td>~300 per leaf (default)</td><td>Depends on tree depth: <br><span class="math">\left( 2^{\text{tree\_depth}} \times \text{tree\_account\_rent\_cost} \times \text{rollover\_threshold} \right) </span><br>~300 for the default depth of <code>26</code></td></tr><tr><td>Nullify old compressed account state</td><td>5000 per transaction</td><td>Reimburses the cost of running a Forester transaction. The current default Forester node implementation can be found <a href="../node-operators.md#light-forester-node">here</a></td></tr><tr><td>Create addresses</td><td>5000 per transaction</td><td>Same as nullify</td></tr></tbody></table>
 
 ## Next Steps
 
-Now you're familiar with the core concepts of ZK Compression, you're ready to take the next step! Dive into [building a program](https://www.zkcompression.com/introduction/intro-to-development#on-chain-program-development) or [application](https://www.zkcompression.com/introduction/intro-to-development#client-side-development) with ZK Compression, or learn how to [set up and run your own node](../../node-operators/run-a-node.md).\
-\
-For those interested in learning more about the fundamentals of ZK and its applications on Solana, we recommend reading the following:
+Now you're familiar with the core concepts of ZK Compression, you're ready to take the next step!
 
-* [Zero-Knowledge Proofs: An Introduction to the Fundamentals](https://www.helius.dev/blog/zero-knowledge-proofs-an-introduction-to-the-fundamentals)
-* [Zero-Knowledge Proofs: Its Applications on Solana](https://www.helius.dev/blog/zero-knowledge-proofs-its-applications-on-solana)
+{% columns %}
+{% column width="41.66666666666667%" %}
+{% content-ref url="../../references/whitepaper.md" %}
+[whitepaper.md](../../references/whitepaper.md)
+{% endcontent-ref %}
+{% endcolumn %}
+
+{% column width="58.33333333333333%" %}
+{% content-ref url="broken-reference" %}
+[Broken link](broken-reference)
+{% endcontent-ref %}
+{% endcolumn %}
+{% endcolumns %}

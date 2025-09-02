@@ -1,6 +1,15 @@
+
 # Lifecycle of a Transaction
 
-ZK Compression transactions are fully compatible with Solana's Transaction and Versioned Transaction formats. There are three key nuances in building transactions with compressed accounts as compared to regular accounts:
+***
+
+{% hint style="info" %}
+This guide assumes you are familiar with transactions on Solana. If you aren't, we recommend to read the [Solana documentation on transactions](https://solana.com/docs/core/transactions).
+{% endhint %}
+
+ZK Compression transactions are fully compatible with Solana's Transaction and Versioned Transaction formats.&#x20;
+
+There are three key nuances in building transactions with compressed accounts as compared to regular accounts:
 
 * Instructions must specify the list of all compressed accounts being read or written to. To read or write to a compressed account, the instruction must send the current account state on-chain and prove its validity
 * Each unique state tree that gets read or written to (via any compressed account) needs to be specified as per Solana's regular on-chain [account access lists](https://solana.com/docs/core/transactions#array-of-account-addresses)
@@ -12,15 +21,15 @@ We can express a transaction more generally as:
 
 Here's what this looks like when updating a single compressed PDA account:
 
-<figure><img src="../../.gitbook/assets/image (5).png" alt="" width="563"><figcaption><p>Simplified: Read and Write compressed accounts</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (7).png" alt="" width="563"><figcaption><p>Simplified: Read and Write compressed accounts</p></figcaption></figure>
 
-In this example, we assume that the client previously created said compressed account and thereafter fetched its compressed account info from an [RPC node](../../node-operators/run-a-node.md#photon-indexer-node)
+In this example, we assume that the client previously created said compressed account and thereafter fetched its compressed account info from an [RPC node](../node-operators.md#photon-indexer-node)
 
 The custom Solana program executing the state transition _Data_ -> _Data'_ should require its client to pack the instructions efficiently. In the above scenario, the total data that's sent to the chain is: `address (same)`, `owner program (same)`, `data`, `data'-data`, `validity proof`
 
 The compressed account after its update looks like this:
 
-<figure><img src="../../.gitbook/assets/image (6).png" alt="" width="563"><figcaption><p>Full representation of a compressed account with PDA</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (8).png" alt="" width="563"><figcaption><p>Full representation of a compressed account with PDA</p></figcaption></figure>
 
 ## On-chain Protocol Execution
 
@@ -32,4 +41,8 @@ To write compressed state, a custom caller program must invoke the Light System 
 4. [Appends](https://github.com/Lightprotocol/light-protocol/blob/v.1.0.0/programs/system/src/invoke/processor.rs#L245-L254) the new compressed account hash to the state tree and advances the tree's state root
 5. [Emits](https://github.com/Lightprotocol/light-protocol/blob/v.1.0.0/programs/system/src/invoke/processor.rs#L272-L279) the new compressed account state onto the Solana ledger
 
-An[ RPC node](../../node-operators/run-a-node.md#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](../../developers/json-rpc-methods/)
+An[ RPC node](../node-operators.md#photon-indexer-node) then parses the transaction and compressed state and provides the read state to clients via the [ZK Compression RPC API](../../resources/json-rpc-methods/)
+
+{% content-ref url="limitations.md" %}
+[limitations.md](limitations.md)
+{% endcontent-ref %}
