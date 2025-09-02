@@ -136,7 +136,7 @@ import { homedir } from "os";
 const payer = Keypair.fromSecretKey(new Uint8Array(JSON.parse(readFileSync(`${homedir()}/.config/solana/id.json`, "utf8"))));
 
 // Helius exposes Solana and compression RPC endpoints through a single URL
-<strong>const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=8d41ecb3-ff31-4742-978d-e64dfe473fe4";
+<strong>const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=&#x3C;API_KEY>";
 </strong>const connection = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
 
 const main = async () => {
