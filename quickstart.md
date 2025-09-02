@@ -142,12 +142,6 @@ const payer = Keypair.fromSecretKey(new Uint8Array(JSON.parse(readFileSync(`${ho
 const main = async () => {
 
   try {
-    // Check SOL balance before proceeding
-    const balance = await connection.getBalance(payer.publicKey);
-    if (balance &#x3C; 0.01 * 1e9) {
-      console.error(`Insufficient SOL: ${balance / 1e9}`);
-    }
-
     // Step 2: Create SPL mint with token pool for compression
     console.log("\nCreating SPL mint with token pool for compression");
 <strong>    const { mint, transactionSignature } = await createMint(
