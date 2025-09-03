@@ -1,6 +1,6 @@
 ---
 description: >-
-  Set up ZK compression infrastructure, learn how to run Forester nodes, Photon
+  Set up ZK Compression infrastructure, learn how to run Forester nodes, Photon
   indexers and Prover nodes.
 layout:
   width: default
