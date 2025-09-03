@@ -1,7 +1,7 @@
 ---
 description: >-
   Returns proofs that the new addresses are not taken already and can be
-  created. Overview to method, use cases, examples and developer tips.
+  created.
 ---
 
 # getMultipleNewAddressProofs
