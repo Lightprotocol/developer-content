@@ -1,8 +1,8 @@
 ---
 description: >-
-  Returns the transaction data for the transaction with the given signature
-  along with parsed compression info. Overview to method, use cases, examples
-  and developer tips.
+  Retrieve the transaction data for the transaction with the given signature
+  along with parsed compression info. RPC method guide with use cases, tips and
+  examples.
 ---
 
 # getTransactionWithCompressionInfo

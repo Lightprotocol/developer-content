@@ -1,13 +1,13 @@
 ---
 description: >-
-  Returns a single ZK Proof used by the compression program to verify that the
-  given accounts are valid and the new addresses can be created. Overview to
-  method, use cases, examples and developer tips.
+  Retrieve a single ZK Proof used by the compression program to verify that the
+  given accounts are valid and the new addresses can be created. RPC method
+  guide with use cases, tips and examples.
 ---
 
 # getValidityProof
 
-The`getValidityProof` RPC method generates zero-knowledge proofs to verify that the given accounts are valid or the new addresses can be created. This proof is required for any operation on compressed accounts (transfer, approve, decompress, etc.) for on-chain verification.
+The`getValidityProof` RPC method generates zero-knowledge proofs to verify that the given accounts are valid or the new addresses can be created. This proof is required for any operation on compressed accounts (transfer, approve, decompress, etc.) for on-chain verification of compressed state.
 
 {% hint style="info" %}
 You can test this method via the OpenAPI example or [custom examples below](getvalidityproof.md#examples).

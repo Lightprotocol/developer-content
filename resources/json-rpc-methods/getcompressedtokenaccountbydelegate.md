@@ -1,8 +1,7 @@
 ---
 description: >-
-  Returns the compressed token accounts that are partially or fully delegated to
-  the given delegate. Overview to method, use cases, examples and developer
-  tips.
+  Retrieve compressed token accounts that are partially or fully delegated to a
+  given delegate. Overview with RPC method guide.
 ---
 
 # getCompressedTokenAccountByDelegate

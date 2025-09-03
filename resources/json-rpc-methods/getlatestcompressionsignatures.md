@@ -1,8 +1,7 @@
 ---
 description: >-
-  Returns the signatures of the latest transactions that used the compression
-  program. This is a paginated endpoint. Overview to method, use cases, examples
-  and developer tips.
+  Retrieve the signatures of the latest transactions that used the compression
+  program. This is a paginated endpoint. Overview with RPC method guide.
 ---
 
 # getLatestCompressionSignatures

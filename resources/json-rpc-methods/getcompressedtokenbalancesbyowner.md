@@ -1,7 +1,7 @@
 ---
 description: >-
   Retrieves all token balances for compressed accounts owned by an address.
-  Overview to method, use cases, examples and developer tips.
+  Overview with RPC method guide.
 ---
 
 # getCompressedTokenBalancesByOwner

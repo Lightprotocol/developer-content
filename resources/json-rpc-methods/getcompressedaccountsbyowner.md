@@ -1,12 +1,12 @@
 ---
 description: >-
-  Returns the owner’s compressed accounts. Overview to method, use cases,
-  examples and developer tips.
+  Retrieve all compressed accounts owned by a specific address.  RPC method
+  guide with use cases, tips and examples.
 ---
 
 # getCompressedAccountsByOwner
 
-The`getCompressedAccountByOwner` RPC method returns all compressed accounts owned by a specific address, with support for filtering, pagination, and data slicing.
+The`getCompressedAccountsByOwner` RPC method returns all compressed accounts owned by a specific address, with support for filtering, pagination, and data slicing.
 
 {% hint style="info" %}
 You can test this method via the OpenAPI example or [custom examples below](getcompressedaccountsbyowner.md#examples).

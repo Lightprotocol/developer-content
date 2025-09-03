@@ -1,7 +1,7 @@
 ---
 description: >-
-  Returns the signatures of the latest transactions that are not voting
-  transactions. Overview to method, use cases, examples and developer tips.
+  Retrieve the signatures of the latest transactions that are not voting
+  transactions. Overview with RPC method guide.
 ---
 
 # getLatestNonVotingSignatures

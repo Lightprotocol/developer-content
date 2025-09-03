@@ -1,8 +1,7 @@
 ---
 description: >-
-  Return the signatures of the transactions that closed or opened a compressed
-  account with the given hash. Overview to method, use cases, examples and
-  developer tips.
+  Retrieve the signatures of the transactions that closed or opened a compressed
+  account with the given hash. Overview with RPC method guide.
 ---
 
 # getCompressionSignaturesForAccount

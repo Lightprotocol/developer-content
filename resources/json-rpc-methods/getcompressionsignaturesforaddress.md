@@ -1,8 +1,7 @@
 ---
 description: >-
-  Return the signatures of the transactions that closed or opened a compressed
-  account with the given address. Overview to method, use cases, examples and
-  developer tips.
+  Retrieve the signatures of the transactions that closed or opened a compressed
+  account with the given address. Overview with RPC method guide.
 ---
 
 # getCompressionSignaturesForAddress

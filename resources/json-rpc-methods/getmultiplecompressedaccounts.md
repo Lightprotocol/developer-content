@@ -1,5 +1,7 @@
 ---
-description: Returns multiple compressed accounts with the given addresses or hashes.
+description: >-
+  Retrieve multiple compressed accounts with the given addresses or hashes.
+  Overview with RPC method guide.
 ---
 
 # getMultipleCompressedAccounts

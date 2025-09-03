@@ -1,8 +1,7 @@
 ---
 description: >-
-  Returns an error if the indexer is stale by more than a configurable number of
-  blocks. Otherwise, it returns ok. Overview to method, use cases, examples and
-  developer tips.
+  Retrieve an error if the indexer is stale by more than a configurable number
+  of blocks. Otherwise, it returns ok. Overview with RPC method guide.
 ---
 
 # getIndexerHealth

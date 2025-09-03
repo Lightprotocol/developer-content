@@ -1,7 +1,7 @@
 ---
 description: >-
-  Returns the compressed token accounts owned by a certain account. Overview to
-  method, use cases, examples and developer tips.
+  Retrieve compressed token accounts owned by a specific address. RPC method
+  guide with use cases, tips and examples.
 ---
 
 # getCompressedTokenAccountsByOwner

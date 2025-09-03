@@ -1,7 +1,7 @@
 ---
 description: >-
-  Returns the slot of the last block indexed by the indexer. Overview to method,
-  use cases, examples and developer tips.
+  Retrieve the slot of the last block indexed by the indexer. Overview with RPC
+  method guide.
 ---
 
 # getIndexerSlot

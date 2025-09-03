@@ -1,7 +1,7 @@
 ---
 description: >-
-  Returns the compressed account with the given address or hash. Overview to
-  method, use cases, examples and developer tips.
+  Retrieve compressed account information by address or hash. RPC method guide
+  with use cases, tips and examples.
 ---
 
 # getCompressedAccount

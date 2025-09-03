@@ -1,7 +1,7 @@
 ---
 description: >-
-  Returns the total balance of the owner's compressed accounts. Overview to
-  method, use cases, examples and developer tips.
+  Query the total compressed token balance for a specific account owner.
+  Overview with RPC method guide.
 ---
 
 # getCompressedBalanceByOwner

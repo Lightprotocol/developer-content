@@ -1,7 +1,7 @@
 ---
 description: >-
-  Returns proofs that the new addresses are not taken already and can be
-  created.
+  Retrieve proofs that the new addresses are not taken already and can be
+  created. Overview with RPC method guide.
 ---
 
 # getMultipleNewAddressProofs

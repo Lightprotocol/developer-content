@@ -1,8 +1,7 @@
 ---
 description: >-
-  Returns the signatures of the transactions that have modified an owner’s
-  compressed token accounts. Overview to method, use cases, examples and
-  developer tips.
+  Retrieve the signatures of the transactions that have modified an owner’s
+  compressed token accounts. Overview with RPC method guide.
 ---
 
 # getCompressionSignaturesForTokenOwner

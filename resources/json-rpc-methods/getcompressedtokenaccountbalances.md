@@ -1,7 +1,7 @@
 ---
 description: >-
-  Returns the balance for a given token account. Overview to method, use cases,
-  examples and developer tips.
+  Retrieve the balance for a given token account by address or hash. Overview
+  with RPC method guide.
 ---
 
 # getCompressedTokenAccountBalances

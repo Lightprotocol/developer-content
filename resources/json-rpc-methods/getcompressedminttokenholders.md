@@ -1,7 +1,7 @@
 ---
 description: >-
-  Returns the owner balances for a given mint in descending order. Overview to
-  method, use cases, examples and developer tips.
+  Retrieve owner balances for a given mint in descending order. Overview with
+  RPC method guide.
 ---
 
 # getCompressedMintTokenHolders

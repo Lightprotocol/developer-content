@@ -1,7 +1,7 @@
 ---
 description: >-
-  Returns the balance for the compressed account with the given address or hash.
-  Overview to method, use cases, examples and developer tips.
+  Retrieve the lamport balance for a specific compressed account by address or
+  hash. Overview with RPC method guide.
 ---
 
 # getCompressedBalance
