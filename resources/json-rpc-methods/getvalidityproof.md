@@ -7,7 +7,7 @@ description: >-
 
 # getValidityProof
 
-The`getValidityProof` RPC method generates zero-knowledge proofs to verify that the given accounts are valid or the new addresses can be created. This proof is required for any operation on compressed accounts (transfer, approve, decompress, etc.) and enables on-chain verification&#x20;
+The`getValidityProof` RPC method generates zero-knowledge proofs to verify that the given accounts are valid or the new addresses can be created. This proof is required for any operation on compressed accounts (transfer, approve, decompress, etc.) for on-chain verification.
 
 {% hint style="info" %}
 You can test this method via the OpenAPI example or [custom examples below](getvalidityproof.md#examples).
