@@ -1,7 +1,6 @@
 # Table of contents
 
 * [Introduction](README.md)
-* [Copy of Introduction](copy-of-introduction.md)
 * [Quickstart](quickstart.md)
 * [Support](support.md)
 
