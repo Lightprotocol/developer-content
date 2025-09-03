@@ -1,7 +1,5 @@
 ---
-description: >-
-  Returns multiple compressed accounts with the given addresses or hashes.
-  Overview to method, use cases, examples and developer tips.
+description: Returns multiple compressed accounts with the given addresses or hashes.
 ---
 
 # getMultipleCompressedAccounts
