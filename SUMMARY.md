@@ -82,11 +82,3 @@
 
 * [GitHub](https://github.com/Lightprotocol/light-protocol)
 * [Discord](https://discord.com/invite/CYvjBgzRFP)
-* [Changelog](https://github.com/Lightprotocol/light-protocol/releases)
-* [Changelog](links/changelog/README.md)
-  * [JS - 0.21.0](links/changelog/js-0.21.0.md)
-  * [Protocol - 1.0.0](links/changelog/protocol-1.0.0.md)
-  * [0.6.0](links/changelog/0.6.0.md)
-  * [0.5.0](links/changelog/0.5.0.md)
-  * [0.4.0](links/changelog/0.4.0.md)
-  * [0.3.0](links/changelog/0.3.0.md)
