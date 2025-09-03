@@ -26,7 +26,7 @@ Compressed tokens provide full SPL token functionality without per-account rent 
 
 <table><thead><tr><th valign="middle">Creation</th><th width="200" align="center">Regular SPL Token</th><th width="200" align="center">Compressed Token</th><th align="center">Cost Reduction</th></tr></thead><tbody><tr><td valign="middle">100 Token Accounts</td><td align="center">~ 0.2 SOL</td><td align="center"><strong>~ 0.00004 SOL</strong></td><td align="center"><em><strong>5000x</strong></em> </td></tr></tbody></table>
 
-Compressed token accounts store information about an individual's ownership of a specific token (mint), but don't require an Associated Token Account (ATA) per token holder, unlike regular token accounts.
+Compressed token accounts store information about an individual's ownership of a specific token (mint). Different from regular token accounts, they don't require an Associated Token Account (ATA) per token holder.
 
 For example, this simplifies [token distribution](advanced-guides/create-an-airdrop.md), since you don't need to allocate a token account per recipient. Once distributed, users can decompress and compress SPL tokens as needed and atomically in one transaction.
 
