@@ -20,14 +20,6 @@ layout:
 
 ***
 
-{% hint style="info" %}
-This guide assumes you are familiar with the basics of Solana.\
-If you aren't, we recommend reading the following:
-
-* [Solana documentation](https://solana.com/docs/intro/dev)
-* [The Solana Programming Model: An Introduction to Developing on Solana](https://www.helius.dev/blog/the-solana-programming-model-an-introduction-to-developing-on-solana)
-{% endhint %}
-
 ## What you will do
 
 With this guide you will add Compressed Token Support to Your Wallet Application.
