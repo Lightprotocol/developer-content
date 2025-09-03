@@ -1,7 +1,5 @@
 ---
-description: >-
-  Guide to create a program with compressed PDAs. Quick access to Core Features
-  and Program Template.
+description: Overview to compressed PDA core features and guide for program development.
 layout:
   width: default
   title:
@@ -26,12 +24,10 @@ Compressed PDAs provide full functionality of accounts at PDAs, without per-acco
 
 <table><thead><tr><th valign="middle">Creation</th><th width="200" align="center">Regular PDA Account</th><th width="200" align="center">Compressed PDA</th><th align="center">Cost Reduction</th></tr></thead><tbody><tr><td valign="middle">100-byte PDA</td><td align="center">~ 0.0016 SOL</td><td align="center"><strong>~ 0.00001 SOL</strong></td><td align="center"><em><strong>160x</strong></em></td></tr></tbody></table>
 
-Like regular PDAs, compressed PDAs are consistently derived using a specific program address and seed. Different from regular PDAs, compressed PDAs&#x20;
+Like regular PDAs, compressed PDAs are derived using a specific program address and seed. Different from regular PDAs, compressed PDAs&#x20;
 
 * invoke the [Light System program](#user-content-fn-1)[^1] to create and update accounts, instead of the System program, and
 * don't require space calculation and payer specification in the account struct.
-
-Compressed PDAs also work with standard Anchor patterns. You use the same seeds, bump constraints, and account validation patterns.&#x20;
 
 ### Compressed PDAs at a Glance
 

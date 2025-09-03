@@ -1,7 +1,7 @@
 ---
 description: >-
-  Complete overview to compressed tokens. Quick access to core features, setup
-  guide and cookbook.
+  Complete overview to compressed tokens core features, setup guide and
+  cookbook.
 layout:
   width: default
   title:

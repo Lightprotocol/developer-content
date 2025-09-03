@@ -1,6 +1,6 @@
 ---
 description: >-
-  Quick access to all of ZK Compression's RPC URLs, Program IDs & Accounts and
+  Overview to all of ZK Compression's RPC URLs, Program IDs & Accounts and
   Lookup Tables.
 ---
 

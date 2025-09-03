@@ -1,7 +1,7 @@
 ---
 description: >-
-  This page provides an overview of all available ZK compression JSON RPC
-  endpoints on Solana.
+  Overview of all available ZK compression JSON RPC endpoints on Solana, best
+  practices, and error codes.
 layout:
   width: default
   title:

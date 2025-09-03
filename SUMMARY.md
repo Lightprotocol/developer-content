@@ -63,6 +63,7 @@
   * [Program Development](resources/sdks/program-development.md)
 * [MCP Configuration](resources/mcp-configuration.md)
 * [How to Optimize Transactions and CU Usage](resources/how-to-optimize-transactions-and-cu-usage.md)
+* [Error Cheatsheet](resources/error-cheatsheet.md)
 
 ## Learn
 

@@ -1,7 +1,7 @@
 ---
 description: >-
-  Get help to your issues with ZK Compression. Quick access to the right
-  support.
+  Get help to your issues with ZK Compression.  Discords from Light Protocol for
+  ZK Compression support and Helius for RPC related questions.
 icon: headset
 layout:
   width: default
