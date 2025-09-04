@@ -18,7 +18,7 @@ layout:
 
 # Introduction
 
-<figure><img src=".gitbook/assets/ScaleAnything.png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/banner.png" alt=""><figcaption></figcaption></figure>
 
 ZK Compression is a Solana account primitive that lets you create tokens and PDAs at a fraction of the cost. Scale your application to millions of users without sacrificing L1 performance and security guarantees.
 
