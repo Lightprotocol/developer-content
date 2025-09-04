@@ -16,6 +16,9 @@ Light Protocol is hosting a [bug bounty program](https://immunefi.com/bug-bounty
 
 The Light protocol on-chain programs were audited by independent security firms Neodyme, OtterSec, Accretion, and Zellic.
 
+* [Ottersec audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/ottersec_refactor_audit_final_06-2025.pdf) (June '25)
+* [Accretion audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/accretion-pinocchio-audit-06-2025.pdf) (June '25)
+* [Ottersec audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/ottersec_zerocopy_audit_03-2025.pdf) (March '25)
 * [Accretion audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/accretion_v1_update_audit.pdf) (January '25)
 * [Zellic audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/zellic_v1_audit.pdf) (September '24)
 * [Neodyme audit report](https://github.com/Lightprotocol/light-protocol/blob/main/audits/neodyme_v1_audit.pdf) (August '24)&#x20;

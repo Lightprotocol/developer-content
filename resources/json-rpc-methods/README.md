@@ -26,7 +26,7 @@ layout:
 [Helius Labs](https://github.com/helius-labs) maintains the canonical RPC API and [Photon indexer implementation](https://github.com/helius-labs/photon).
 {% endhint %}
 
-Interact with compressed accounts directly with the [ZK Compression JSON RPC](./) API. It's a thin wrapper extending [Solana's web3.js `Connection` class](https://solana-labs.github.io/solana-web3.js/classes/Connection.html) with compression-related endpoints.
+Interact with compressed accounts directly with the ZK Compression JSON RPC API. It's a thin wrapper extending [Solana's web3.js `Connection` class](https://solana-labs.github.io/solana-web3.js/classes/Connection.html) with compression-related endpoints.
 
 The API exposed by the indexer closely mirrors existing RPC calls, with one-to-one mapping:
 

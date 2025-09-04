@@ -55,22 +55,18 @@ The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes 
 
 ### Address & Hash
 
-The `address` field is optional for compressed accounts because ensuring that the address of a new account is unique incurs additional computational overhead, and not all use cases need the uniqueness property of addresses
+The `address` field is optional for compressed accounts because ensuring that the address of a new account is unique incurs additional computational overhead, and not all use cases need the uniqueness property of addresses.
 
-Instead, each compressed account can be identified by its hash, regardless of whether it has an address
+Instead, each compressed account can be identified by its hash, regardless of whether it has an address.
 
 {% hint style="info" %}
 * Use the address field wherever the state must be unique (such as for NFTs or certain PDAs)
 * You don't need the address for any fungible state (e.g., fungible tokens)
 {% endhint %}
 
-By definition, whenever the data of a compressed account changes, its hash changes. This impacts how developers interact with fungible state:
+By definition, whenever the data of a compressed account changes, its hash changes. This impacts how developers interact with fungible state.  Check out the [examples](https://www.zkcompression.com/get-started/intro-to-development#build-by-example) section to see what using hashes instead of addresses looks like in practice.
 
-Check out the examples to see what using hashes instead of addresses looks like in practice
-
-* [Web Example Client](https://github.com/Lightprotocol/example-web-client)
-* [Node Example Client](https://github.com/Lightprotocol/example-nodejs-client)
-* [Token Escrow Anchor Program](https://github.com/Lightprotocol/light-protocol/tree/light-v0.3.0/examples/token-escrow)
+In the next section we will explain why using the account's hash as its ID makes sense for the compression protocol.
 
 ## State Merkle trees
 
