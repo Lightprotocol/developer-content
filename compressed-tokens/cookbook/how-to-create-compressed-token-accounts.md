@@ -22,21 +22,20 @@ layout:
 
 ***
 
-Compressed token accounts store ownership information for compressed tokens like regular token accounts with three core differences. Compressed Tokens
+Compressed token accounts store ownership information for compressed tokens like regular token accounts with two core differences. Compressed Tokens
 
-* do not require an [Associated Token Accounts (ATAs)](#user-content-fn-1)[^1],
-* do not require a rent-exempt balance, and
-* are not explicitly created.
+* do not require an [Associated Token Accounts (ATAs)](#user-content-fn-1)[^1], and
+* do not require a rent-exempt balance.
 
-Compressed token accounts are automatically created in the following scenarios:
+Compressed token accounts are created in the following scenarios:
 
-1. `mintTo()` creates compressed token accounts for recipients
+1. `mintTo()` creates compressed token accounts for recipients.
 
 {% content-ref url="how-to-mint-compressed-tokens.md" %}
 [how-to-mint-compressed-tokens.md](how-to-mint-compressed-tokens.md)
 {% endcontent-ref %}
 
-2. `transfer()` creates compressed token accounts for recipients
+2. `transfer()` consumes existing accounts of the sender as input, and creates new compressed token accounts with updated balances as output for the sender and recipient(s).&#x20;
 
 {% content-ref url="how-to-transfer-compressed-token.md" %}
 [how-to-transfer-compressed-token.md](how-to-transfer-compressed-token.md)
