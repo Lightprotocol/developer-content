@@ -24,10 +24,7 @@ Compressed PDAs provide full functionality of accounts at PDAs, without per-acco
 
 <table><thead><tr><th valign="middle">Creation</th><th width="200" align="center">Regular PDA Account</th><th width="200" align="center">Compressed PDA</th><th align="center">Cost Reduction</th></tr></thead><tbody><tr><td valign="middle">100-byte PDA</td><td align="center">~ 0.0016 SOL</td><td align="center"><strong>~ 0.00001 SOL</strong></td><td align="center"><em><strong>160x</strong></em></td></tr></tbody></table>
 
-Compressed PDAs are derived using a specific program address and seed, like regular PDAs. These are the key differences:
-
-* custom programs invoke the [Light System program](#user-content-fn-1)[^1] to create and update accounts, instead of the System program, and
-* no space calculation and payer specification in the account struct.
+Compressed PDAs are derived using a specific program address and seed, like regular PDAs. Custom programs invoke the [Light System program](#user-content-fn-1)[^1] to create and update accounts, instead of the System program.
 
 ### Compressed PDAs at a Glance
 
