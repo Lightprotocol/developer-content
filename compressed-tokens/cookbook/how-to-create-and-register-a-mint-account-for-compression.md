@@ -253,7 +253,7 @@ const { mint, transactionSignature } = await createMint(
 
 ## Next Steps
 
-Learn How to Create Compressed Token Accounts in our next section.
+Learn How to create compressed token accounts in the next section.
 
 {% content-ref url="how-to-create-compressed-token-accounts.md" %}
 [how-to-create-compressed-token-accounts.md](how-to-create-compressed-token-accounts.md)

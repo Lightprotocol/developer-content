@@ -233,3 +233,13 @@ FLAGS
 
 * Always feel free to join the [Developer Discord](https://discord.gg/D2cEphnvcY) for help!
 * For more info about the canonical indexer implementation built and maintained by Helius Labs, refer to the [Photon codebase](https://github.com/helius-labs/photon).
+
+***
+
+## Next Steps
+
+Get started with our Cookbook Guides.
+
+{% content-ref url="../compressed-tokens/cookbook/" %}
+[cookbook](../compressed-tokens/cookbook/)
+{% endcontent-ref %}
