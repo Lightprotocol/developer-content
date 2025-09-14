@@ -7,10 +7,6 @@ description: >-
 
 # Create an Airdrop
 
-## Create an Airdrop
-
-***
-
 ### Cost Comparison
 
 {% hint style="info" %}
