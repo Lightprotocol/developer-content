@@ -17,9 +17,9 @@ icon: headset
 #### Reporting Technical Issues
 
 {% hint style="info" %}
-When Reporting Technical Issues
+When reporting technical issues,
 
-1. include as much detail as possible in your question
-2. provide a reproducer or GitHub code snippet if possible
-3. please use text (not screenshots) to show error messages so other people with the same problem can find your question!
+1. include as much detail as possible in your question,
+2. provide a reproducer or GitHub code snippet if possible,
+3. please use text (not screenshots) to show error messages so other people with the same problem can find your question.
 {% endhint %}
