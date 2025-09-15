@@ -150,8 +150,8 @@ const main = async () => {
 </strong><strong>      mintAmount
 </strong><strong>    );
 </strong>
-    console.log(`Compressed Token Balance ${mintAmount / 1e9} token`);
-    console.log(`Mint tokens transaction: https://explorer.solana.com/tx/${mintToTxId}?cluster=devnet`);
+    console.log(`Compressed Token minted ${mintAmount / 1e9} token`);
+    console.log(`Transaction: https://explorer.solana.com/tx/${mintToTxId}?cluster=devnet`);
 
     // Step 4: Verify compressed token balance via getCompressedTokenAccountsByOwner
     const tokenAccounts = await connection.getCompressedTokenAccountsByOwner(
