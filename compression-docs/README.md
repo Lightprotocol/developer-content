@@ -8,11 +8,11 @@ icon: book-open
 
 ZK Compression is a Solana account primitive that lets you create tokens and PDAs at a fraction of the cost. Scale your application to millions of users without sacrificing L1 performance and security guarantees.
 
-<table><thead><tr><th valign="middle">Creation</th><th width="200" align="center">Regular Account</th><th width="200" align="center">Compressed Account</th><th align="center">Cost Reduction</th></tr></thead><tbody><tr><td valign="middle">100-byte PDA Account</td><td align="center">0.0016 SOL</td><td align="center"><strong>~ 0.00001 SOL</strong></td><td align="center"><em><strong>160x</strong></em></td></tr><tr><td valign="middle">100 Token Accounts</td><td align="center">~ 0.2 SOL</td><td align="center"><strong>~ 0.00004 SOL</strong></td><td align="center"><em><strong>5000x</strong></em></td></tr></tbody></table>
+<table><thead><tr><th valign="middle">Creation</th><th width="200" align="center">Regular Account</th><th width="200" align="center">Compressed Account</th><th align="center">Cost Reduction</th></tr></thead><tbody><tr><td valign="middle">100-byte PDA Account</td><td align="center">0.0016 SOL</td><td align="center"><strong>~ 0.00001 SOL</strong></td><td align="center"><strong>160x</strong></td></tr><tr><td valign="middle">100 Token Accounts</td><td align="center">~ 0.2 SOL</td><td align="center"><strong>~ 0.00004 SOL</strong></td><td align="center"><strong>5000x</strong></td></tr></tbody></table>
 
 ### Core Features
 
-<table data-view="cards"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Rent-free accounts</strong></td><td>Create accounts without paying upfront rent.</td></tr><tr><td><strong>L1 Performance</strong></td><td>Execution and data availability on Solana.</td></tr><tr><td><strong>Fully Composable</strong></td><td>Compatible with existing programs and accounts.</td></tr></tbody></table>
+<table data-view="cards"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Rent-free Accounts</strong></td><td>Create accounts without paying upfront rent.</td></tr><tr><td><strong>L1 Performance</strong></td><td>Execution and data availability on Solana.</td></tr><tr><td><strong>Fully Composable</strong></td><td>Compatible with existing programs and accounts.</td></tr></tbody></table>
 
 ### Start Building
 
@@ -28,9 +28,7 @@ ZK Compression is an account primitive that combines generalized state compressi
 
 Instead of storing account data in millions of on-chain accounts, state compression stores account data on the [Solana ledger](#user-content-fn-2)[^2] with cryptographic security. Only a small fingerprint is stored on-chain. This fingerprint allows transactions to use the account data in Solana's virtual machine as if it were stored on-chain.\
 \
-Compression is the only technology that sustainably solves state bloat in blockchains like Solana.
-
-We've designed the compression protocol to be highly performant with minimal overhead.
+Compression is the only technology that sustainably solves state bloat in blockchains like Solana. We've designed the compression protocol to be highly performant with minimal compute overhead.
 {% endstep %}
 
 {% step %}
