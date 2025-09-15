@@ -67,6 +67,7 @@
 ## References
 
 * [Whitepaper](references/whitepaper.md)
+* [Terminology](references/terminology.md)
 * [Security](references/security.md)
 
 ## Links
