@@ -238,7 +238,7 @@ FLAGS
 
 ### Next Steps
 
-Get started with our Cookbook Guides.
+Get started with our cookbook guides.
 
 {% content-ref url="../compressed-tokens/cookbook/" %}
 [cookbook](../compressed-tokens/cookbook/)

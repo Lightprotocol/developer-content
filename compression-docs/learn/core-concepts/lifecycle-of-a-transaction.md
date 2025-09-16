@@ -6,10 +6,6 @@ description: >-
 
 # Lifecycle of a Transaction
 
-## Lifecycle of a Transaction
-
-***
-
 {% hint style="info" %}
 This guide assumes you are familiar with transactions on Solana. If you aren't, we recommend to read the [Solana documentation on transactions](https://solana.com/docs/core/transactions).
 {% endhint %}
@@ -52,6 +48,6 @@ An RPC node then parses the transaction and compressed state and provides the re
 
 ### Next Steps
 
-{% content-ref url="limitations.md" %}
-[limitations.md](limitations.md)
+{% content-ref url="considerations.md" %}
+[considerations.md](considerations.md)
 {% endcontent-ref %}

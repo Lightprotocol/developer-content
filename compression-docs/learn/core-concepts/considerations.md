@@ -1,12 +1,10 @@
 ---
-description: Overview limitations of compressed accounts.
+description: >-
+  Overview to considerations of ZK Compression, namely larger transaction size,
+  higher compute unit usage, and per-transaction state cost.
 ---
 
-# Limitations
-
-## Limitations
-
-***
+# Considerations
 
 ### Overview
 

@@ -1,12 +1,11 @@
 ---
-description: Overview to ZK Compression's Core Concepts.
+description: >-
+  Overview to ZK Compression's Core Concepts. Get a high-level system overview
+  and learn about the compressed account model, lifecycle of a transaction, and
+  considerations.
 ---
 
 # Core Concepts
-
-## Core Concepts
-
-***
 
 ZK Compression is an account primitive on Solana that drastically reduces on-chain state costs while maintaining Solana's security, composability, and performance.
 
@@ -64,7 +63,7 @@ In the following sections, we'll dive into the core concepts that make ZK Compre
 * **State Trees**: Learn about the Merkle tree structure used to store compressed accounts and how it minimizes on-chain storage.
 * **Validity Proofs**: Explore how the protocol uses zero-knowledge proofs to verify data validity while keeping proof sizes small.
 * **Lifecycle of a Transaction**: Follow the journey of a ZK-compressed transaction from creation to execution.
-* **Limitations and Considerations**: Discover the trade-offs and scenarios where ZK Compression may or may not be the best solution.
+* **Considerations**: Discover the trade-offs and scenarios where ZK Compression may or may not be the best solution.
 
 {% content-ref url="compressed-account-model.md" %}
 [compressed-account-model.md](compressed-account-model.md)

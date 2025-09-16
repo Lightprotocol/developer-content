@@ -61,7 +61,7 @@
 * [Core Concepts](learn/core-concepts/README.md)
   * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
   * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
-  * [Limitations](learn/core-concepts/limitations.md)
+  * [Considerations](learn/core-concepts/considerations.md)
 * [Node Operators](learn/node-operators.md)
 
 ## References

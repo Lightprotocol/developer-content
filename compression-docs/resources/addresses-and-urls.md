@@ -81,4 +81,12 @@ main();
 
 </details>
 
-###
+***
+
+### Next Steps
+
+Explore all JSON RPC endpoints on Solana, best practices, and error codes.
+
+{% content-ref url="json-rpc-methods/" %}
+[json-rpc-methods](json-rpc-methods/)
+{% endcontent-ref %}

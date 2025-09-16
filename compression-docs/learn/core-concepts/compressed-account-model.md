@@ -6,10 +6,6 @@ description: >-
 
 # Compressed Account Model
 
-## Compressed Account Model
-
-***
-
 {% hint style="info" %}
 This guide assumes that you're familiar with [Solana's account model](https://solana.com/docs/core/accounts).
 {% endhint %}
