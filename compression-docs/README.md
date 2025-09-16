@@ -42,7 +42,7 @@ The protocol uses small zero-knowledge proofs (validity proofs) to verify the in
 
 Quickly use ZK Compression in your existing AI workflow by following the steps below.
 
-<table><thead><tr><th width="125.25">Tool</th><th width="313">Description</th><th>Link</th></tr></thead><tbody><tr><td>LLMs.txt</td><td>Index of site that helps LLMs map documentation.</td><td><a href="https://zkcompression.com/llms.txt">https://zkcompression.com/llms.txt</a></td></tr><tr><td>.md</td><td>Copy the page you are working on as Markdown for LLMs for questions.</td><td>Top right corner on each page, or add suffix e.g. https://zkcompression.com/introduction.md</td></tr></tbody></table>
+<table><thead><tr><th width="125.25">Tool</th><th width="313">Description</th><th>Link</th></tr></thead><tbody><tr><td>LLMs.txt</td><td>Index of site that helps LLMs map documentation.</td><td><a href="https://zkcompression.com/llms.txt">https://zkcompression.com/llms.txt</a></td></tr><tr><td>.md</td><td>Copy the page you are working on as markdown for LLMs for questions.</td><td>Top right corner on each page, or add suffix e.g. https://zkcompression.com/introduction.md</td></tr></tbody></table>
 
 ### Resources
 
