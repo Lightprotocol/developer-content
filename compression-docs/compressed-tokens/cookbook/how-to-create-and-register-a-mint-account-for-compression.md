@@ -14,12 +14,12 @@ Compressed tokens use an SPL mint that is registered with the compressed token p
 
 The `createMint()` function performs three operations:
 
-1. Create a standard SPL mint account `createMintAccountInstruction`
-2. Initialize the mint `initializeMintInstruction` to set authority, decimals, etc.
-3. Create token pool PDA with `createTokenPoolInstruction`, the [omnibus account](#user-content-fn-1)[^1] for compression and decompression of tokens
+1. Create a standard SPL mint account `createMintAccountInstruction`,
+2. initialize the mint `initializeMintInstruction` to set authority, decimals, etc., and
+3. create a token pool PDA with `createTokenPoolInstruction`, the [omnibus account](#user-content-fn-1)[^1] for compression and decompression of tokens.
 
 {% hint style="success" %}
-**Best Practice:** Each mint supports a maximum of 4 token pools total. During compression/decompression operations, token pools get write-locked. Use `addTokenPools()` to create additional pools to increase per-block write-lock capacity.
+**Best Practice:** Each mint supports a maximum of 4 token pools total. During compression/decompression operations, token pools get write-locked. Use `addTokenPools()` to create additional pools that increase per-block write-lock capacity.
 {% endhint %}
 
 {% code title="function-create-mint.ts" %}
@@ -237,7 +237,7 @@ const { mint, transactionSignature } = await createMint(
 
 ### Next Steps
 
-Learn how to create compressed token accounts in the next section.
+Learn differences to regular and how to create compressed token accounts in the next section.
 
 {% content-ref url="how-to-create-compressed-token-accounts.md" %}
 [how-to-create-compressed-token-accounts.md](how-to-create-compressed-token-accounts.md)
