@@ -4,11 +4,7 @@ description: Complete whitepaper introducing ZK Compression.
 
 # Whitepaper
 
-## Whitepaper
-
-***
-
-#### Scaling the Design Space for On-chain Applications with ZK Compression v0.1.0
+### Scaling the Design Space for On-chain Applications with ZK Compression
 
 **Light Protocol Team**
 
