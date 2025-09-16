@@ -1,7 +1,7 @@
 ---
 description: >-
-  Complete guide to approve with `approve()` and revoke delegate authority with
-  `revoke()` for compressed tokens, troubleshooting and advanced configurations.
+  Complete guide to manage delegate authority for compressed tokens with
+  `approve()` and `revoke()`, troubleshooting and advanced configurations.
 ---
 
 # How to approve and revoke delegate authority
@@ -10,13 +10,13 @@ The `approve()` and `revoke()` functions grant and remove delegate spending auth
 
 Before we approve or revoke delegates, we need:
 
-* Compressed token accounts to delegate or revoke delegation from
-* SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`
+* compressed token accounts to delegate or revoke delegation from, and
+* an SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`
 
 The functions perform opposite operations:
 
-1. **`approve()`** consumes input account and creates delegated account with spending limit for delegate and change account for owner
-2. **`revoke()`** consumes delegated accounts and creates output account under owner control without delegation
+1. `approve()` consumes input account and creates delegated account with spending limit for delegate and change account for owner, and
+2. `revoke()` consumes delegated accounts and creates output account under owner control without delegation.
 
 {% code title="function-manage-delegates.ts" %}
 ```typescript
@@ -353,9 +353,9 @@ revokeDelegates().catch(console.error);
 
 You've successfully approved and revoked delegation for compressed tokens. The output shows:
 
-* **Approval completion**: Delegate authority granted for specified token amount
-* **Delegation verification**: Confirmed delegate accounts exist with correct amounts
-* **Revocation completion**: Delegate authority removed and tokens returned to owner
+* **Approval completion**: Delegate authority granted for specified token amount.
+* **Delegation verification**: Confirmed delegate accounts exist with correct amounts.
+* **Revocation completion**: Delegate authority removed and tokens returned to owner.
 {% endstep %}
 {% endstepper %}
 

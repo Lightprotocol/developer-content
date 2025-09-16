@@ -1,6 +1,6 @@
 ---
 description: >-
-  Complete guide to compress with `compress()` and decompress SPL Tokens with
+  Complete guide to compress SPL tokens with `compress()` and decompress with
   `decompress()`, troubleshooting and advanced configurations. Best used for
   transfers.
 ---
@@ -11,21 +11,21 @@ The `compress()` and `decompress()` functions convert SPL tokens between compres
 
 The functions perform opposite operations:
 
-1. `compress()` locks SPL tokens in a token pool account and creates compressed accounts
-2. `decompress()` withdraws SPL tokens from the token pool to an Associated Token Account and invalidates compressed accounts
+1. `compress()` locks SPL tokens in a token pool account and creates compressed accounts, and
+2. `decompress()` withdraws SPL tokens from the token pool to an Associated Token Account and invalidates compressed accounts.
 
 Before we convert formats, we need:
 
-* SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`
-* for `compress()` SPL tokens in an Associated Token Account
-* For `decompress()` compressed token accounts with sufficient balance
+* An SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`,&#x20;
+* for `compress()` SPL tokens in an Associated Token Account, or
+* for `decompress()` compressed token accounts with sufficient balance.
 
 {% hint style="success" %}
 **Function Difference and Best Practice:**
 
 * `compress(amount, sourceTokenAccount, toAddress)` compresses specific amounts from\
   source to a specified recipient. Use for transfers and precise amounts.
-* `compressSplTokenAccount(tokenAccount, remainingAmount)` compresses the entire SPL token account balance minus optional remaining amount only to the same owner. Use to migrate complete token accounts with optional partial retention. Here is how.
+* `compressSplTokenAccount(tokenAccount, remainingAmount)` compresses the entire SPL token account balance minus optional remaining amount only to the same owner. Use to migrate complete token accounts with optional partial retention. [Here is how](how-to-compress-complete-spl-token-accounts.md).
 {% endhint %}
 
 {% code title="function-decompress-compress.ts" %}
@@ -491,7 +491,7 @@ await decompressDelegated(
 
 ### Next Steps
 
-Learn how to compress complete token accounts in one transaction to reclaim rent.
+Learn how to compress complete token accounts in one transaction and reclaim rent afterwards.
 
 {% content-ref url="how-to-compress-complete-spl-token-accounts.md" %}
 [how-to-compress-complete-spl-token-accounts.md](how-to-compress-complete-spl-token-accounts.md)

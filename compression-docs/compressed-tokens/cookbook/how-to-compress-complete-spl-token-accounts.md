@@ -28,7 +28,7 @@ After compression, empty token accounts can now be closed to reclaim rent with [
   account balance minus optional remaining amount only to the same owner. Use to migrate complete token\
   accounts with optional partial retention.
 * `compress(amount, sourceTokenAccount, toAddress)` compresses specific amounts from\
-  source to a specified recipient. Use for transfers and precise amounts. Here is how.
+  source to a specified recipient. Use for transfers and precise amounts. [Here is how](how-to-compress-and-decompress-spl-tokens.md).
 {% endhint %}
 
 {% code title="function-compress-spl-accounts.ts" %}
@@ -292,10 +292,10 @@ compressSplTokenAccounts().catch(console.error);
 {% step %}
 **Success!**
 
-You've successfully compressed an SPL token account. The output shows:
+You've compressed an SPL token account. The output shows:
 
-* **Account compression**: Entire SPL token account balance converted to compressed format
-* **Balance verification**: All tokens migrated from SPL account to compressed accounts
+* **Account compression**: Entire SPL token account balance converted to compressed format.
+* **Balance verification**: All tokens migrated from SPL account to compressed accounts.
 * **Rent Reclaimable**: The empty SPL account can now be closed to reclaim rent with [`closeAccount()`](https://solana.com/developers/cookbook/tokens/close-token-accounts).
 {% endstep %}
 {% endstepper %}

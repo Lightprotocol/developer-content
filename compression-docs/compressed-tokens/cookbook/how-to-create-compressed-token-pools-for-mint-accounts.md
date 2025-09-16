@@ -14,13 +14,13 @@ The token pool account itself requires rent, but individual compressed token acc
 
 The function
 
-1. registers an existing SPL mint with the compressed token program and
-2. create token pool PDA with `createTokenPoolInstruction`, the omnibus account that holds SPL tokens corresponding to compressed tokens in circulation
+1. registers an existing SPL mint with the compressed token program, and
+2. create token pool PDA with `createTokenPoolInstruction`, the omnibus account that holds SPL tokens corresponding to compressed tokens in circulation.
 
 Before we create a token pool, we need an existing SPL mint account.
 
 {% hint style="success" %}
-**Best Practice:** Each mint supports a maximum of 4 token pools total. During compression/decompression operations, token pools get write-locked. Use `addTokenPools()` to create additional pools to increase per-block write-lock capacity.
+**Best Practice:** Each mint supports a maximum of 4 token pools total. During compression/decompression operations, token pools get write-locked. Use `addTokenPools()` to create additional pools that increase per-block write-lock capacity.
 {% endhint %}
 
 {% code title="function-create-token-pool.ts" %}
@@ -217,9 +217,9 @@ createTokenPools().catch(console.error);
 
 You've created multiple token pools for an SPL mint. The output shows:
 
-* **Token pool creation**: Omnibus account registered for compression/decompression
-* **Additional pools**: Multiple pools created for increased write-lock limit per block
-* **Transaction confirmations**: All pool creation operations confirmed on-chain
+* **Token pool creation**: Omnibus account registered for compression/decompression.
+* **Additional pools**: Multiple pools created for increased write-lock limit per block.
+* **Transaction confirmations**: All pool creation operations confirmed on-chain.
 {% endstep %}
 {% endstepper %}
 

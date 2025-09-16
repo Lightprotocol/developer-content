@@ -11,13 +11,13 @@ The `mergeTokenAccounts()` function consolidates multiple compressed accounts of
 
 The function
 
-1. Consume multiple input compressed token accounts (up to 8 accounts)
-2. Create single output compressed account with combined balance for the owner
+1. consumes multiple input compressed token accounts (up to 8 accounts), and
+2. creates a single output compressed account with combined balance for the owner.
 
-Before we merge compressed accounts, we need:
+Before we merge compressed accounts, we need
 
-* Multiple compressed token accounts of the same mint owned by the same wallet
-* SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`
+* multiple compressed token accounts of the same mint owned by the same wallet, and
+* SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`.
 
 {% hint style="success" %}
 State trees where compressed account's are stored, are append only. `mergeTokenAccounts()` reduces account fragmentation to simplify balance calculations from `getCompressedTokenAccountsByOwner`
@@ -345,7 +345,7 @@ for (const mint of mints) {
 
 ### Next Steps
 
-Learn how to create more compressed token pools for your SPL mint to increase write-lock limits.
+Learn how to create additional compressed token pools for your SPL mint to increase write-lock limits.
 
 {% content-ref url="how-to-create-compressed-token-pools-for-mint-accounts.md" %}
 [how-to-create-compressed-token-pools-for-mint-accounts.md](how-to-create-compressed-token-pools-for-mint-accounts.md)

@@ -10,8 +10,12 @@ The `transfer()` function moves compressed tokens between accounts. Unlike regul
 
 Before we can transfer compressed tokens, we need:
 
-* SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`
-* Source compressed token account with sufficient balance for the transfer amount. Regular SPL token accounts can be compressed in the same transaction with `compress_or_decompress_amount`, if needed.
+* An SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`, and
+* a source compressed token account with sufficient balance for the transfer amount.&#x20;
+
+{% hint style="success" %}
+Regular SPL token accounts can be compressed in the same transaction with `compress_or_decompress_amount`, if needed.
+{% endhint %}
 
 {% code title="function-transfer-compressed-tokens.ts" %}
 ```typescript
