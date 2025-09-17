@@ -1,0 +1,18 @@
+# Cloudflare Workers configuration for Light MCP Remote Server
+name = "light-mcp-remote"
+main = "src/index.ts"
+compatibility_date = "2024-12-18"
+compatibility_flags = ["nodejs_compat"]
+
+# Enable dev mode for local development
+workers_dev = true
+
+# Environment variables can be set here
+[vars]
+# Add any environment variables here if needed
+
+# KV namespaces for caching (optional - uncomment if you want to add caching)
+# [[kv_namespaces]]
+# binding = "DOCS_CACHE"
+# id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"

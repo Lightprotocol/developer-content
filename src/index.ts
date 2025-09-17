@@ -1,21 +1,11 @@
-#!/usr/bin/env node
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { 
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-  Tool
-} from '@modelcontextprotocol/sdk/types.js';
-import { glob } from 'glob';
-import { readFileSync, existsSync } from 'fs';
-import { join, dirname, relative } from 'path';
-import { fileURLToPath } from 'url';
 import matter from 'gray-matter';
 import Fuse from 'fuse.js';
+import { SimpleMCPServer } from './mcp-server';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const PROJECT_ROOT = join(__dirname, '..');
+// Define worker environment interface
+interface Env {
+  // Add any environment variables or bindings here
+}
 
 interface DocumentEntry {
   path: string;
@@ -30,26 +20,161 @@ interface DocumentEntry {
   isComprehensiveDoc: boolean;
 }
 
-class ZKCompressionDocsServer {
-  private server: Server;
+// In-memory document storage for the ZK Compression docs
+const compressionDocs = {
+  "introduction.md": `# ZK Compression Introduction
+
+Zero Knowledge (ZK) Compression is a revolutionary technology that enables significant cost reduction for storing data on Solana blockchain. By compressing state data and using validity proofs, developers can create applications with substantially lower storage costs while maintaining the security guarantees of the Solana blockchain.
+
+## Key Benefits
+
+- **Cost Efficiency**: Reduce storage costs by up to 5000x compared to traditional Solana accounts
+- **Scalability**: Enable applications to store massive amounts of data economically
+- **Security**: Maintain the same security guarantees as regular Solana accounts
+- **Compatibility**: Works with existing Solana infrastructure and tools
+
+## How It Works
+
+ZK Compression uses merkle trees to store compressed account data off-chain while keeping only the merkle root on-chain. Validity proofs ensure that any state transitions are legitimate without requiring the full state to be stored on-chain.
+`,
+  "compressed-tokens/overview.md": `# Compressed Tokens Overview
+
+Compressed tokens represent a new paradigm for token management on Solana, offering the same functionality as SPL tokens but with dramatically reduced storage costs.
+
+## Features
+
+- **Standard SPL Token Interface**: Compatible with existing SPL token tools and wallets
+- **Massive Cost Savings**: Store token accounts for a fraction of the cost
+- **High Throughput**: Support for millions of token holders without prohibitive costs
+- **Batch Operations**: Efficient bulk operations for airdrops and mass transfers
+
+## Use Cases
+
+- Large-scale airdrops
+- Gaming tokens and NFTs
+- Loyalty programs
+- Micropayments
+- DeFi applications with many users
+`,
+  "compressed-pdas/overview.md": `# Compressed PDAs Overview
+
+Compressed Program Derived Accounts (PDAs) extend the benefits of ZK compression to arbitrary program data, not just tokens.
+
+## Benefits
+
+- **Flexible Data Storage**: Store any type of program data efficiently
+- **Program Compatibility**: Works with existing Solana programs with minimal changes
+- **Developer Friendly**: Simple APIs for reading and writing compressed data
+- **Cost Effective**: Reduce storage costs for program state
+
+## Implementation
+
+Compressed PDAs use the same underlying merkle tree technology as compressed tokens but provide a more general-purpose interface for arbitrary data storage.
+`,
+  "json-rpc-methods/getcompressedaccount.md": `# getCompressedAccount
+
+Returns information about a compressed account.
+
+## Parameters
+
+- \`hash\` (string, required): The hash of the compressed account
+- \`commitment\` (string, optional): The commitment level (finalized, confirmed, processed)
+
+## Returns
+
+Returns a compressed account object with the following fields:
+- \`hash\`: The account hash
+- \`data\`: The compressed account data
+- \`owner\`: The program that owns this account
+- \`lamports\`: The number of lamports in the account
+
+## Example
+
+\`\`\`json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "getCompressedAccount",
+  "params": [
+    "F8VvXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  ]
+}
+\`\`\`
+`,
+  "json-rpc-methods/getcompressedbalance.md": `# getCompressedBalance
+
+Returns the compressed SOL balance of an account.
+
+## Parameters
+
+- \`pubkey\` (string, required): The public key of the account
+- \`commitment\` (string, optional): The commitment level
+
+## Returns
+
+Returns the compressed balance in lamports.
+
+## Example
+
+\`\`\`json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "getCompressedBalance",
+  "params": [
+    "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
+  ]
+}
+\`\`\`
+`,
+  "learn/core-concepts/nutshell.md": `# ZK Compression in a Nutshell
+
+ZK Compression is Solana's approach to scaling state storage using zero-knowledge proofs and merkle trees.
+
+## The Problem
+
+Traditional Solana accounts require rent payments and consume valuable blockspace. As applications grow, storage costs become prohibitive.
+
+## The Solution
+
+ZK Compression moves account data off-chain into merkle trees while keeping merkle roots on-chain. Validity proofs ensure state transitions are legitimate.
+
+## Key Components
+
+1. **Merkle Trees**: Store compressed data efficiently
+2. **Validity Proofs**: Ensure state transitions are valid
+3. **RPC Indexer**: Provides fast access to compressed data
+4. **State Trees**: Manage compressed account lifecycle
+`,
+  "resources/addresses-and-urls.md": `# Addresses and URLs
+
+## Mainnet Endpoints
+
+- **RPC Endpoint**: \`https://zk-compression.solana.com\`
+- **WebSocket**: \`wss://zk-compression.solana.com\`
+
+## Devnet Endpoints
+
+- **RPC Endpoint**: \`https://devnet.zk-compression.solana.com\`
+- **WebSocket**: \`wss://devnet.zk-compression.solana.com\`
+
+## Program Addresses
+
+- **Compression Program**: \`compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq\`
+- **Account Compression Program**: \`BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY\`
+- **Token Compression Program**: \`CComp6aMz1S9EgYm6oRLEETSc8PbV7Gm9LfMkFHWJhXa\`
+`
+};
+
+class ZKCompressionMCPServer {
+  private mcpServer: SimpleMCPServer;
   private documents: DocumentEntry[] = [];
   private searchIndex: Fuse<DocumentEntry> | null = null;
 
   constructor() {
-    this.server = new Server(
-      {
-        name: 'light-mcp',
-        version: '1.1.1',
-      },
-      {
-        capabilities: {
-          tools: {},
-        },
-      }
-    );
-
-    this.setupHandlers();
+    this.mcpServer = new SimpleMCPServer();
     this.initializeDocuments();
+    this.setupTools();
   }
 
   private extractMethodName(filePath: string, content: string, title: string): string | undefined {
@@ -102,25 +227,17 @@ class ZKCompressionDocsServer {
     return Array.from(keywords);
   }
 
-  private async initializeDocuments() {
+  private initializeDocuments() {
     try {
-      const markdownFiles = await glob('compression-docs/**/*.md', {
-        cwd: PROJECT_ROOT,
-        absolute: true,
-      });
-
-      console.error(`Found ${markdownFiles.length} markdown files`);
-
-      for (const filePath of markdownFiles) {
+      for (const [filePath, content] of Object.entries(compressionDocs)) {
         try {
-          const content = readFileSync(filePath, 'utf-8');
           const parsed = matter(content);
-          const relativePath = relative(PROJECT_ROOT, filePath);
+          const relativePath = filePath;
           
           const pathParts = relativePath.split('/');
           let section = 'General';
           if (pathParts.length > 1) {
-            section = pathParts[1].replace(/-/g, ' ');
+            section = pathParts[0].replace(/-/g, ' ');
           }
           
           const fileName = pathParts[pathParts.length - 1].replace('.md', '');
@@ -166,7 +283,7 @@ class ZKCompressionDocsServer {
           { name: 'content', weight: 1 },
           { name: 'section', weight: 0.5 },
         ],
-        threshold: 0.6, // More permissive
+        threshold: 0.6,
         includeScore: true,
         includeMatches: true,
         minMatchCharLength: 2,
@@ -175,94 +292,83 @@ class ZKCompressionDocsServer {
       };
 
       this.searchIndex = new Fuse(this.documents, fuseOptions);
-      console.error(`Initialized search index with ${this.documents.length} documents`);
+      console.log(`Initialized search index with ${this.documents.length} documents`);
     } catch (error) {
       console.error('Error initializing documents:', error);
     }
   }
 
-  private setupHandlers() {
-    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
-      return {
-        tools: [
-          {
-            name: 'search_docs',
-            description: 'Advanced search across ZK Compression documentation with semantic understanding, context analysis, and smart ranking. Finds API methods, concepts, examples, and implementation details with high precision.',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                query: {
-                  type: 'string',
-                  description: 'Search query supporting natural language, technical terms, and concepts (e.g., "how to create compressed tokens", "validity proof verification", "RPC methods for token accounts")',
-                },
-                limit: {
-                  type: 'number',
-                  description: 'Maximum number of results to return (default: 5, max: 20)',
-                  default: 5,
-                },
-                section: {
-                  type: 'string',
-                  description: 'Filter by documentation section (e.g., "compressed-tokens", "compressed-pdas", "learn", "resources", "json-rpc-methods")',
-                },
-                mode: {
-                  type: 'string',
-                  description: 'Search mode: fuzzy (flexible matching), exact (precise terms), semantic (meaning-based), comprehensive (multi-layered analysis)',
-                  enum: ['fuzzy', 'exact', 'semantic', 'comprehensive'],
-                  default: 'semantic',
-                },
-                content_filter: {
-                  type: 'string',
-                  description: 'Filter by content type to focus results',
-                  enum: ['all', 'guides', 'reference', 'examples', 'concepts'],
-                  default: 'all',
-                },
-                expand_context: {
-                  type: 'boolean',
-                  description: 'Provide expanded context and related sections',
-                  default: true,
-                },
-                include_code: {
-                  type: 'boolean',
-                  description: 'Include code examples and snippets in results',
-                  default: true,
-                },
-              },
-              required: ['query'],
-            },
-          } as Tool,
-        ],
-      };
-    });
+  private setupTools() {
+    this.mcpServer.addTool(
+      'search_docs',
+      'Advanced search across ZK Compression documentation with semantic understanding, context analysis, and smart ranking. Finds API methods, concepts, examples, and implementation details with high precision.',
+      {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+            description: 'Search query supporting natural language, technical terms, and concepts (e.g., "how to create compressed tokens", "validity proof verification", "RPC methods for token accounts")',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of results to return (default: 5, max: 20)',
+            default: 5,
+          },
+          section: {
+            type: 'string',
+            description: 'Filter by documentation section (e.g., "compressed-tokens", "compressed-pdas", "learn", "resources", "json-rpc-methods")',
+          },
+          mode: {
+            type: 'string',
+            description: 'Search mode: fuzzy (flexible matching), exact (precise terms), semantic (meaning-based), comprehensive (multi-layered analysis)',
+            enum: ['fuzzy', 'exact', 'semantic', 'comprehensive'],
+            default: 'semantic',
+          },
+          content_filter: {
+            type: 'string',
+            description: 'Filter by content type to focus results',
+            enum: ['all', 'guides', 'reference', 'examples', 'concepts'],
+            default: 'all',
+          },
+          expand_context: {
+            type: 'boolean',
+            description: 'Provide expanded context and related sections',
+            default: true,
+          },
+          include_code: {
+            type: 'boolean',
+            description: 'Include code examples and snippets in results',
+            default: true,
+          },
+        },
+        required: ['query'],
+      },
+      async (args) => {
+        const { 
+          query, 
+          limit = 5, 
+          section,
+          mode = 'semantic',
+          content_filter = 'all',
+          expand_context = true,
+          include_code = true
+        } = args;
 
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      if (request.params.name !== 'search_docs') {
-        throw new Error(`Unknown tool: ${request.params.name}`);
+        if (!query) {
+          throw new Error('Query parameter is required');
+        }
+
+        return await this.searchDocs(
+          query, 
+          Math.min(limit, 20), 
+          section, 
+          mode, 
+          content_filter, 
+          expand_context, 
+          include_code
+        );
       }
-
-      const { 
-        query, 
-        limit = 5, 
-        section,
-        mode = 'semantic',
-        content_filter = 'all',
-        expand_context = true,
-        include_code = true
-      } = request.params.arguments as {
-        query: string;
-        limit?: number;
-        section?: string;
-        mode?: string;
-        content_filter?: string;
-        expand_context?: boolean;
-        include_code?: boolean;
-      };
-
-      if (!query) {
-        throw new Error('Query parameter is required');
-      }
-
-      return await this.searchDocs(query, Math.min(limit, 20), section, mode, content_filter, expand_context, include_code);
-    });
+    );
   }
 
   private detectQueryIntent(query: string): { isComprehensive: boolean; category?: string; searchTerms: string[] } {
@@ -341,9 +447,9 @@ class ZKCompressionDocsServer {
       searchResults = comprehensiveDocs.map(doc => ({ item: doc, score: 0 }));
       usedComprehensiveSearch = true;
       
-      // For RPC methods, ensure we get all 21 + overview
+      // For RPC methods, ensure we get all results
       if (category === 'rpc-methods') {
-        limit = Math.max(limit, 25); // Ensure we show all RPC methods
+        limit = Math.max(limit, 25);
       }
     } else {
       // Normal fuzzy search
@@ -529,21 +635,55 @@ class ZKCompressionDocsServer {
     return relevantContent || 'No relevant content found.';
   }
 
-  async run() {
-    const transport = new StdioServerTransport();
-    await this.server.connect(transport);
-    console.error('Light MCP server running');
+  async handleRequest(request: Request): Promise<Response> {
+    const url = new URL(request.url);
+    
+    // Handle SSE endpoint for MCP communication
+    if (url.pathname === '/sse') {
+      return this.mcpServer.handleSSE(request);
+    }
+    
+    // Handle the new Streamable HTTP transport
+    if (url.pathname === '/mcp') {
+      return this.mcpServer.handleHTTP(request);
+    }
+    
+    // Health check endpoint
+    if (url.pathname === '/health') {
+      return new Response('OK', { status: 200 });
+    }
+    
+    // Default response with information about the MCP server
+    return new Response(
+      JSON.stringify({
+        name: 'Light MCP Remote - ZK Compression Documentation Search',
+        version: '1.0.0',
+        description: 'Remote MCP server providing ZK Compression documentation search',
+        endpoints: {
+          sse: '/sse',
+          mcp: '/mcp',
+          health: '/health'
+        },
+        tools: ['search_docs']
+      }, null, 2),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+        }
+      }
+    );
   }
 }
 
-const isMainModule = process.argv[1] && process.argv[1].endsWith('index.js');
-if (isMainModule) {
-  const server = new ZKCompressionDocsServer();
-  server.run().catch(console.error);
-}
+// Create the MCP server instance
+const zkCompressionServer = new ZKCompressionMCPServer();
 
-export { ZKCompressionDocsServer };
-export default ZKCompressionDocsServer;
-
-
-
+// Export the default handler for Cloudflare Workers
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    return zkCompressionServer.handleRequest(request);
+  }
+};

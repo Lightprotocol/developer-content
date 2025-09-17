@@ -1,35 +1,35 @@
 {
-  "name": "light-mcp",
-  "version": "1.2.4",
-  "description": "MCP server providing ZK Compression documentation search for AI-powered IDEs",
-  "main": "dist/index.js",
+  "name": "light-mcp-remote",
+  "version": "1.0.0",
+  "description": "Remote MCP server providing ZK Compression documentation search deployed on Cloudflare Workers",
+  "main": "src/index.ts",
   "type": "module",
-  "bin": {
-    "light-mcp": "dist/cli.js"
-  },
-  "files": [
-    "dist/**/*",
-    "compression-docs/**/*",
-    "README.md"
-  ],
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "tsx src/index.ts",
-    "prepublishOnly": "npm run build"
+    "build": "wrangler types",
+    "start": "wrangler dev --local",
+    "dev": "wrangler dev --local",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "fuse.js": "^7.0.0",
     "glob": "^10.3.10",
-    "gray-matter": "^4.0.3",
-    "fuse.js": "^7.0.0"
+    "gray-matter": "^4.0.3"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0",
-    "tsx": "^4.0.0"
+    "wrangler": "^4.33.2"
   },
-  "keywords": ["mcp", "solana", "zk-compression"],
+  "keywords": [
+    "mcp",
+    "solana",
+    "zk-compression",
+    "cloudflare",
+    "workers",
+    "remote"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "repository": {
