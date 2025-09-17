@@ -146,14 +146,6 @@ The process of converting a compressed to a regular Solana account. SPL tokens a
 
 ***
 
-### [**Fee account**](https://solana.com/docs/references/terminology#fee-account)
-
-The fee account in the transaction is the account that pays for the cost of including the transaction in the ledger.
-
-This is the first account in the transaction. This account must be declared as Read-Write (writable) in the transaction since paying for the transaction reduces the account balance.
-
-***
-
 ### Forester node / Forester
 
 A keeper node to incorporate state updates into state Merkle Trees for ZK Compression.
@@ -191,18 +183,6 @@ A call to invoke a specific [instruction handler](https://solana.com/docs/refere
 An instruction also specifies which accounts it wants to read or modify, and additional data that serves as auxiliary input to the [instruction handler](https://solana.com/docs/references/terminology#instruction-handler). A [client](https://solana.com/docs/references/terminology#client) must include at least one instruction in a [transaction](https://solana.com/docs/references/terminology#transaction), and all instructions must complete for the transaction to be considered successful.
 
 For example, compressed accounts are created or updated with the `InvokeCpiInstruction` to the Light System Program.
-
-***
-
-### [**Keypair**](https://solana.com/docs/references/terminology#keypair)
-
-A [public key](https://solana.com/docs/references/terminology#public-key-pubkey) and corresponding [private key](https://solana.com/docs/references/terminology#private-key) for accessing an account.
-
-***
-
-### [**Lamport**](https://solana.com/docs/references/terminology#lamport)
-
-A fractional [native token](https://solana.com/docs/references/terminology#native-token) with the value of 0.000000001 [SOL](https://solana.com/docs/references/terminology#sol) (a billionth)
 
 ***
 
@@ -255,12 +235,6 @@ ZK Compression encodes Merkle proofs into zero-knowledge proofs (validity proofs
 
 ***
 
-### [**Node**](https://solana.com/docs/references/terminology#node)
-
-A computer participating in a [cluster](https://solana.com/docs/references/terminology#cluster).
-
-***
-
 ### Nullification
 
 The process of marking compressed accounts as spent to prevent double-spending.
@@ -293,18 +267,6 @@ The ability of the SVM to execute multiple transactions simultaneously, as long 
 
 ***
 
-### [**Private key**](https://solana.com/docs/references/terminology#private-key)
-
-The private key of a [keypair](https://solana.com/docs/references/terminology#keypair).
-
-***
-
-### [**Program id**](https://solana.com/docs/references/terminology#program-id)
-
-The public key of the [account](https://solana.com/docs/references/terminology#account) containing a [program](https://solana.com/docs/references/terminology#program).
-
-***
-
 ### [**Program derived addresses (PDA)**](https://solana.com/docs/references/terminology#program-derived-account-pda)
 
 PDAs are special account addresses derived deterministically using optional seeds, a bump seed, and a program ID.
@@ -332,12 +294,6 @@ The Poseidon hash is designed to minimize computational complexity in ZK circuit
 ### Proof verification
 
 The on-chain process of validating zero-knowledge proofs to confirm the correctness of compressed account state transitions.
-
-***
-
-### [**Public key (pubkey)**](https://solana.com/docs/references/terminology#public-key-pubkey)
-
-The public key of a [keypair](https://solana.com/docs/references/terminology#keypair).
 
 ***
 
@@ -376,12 +332,6 @@ The [ZK Compression RPC API](https://www.zkcompression.com/developers/json-rpc-m
 ### [**Smart contract**](https://solana.com/docs/references/terminology#smart-contract)
 
 Smart contracts on Solana are called programs with key characteristics and optimizations.
-
-***
-
-### [**SOL**](https://solana.com/docs/references/terminology#sol)
-
-The [native token](https://solana.com/docs/references/terminology#native-token) of a Solana [cluster](https://solana.com/docs/references/terminology#cluster).
 
 ***
 
