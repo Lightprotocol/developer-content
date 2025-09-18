@@ -42,10 +42,10 @@ The protocol uses small zero-knowledge proofs (validity proofs) to verify the in
 
 Integrate ZK Compression in your existing AI workflow by following the steps below.
 
-<table><thead><tr><th width="125.25">Tool</th><th width="313">Description</th><th>Link</th></tr></thead><tbody><tr><td>LLMs.txt</td><td>Index of site that helps LLMs map documentation.</td><td><a href="https://zkcompression.com/llms.txt">https://zkcompression.com/llms.txt</a></td></tr><tr><td>.md</td><td>Copy the page you are working on as markdown for LLMs. </td><td>Top right corner on each page, <br>or append .md to the root URL: <a href="https://www.zkcompression.com/references/whitepaper.md">https://www.zkcompression.com/references/whitepaper.md</a></td></tr></tbody></table>
+<table><thead><tr><th width="125.25">Tool</th><th width="313">Description</th><th>Link</th></tr></thead><tbody><tr><td>LLMs.txt</td><td>Index of site that helps LLMs map documentation.</td><td><a href="https://zkcompression.com/llms.txt">https://zkcompression.com/llms.txt</a></td></tr><tr><td>.md</td><td>Copy the page you are working on as markdown for LLMs. </td><td>Top right corner on each page, <br>or append .md to the root URL, e.g. <a href="https://www.zkcompression.com/references/whitepaper.md">https://www.zkcompression.com/references/whitepaper.md</a></td></tr></tbody></table>
 
 {% hint style="success" %}
-**AI powered Navigation**: Use AI search to quickly find the information you need, get code examples, and understand complex concepts. Available throughout our documentation.
+**AI powered Navigation**: Use AI search to find the information you need fast, get code examples, and understand complex topics. Available throughout our documentation.
 {% endhint %}
 
 {% embed url="https://drive.google.com/file/d/1-oxTqNMQX8LqP8FYSCDiG3YzIixnPbiN/view?usp=share_link" %}
