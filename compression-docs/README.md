@@ -20,20 +20,14 @@ ZK Compression is a Solana account primitive that lets you create tokens and PDA
 
 ### What is ZK Compression? <a href="#zk-and-compression-in-a-nutshell" id="zk-and-compression-in-a-nutshell"></a>
 
-ZK Compression is an account primitive that combines generalized state compression and [zero-knowledge proofs](#user-content-fn-1)[^1] to reduce the on-chain state footprint and storage cost.
-
-{% hint style="success" %}
-Developers don't need to initialize state Merkle trees or generate zero-knowledge proofs to start building.\
-By default, the protocol provides all infrastructure under the hood.
-{% endhint %}
+ZK Compression is a framework that reduces the storage cost of Solana accounts by combining generalized state compression and [zero-knowledge proofs](#user-content-fn-1)[^1].
 
 {% stepper %}
 {% step %}
-#### Compression
+#### State Compression
 
-Instead of storing account data in millions of on-chain accounts, state compression stores account data on the [Solana ledger](#user-content-fn-2)[^2] with cryptographic security. Only a small fingerprint is stored on-chain. This fingerprint allows transactions to use the account data in Solana's virtual machine as if it were stored on-chain.\
-\
-Compression is the only technology that sustainably solves state bloat in blockchains like Solana. We've designed the compression protocol to be highly performant with minimal compute overhead.
+Instead of storing account data in millions of on-chain accounts, state compression stores account data on the [Solana ledger](#user-content-fn-2)[^2] with cryptographic security. Only a small fingerprint is stored on-chain. This fingerprint allows transactions to use the account data inside Solana's virtual machine as if it were stored on-chain. \
+Compression is also the only technology that sustainably solves state bloat in blockchains like Solana. We've designed the compression protocol to be highly performant with minimal integration overhead for developers.
 {% endstep %}
 
 {% step %}
@@ -50,7 +44,7 @@ Integrate ZK Compression in your existing AI workflow by following the steps bel
 <table><thead><tr><th width="125.25">Tool</th><th width="313">Description</th><th>Link</th></tr></thead><tbody><tr><td>LLMs.txt</td><td>Index of site that helps LLMs map documentation.</td><td><a href="https://zkcompression.com/llms.txt">https://zkcompression.com/llms.txt</a></td></tr><tr><td>.md</td><td>Copy the page you are working on as markdown for LLMs. </td><td>Top right corner on each page, <br>or append .md to the root URL, e.g. <a href="https://www.zkcompression.com/references/whitepaper.md">https://www.zkcompression.com/references/whitepaper.md</a></td></tr></tbody></table>
 
 {% hint style="success" %}
-**AI powered navigation**: Use AI search to find the information you need fast, get code examples, and understand complex topics. Available throughout our documentation.
+**AI powered navigation**: Use AI search to quickly find information, get code examples, and learn complex topics. Available throughout our documentation.
 {% endhint %}
 
 {% embed url="https://drive.google.com/file/d/1-oxTqNMQX8LqP8FYSCDiG3YzIixnPbiN/view?usp=share_link" %}
