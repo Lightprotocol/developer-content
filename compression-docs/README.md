@@ -22,6 +22,11 @@ ZK Compression is a Solana account primitive that lets you create tokens and PDA
 
 ZK Compression is an account primitive that combines generalized state compression and [zero-knowledge proofs](#user-content-fn-1)[^1] to reduce the on-chain state footprint and storage cost.
 
+{% hint style="success" %}
+Developers don't need to initialize state Merkle trees or generate zero-knowledge proofs to start building.\
+By default, the protocol provides all infrastructure under the hood.
+{% endhint %}
+
 {% stepper %}
 {% step %}
 #### Compression
