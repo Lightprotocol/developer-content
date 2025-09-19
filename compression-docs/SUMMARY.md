@@ -55,6 +55,9 @@
 * [SDKs](resources/sdks/README.md)
   * [Client Development](resources/sdks/client-development.md)
   * [Program Development](resources/sdks/program-development.md)
+* [Errors](resources/errors/README.md)
+  * [Light System Program Errors](resources/errors/light-system-program-errors.md)
+  * [Light SDK Errors](resources/errors/light-sdk-errors.md)
 
 ## Learn
 
