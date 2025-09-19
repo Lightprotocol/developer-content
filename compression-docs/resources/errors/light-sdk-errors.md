@@ -14,18 +14,16 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/main/sdk-libs
 
 <summary>Dependencies</summary>
 
-| External Crate         | Error Type           | Usage                                                 |
-| ---------------------- | -------------------- | ----------------------------------------------------- |
-| `light_account_checks` | `AccountError`       | Transparent wrapper with `#[from]` auto-conversion    |
-| `light_hasher`         | `HasherError`        | Transparent wrapper with `#[from]` auto-conversion    |
-| `light_sdk_types`      | `LightSdkTypesError` | Manual `From` impl with explicit variant mapping      |
-| `light_zero_copy`      | `ZeroCopyError`      | Transparent wrapper with `#[from]` auto-conversion    |
-| `thiserror`            | `Error`              | Derive macro for automatic Error trait implementation |
-| `crate`                | `ProgramError`       | Custom wrapper with formatted message and `#[from]`   |
-
-#### Type Definition
-
 ```rust
+use light_account_checks::error::AccountError;
+use light_hasher::HasherError;
+use light_sdk_types::error::LightSdkTypesError;
+use light_zero_copy::errors::ZeroCopyError;
+use thiserror::Error;
+
+use crate::ProgramError;
+
+// Type Definition
 pub type Result<T> = std::result::Result<T, LightSdkError>;
 ```
 
