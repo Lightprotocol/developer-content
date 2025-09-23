@@ -20,6 +20,36 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/main/programs
 
 ***
 
+## 7000 / HasherError Variants
+
+{% hint style="info" %}
+Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/hasher/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/program-libs/hasher/src/errors.rs)
+{% endhint %}
+
+<table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>7001</td><td>0x1B59</td><td><code>IntegerOverflow</code></td><td>"Integer overflow, value too large"</td></tr><tr><td>7003</td><td>0x1B5B</td><td><code>PoseidonSyscall(PoseidonSyscallError)</code></td><td>"Poseidon syscall error: {0}"</td></tr><tr><td>7005</td><td>0x1B5D</td><td><code>InvalidInputLength(usize, usize)</code></td><td>"Allowed input length {0} provided {1}"</td></tr><tr><td>7006</td><td>0x1B5E</td><td><code>InvalidNumFields</code></td><td>"Invalid number of fields"</td></tr><tr><td>7007</td><td>0x1B5F</td><td><code>EmptyInput</code></td><td>"Empty input"</td></tr><tr><td>7008</td><td>0x1B60</td><td><code>BorshError</code></td><td>"Borsh serialization failed."</td></tr><tr><td>7009</td><td>0x1B61</td><td><code>OptionHashToFieldSizeZero</code></td><td>"Option hash to field size returned [0u8;32], a collision with None for an Option type."</td></tr></tbody></table>
+
+\*\*\*
+
+## 10000 / ConcurrentMerkleTreeError Variants
+
+{% hint style="info" %}
+Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/concurrent-merkle-tree/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/program-libs/concurrent-merkle-tree/src/errors.rs)
+{% endhint %}
+
+<table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>10001</td><td>0x2711</td><td><code>IntegerOverflow</code></td><td>"Integer overflow"</td></tr><tr><td>10002</td><td>0x2712</td><td><code>HeightZero</code></td><td>"Invalid height, it has to be greater than 0"</td></tr><tr><td>10003</td><td>0x2713</td><td><code>InvalidHeight(usize)</code></td><td>"Invalud height, expected {0}"</td></tr><tr><td>10004</td><td>0x2714</td><td><code>ChangelogZero</code></td><td>"Invalid changelog size, it has to be greater than 0. Changelog is used for storing Merkle paths during appends."</td></tr><tr><td>10005</td><td>0x2715</td><td><code>RootsZero</code></td><td>"Invalid number of roots, it has to be greater than 0"</td></tr><tr><td>10006</td><td>0x2716</td><td><code>CanopyGeThanHeight</code></td><td>"Canopy depth has to be lower than height"</td></tr><tr><td>10007</td><td>0x2717</td><td><code>TreeIsFull</code></td><td>"Merkle tree is full, cannot append more leaves."</td></tr><tr><td>10008</td><td>0x2718</td><td><code>BatchGreaterThanChangelog(usize, usize)</code></td><td>"Number of leaves ({0}) exceeds the changelog capacity ({1})."</td></tr><tr><td>10009</td><td>0x2719</td><td><code>InvalidProofLength(usize, usize)</code></td><td>"Invalid proof length, expected {0}, got {1}."</td></tr><tr><td>10010</td><td>0x271A</td><td><code>InvalidProof([u8; 32], [u8; 32])</code></td><td>"Invalid Merkle proof, expected root: {0:?}, the provided proof produces root: {1:?}"</td></tr><tr><td>10011</td><td>0x271B</td><td><code>CannotUpdateLeaf</code></td><td>"Attempting to update the leaf which was updated by an another newest change."</td></tr><tr><td>10012</td><td>0x271C</td><td><code>CannotUpdateEmpty</code></td><td>"Cannot update the empty leaf"</td></tr><tr><td>10013</td><td>0x271D</td><td><code>EmptyLeaves</code></td><td>"The batch of leaves is empty"</td></tr><tr><td>10014</td><td>0x271E</td><td><code>BufferSize(usize, usize)</code></td><td>"Invalid buffer size, expected {0}, got {1}"</td></tr></tbody></table>
+
+***
+
+## 11000 / IndexedMerkleTreeError Variants
+
+{% hint style="info" %}
+Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/indexed-merkle-tree/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/program-libs/indexed-merkle-tree/src/errors.rs)
+{% endhint %}
+
+<table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>11001</td><td>0x2AF9</td><td><code>IntegerOverflow</code></td><td>"Integer overflow"</td></tr><tr><td>11002</td><td>0x2AFA</td><td><code>IndexHigherThanMax</code></td><td>"Invalid index, it exceeds the number of elements."</td></tr><tr><td>11003</td><td>0x2AFB</td><td><code>LowElementNotFound</code></td><td>"Could not find the low element."</td></tr><tr><td>11004</td><td>0x2AFC</td><td><code>LowElementGreaterOrEqualToNewElement</code></td><td>"Low element is greater or equal to the provided new element."</td></tr><tr><td>11005</td><td>0x2AFD</td><td><code>NewElementGreaterOrEqualToNextElement</code></td><td>"The provided new element is greater or equal to the next element."</td></tr><tr><td>11006</td><td>0x2AFE</td><td><code>ElementAlreadyExists</code></td><td>"The element already exists, but was expected to be absent."</td></tr><tr><td>11007</td><td>0x2AFF</td><td><code>ElementDoesNotExist</code></td><td>"The element does not exist, but was expected to be present."</td></tr><tr><td>11008</td><td>0x2B00</td><td><code>ChangelogBufferSize(usize, usize)</code></td><td>"Invalid changelog buffer size, expected {0}, got {1}"</td></tr><tr><td>11009</td><td>0x2B01</td><td><code>ArrayFull</code></td><td>"Indexed array is full, cannot append more elements"</td></tr></tbody></table>
+
+***
+
 ## 12000 / AccountError Variants
 
 {% hint style="info" %}
@@ -27,6 +57,16 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 {% endhint %}
 
 <table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>12006</td><td>0x2EE6</td><td><code>InvalidDiscriminator</code></td><td>"Invalid Discriminator."</td></tr><tr><td>12007</td><td>0x2EE7</td><td><code>AccountOwnedByWrongProgram</code></td><td>"Account owned by wrong program."</td></tr><tr><td>12008</td><td>0x2EE8</td><td><code>AccountNotMutable</code></td><td>"Account not mutable."</td></tr><tr><td>12009</td><td>0x2EE9</td><td><code>BorrowAccountDataFailed</code></td><td>"Borrow account data failed."</td></tr><tr><td>12010</td><td>0x2EEA</td><td><code>InvalidAccountSize</code></td><td>"Invalid Account size."</td></tr><tr><td>12011</td><td>0x2EEB</td><td><code>AccountMutable</code></td><td>"Account is mutable."</td></tr><tr><td>12012</td><td>0x2EEC</td><td><code>AlreadyInitialized</code></td><td>"Account is already initialized."</td></tr><tr><td>12013</td><td>0x2EED</td><td><code>InvalidAccountBalance</code></td><td>"Invalid account balance."</td></tr><tr><td>12014</td><td>0x2EEE</td><td><code>FailedBorrowRentSysvar</code></td><td>"Failed to borrow rent sysvar."</td></tr><tr><td>12015</td><td>0x2EEF</td><td><code>InvalidSigner</code></td><td>"Invalid Signer"</td></tr><tr><td>12016</td><td>0x2EF0</td><td><code>InvalidSeeds</code></td><td>"Invalid Seeds"</td></tr><tr><td>12017</td><td>0x2EF1</td><td><code>InvalidProgramId</code></td><td>"Invalid Program Id"</td></tr><tr><td>12018</td><td>0x2EF2</td><td><code>ProgramNotExecutable</code></td><td>"Program not executable."</td></tr><tr><td>12019</td><td>0x2EF3</td><td><code>AccountNotZeroed</code></td><td>"Account not zeroed."</td></tr></tbody></table>
+
+***
+
+## 14300 / BatchedMerkleTreeError Variants
+
+{% hint style="info" %}
+Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/batched-merkle-tree/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/program-libs/batched-merkle-tree/src/errors.rs)
+{% endhint %}
+
+<table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>14301</td><td>0x37DD</td><td><code>BatchNotReady</code></td><td>"Batch is not ready to be inserted"</td></tr><tr><td>14302</td><td>0x37DE</td><td><code>BatchAlreadyInserted</code></td><td>"Batch is already inserted"</td></tr><tr><td>14303</td><td>0x37DF</td><td><code>BatchInsertFailed</code></td><td>"Batch insert failed"</td></tr><tr><td>14304</td><td>0x37E0</td><td><code>LeafIndexNotInBatch</code></td><td>"Leaf index not in batch."</td></tr><tr><td>14305</td><td>0x37E1</td><td><code>InvalidNetworkFee</code></td><td>"Invalid network fee."</td></tr><tr><td>14306</td><td>0x37E2</td><td><code>BatchSizeNotDivisibleByZkpBatchSize</code></td><td>"Batch size not divisible by ZKP batch size."</td></tr><tr><td>14307</td><td>0x37E3</td><td><code>InclusionProofByIndexFailed</code></td><td>"Inclusion proof by index failed."</td></tr><tr><td>14308</td><td>0x37E4</td><td><code>InvalidBatchIndex</code></td><td>"Invalid batch index"</td></tr><tr><td>14309</td><td>0x37E5</td><td><code>InvalidIndex</code></td><td>"Invalid index"</td></tr><tr><td>14310</td><td>0x37E6</td><td><code>TreeIsFull</code></td><td>"Batched Merkle tree is full."</td></tr><tr><td>14311</td><td>0x37E7</td><td><code>NonInclusionCheckFailed</code></td><td>"Value already exists in bloom filter."</td></tr><tr><td>14312</td><td>0x37E8</td><td><code>BloomFilterNotZeroed</code></td><td>"Bloom filter must be zeroed prior to reusing a batch."</td></tr></tbody></table>
 
 ***
 
