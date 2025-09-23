@@ -3,6 +3,7 @@
 * [Introduction](README.md)
 * [Quickstart](quickstart.md)
 * [Support](support.md)
+* [Event: Cypherpunk Hackathon](event-cypherpunk-hackathon.md)
 
 ## Compressed Tokens
 
