@@ -28,7 +28,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 
 <table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>7001</td><td>0x1B59</td><td><code>IntegerOverflow</code></td><td>"Integer overflow, value too large"</td></tr><tr><td>7003</td><td>0x1B5B</td><td><code>PoseidonSyscall(PoseidonSyscallError)</code></td><td>"Poseidon syscall error: {0}"</td></tr><tr><td>7005</td><td>0x1B5D</td><td><code>InvalidInputLength(usize, usize)</code></td><td>"Allowed input length {0} provided {1}"</td></tr><tr><td>7006</td><td>0x1B5E</td><td><code>InvalidNumFields</code></td><td>"Invalid number of fields"</td></tr><tr><td>7007</td><td>0x1B5F</td><td><code>EmptyInput</code></td><td>"Empty input"</td></tr><tr><td>7008</td><td>0x1B60</td><td><code>BorshError</code></td><td>"Borsh serialization failed."</td></tr><tr><td>7009</td><td>0x1B61</td><td><code>OptionHashToFieldSizeZero</code></td><td>"Option hash to field size returned [0u8;32], a collision with None for an Option type."</td></tr></tbody></table>
 
-\*\*\*
+***
 
 ## 10000 / ConcurrentMerkleTreeError Variants
 
