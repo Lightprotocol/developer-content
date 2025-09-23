@@ -12,8 +12,8 @@ description: >-
 2. **Check for debug guides -** some errors have detailed troubleshooting pages
 3. **Still issues?**&#x20;
 
-* Reach out on [Discord](https://discord.com/invite/CYvjBgzRFP) or Telegram for support
-* Share a minimal reproducer (GitHub repo / gist)
+* Reach out on [Discord](https://discord.com/invite/CYvjBgzRFP) for support
+* Share the exact error code and a reproducer (GitHub repo / gist)
 
 ***
 
