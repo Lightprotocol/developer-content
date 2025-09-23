@@ -4,13 +4,15 @@ description: Overview to all errors sorted by number.
 
 # Errors
 
-{% hint style="info" %}
-Use STRG F to find your Error Code.
-{% endhint %}
+## How to use this page
+
+1. Find your Error Code with your STRG F
+2. For some Errors, a "How to debug" page already exists.&#x20;
+3. Still issues? Reach out on Discord or telegram.
 
 ***
 
-## 6000 / SystemProgramError Variants
+## 6000 - 6053 / SystemProgramError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/main/programs/system/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/programs/system/src/errors.rs#L133)
@@ -20,7 +22,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/main/programs
 
 ***
 
-## 7000 / HasherError Variants
+## 7001 - 7009 / HasherError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/hasher/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/program-libs/hasher/src/errors.rs)
@@ -30,7 +32,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 
 ***
 
-## 10000 / ConcurrentMerkleTreeError Variants
+## 10001 - 10014 / ConcurrentMerkleTreeError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/concurrent-merkle-tree/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/program-libs/concurrent-merkle-tree/src/errors.rs)
@@ -40,7 +42,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 
 ***
 
-## 11000 / IndexedMerkleTreeError Variants
+## 11001 - 11009 / IndexedMerkleTreeError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/indexed-merkle-tree/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/program-libs/indexed-merkle-tree/src/errors.rs)
@@ -50,7 +52,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 
 ***
 
-## 12000 / AccountError Variants
+## 12006 - 12019 / AccountError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/account-checks/src/error.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/program-libs/account-checks/src/error.rs)
@@ -60,7 +62,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 
 ***
 
-## 14000 / MerkleTreeMetadataError Variants
+## 14001 - 14009 / MerkleTreeMetadataError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/merkle-tree-metadata/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/program-libs/merkle-tree-metadata/src/errors.rs)
@@ -70,7 +72,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 
 ***
 
-## 14000 / LightSdkTypesError Variants
+## 14017 - 14034 / LightSdkTypesError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/sdk-libs/sdk-types/src/error.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/sdk-libs/sdk-types/src/error.rs#L4)
@@ -80,7 +82,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/sdk-libs/sdk-
 
 ***
 
-## 14300 / BatchedMerkleTreeError Variants
+## 14301 - 14312 / BatchedMerkleTreeError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/batched-merkle-tree/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/program-libs/batched-merkle-tree/src/errors.rs)
@@ -90,7 +92,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 
 ***
 
-## 15000 / ZeroCopyError Variants
+## 15001 - 15017 / ZeroCopyError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/zero-copy/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/program-libs/zero-copy/src/errors.rs)
@@ -100,7 +102,7 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 
 ***
 
-## 16000 / LightSdkError Variants
+## 16001 - 16034 / LightSdkError Variants
 
 {% hint style="info" %}
 Source code: [https://github.com/Lightprotocol/light-protocol/blob/main/sdk-libs/sdk/src/error.rs](https://github.com/Lightprotocol/light-protocol/blob/main/sdk-libs/sdk/src/error.rs#L126)
