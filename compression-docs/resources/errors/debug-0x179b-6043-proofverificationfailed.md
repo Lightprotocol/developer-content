@@ -13,7 +13,7 @@ You're passing an invalid proof. The proof provided cannot be verified against t
 
 <details>
 
-<summary>Inconsistent Addresss Seed - Client seeds don't match onchain address derivation</summary>
+<summary>Inconsistent Address Seed - Client seeds don't match onchain address derivation</summary>
 
 Compare client vs onchain seeds/addresses. Both should be identical.
 
