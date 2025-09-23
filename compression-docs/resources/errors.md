@@ -1,11 +1,11 @@
 ---
-description: Overview to errors of Light System Program and Light SDK.
+description: Overview to all errors sorted by number.
 ---
 
 # Errors
 
 {% hint style="info" %}
-Use STRG F to find your Error Code
+Use STRG F to find your Error Code.
 {% endhint %}
 
 ***
@@ -60,6 +60,26 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 
 ***
 
+## 14000 / MerkleTreeMetadataError Variants
+
+{% hint style="info" %}
+Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/merkle-tree-metadata/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/program-libs/merkle-tree-metadata/src/errors.rs)
+{% endhint %}
+
+<table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>14001</td><td>0x36B1</td><td><code>MerkleTreeAndQueueNotAssociated</code></td><td>"Merkle tree and queue are not associated."</td></tr><tr><td>14002</td><td>0x36B2</td><td><code>RolloverNotConfigured</code></td><td>"Rollover not configured."</td></tr><tr><td>14003</td><td>0x36B3</td><td><code>MerkleTreeAlreadyRolledOver</code></td><td>"Merkle tree already rolled over."</td></tr><tr><td>14004</td><td>0x36B4</td><td><code>InvalidQueueType</code></td><td>"Invalid queue type."</td></tr><tr><td>14005</td><td>0x36B5</td><td><code>InsufficientRolloverFee</code></td><td>"Insufficient rollover fee."</td></tr><tr><td>14006</td><td>0x36B6</td><td><code>NotReadyForRollover</code></td><td>"Merkle tree not ready for rollover."</td></tr><tr><td>14007</td><td>0x36B7</td><td><code>InvalidTreeType</code></td><td>"Invalid tree type."</td></tr><tr><td>14008</td><td>0x36B8</td><td><code>InvalidRolloverThreshold</code></td><td>"Invalid Rollover Threshold."</td></tr><tr><td>14009</td><td>0x36B9</td><td><code>InvalidHeight</code></td><td>"Invalid Height."</td></tr></tbody></table>
+
+***
+
+## 14000 / LightSdkTypesError Variants
+
+{% hint style="info" %}
+Source code: [https://github.com/Lightprotocol/light-protocol/blob/sdk-libs/sdk-types/src/error.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/sdk-libs/sdk-types/src/error.rs#L4)
+{% endhint %}
+
+<table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>14017</td><td>0x36C1</td><td><code>FewerAccountsThanSystemAccounts</code></td><td>"Fewer accounts than system accounts"</td></tr><tr><td>14021</td><td>0x36C5</td><td><code>InitAddressIsNone</code></td><td>"Address is none during initialization"</td></tr><tr><td>14022</td><td>0x36C6</td><td><code>InitWithAddressIsNone</code></td><td>"Address is none during initialization with address"</td></tr><tr><td>14023</td><td>0x36C7</td><td><code>InitWithAddressOutputIsNone</code></td><td>"Output is none during initialization with address"</td></tr><tr><td>14024</td><td>0x36C8</td><td><code>MetaMutAddressIsNone</code></td><td>"Address is none during meta mutation"</td></tr><tr><td>14025</td><td>0x36C9</td><td><code>MetaMutInputIsNone</code></td><td>"Input is none during meta mutation"</td></tr><tr><td>14026</td><td>0x36CA</td><td><code>MetaMutOutputLamportsIsNone</code></td><td>"Output lamports is none during meta mutation"</td></tr><tr><td>14027</td><td>0x36CB</td><td><code>MetaMutOutputIsNone</code></td><td>"Output is none during meta mutation"</td></tr><tr><td>14028</td><td>0x36CC</td><td><code>MetaCloseAddressIsNone</code></td><td>"Address is none during meta close"</td></tr><tr><td>14029</td><td>0x36CD</td><td><code>MetaCloseInputIsNone</code></td><td>"Input is none during meta close"</td></tr><tr><td>14031</td><td>0x36CF</td><td><code>CpiAccountsIndexOutOfBounds(usize)</code></td><td>"CPI accounts index out of bounds: {0}"</td></tr><tr><td>14032</td><td>0x36D0</td><td><code>InvalidCpiContextAccount</code></td><td>"Invalid CPI context account"</td></tr><tr><td>14033</td><td>0x36D1</td><td><code>InvalidSolPoolPdaAccount</code></td><td>"Invalid sol pool pda account"</td></tr><tr><td>14034</td><td>0x36D2</td><td><code>InvalidCpiAccountsOffset</code></td><td>"CpigAccounts accounts slice starts with an invalid account. It should start with LightSystemProgram SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7."</td></tr></tbody></table>
+
+***
+
 ## 14300 / BatchedMerkleTreeError Variants
 
 {% hint style="info" %}
@@ -67,6 +87,16 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/
 {% endhint %}
 
 <table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>14301</td><td>0x37DD</td><td><code>BatchNotReady</code></td><td>"Batch is not ready to be inserted"</td></tr><tr><td>14302</td><td>0x37DE</td><td><code>BatchAlreadyInserted</code></td><td>"Batch is already inserted"</td></tr><tr><td>14303</td><td>0x37DF</td><td><code>BatchInsertFailed</code></td><td>"Batch insert failed"</td></tr><tr><td>14304</td><td>0x37E0</td><td><code>LeafIndexNotInBatch</code></td><td>"Leaf index not in batch."</td></tr><tr><td>14305</td><td>0x37E1</td><td><code>InvalidNetworkFee</code></td><td>"Invalid network fee."</td></tr><tr><td>14306</td><td>0x37E2</td><td><code>BatchSizeNotDivisibleByZkpBatchSize</code></td><td>"Batch size not divisible by ZKP batch size."</td></tr><tr><td>14307</td><td>0x37E3</td><td><code>InclusionProofByIndexFailed</code></td><td>"Inclusion proof by index failed."</td></tr><tr><td>14308</td><td>0x37E4</td><td><code>InvalidBatchIndex</code></td><td>"Invalid batch index"</td></tr><tr><td>14309</td><td>0x37E5</td><td><code>InvalidIndex</code></td><td>"Invalid index"</td></tr><tr><td>14310</td><td>0x37E6</td><td><code>TreeIsFull</code></td><td>"Batched Merkle tree is full."</td></tr><tr><td>14311</td><td>0x37E7</td><td><code>NonInclusionCheckFailed</code></td><td>"Value already exists in bloom filter."</td></tr><tr><td>14312</td><td>0x37E8</td><td><code>BloomFilterNotZeroed</code></td><td>"Bloom filter must be zeroed prior to reusing a batch."</td></tr></tbody></table>
+
+***
+
+## 15000 / ZeroCopyError Variants
+
+{% hint style="info" %}
+Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/zero-copy/src/errors.rs](https://github.com/Lightprotocol/light-protocol/blob/program-libs/zero-copy/src/errors.rs)
+{% endhint %}
+
+<table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>15001</td><td>0x3A99</td><td><code>Full</code></td><td>"The vector is full, cannot push any new elements"</td></tr><tr><td>15002</td><td>0x3A9A</td><td><code>ArraySize(usize, usize)</code></td><td>"Requested array of size {}, but the vector has {} elements"</td></tr><tr><td>15003</td><td>0x3A9B</td><td><code>IterFromOutOfBounds</code></td><td>"The requested start index is out of bounds"</td></tr><tr><td>15004</td><td>0x3A9C</td><td><code>InsufficientMemoryAllocated(usize, usize)</code></td><td>"Memory allocated {}, Memory required {}"</td></tr><tr><td>15006</td><td>0x3A9E</td><td><code>UnalignedPointer</code></td><td>"Unaligned pointer"</td></tr><tr><td>15007</td><td>0x3A9F</td><td><code>MemoryNotZeroed</code></td><td>"Memory not zeroed"</td></tr><tr><td>15008</td><td>0x3AA0</td><td><code>InvalidConversion</code></td><td>"Invalid conversion"</td></tr><tr><td>15009</td><td>0x3AA1</td><td><code>InvalidData(Infallible)</code></td><td>"Invalid data"</td></tr><tr><td>15010</td><td>0x3AA2</td><td><code>Size</code></td><td>"Invalid size"</td></tr><tr><td>15011</td><td>0x3AA3</td><td><code>InvalidOptionByte(u8)</code></td><td>"Invalid option byte {} must be 0 (None) or 1 (Some)"</td></tr><tr><td>15012</td><td>0x3AA4</td><td><code>InvalidCapacity</code></td><td>"Invalid capacity. Capacity must be greater than 0"</td></tr><tr><td>15013</td><td>0x3AA5</td><td><code>LengthGreaterThanCapacity</code></td><td>"Length is greater than capacity"</td></tr><tr><td>15014</td><td>0x3AA6</td><td><code>CurrentIndexGreaterThanLength</code></td><td>"Current index is greater than length"</td></tr><tr><td>15015</td><td>0x3AA7</td><td><code>InvalidEnumValue</code></td><td>"Invalid enum value"</td></tr><tr><td>15016</td><td>0x3AA8</td><td><code>InsufficientCapacity</code></td><td>"Insufficient capacity for operation"</td></tr><tr><td>15017</td><td>0x3AA9</td><td><code>PlatformSizeOverflow</code></td><td>"Value too large for platform usize"</td></tr></tbody></table>
 
 ***
 
