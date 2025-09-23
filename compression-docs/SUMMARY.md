@@ -56,7 +56,8 @@
 * [SDKs](resources/sdks/README.md)
   * [Client Development](resources/sdks/client-development.md)
   * [Program Development](resources/sdks/program-development.md)
-* [Errors](resources/errors.md)
+* [Errors](resources/errors/README.md)
+  * [Debug 0x179b / 6043 / proofVerificationFailed](resources/errors/debug-0x179b-6043-proofverificationfailed.md)
 
 ## Learn
 
