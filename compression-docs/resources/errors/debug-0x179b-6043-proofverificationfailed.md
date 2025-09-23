@@ -11,6 +11,10 @@ You're passing an invalid proof. The proof provided cannot be verified against t
 
 ### **Common causes and Debug Steps**
 
+{% hint style="info" %}
+For a complete example of proper client+onchain flows, see the [Counter Program](https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor/programs/counter/src/lib.rs#L26).
+{% endhint %}
+
 <details>
 
 <summary>Inconsistent Address Seed - Client seeds don't match onchain address derivation</summary>
@@ -26,10 +30,6 @@ console.log("Client seeds:", seeds, "address:", address);
 // Onchain - log seeds/address
 msg!("Program seeds: {:?}, address: {:?}", seeds, address);
 ```
-
-{% hint style="info" %}
-For a complete example of proper client+onchain flows, see the [Counter Program](https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor/programs/counter/src/lib.rs#L26).
-{% endhint %}
 
 </details>
 
