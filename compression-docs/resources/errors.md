@@ -10,7 +10,10 @@ description: >-
 
 1. **Search your error code or hex value** with `Cmd+F`/ `Ctrl+F`
 2. **Check for debug guides -** some errors have detailed troubleshooting pages
-3. **Still issues?** Reach out on [Discord](https://discord.com/invite/CYvjBgzRFP) or Telegram for support
+3. **Still issues?**&#x20;
+
+* Reach out on [Discord](https://discord.com/invite/CYvjBgzRFP) or Telegram for support
+* Share a minimal reproducer (GitHub repo / gist)
 
 ***
 
