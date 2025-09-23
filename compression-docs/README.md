@@ -63,7 +63,7 @@ Integrate ZK Compression in your existing AI workflow by following the steps bel
 [quickstart.md](quickstart.md)
 {% endcontent-ref %}
 
-[^1]: A cryptographic proof to verify the validity of a statement without revealing the underlying data.\\
+[^1]: A cryptographic proof to verify the validity of a statement without revealing the underlying data.
 
     ZK Compression uses a Groth16 SNARK zk proof with a constant 128 bytes size.
 
