@@ -1,23 +1,39 @@
 ---
+description: Common cause and debug steps for ProofVerificationFailed (0x179B / 6043)
 hidden: true
 ---
 
-# Debug 0x179b / 6043 / proofVerificationFailed
+# Debug 0x179b / 6043 / ProofVerificationFailed
 
-"thanks Jon & hi guys! good to be connected\
-0x179b / 6043 is proofVerificationFailed, aka you’re passing an invalid proof\
-one likely cause is often that the address seeds in the client don’t match the seeds used to derive the address onchain\
-to help debug this, do you have a reproducer/gh/gist you can share? if it’s in a private github my handle is @ swenschaeferjohann
+### Description
 
-swen\
-Today at 7:43 AM\
-also, ICYI, this program example shows client+onchain flows for create + update pretty well and should help clarify https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor/programs/counter/src/lib.rs#L26
+You're passing an invalid proof. The proof provided cannot be verified against the expected state.
 
-"
+### **Common causes and Debug Steps**
 
+<details>
 
+<summary>Inconsistent Addresss Seed - Client seeds don't match onchain address derivation</summary>
 
-could add "how to debug"\
-println!() rust / console.log() in TS -- client seeds/address that is used to request the proof\
-msg!() log onchain seeds/address\
-\=> check that same
+Compare client vs onchain seeds/addresses. Both should be identical.
+
+```typescript
+// Client - log seeds/address used to request proof
+console.log("Client seeds:", seeds, "address:", address);
+```
+
+```rust
+// Onchain - log seeds/address
+msg!("Program seeds: {:?}, address: {:?}", seeds, address);
+```
+
+{% hint style="info" %}
+For a complete example of proper client+onchain flows, see the [Counter Program](https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor/programs/counter/src/lib.rs#L26).
+{% endhint %}
+
+</details>
+
+### **Still having issues?** We're here to help!
+
+* Reach out on [Discord](https://discord.com/invite/CYvjBgzRFP) for support
+* Share the exact error code and a reproducer (GitHub repo / gist)
