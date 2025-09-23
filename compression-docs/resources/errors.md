@@ -1,14 +1,16 @@
 ---
-description: Overview to all errors sorted by number.
+description: >-
+  Complete error code reference for ZK Compression. Search error codes with hex
+  values and messages.
 ---
 
 # Errors
 
 ## How to use this page
 
-1. Find your Error Code with your STRG F
-2. For some Errors, a "How to debug" page already exists.&#x20;
-3. Still issues? Reach out on Discord or telegram.
+1. **Search your error code or hex value** with `Cmd+F`/ `Ctrl+F`
+2. **Check for debug guides -** some errors have detailed troubleshooting pages
+3. **Still issues?** Reach out on [Discord](https://discord.com/invite/CYvjBgzRFP) or Telegram for support
 
 ***
 
