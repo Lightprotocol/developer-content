@@ -20,6 +20,16 @@ Source code: [https://github.com/Lightprotocol/light-protocol/blob/main/programs
 
 ***
 
+## 12000 / AccountError Variants
+
+{% hint style="info" %}
+Source code: [https://github.com/Lightprotocol/light-protocol/blob/program-libs/account-checks/src/error.rs](https://github.com/Lightprotocol/light-protocol/blob/604892ff3902292dd0b0b047cb0bfacc469ea0d4/program-libs/account-checks/src/error.rs)
+{% endhint %}
+
+<table><thead><tr><th width="120">Code</th><th width="100">Hex</th><th>Error</th><th>Message</th></tr></thead><tbody><tr><td>12006</td><td>0x2EE6</td><td><code>InvalidDiscriminator</code></td><td>"Invalid Discriminator."</td></tr><tr><td>12007</td><td>0x2EE7</td><td><code>AccountOwnedByWrongProgram</code></td><td>"Account owned by wrong program."</td></tr><tr><td>12008</td><td>0x2EE8</td><td><code>AccountNotMutable</code></td><td>"Account not mutable."</td></tr><tr><td>12009</td><td>0x2EE9</td><td><code>BorrowAccountDataFailed</code></td><td>"Borrow account data failed."</td></tr><tr><td>12010</td><td>0x2EEA</td><td><code>InvalidAccountSize</code></td><td>"Invalid Account size."</td></tr><tr><td>12011</td><td>0x2EEB</td><td><code>AccountMutable</code></td><td>"Account is mutable."</td></tr><tr><td>12012</td><td>0x2EEC</td><td><code>AlreadyInitialized</code></td><td>"Account is already initialized."</td></tr><tr><td>12013</td><td>0x2EED</td><td><code>InvalidAccountBalance</code></td><td>"Invalid account balance."</td></tr><tr><td>12014</td><td>0x2EEE</td><td><code>FailedBorrowRentSysvar</code></td><td>"Failed to borrow rent sysvar."</td></tr><tr><td>12015</td><td>0x2EEF</td><td><code>InvalidSigner</code></td><td>"Invalid Signer"</td></tr><tr><td>12016</td><td>0x2EF0</td><td><code>InvalidSeeds</code></td><td>"Invalid Seeds"</td></tr><tr><td>12017</td><td>0x2EF1</td><td><code>InvalidProgramId</code></td><td>"Invalid Program Id"</td></tr><tr><td>12018</td><td>0x2EF2</td><td><code>ProgramNotExecutable</code></td><td>"Program not executable."</td></tr><tr><td>12019</td><td>0x2EF3</td><td><code>AccountNotZeroed</code></td><td>"Account not zeroed."</td></tr></tbody></table>
+
+***
+
 ## 16000 / LightSdkError Variants
 
 {% hint style="info" %}
