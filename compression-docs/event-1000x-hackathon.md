@@ -5,16 +5,26 @@ description: >-
 hidden: true
 ---
 
-# Event: Cypherpunk Hackathon
+# Event: 1000x Hackathon
 
 ### Track Description
 
-This track challenges participants to build projects that use ZK Compression.
+1000x is a dedicated side track to the Solana Cypherpunk hackathon, hosted by [Light Protocol](https://x.com/LightProtocol) in collaboration with [Superteam Germany](https://x.com/SuperteamDE).
 
-Projects **must use compressed tokens or compressed accounts** in some capacity to be eligible, in addition to the following requirements.
+**Here’s how you can participate:**
+
+1. Use compressed tokens or compressed accounts in some capacity in your Cypherpunk project.
+2. Submit by October 30, 2025 via Superteam Earn
+
+Each participant can have a maximum of 1 project submission count in the side track. You can submit your project to both Colosseum and 1000x.
+
+» [Project ideas](https://github.com/Lightprotocol/cypherpunk-hackathon/blob/main/ideas.mdhttps://github.com/Lightprotocol/cypherpunk-hackathon/blob/main/ideas.md)
+
+
 
 <table data-card-size="large" data-view="cards"><thead><tr><th></th></tr></thead><tbody><tr><td><h4>Germany</h4></td></tr><tr><td><h4>Portugal</h4></td></tr></tbody></table>
 
+* Projects **must use compressed tokens or compressed accounts** in some capacity to be eligible, in addition to the following requirements.
 * The [Solana Foundation Rules](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf) apply.
 * Each participant can have a maximum of 1 project submission count towards scoring in this side track.
 * Please note that we award the prizes at our sole discretion. We reserve the right not to award the participation bounty if a submission is deemed insufficient in effort or quality.
@@ -33,12 +43,16 @@ Teams and individuals are evaluated on the following criteria:
 
 After the judges complete individual evaluations, they will discuss and choose the winners based on the project’s weighted scores.
 
-### **Rewards**
+### Side Track Prizes
 
-* **First Place**: $1,000 USDC + Swag
-* **Second Place**: $500 USDC + Swag
-* **Third Place**: $250 USDC + Swag
-* **Fourth Place**: $250 USDC + Swag
+### Side Track Prizes
+
+| Place                                                                        | Prize                      |
+| ---------------------------------------------------------------------------- | -------------------------- |
+| First Place                                                                  | 1 winner up to $20k + Swag |
+| Second Place                                                                 | 1 team of $10k + Swag      |
+| Third Place                                                                  | 2 teams of $5k each + Swag |
+| All participants who submit a project that fulfills the eligibility criteria | $100                       |
 
 ### **Resources**
 
@@ -57,11 +71,11 @@ We encourage you to build things that you're excited about building.
 
 For inspiration, we have compiled a list of interesting ideas [here](https://github.com/Lightprotocol/1000x-hackathon/).
 
-### **Where can I ask technical questions?**
+### **Get support**
 
 1. Check out the [Light](https://discord.gg/CYvjBgzRFP) and [Helius](https://discord.gg/Uzzf6a7zKr) Developer Discord servers!
 2. We also host [office hours](https://calendly.com/swen_light/1000x-breakout-hackathon-office-hours) for teams or individuals participating in the hackathon.
 
-### Next Steps
+## Next Steps
 
 Get an overview &#x20;
