@@ -25,11 +25,35 @@ Here's how you can participate
 Participants must submit their project from **Germany** _or_ **Portugal**. [Solana Foundation and Colosseum Rules apply](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf). You can submit your project to both Colosseum and 1000x.
 {% endhint %}
 
-<table data-card-size="large" data-view="cards"><thead><tr><th></th><th></th><th data-hidden data-card-cover data-type="image">Cover image</th></tr></thead><tbody><tr><td><h4>Sign Ups Local Track Germany</h4></td><td>$ 3,000 total in prizes + swag</td><td></td></tr><tr><td><h4>Sign Ups Local Track Portugal</h4></td><td>$ 500 total in prizes + swag</td><td></td></tr></tbody></table>
+#### Sign Ups Local to Track&#x20;
+
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th></th><th data-hidden data-card-cover data-type="image">Cover image</th></tr></thead><tbody><tr><td><h4>Germany</h4></td><td>$ 3,000 total in prizes + swag</td><td></td></tr><tr><td><h4>Portugal</h4></td><td>$ 500 total in prizes + swag</td><td></td></tr></tbody></table>
+
+<details>
+
+<summary>Details for Scope and Judging</summary>
+
+Projects **must use compressed tokens or compressed accounts** in some capacity to be eligible, in addition to the following requirements:
+
+* The [Solana Foundation](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf) and [Colosseum Hackathon](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf) rules apply.
+* Each participant can have a maximum of 1 project submission count towards scoring in this side track.
+* We award the prizes at our sole discretion. We reserve the right not to award the participation bounty if a submission is deemed insufficient in effort or quality.
+
+Once all submissions are collected, we will distribute a list to the side-track judges for evaluation, based on the following criteria:
+
+* Functionality
+* Potential impact
+* Novelty
+* Design
+* Extensibility
+
+After the judges complete individual evaluations, they will discuss and choose the winners based on the project’s weighted scores.
+
+</details>
 
 ### Project Ideas & Resources
 
-We encourage you to build things that you're excited about building. For inspiration, we have compiled a list of ideas to explore during the 1000x Hackathon » [Project Ideas](https://github.com/Lightprotocol/1000x-hackathon/blob/main/ideas.md).
+We encourage you to build things that you're excited about building. For inspiration, we have compiled a list of ideas to explore » [Project Ideas](https://github.com/Lightprotocol/1000x-hackathon/blob/main/ideas.md).
 
 #### **Additional Resources:**
 
@@ -45,36 +69,6 @@ We encourage you to build things that you're excited about building. For inspira
 
 * Reach out via [Discord](https://discord.com/invite/CYvjBgzRFP) or [Telegram](https://t.me/tilo_light).
 * Book a Call in our [Office hours](https://calendly.com/tilo-light/1000x-office-hours)
-
-### Details for Scope and Judging
-
-* Projects **must use compressed tokens or compressed accounts** in some capacity to be eligible, in addition to the following requirements.
-* The [Solana Foundation Rules](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf) apply.
-* Each participant can have a maximum of 1 project submission count towards scoring in this side track.
-* We award the prizes at our sole discretion. We reserve the right not to award the participation bounty if a submission is deemed insufficient in effort or quality.
-
-The Cypherpunk Hackathon's [submission rules](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf) apply. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation.
-
-Teams and individuals are evaluated on the following criteria:
-
-* Functionality
-* Potential impact
-* Novelty
-* Design
-* Extensibility
-
-After the judges complete individual evaluations, they will discuss and choose the winners based on the project’s weighted scores.
-
-### **Project Ideas**
-
-
-
-For inspiration, we have compiled a list of interesting ideas [here](https://github.com/Lightprotocol/1000x-hackathon/).
-
-### **Get support**
-
-1. Check out the [Light](https://discord.gg/CYvjBgzRFP) and [Helius](https://discord.gg/Uzzf6a7zKr) Developer Discord servers!
-2. We also host [office hours](https://calendly.com/swen_light/1000x-breakout-hackathon-office-hours) for teams or individuals participating in the hackathon.
 
 ## Next Steps
 
