@@ -25,7 +25,7 @@ Here's how you can participate
 Participants must submit their project from **Germany** _or_ **Portugal**. [Solana Foundation and Colosseum Rules apply](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf). You can submit your project to both Colosseum and 1000x.
 {% endhint %}
 
-<table data-card-size="large" data-view="cards"><thead><tr><th></th><th></th><th data-hidden data-card-cover data-type="image">Cover image</th></tr></thead><tbody><tr><td><h4>Sign Ups Local Track Germany</h4></td><td>$ 3000 total in prizes + swag</td><td data-object-fit="contain"><a href=".gitbook/assets/1000x-germany.png">1000x-germany.png</a></td></tr><tr><td><h4>Sign Ups Local Track Portugal</h4></td><td>$ 500 total in prizes + swag</td><td></td></tr></tbody></table>
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th></th><th data-hidden data-card-cover data-type="image">Cover image</th></tr></thead><tbody><tr><td><h4>Sign Ups Local Track Germany</h4></td><td>$ 3,000 total in prizes + swag</td><td></td></tr><tr><td><h4>Sign Ups Local Track Portugal</h4></td><td>$ 500 total in prizes + swag</td><td></td></tr></tbody></table>
 
 ### Project Ideas & Resources
 
