@@ -10,7 +10,7 @@ hidden: true
 
 The `create_compressed_account()` instruction creates new compressed accounts with derived addresses.
 
-The instruction creates performs these operations:
+The instruction performs the following operations:
 
 1. **Light System Program CPI Setup** - Validate and organize accounts for CPI calls
 2. **Deterministic Address Generation** - Derive 32-byte address and seed from input parameters
