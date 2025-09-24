@@ -9,7 +9,7 @@ description: >-
 
 Custom programs can use compressed accounts with familiar Anchor patterns. The Light SDK's main macros include:
 
-* `declare_id!` & `derive_light_cpi_signer!`: Specifcies Program ID  and authorizes Light System Program CPI
+* `declare_id!` & `derive_light_cpi_signer!`: Specifies Program ID  and authorizes Light System Program CPI
 * `#[program]`: Specifies module for the program's instruction logic to interact with compressed accounts (Standard Anchor module)
 * `LightHasher` & `LightDiscriminator`: Traits for compressed account serialization and identification
 * `ValidityProof` parameter: ZK proof validation for interactions with compressed accounts
