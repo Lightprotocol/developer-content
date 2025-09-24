@@ -26,6 +26,9 @@
 ## Compressed PDAs
 
 * [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas.md)
+* [The Basics](compressed-pdas/the-basics/README.md)
+  * [Program Structure](compressed-pdas/the-basics/program-structure.md)
+* [How to Create Compressed Accounts](compressed-pdas/how-to-create-compressed-accounts.md)
 
 ## Resources
 
