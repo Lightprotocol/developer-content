@@ -7,19 +7,17 @@ description: >-
 
 # Program Structure
 
-Custom programs can use compressed accounts with familiar Anchor patterns. The Light SDK components include:
+Custom programs can use compressed accounts with familiar Anchor patterns. The Light SDK's main macros include:
 
-* `declare_id!` & `derive_light_cpi_signer!`: Program ID declaration with Light System Program CPI authorization
-* `#[program]`: Standard Anchor module with instruction logic for compressed account operations
+* `declare_id!` & `derive_light_cpi_signer!`: Specifcies Program ID  and authorizes Light System Program CPI
+* `#[program]`: Specifies module for the program's instruction logic to interact with compressed accounts (Standard Anchor module)
 * `LightHasher` & `LightDiscriminator`: Traits for compressed account serialization and identification
 * `ValidityProof` parameter: ZK proof validation for interactions with compressed accounts
-* `#[hash]` attribute: Field-level control over Merkle tree inclusion
+* `#[hash]` attribute: Field-level control over what data is hashed to a Merkle tree
 
 ### Example Program
 
-Let's examine a program that demonstrates ZK compression fundamentals to understand the basic structure and key differences from standard Anchor programs.
-
-The program below includes a single instruction `create_compressed_account` that creates a compressed account with derived address and stores custom data.
+The program below includes a single instruction `create_compressed_account` that creates a compressed account with derived address and stores custom data. It showcases the basic structure and key differences from standard Anchor programs.
 
 ```rust
 #![allow(unexpected_cfgs)]
