@@ -7,29 +7,51 @@ hidden: true
 
 # Event: 1000x Hackathon
 
-### Track Description
+&#x20;\<banner>
 
-1000x is a dedicated side track to the Solana Cypherpunk hackathon, hosted by [Light Protocol](https://x.com/LightProtocol) in collaboration with [Superteam Germany](https://x.com/SuperteamDE).
 
-**Here’s how you can participate:**
 
-1. Use compressed tokens or compressed accounts in some capacity in your Cypherpunk project.
+## Sign-ups are now open!
+
+1000x is a dedicated side track to the Solana Cypherpunk hackathon, hosted by [Light Protocol](https://x.com/LightProtocol) in collaboration with [Superteam Germany](https://x.com/SuperteamDE) and [Shipyard Portugal](https://x.com/SolanaPT).&#x20;
+
+Here's how you can participate
+
+1. Use ZK Compression in your Cypherpunk project
 2. Submit by October 30, 2025 via Superteam Earn
+3. You're now eligible to win prizes in 1000x
 
-Each participant can have a maximum of 1 project submission count in the side track. You can submit your project to both Colosseum and 1000x.
+{% hint style="success" %}
+Participants must submit their project from **Germany** _or_ **Portugal**. [Solana Foundation and Colosseum Rules apply](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf). You can submit your project to both Colosseum and 1000x.
+{% endhint %}
 
-» [Project ideas](https://github.com/Lightprotocol/cypherpunk-hackathon/blob/main/ideas.mdhttps://github.com/Lightprotocol/cypherpunk-hackathon/blob/main/ideas.md)
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th></th><th data-hidden data-card-cover data-type="image">Cover image</th></tr></thead><tbody><tr><td><h4>Sign Ups Local Track Germany</h4></td><td>$ 3000 total in prizes + swag</td><td data-object-fit="contain"><a href=".gitbook/assets/1000x-germany.png">1000x-germany.png</a></td></tr><tr><td><h4>Sign Ups Local Track Portugal</h4></td><td>$ 500 total in prizes + swag</td><td></td></tr></tbody></table>
 
+### Project Ideas & Resources
 
+We encourage you to build things that you're excited about building. For inspiration, we have compiled a list of ideas to explore during the 1000x Hackathon » [Project Ideas](https://github.com/Lightprotocol/1000x-hackathon/blob/main/ideas.md).
 
-<table data-card-size="large" data-view="cards"><thead><tr><th></th></tr></thead><tbody><tr><td><h4>Germany</h4></td></tr><tr><td><h4>Portugal</h4></td></tr></tbody></table>
+#### **Additional Resources:**
+
+» [Introductory Blog Post](https://www.helius.dev/blog/zk-compression-keynote-breakpoint-2024)
+
+» [Light Protocol Monorepo](https://github.com/Lightprotocol/light-protocol)
+
+» [Example programs](https://github.com/Lightprotocol/program-examples)
+
+» Example[ Web ](https://github.com/Lightprotocol/example-web-client)& [Node Client](https://github.com/Lightprotocol/example-nodejs-client)
+
+### Get Support
+
+* Reach out via [Discord](https://discord.com/invite/CYvjBgzRFP) or [Telegram](https://t.me/tilo_light).
+* Book a Call in our [Office hours](https://calendly.com/tilo-light/1000x-office-hours)
+
+### Details for Scope and Judging
 
 * Projects **must use compressed tokens or compressed accounts** in some capacity to be eligible, in addition to the following requirements.
 * The [Solana Foundation Rules](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf) apply.
 * Each participant can have a maximum of 1 project submission count towards scoring in this side track.
-* Please note that we award the prizes at our sole discretion. We reserve the right not to award the participation bounty if a submission is deemed insufficient in effort or quality.
-
-### **Judging**
+* We award the prizes at our sole discretion. We reserve the right not to award the participation bounty if a submission is deemed insufficient in effort or quality.
 
 The Cypherpunk Hackathon's [submission rules](https://www.colosseum.org/files/Breakout%20Hackathon%20Official%20Rules%202025.pdf) apply. Once all submissions are collected, we will distribute a list to the side-track judges for evaluation.
 
@@ -43,31 +65,9 @@ Teams and individuals are evaluated on the following criteria:
 
 After the judges complete individual evaluations, they will discuss and choose the winners based on the project’s weighted scores.
 
-### Side Track Prizes
-
-### Side Track Prizes
-
-| Place                                                                        | Prize                      |
-| ---------------------------------------------------------------------------- | -------------------------- |
-| First Place                                                                  | 1 winner up to $20k + Swag |
-| Second Place                                                                 | 1 team of $10k + Swag      |
-| Third Place                                                                  | 2 teams of $5k each + Swag |
-| All participants who submit a project that fulfills the eligibility criteria | $100                       |
-
-### **Resources**
-
-* [ZK Compression documentation](https://www.zkcompression.com/)
-* [Discord chat for the hackathon](https://discord.com/invite/qCv4Y7uYmh)
-* [Project ideas](https://github.com/Lightprotocol/zk-compression-summer-hackathon/blob/main/ideas.md)
-* [Light Protocol Monorepo](https://github.com/lightprotocol/light-protocol)
-* [Example programs](https://github.com/Lightprotocol/light-protocol/tree/main/examples)
-* Example clients ([web](https://github.com/Lightprotocol/example-web-client), [node](https://github.com/Lightprotocol/example-nodejs-client))
-* [Integration guides](https://www.zkcompression.com/developers/creating-airdrops-with-compressed-tokens)
-* Introductory [Blog](https://www.helius.dev/blog/solana-builders-zk-compression) posts
-
 ### **Project Ideas**
 
-We encourage you to build things that you're excited about building.
+
 
 For inspiration, we have compiled a list of interesting ideas [here](https://github.com/Lightprotocol/1000x-hackathon/).
 
