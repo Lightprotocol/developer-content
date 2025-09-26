@@ -1,3 +1,9 @@
+---
+description: >-
+  Reference for LightAccount module. Compressed account abstraction similar to
+  Anchor Account and required traits.
+---
+
 # LightAccount
 
 LightAccount is a wrapper around compressed account data similar to Anchor's `Account<T>`. This abstracts access to compressed account data with automatic serialization and hashing.
