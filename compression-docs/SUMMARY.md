@@ -30,6 +30,7 @@
   * [Light SDK References](compressed-pdas/the-basics/light-sdk-references/README.md)
     * [LightAccount](compressed-pdas/the-basics/light-sdk-references/lightaccount.md)
     * [Compressed PDA Derivation](compressed-pdas/the-basics/light-sdk-references/compressed-pda-derivation.md)
+    * [Cross Program Invocations](compressed-pdas/the-basics/light-sdk-references/cross-program-invocations.md)
 * [How to Create Compressed Accounts](compressed-pdas/how-to-create-compressed-accounts.md)
 
 ## Resources
