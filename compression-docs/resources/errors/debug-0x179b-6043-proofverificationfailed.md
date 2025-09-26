@@ -11,14 +11,14 @@ You're passing an invalid proof. The proof provided cannot be verified against t
 ### **Common causes and Debug Steps**
 
 {% hint style="info" %}
-For a complete example of proper client+onchain flows, see the [Counter Program](https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor/programs/counter/src/lib.rs#L26).
+For a complete example of proper client+on chain flows, see the [Counter Program](https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor/programs/counter/src/lib.rs#L26).
 {% endhint %}
 
 <details>
 
-<summary>Inconsistent Address Seed - Client seeds don't match onchain address derivation</summary>
+<summary>Inconsistent Address Seed - Client seeds don't match on chain address derivation</summary>
 
-Compare client vs onchain seeds/addresses. Both should be identical.
+Compare client vs on chain seeds/addresses. Both should be identical.
 
 ```typescript
 // Client - log seeds/address used to request proof
