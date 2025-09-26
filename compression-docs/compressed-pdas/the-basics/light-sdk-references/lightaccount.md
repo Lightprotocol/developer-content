@@ -9,7 +9,7 @@ description: >-
 LightAccount is a wrapper around compressed account data similar to Anchor's `Account<T>`. This abstracts access to compressed account data with automatic serialization and hashing.
 
 {% hint style="info" %}
-[LightAccount Crate](https://docs.rs/light-sdk/latest/light_sdk/account/index.html#light-account)
+See [source code](https://github.com/Lightprotocol/light-protocol/blob/main/sdk-libs/sdk/src/account.rs) for complete implementation details.
 {% endhint %}
 
 ### Compressed account with LightHasher and LightDiscriminator
