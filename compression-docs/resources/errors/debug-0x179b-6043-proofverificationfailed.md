@@ -1,6 +1,5 @@
 ---
 description: Common cause and debug steps for ProofVerificationFailed (0x179B / 6043)
-hidden: true
 ---
 
 # Debug 0x179b / 6043 / ProofVerificationFailed
@@ -37,3 +36,4 @@ msg!("Program seeds: {:?}, address: {:?}", seeds, address);
 
 * Reach out on [Discord](https://discord.com/invite/CYvjBgzRFP) for support
 * Share the exact error code and a reproducer (GitHub repo / gist)
+
