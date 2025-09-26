@@ -99,4 +99,7 @@ let new_address_params = packed_address_tree_info
     .into_new_address_params_packed(address_seed);
 ```
 
-See [create-and-update example](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update) for complete usage.
+## Next Steps
+
+Learn about utilities to invoke the light-system-program via cpi.
+
