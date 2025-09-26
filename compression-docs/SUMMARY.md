@@ -29,6 +29,8 @@
 * [The Basics](compressed-pdas/the-basics/README.md)
   * [Program Structure](compressed-pdas/the-basics/program-structure/README.md)
     * [Page 1](compressed-pdas/the-basics/program-structure/page-1.md)
+  * [Light SDK References](compressed-pdas/the-basics/light-sdk-references/README.md)
+    * [Light Account](compressed-pdas/the-basics/light-sdk-references/light-account.md)
 * [How to Create Compressed Accounts](compressed-pdas/how-to-create-compressed-accounts.md)
 
 ## Resources
