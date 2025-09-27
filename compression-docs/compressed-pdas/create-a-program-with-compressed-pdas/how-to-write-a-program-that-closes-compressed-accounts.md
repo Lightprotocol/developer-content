@@ -15,7 +15,7 @@ A compressed account is closed by the program, when called by a client.
 
 The client
 
-1. creates [instruction with proof and data](#user-content-fn-1)[^1]
+1. creates [instruction with proof and data](#user-content-fn-1)[^1]upon
 2. then sends transaction to your program. Learn here how to call your program from a client.
 
 Your program
@@ -26,7 +26,7 @@ Your program
 The Light System program closes the compressed account permanently. The address of a closed account cannot be reused.
 
 {% hint style="success" %}
-Other than regular accounts, no rent can be reclaimed, when  compressed accounts is closed.
+Unlike with regular accounts, compressed accounts no rent can be reclaimed after closing.
 {% endhint %}
 
 ## Get Started
