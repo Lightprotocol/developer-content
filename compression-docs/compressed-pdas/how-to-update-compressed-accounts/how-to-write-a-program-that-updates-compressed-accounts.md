@@ -9,6 +9,8 @@ hidden: true
 
 This guide shows you how to write a Solana program that updates compressed accounts with the `update_compressed_account` instruction.
 
+The stepper below walks through each implementation step. You can find a working [full code example at the end.](how-to-write-a-program-that-updates-compressed-accounts.md#update-account-example)
+
 A compressed account is updated by the program, when called by a client.
 
 The client
@@ -34,8 +36,6 @@ To build a program that updates compressed accounts, you'll need to:
 1. Set up Light SDK dependencies and import required types,
 2. Define account struct with `LightHasher` and `LightDiscriminator` derives, and
 3. Implement `update_compressed_account` instruction with `new_mut()` for existing account data.
-
-The stepper below walks through each implementation step. You can find a full code example at the end.
 
 {% hint style="info" %}
 `declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.
@@ -181,6 +181,15 @@ You've implemented a program that updates compressed accounts via Light System p
 ## Update Account Example
 
 Copy the complete example and built with `anchor build`. Find the [source code](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update) here.
+
+{% hint style="success" %}
+Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first:
+
+```bash
+npm -g i @lightprotocol/zk-compression-cli
+light init testprogram
+```
+{% endhint %}
 
 ```rust
 #![allow(unexpected_cfgs)]
