@@ -4,7 +4,7 @@ description: >-
   Anchor Account and required traits.
 ---
 
-# LightAccount
+# LightAccount Abstraction
 
 LightAccount is a wrapper around compressed account data similar to Anchor's `Account<T>`. This abstracts access to compressed account data with automatic serialization and hashing.
 
