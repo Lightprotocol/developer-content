@@ -24,7 +24,7 @@ Your program
 The Light System program creates the compressed account.
 
 {% hint style="success" %}
-Similar to the System program with regular accounts, your program calls the Light System program to create compressed accounts via CPI instead.
+Your program calls the Light System program to create compressed accounts via CPI, similar to the System program to create regular accounts.
 {% endhint %}
 
 ## Get Started
