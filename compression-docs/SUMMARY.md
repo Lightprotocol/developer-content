@@ -31,7 +31,8 @@
     * [LightAccount Abstraction](compressed-pdas/the-basics/light-sdk-references/lightaccount.md)
     * [Compressed PDA Derivation](compressed-pdas/the-basics/light-sdk-references/compressed-pda-derivation.md)
     * [Cross Program Invocations](compressed-pdas/the-basics/light-sdk-references/cross-program-invocations.md)
-* [How to Create Compressed Accounts](compressed-pdas/how-to-create-compressed-accounts.md)
+* [How to Write a Program that Creates Compressed Accounts](compressed-pdas/how-to-write-a-program-that-creates-compressed-accounts.md)
+* [How to Write a Program that Updates Compressed Accounts](compressed-pdas/how-to-write-a-program-that-updates-compressed-accounts.md)
 
 ## Resources
 
