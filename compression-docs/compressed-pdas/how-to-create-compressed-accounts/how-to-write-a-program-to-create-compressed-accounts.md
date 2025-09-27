@@ -187,7 +187,9 @@ You've implemented a program that creates compressed accounts via Light System p
 {% endstep %}
 {% endstepper %}
 
-## Complete Program Example
+## Create Account Example
+
+Copy the complete example and built with `anchor build`. Find the [source code](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update) here.
 
 ```rust
 #![allow(unexpected_cfgs)]
@@ -209,10 +211,10 @@ use light_sdk::{
     LightDiscriminator, LightHasher,
 };
 
-declare_id!("YOUR_PROGRAM_ID");
+declare_id!("HNqStLMpNuNJqhBF1FbGTKHEFbBLJmq8RdJJmZKWz6jH");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("YOUR_PROGRAM_ID");
+    derive_light_cpi_signer!("HNqStLMpNuNJqhBF1FbGTKHEFbBLJmq8RdJJmZKWz6jH");
 
 pub const SEED: &[u8] = b"your_seed";
 
