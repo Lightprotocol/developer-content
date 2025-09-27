@@ -195,11 +195,17 @@ You've implemented a program that creates compressed accounts via Light System p
 use anchor_lang::prelude::*;
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_sdk::{
+    // Wrapper for hashing and serialization for compressed accounts
     account::LightAccount,
+    // Derives address from provided seeds. Returns address and a singular seed
     address::v1::derive_address,
+    // Structures for calling Light System program via CPI
     cpi::{CpiAccounts, CpiInputs, CpiSigner},
+    // Macro that computes PDA signer with "cpi_authority" seed at compile time
     derive_light_cpi_signer,
+    // ZK proof for merkle inclusion/non-inclusion verification
     instruction::{PackedAddressTreeInfo, ValidityProof},
+    // Traits for account type discrimination and Poseidon hash derivation
     LightDiscriminator, LightHasher,
 };
 
@@ -223,37 +229,44 @@ pub mod create_compressed_account {
     use super::*;
 
     pub fn create_compressed_account<'info>(
-        ctx: Context<'_, '_, '_, 'info, CreateCompressedAccount<'info>>,
-        proof: ValidityProof,
-        address_tree_info: PackedAddressTreeInfo,
-        output_state_tree_index: u8,
+        ctx: Context<'_, '_, '_, 'info, CreateCompressedAccount<'info>>, // standard Anchor context
+        proof: ValidityProof, // ZK proof verifying address non-inclusion
+        address_tree_info: PackedAddressTreeInfo, // Specifies address tree to use for derivation
+        output_state_tree_index: u8, // Specifies state tree to store the new account
         message: String,
     ) -> Result<()> {
+        // Create CPI accounts struct
         let light_cpi_accounts = CpiAccounts::new(
-            ctx.accounts.signer.as_ref(),
-            ctx.remaining_accounts,
-            LIGHT_CPI_SIGNER,
+            ctx.accounts.signer.as_ref(), // fee payer and transaction signer for CPI
+            ctx.remaining_accounts, // merkle tree and system accounts required for Light System program CPI
+            LIGHT_CPI_SIGNER, // program signer
         );
 
+        // Derive deterministic address from seeds and address tree
+        // must match client-side derivation
         let (address, address_seed) = derive_address(
             &[SEED, ctx.accounts.signer.key().as_ref()],
-            &address_tree_info.get_tree_pubkey(&light_cpi_accounts)?,
+            &address_tree_info.get_tree_pubkey(&light_cpi_accounts)?, // merkle tree pubkey for final address computation
             &crate::ID,
         );
 
+        // Initialize compressed account wrapper with owner, address, and output state tree index
         let mut data_account = LightAccount::<'_, DataAccount>::new_init(
             &crate::ID,
             Some(address),
-            output_state_tree_index,
+            output_state_tree_index, // specifies which state tree will store account
         );
         data_account.owner = ctx.accounts.signer.key();
         data_account.message = message;
 
+        // Package validity proof, compressed account data, and address registration params
         let cpi_inputs = CpiInputs::new_with_address(
-            proof,
-            vec![data_account.to_account_info()?],
-            vec![address_tree_info.into_new_address_params_packed(address_seed)],
+            proof, // ZK proof for address non-inclusion
+            vec![data_account.to_account_info()?], // compressed account info for Light System
+            vec![address_tree_info.into_new_address_params_packed(address_seed)], // packed address registration parameters
         );
+
+        // Invoke light system program to create compressed account
         cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
 
         Ok(())
