@@ -25,7 +25,9 @@
 
 ## Compressed PDAs
 
+* [Overview](compressed-pdas/overview.md)
 * [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas.md)
+* [Copy of Create a Program with Compressed PDAs](compressed-pdas/copy-of-create-a-program-with-compressed-pdas.md)
 * [The Basics](compressed-pdas/the-basics/README.md)
   * [LightAccount Abstraction](compressed-pdas/the-basics/lightaccount-abstraction.md)
   * [Compressed PDA Derivation](compressed-pdas/the-basics/compressed-pda-derivation.md)
