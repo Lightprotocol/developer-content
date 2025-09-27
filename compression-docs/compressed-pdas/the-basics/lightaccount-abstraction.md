@@ -1,7 +1,7 @@
 ---
 description: >-
-  Reference for LightAccount module. Compressed account abstraction similar to
-  Anchor Account and required traits.
+  Reference for the LightAccount module. Compressed account abstraction similar
+  to Anchor Account and required traits.
 ---
 
 # LightAccount Abstraction
@@ -40,9 +40,15 @@ The `LightHasher` derives a hashing scheme from the compressed account layout. A
 
 * Maximum 12 fields per struct (use nested structs for larger accounts)
 * Fields must be less than BN254 field size (254 bits)
-* Use `#[hash]` attribute on fields >31 bytes (e.g., Pubkeys) and fields included in account hash
+* Use `#[hash]` attribute on fields >31 bytes (e.g., Pubkeys) and fields included in account hash    \&crate::ID,
 
-### Create Compressed Account
+## LightAccount Methods
+
+{% hint style="info" %}
+`new_init()` → CREATE | `new_mut()` → UPDATE | `new_close()` → CLOSE
+{% endhint %}
+
+### new\_init() - Create New Account
 
 Address must be derived using `derive_address()` before account creation.
 
@@ -58,7 +64,7 @@ let mut my_compressed_account = LightAccount::<'_, CounterAccount>::new_init(
 my_compressed_account.owner = ctx.accounts.signer.key();
 ```
 
-### Update Compressed Account
+### new\_mut() - Update Existing Account
 
 `new_mut()` creates an account wrapper for updating existing accounts. Returns `Result<LightAccount<T>, LightSdkError>`.
 
@@ -72,7 +78,7 @@ let mut my_compressed_account = LightAccount::<'_, CounterAccount>::new_mut(
 my_compressed_account.counter += 1;
 ```
 
-### Close Compressed Account
+### new\_close() - Close Compressed Account
 
 `new_close()` creates an account wrapper for closing existing accounts. Returns `Result<LightAccount<T>, LightSdkError>`.
 

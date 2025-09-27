@@ -27,12 +27,14 @@
 
 * [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas.md)
 * [The Basics](compressed-pdas/the-basics/README.md)
-  * [Light SDK References](compressed-pdas/the-basics/light-sdk-references/README.md)
-    * [LightAccount Abstraction](compressed-pdas/the-basics/light-sdk-references/lightaccount.md)
-    * [Compressed PDA Derivation](compressed-pdas/the-basics/light-sdk-references/compressed-pda-derivation.md)
-    * [Cross Program Invocations](compressed-pdas/the-basics/light-sdk-references/cross-program-invocations.md)
-* [How to Write a Program that Creates Compressed Accounts](compressed-pdas/how-to-write-a-program-that-creates-compressed-accounts.md)
-* [How to Write a Program that Updates Compressed Accounts](compressed-pdas/how-to-write-a-program-that-updates-compressed-accounts.md)
+  * [LightAccount Abstraction](compressed-pdas/the-basics/lightaccount-abstraction.md)
+  * [Compressed PDA Derivation](compressed-pdas/the-basics/compressed-pda-derivation.md)
+  * [Cross Program Invocations](compressed-pdas/the-basics/cross-program-invocations.md)
+  * [Comparing Regular and Compressed Accounts](compressed-pdas/the-basics/comparing-regular-and-compressed-accounts.md)
+* [How to Create Compressed Accounts](compressed-pdas/how-to-create-compressed-accounts/README.md)
+  * [How to write a Program to Create Compressed Accounts](compressed-pdas/how-to-create-compressed-accounts/how-to-write-a-program-to-create-compressed-accounts.md)
+* [How to Update Compressed Accounts](compressed-pdas/how-to-update-compressed-accounts/README.md)
+  * [How to Write a Program that Updates Compressed Accounts](compressed-pdas/how-to-update-compressed-accounts/how-to-write-a-program-that-updates-compressed-accounts.md)
 
 ## Resources
 

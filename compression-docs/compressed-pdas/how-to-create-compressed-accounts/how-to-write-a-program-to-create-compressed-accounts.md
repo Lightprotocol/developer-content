@@ -5,7 +5,7 @@ description: >-
 hidden: true
 ---
 
-# How to Write a Program that Creates Compressed Accounts
+# How to write a Program to Create Compressed Accounts
 
 This guide shows you how to write a Solana program that creates compressed accounts with the `create_compressed_account` instruction.
 
@@ -107,7 +107,7 @@ The `#[hash]` attribute specifies which fields are included in the compressed ac
 Implement the instruction to derive addresses and creates compressed accounts via Light System CPI. The [`#[program]`](https://docs.rs/anchor-lang/latest/anchor_lang/attr.program.html) attribute works identically, with special traits in the instruction data.
 
 {% hint style="warning" %}
-**Important:** Address must be derived identically to how the client that derived it. The validity proof must include the exact address being created. Otherwise you will get the [error 0x179B (6043 / `ProofVerificationFailed`)](../resources/errors/debug-0x179b-6043-proofverificationfailed.md).
+**Important:** Address must be derived identically to how the client that derived it. The validity proof must include the exact address being created. Otherwise you will get the [error 0x179B (6043 / `ProofVerificationFailed`)](../../resources/errors/debug-0x179b-6043-proofverificationfailed.md).
 {% endhint %}
 
 ```rust

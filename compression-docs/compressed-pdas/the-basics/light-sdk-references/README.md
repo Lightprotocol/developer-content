@@ -1,2 +1,0 @@
-# Light SDK References
-

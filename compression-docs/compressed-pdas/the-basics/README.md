@@ -1,4 +1,5 @@
 ---
+description: Light SDK References
 hidden: true
 ---
 
