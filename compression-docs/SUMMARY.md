@@ -37,6 +37,8 @@
   * [How to write a Program to Create Compressed Accounts](compressed-pdas/how-to-create-compressed-accounts/how-to-write-a-program-to-create-compressed-accounts.md)
 * [How to Update Compressed Accounts](compressed-pdas/how-to-update-compressed-accounts/README.md)
   * [How to Write a Program that Updates Compressed Accounts](compressed-pdas/how-to-update-compressed-accounts/how-to-write-a-program-that-updates-compressed-accounts.md)
+* [How to Close Compressed Accounts](compressed-pdas/how-to-close-compressed-accounts/README.md)
+  * [How to Write a Program that Closes Compressed Accounts](compressed-pdas/how-to-close-compressed-accounts/how-to-write-a-program-that-closes-compressed-accounts.md)
 
 ## Resources
 
