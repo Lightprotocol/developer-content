@@ -7,13 +7,17 @@ hidden: true
 
 # How to write a Program to Create Compressed Accounts
 
-This guide shows you how to write a Solana program that creates compressed accounts with the `create_compressed_account` instruction.
+This guide shows you how to write a Solana program that creates compressed accounts. Compressed accounts are created with the `create_compressed_account` instruction.
 
-A compressed account is created by a program, when called by a client.
+A compressed account is created by the program, when called by a client.
 
 The client
 
-1. creates [instruction with proof and data](#user-content-fn-1)[^1]:
+1. creates instruction with proof and data:
+   * ValidityProof for the new address
+   * PackedAddressTreeInfo containing tree metadata
+   * output\_tree\_index specifying which state tree to use
+   * Account data to store
 2. then sends transaction to your program. Learn here how to call your program from a client.
 
 Your program
@@ -29,9 +33,25 @@ Similar to the System program with regular accounts, your program calls the Ligh
 
 ## Get Started
 
+To build a program that creates compressed accounts, you'll need to:
+
+1. Set up Light SDK dependencies, specify on-chain address with `declare_id!` to configure CPI signer for Light System program,
+2. Define account struct with `LightHasher` and `LightDiscriminator` derives, and
+3. Implement `create_compressed_account` instruction in `#[program]` module.
+
+{% hint style="info" %}
+You can find a full code example below.
+{% endhint %}
+
 {% stepper %}
 {% step %}
-### Setup Dependencies & Import Required Modules
+### Prerequisites
+
+Set up Light SDK dependencies, import essential types , and configure program constants:
+
+<details>
+
+<summary>Dependencies, Imports, Program Constants</summary>
 
 Add Light SDK and Anchor framework dependencies to your `Cargo.toml`:
 
@@ -42,9 +62,7 @@ light-sdk = "0.13.0"
 borsh = "0.10.0"
 ```
 
-<details>
-
-<summary>Import the essential types and macros</summary>
+Import the essential types and macros:
 
 ```rust
 use anchor_lang::prelude::*;
@@ -65,10 +83,6 @@ use light_sdk::{
 };
 ```
 
-</details>
-{% endstep %}
-
-{% step %}
 ### Define Program Constants
 
 Set up your program ID and CPI authority for Light System program calls. Works identical to [`declare_id!`](https://docs.rs/anchor-lang/latest/anchor_lang/macro.declare_id.html) with Anchor.
@@ -81,12 +95,14 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 pub const SEED: &[u8] = b"your_seed";
 ```
+
+</details>
 {% endstep %}
 
 {% step %}
-### Create Account Data Structure
+### Account Data Structure
 
-Define your compressed account data with proper serialization and hashing traits:
+Define your compressed account struct with the required derives:
 
 ```rust
 #[derive(Clone, Debug, Default, BorshSerialize, BorshDeserialize, LightHasher, LightDiscriminator)]
@@ -98,16 +114,16 @@ pub struct DataAccount {
 }
 ```
 
-The `#[hash]` attribute specifies which fields are included in the compressed account's hash in the Merkle tree leaf.
+Add `#[hash]` to fields with data types greater than 31 bytes (like Pubkeys) and fields you want verified in proofs.
 {% endstep %}
 
 {% step %}
 ### Implement `create_compressed_account` Instruction
 
-Implement the instruction to derive addresses and creates compressed accounts via Light System CPI. The [`#[program]`](https://docs.rs/anchor-lang/latest/anchor_lang/attr.program.html) attribute works identically, with special traits in the instruction data.
+Implement the instruction to derive addresses and creates compressed accounts via Light System CPI. The [`#[program]`](https://docs.rs/anchor-lang/latest/anchor_lang/attr.program.html) attribute annotates the module containing all the instruction handlers for your program, like with regular Anchor programs. Each public function within this module corresponds to an instruction that can be invoked.
 
 {% hint style="warning" %}
-**Important:** Address must be derived identically to how the client that derived it. The validity proof must include the exact address being created. Otherwise you will get the [error 0x179B (6043 / `ProofVerificationFailed`)](../../resources/errors/debug-0x179b-6043-proofverificationfailed.md).
+**Important:** Address must be derived identically to how the client that derived it. The validity proof must include the exact address being created. Otherwise you will get the error 0x179B (6043 / `ProofVerificationFailed`)
 {% endhint %}
 
 ```rust
@@ -116,16 +132,16 @@ Implement the instruction to derive addresses and creates compressed accounts vi
         use super::*;
 
         pub fn create_compressed_account<'info>(
-            ctx: Context<'_, '_, '_, 'info, CreateCompressedAccount<'info>>,
-            proof: ValidityProof,
-            address_tree_info: PackedAddressTreeInfo,
-            output_state_tree_index: u8,
+            ctx: Context<'_, '_, '_, 'info, CreateCompressedAccount<'info>>, // standard Anchor context
+            proof: ValidityProof, // ZK proof verifying address non-inclusion
+            address_tree_info: PackedAddressTreeInfo, // Specifies which address tree to use for derivation
+            output_state_tree_index: u8, // Specifies which state tree will store the new account
             message: String,
         ) -> Result<()> {
             // Create CPI accounts struct with fee payer, remaining accounts, and program signer
             let light_cpi_accounts = CpiAccounts::new(
-                ctx.accounts.signer.as_ref(),
-                ctx.remaining_accounts,
+                ctx.accounts.signer.as_ref(), // fee payer and transaction signer for CPI 
+                ctx.remaining_accounts, // merkle tree and system accounts required for Light System program CPI 
                 LIGHT_CPI_SIGNER,
             );
 
@@ -133,7 +149,7 @@ Implement the instruction to derive addresses and creates compressed accounts vi
             // must match client-side derivation
             let (address, address_seed) = derive_address(
                 &[SEED, ctx.accounts.signer.key().as_ref()],
-                &address_tree_info.get_tree_pubkey(&light_cpi_accounts)?,
+                &address_tree_info.get_tree_pubkey(&light_cpi_accounts)?, // merkle tree pubkey for final address computation
                 &crate::ID,
             );
 
@@ -141,16 +157,16 @@ Implement the instruction to derive addresses and creates compressed accounts vi
             let mut data_account = LightAccount::<'_, DataAccount>::new_init(
                 &crate::ID,
                 Some(address),
-                output_state_tree_index,
+                output_state_tree_index, // specifies which state tree will store account
             );
             data_account.owner = ctx.accounts.signer.key();
             data_account.message = message;
 
-            // Package validity proof, serialized account data, and new address params
+            // Package validity proof, compressed account data, and address registration params
             let cpi_inputs = CpiInputs::new_with_address(
-                proof,
-                vec![data_account.to_account_info()?],
-                vec![address_tree_info.into_new_address_params_packed(address_seed)],
+                proof, // ZK proof for address non-inclusion
+                vec![data_account.to_account_info()?], // compressed account info for Light System
+                vec![address_tree_info.into_new_address_params_packed(address_seed)], // packed address registration parameters
             );
 
             // Invoke light system program to create compressed account
@@ -258,13 +274,3 @@ pub struct CreateCompressedAccount<'info> {
 ## Next steps
 
 Learn how to Call Your Program from a Client Learn how to Update Compressed Accounts Learn how to Close Compressed Accounts
-
-[^1]: Instruction:
-
-    * `ValidityProof` for the new address
-
-    - `PackedAddressTreeInfo` containing tree metadata
-
-    * `output_tree_index` specifying which state tree to use
-
-    - `Account data` to store
