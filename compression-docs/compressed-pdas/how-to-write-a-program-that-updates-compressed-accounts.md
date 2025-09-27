@@ -1,8 +1,8 @@
 ---
 description: >-
-  Complete guide to implementing a Solana program that updates compressed
-  accounts using Light SDK and `update_compressed_account()` instruction
-  handler.
+  Complete guide to a Solana program that updates compressed accounts using
+  Light SDK and `update_compressed_account()` instruction handler.
+hidden: true
 ---
 
 # How to Write a Program that Updates Compressed Accounts
@@ -13,11 +13,7 @@ A compressed account is updated by the program, when called by a client.
 
 The client
 
-1. creates instruction with proof and data:
-   * ValidityProof for the existing account
-   * CompressedAccountMeta containing current account metadata
-   * Current account data to update
-   * New account data to store
+1. creates [instruction with proof and data](#user-content-fn-1)[^1],
 2. then sends transaction to your program. Learn here how to call your program from a client.
 
 Your program
@@ -253,3 +249,13 @@ pub struct UpdateCompressedAccount<'info> {
 ## Next steps
 
 Learn how to Call Your Program from a Client Learn how to Create Compressed Accounts Learn how to Close Compressed Accounts
+
+[^1]: Instructions:
+
+    * `ValidityProof` for the existing account
+
+    - `CompressedAccountMeta` containing current account metadata
+
+    * Current account data to update
+
+    - New account data to store

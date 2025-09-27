@@ -1,12 +1,11 @@
 ---
 description: >-
-  Complete guide to implementing a Solana program that creates compressed
-  accounts using Light SDK and `create_compressed_account()` instruction
-  handler.
+  Complete guide to a Solana program that creates compressed accounts using
+  Light SDK and `create_compressed_account()` instruction handler.
 hidden: true
 ---
 
-# How to Create Compressed Accounts
+# How to Write a Program that Creates Compressed Accounts
 
 This guide shows you how to write a Solana program that creates compressed accounts with the `create_compressed_account` instruction.
 
