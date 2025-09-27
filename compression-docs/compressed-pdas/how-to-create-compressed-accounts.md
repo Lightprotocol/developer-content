@@ -1,16 +1,16 @@
 ---
 description: >-
-  Complete guide to create compressed accounts using Light SDK with the
-  `create_compressed_account()` instruction. Includes program structure, CPI
-  setup, and address derivation.
+  Complete guide to implementing a Solana program that creates compressed
+  accounts using Light SDK and `create_compressed_account()` instruction
+  handler.
 hidden: true
 ---
 
 # How to Create Compressed Accounts
 
-This guide shows you how to write a Solana program that creates compressed accounts. Compressed accounts are created with the `create_compressed_account` instruction.
+This guide shows you how to write a Solana program that creates compressed accounts with the `create_compressed_account` instruction.
 
-A compressed account is created by the program, when called by a client.
+A compressed account is created by a program, when called by a client.
 
 The client
 
@@ -23,6 +23,10 @@ Your program
 2. performs a CPI from your custom program to the Light System program
 
 The Light System program creates the compressed account.
+
+{% hint style="success" %}
+Similar to the System program with regular accounts, your program calls the Light System program to create compressed accounts via CPI instead.
+{% endhint %}
 
 ## Get Started
 
@@ -47,12 +51,18 @@ borsh = "0.10.0"
 use anchor_lang::prelude::*;
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_sdk::{
+    // Wrapper for hashing and serialization for compressed accounts
     account::LightAccount,
-    address::v1::derive_address,
-    cpi::{CpiAccounts, CpiInputs, CpiSigner},
-    derive_light_cpi_signer,
-    instruction::{PackedAddressTreeInfo, ValidityProof},
-    LightDiscriminator, LightHasher,
+    // Derives address from provided seeds. Returns address and a singular seed
+    address::v1::derive_address, 
+    // Structures for calling Light System program via CPI
+    cpi::{CpiAccounts, CpiInputs, CpiSigner}, 
+    // Macro that computes PDA signer with "cpi_authority" seed at compile time
+    derive_light_cpi_signer, 
+    // ZK proof for merkle inclusion/non-inclusion verification
+    instruction::{PackedAddressTreeInfo, ValidityProof}, 
+    // Traits for account type discrimination and Poseidon hash derivation
+    LightDiscriminator, LightHasher, 
 };
 ```
 
