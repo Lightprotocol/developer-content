@@ -7,17 +7,13 @@ hidden: true
 
 # How to write a Program to Create Compressed Accounts
 
-This guide shows you how to write a Solana program that creates compressed accounts. Compressed accounts are created with the `create_compressed_account` instruction.
+This guide shows you how to write a Solana program that creates compressed accounts with the `create_compressed_account` instruction.
 
 A compressed account is created by the program, when called by a client.
 
 The client
 
-1. creates instruction with proof and data:
-   * ValidityProof for the new address
-   * PackedAddressTreeInfo containing tree metadata
-   * output\_tree\_index specifying which state tree to use
-   * Account data to store
+1. creates [instruction with proof and data](#user-content-fn-1)[^1]
 2. then sends transaction to your program. Learn here how to call your program from a client.
 
 Your program
@@ -274,3 +270,10 @@ pub struct CreateCompressedAccount<'info> {
 ## Next steps
 
 Learn how to Call Your Program from a Client Learn how to Update Compressed Accounts Learn how to Close Compressed Accounts
+
+[^1]: Instruction:
+
+    * `ValidityProof` for the new address
+    * `PackedAddressTreeInfo` containing tree metadata
+    * `output_tree_index` specifying which state tree to use
+    * Account data to store
