@@ -31,19 +31,21 @@ Your program calls the Light System program to create compressed accounts via CP
 
 To build a program that creates compressed accounts, you'll need to:
 
-1. Set up Light SDK dependencies, specify on-chain address with `declare_id!` to configure CPI signer for Light System program,
+1. Set up Light SDK dependencies, specify on-chain address with `declare_id!`,
 2. Define account struct with `LightHasher` and `LightDiscriminator` derives, and
-3. Implement `create_compressed_account` instruction in `#[program]` module.
+3. Implement `create_compressed_account` instruction in the  `#[program]` attribute.
+
+The stepper below walks through each implementation step. You can find a [full code example at the end](how-to-write-a-program-to-create-compressed-accounts.md#complete-program-example).&#x20;
 
 {% hint style="info" %}
-You can find a full code example below.
+`declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.&#x20;
 {% endhint %}
 
 {% stepper %}
 {% step %}
 ### Prerequisites
 
-Set up Light SDK dependencies, import essential types , and configure program constants:
+Set up Light SDK dependencies, import essential types , and configure program constants with `declare_id!`.
 
 <details>
 
@@ -79,9 +81,7 @@ use light_sdk::{
 };
 ```
 
-### Define Program Constants
-
-Set up your program ID and CPI authority for Light System program calls. Works identical to [`declare_id!`](https://docs.rs/anchor-lang/latest/anchor_lang/macro.declare_id.html) with Anchor.
+Set up your program ID and CPI authority for Light System program calls&#x20;
 
 ```rust
 declare_id!("YOUR_PROGRAM_ID");
@@ -98,7 +98,7 @@ pub const SEED: &[u8] = b"your_seed";
 {% step %}
 ### Account Data Structure
 
-Define your compressed account struct with the required derives:
+Define your compressed account struct with the required derives.
 
 ```rust
 #[derive(Clone, Debug, Default, BorshSerialize, BorshDeserialize, LightHasher, LightDiscriminator)]
@@ -116,10 +116,10 @@ Add `#[hash]` to fields with data types greater than 31 bytes (like Pubkeys) and
 {% step %}
 ### Implement `create_compressed_account` Instruction
 
-Implement the instruction to derive addresses and creates compressed accounts via Light System CPI. The [`#[program]`](https://docs.rs/anchor-lang/latest/anchor_lang/attr.program.html) attribute annotates the module containing all the instruction handlers for your program, like with regular Anchor programs. Each public function within this module corresponds to an instruction that can be invoked.
+Implement the instruction to derive addresses and creates compressed accounts via Light System CPI.
 
 {% hint style="warning" %}
-**Important:** Address must be derived identically to how the client that derived it. The validity proof must include the exact address being created. Otherwise you will get the error 0x179B (6043 / `ProofVerificationFailed`)
+Address must be derived identically to how the client that derived it. The validity proof must include the exact address being created. Otherwise you will get the error 0x179B (6043 / `ProofVerificationFailed`)
 {% endhint %}
 
 ```rust
@@ -130,15 +130,15 @@ Implement the instruction to derive addresses and creates compressed accounts vi
         pub fn create_compressed_account<'info>(
             ctx: Context<'_, '_, '_, 'info, CreateCompressedAccount<'info>>, // standard Anchor context
             proof: ValidityProof, // ZK proof verifying address non-inclusion
-            address_tree_info: PackedAddressTreeInfo, // Specifies which address tree to use for derivation
-            output_state_tree_index: u8, // Specifies which state tree will store the new account
+            address_tree_info: PackedAddressTreeInfo, // Specifies address tree to use for derivation
+            output_state_tree_index: u8, // Specifies state tree to store the new account
             message: String,
         ) -> Result<()> {
-            // Create CPI accounts struct with fee payer, remaining accounts, and program signer
+            // Create CPI accounts struct
             let light_cpi_accounts = CpiAccounts::new(
                 ctx.accounts.signer.as_ref(), // fee payer and transaction signer for CPI 
                 ctx.remaining_accounts, // merkle tree and system accounts required for Light System program CPI 
-                LIGHT_CPI_SIGNER,
+                LIGHT_CPI_SIGNER, // program signer
             );
 
             // Derive deterministic address from seeds and address tree
