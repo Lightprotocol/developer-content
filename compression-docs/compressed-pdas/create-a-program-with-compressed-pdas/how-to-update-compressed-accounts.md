@@ -5,11 +5,11 @@ description: >-
 hidden: true
 ---
 
-# How to Write a Program that Updates Compressed Accounts
+# How to Update Compressed Accounts
 
 This guide shows you how to write a Solana program that updates compressed accounts with the `update_compressed_account` instruction.
 
-The stepper below walks through each implementation step. You can find a working [full code example at the end.](how-to-write-a-program-that-updates-compressed-accounts.md#update-account-example)
+The stepper below walks through each implementation step. You can find a working [full code example at the end.](how-to-update-compressed-accounts.md#update-account-example)
 
 A compressed account is updated by the program, when called by a client.
 
@@ -33,9 +33,9 @@ Regular accounts update their data fields when state changes. Compressed account
 
 To build a program that updates compressed accounts, you'll need to:
 
-1. Set up Light SDK dependencies and import required types,
+1. Set up Light SDK dependencies and specify on-chain address with `declare_id!`,
 2. Define account struct with `LightHasher` and `LightDiscriminator` derives, and
-3. Implement `update_compressed_account` instruction with `new_mut()` for existing account data.
+3. Implement `update_compressed_account` instruction within the `#[program]` module.
 
 {% hint style="info" %}
 `declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.

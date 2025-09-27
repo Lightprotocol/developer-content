@@ -206,8 +206,8 @@ The counter program implements a compressed account lifecycle (create, increment
 
 Get an overview of the SDKs for program development with ZK Compression.
 
-{% content-ref url="../resources/sdks/program-development.md" %}
-[program-development.md](../resources/sdks/program-development.md)
+{% content-ref url="../../resources/sdks/program-development.md" %}
+[program-development.md](../../resources/sdks/program-development.md)
 {% endcontent-ref %}
 
 [^1]: The program enforces compressed account layout with ownership and sum checks, and is invoked to create and write to compressed accounts and PDAs.

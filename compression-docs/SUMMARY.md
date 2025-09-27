@@ -26,19 +26,16 @@
 ## Compressed PDAs
 
 * [Overview](compressed-pdas/overview.md)
-* [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas.md)
+* [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas/README.md)
+  * [How to Create Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-create-compressed-accounts.md)
+  * [How to Update Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-update-compressed-accounts.md)
+  * [How to Write a Program that Closes Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-write-a-program-that-closes-compressed-accounts.md)
 * [Copy of Create a Program with Compressed PDAs](compressed-pdas/copy-of-create-a-program-with-compressed-pdas.md)
 * [The Basics](compressed-pdas/the-basics/README.md)
   * [LightAccount Abstraction](compressed-pdas/the-basics/lightaccount-abstraction.md)
   * [Compressed PDA Derivation](compressed-pdas/the-basics/compressed-pda-derivation.md)
   * [Cross Program Invocations](compressed-pdas/the-basics/cross-program-invocations.md)
   * [Comparing Regular and Compressed Accounts](compressed-pdas/the-basics/comparing-regular-and-compressed-accounts.md)
-* [How to Create Compressed Accounts](compressed-pdas/how-to-create-compressed-accounts/README.md)
-  * [How to write a Program to Create Compressed Accounts](compressed-pdas/how-to-create-compressed-accounts/how-to-write-a-program-to-create-compressed-accounts.md)
-* [How to Update Compressed Accounts](compressed-pdas/how-to-update-compressed-accounts/README.md)
-  * [How to Write a Program that Updates Compressed Accounts](compressed-pdas/how-to-update-compressed-accounts/how-to-write-a-program-that-updates-compressed-accounts.md)
-* [How to Close Compressed Accounts](compressed-pdas/how-to-close-compressed-accounts/README.md)
-  * [How to Write a Program that Closes Compressed Accounts](compressed-pdas/how-to-close-compressed-accounts/how-to-write-a-program-that-closes-compressed-accounts.md)
 
 ## Resources
 

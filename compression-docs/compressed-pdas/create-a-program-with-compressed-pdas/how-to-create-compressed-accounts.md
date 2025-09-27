@@ -5,11 +5,11 @@ description: >-
 hidden: true
 ---
 
-# How to write a Program to Create Compressed Accounts
+# How to Create Compressed Accounts
 
 This guide shows you how to write a Solana program that creates compressed accounts with the `create_compressed_account` instruction.
 
-The stepper below walks through each implementation step. You can find a working [full code example at the end](how-to-write-a-program-to-create-compressed-accounts.md#complete-program-example).&#x20;
+The stepper below walks through each implementation step. You can find a working [full code example at the end](how-to-create-compressed-accounts.md#complete-program-example).&#x20;
 
 A compressed account is created by the program, when called by a client.
 
@@ -33,9 +33,9 @@ Your program calls the Light System program to create compressed accounts via CP
 
 To build a program that creates compressed accounts, you'll need to:
 
-1. Set up Light SDK dependencies, specify on-chain address with `declare_id!`,
+1. Set up Light SDK dependencies and specify on-chain address with `declare_id!`,
 2. Define account struct with `LightHasher` and `LightDiscriminator` derives, and
-3. Implement `create_compressed_account` instruction in the  `#[program]` attribute.
+3. Implement `create_compressed_account` instruction within the `#[program]` module.
 
 {% hint style="info" %}
 `declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.&#x20;
