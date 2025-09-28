@@ -35,7 +35,7 @@ To build a program that creates compressed accounts, you'll need to:
 
 1. Set up Light SDK dependencies and specify on-chain address with `declare_id!`,
 2. Define account struct with `LightHasher` and `LightDiscriminator` derives, and
-3. Implement `create_compressed_account` instruction within the `#[program]` module.
+3. Implement instruction within the `#[program]` module.
 
 {% stepper %}
 {% step %}
@@ -45,7 +45,6 @@ Set up `light-sdk` dependencies.
 
 ```toml
 [dependencies]
-anchor-lang = "0.31.1"
 light-sdk = "0.13.0"
 borsh = "0.10.0"
 ```
@@ -73,8 +72,8 @@ Define your compressed account struct with the required derives.
 #[derive(Clone, 
     Debug, 
     Default, 
-    AnchorSerialize, 
-    AnchorDeserialize, 
+    BorshSerialize, // AnchorSerialize
+    BorshDeserialize, // AnchorDeserialize 
     LightHasher, 
     LightDiscriminator
 )
