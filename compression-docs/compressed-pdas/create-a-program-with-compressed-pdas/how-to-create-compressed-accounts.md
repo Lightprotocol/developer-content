@@ -43,7 +43,7 @@ To build a program that creates compressed accounts, you'll need to:
 
 {% stepper %}
 {% step %}
-### Prerequisites
+### Dependencies
 
 Set up `light-sdk` dependencies.
 
@@ -59,6 +59,13 @@ borsh = "0.10.0"
 ### Constants
 
 
+
+```rust
+declare_id!("PROGRAM_ID");
+
+pub const LIGHT_CPI_SIGNER: CpiSigner =
+    derive_light_cpi_signer!("PROGRAM_ID");
+```
 {% endstep %}
 
 {% step %}
@@ -90,11 +97,9 @@ Add `#[hash]` to fields with data types greater than 31 bytes (like Pubkeys) and
 {% step %}
 ### Instruction Data for `create_compressed_account`
 
-`1`
 
-`2`
 
-`3`
+
 
 ```rust
 pub struct InstructionData {
@@ -111,13 +116,16 @@ pub struct InstructionData {
 
 
 
-```rust
-let (address, address_seed) = derive_address(
-                &[SEED, ctx.accounts.signer.key().as_ref()],
-                &address_tree_info.get_tree_pubkey(&light_cpi_accounts)?, // merkle tree pubkey for final address computation
-                &crate::ID,
-            );
-```
+<pre class="language-rust"><code class="lang-rust">let address_merkle_tree_pubkey =
+    address_tree_info.get_tree_pubkey(&#x26;light_cpi_accounts)?;
+let custom_seeds = [SEED, ctx.accounts.signer.key().as_ref()];
+let program_id = crate::ID;
+<strong>let (address, address_seed) = derive_address(
+</strong><strong>                &#x26;custom_seeds,
+</strong><strong>                &#x26;address_merkle_tree_pubkey,
+</strong><strong>                &#x26;program_id,
+</strong><strong>            );
+</strong></code></pre>
 {% endstep %}
 
 {% step %}
@@ -126,9 +134,9 @@ let (address, address_seed) = derive_address(
 
 
 ```rust
-           // Initialize compressed account wrapper with owner, address, and output state tree index
+let owner = crate::ID;
 let mut data_account = LightAccount::<'_, DataAccount>::new_init(
-        &crate::ID,
+        &owner,
         Some(address),
         output_state_tree_index, // specifies which state tree will store account
     );
@@ -146,7 +154,7 @@ let mut data_account = LightAccount::<'_, DataAccount>::new_init(
 ```rust
 // Create CPI accounts struct
 let light_cpi_accounts = CpiAccounts::new(
-    ctx.accounts.signer.as_ref(), // fee payer and transaction signer for CPI 
+    ctx.accounts.fee_payer.as_ref(), // fee payer and transaction signer for CPI 
     ctx.remaining_accounts, // merkle tree and system accounts required for Light System program CPI 
     LIGHT_CPI_SIGNER, // program signer
 );
@@ -269,6 +277,14 @@ pub struct CreateCompressedAccount<'info> {
     pub signer: Signer<'info>,
 }
 ```
+
+<details>
+
+<summary>Anchor</summary>
+
+
+
+</details>
 
 ## Next steps
 
