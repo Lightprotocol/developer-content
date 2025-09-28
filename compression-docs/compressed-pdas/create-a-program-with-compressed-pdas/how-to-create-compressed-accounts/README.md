@@ -9,7 +9,7 @@ hidden: true
 
 This guide shows you how to write a Solana program that creates compressed accounts.
 
-The stepper below walks through each implementation step. You can find a working [full code example at the end](how-to-create-compressed-accounts.md#complete-program-example).&#x20;
+The stepper below walks through each implementation step. You can find a working [full code example at the end](./#complete-program-example).&#x20;
 
 A compressed account is created by the program, when called by a client.
 
