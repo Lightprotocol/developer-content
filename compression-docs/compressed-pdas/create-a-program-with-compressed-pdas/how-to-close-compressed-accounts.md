@@ -15,7 +15,7 @@ A compressed account is closed by the program, when called by a client.
 
 The client
 
-1. creates [instruction with proof and data](#user-content-fn-1)[^1]upon
+1. creates [instruction with proof and data](#user-content-fn-1)[^1],
 2. then sends transaction to your program. Learn here how to call your program from a client.
 
 Your program
