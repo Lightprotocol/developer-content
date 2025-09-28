@@ -58,7 +58,7 @@ Your program calls the Light System program to create compressed accounts via CP
 
 ## Get Started
 
-Use the `light-sdk` to create compressed accounts in these three phases:&#x20;
+Use the `light-sdk` to create compressed accounts in three implementation steps:&#x20;
 
 1. deterministic address derivation,
 2. compressed account initialization, and
