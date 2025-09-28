@@ -29,7 +29,7 @@
 * [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas/README.md)
   * [How to Create Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-create-compressed-accounts.md)
   * [How to Update Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-update-compressed-accounts.md)
-  * [How to Write a Program that Closes Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-write-a-program-that-closes-compressed-accounts.md)
+  * [How to Close Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-close-compressed-accounts.md)
 * [Copy of Create a Program with Compressed PDAs](compressed-pdas/copy-of-create-a-program-with-compressed-pdas.md)
 * [The Basics](compressed-pdas/the-basics/README.md)
   * [LightAccount Abstraction](compressed-pdas/the-basics/lightaccount-abstraction.md)

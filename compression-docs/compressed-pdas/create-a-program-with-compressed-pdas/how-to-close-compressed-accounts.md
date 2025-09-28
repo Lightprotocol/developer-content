@@ -5,11 +5,11 @@ description: >-
 hidden: true
 ---
 
-# How to Write a Program that Closes Compressed Accounts
+# How to Close Compressed Accounts
 
 This guide shows you how to write a Solana program that closes compressed accounts with the `close_compressed_account` instruction.
 
-The stepper below walks through each implementation step. You can find a working [full code example at the end](how-to-write-a-program-that-closes-compressed-accounts.md#complete-program-example).
+The stepper below walks through each implementation step. You can find a working [full code example at the end](how-to-close-compressed-accounts.md#complete-program-example).
 
 A compressed account is closed by the program, when called by a client.
 
