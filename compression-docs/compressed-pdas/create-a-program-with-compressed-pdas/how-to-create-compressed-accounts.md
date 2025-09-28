@@ -37,10 +37,6 @@ To build a program that creates compressed accounts, you'll need to:
 2. Define account struct with `LightHasher` and `LightDiscriminator` derives, and
 3. Implement `create_compressed_account` instruction within the `#[program]` module.
 
-{% hint style="info" %}
-`declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.&#x20;
-{% endhint %}
-
 {% stepper %}
 {% step %}
 ### Dependencies
@@ -187,6 +183,10 @@ light init testprogram
 ```
 {% endhint %}
 
+{% tabs %}
+{% tab title="Anchor" %}
+`declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.&#x20;
+
 ```rust
 #![allow(unexpected_cfgs)]
 
@@ -278,13 +278,17 @@ pub struct CreateCompressedAccount<'info> {
 }
 ```
 
-<details>
 
-<summary>Anchor</summary>
+{% endtab %}
 
+{% tab title="Native" %}
 
+{% endtab %}
 
-</details>
+{% tab title="Pinchocchio" %}
+
+{% endtab %}
+{% endtabs %}
 
 ## Next steps
 
