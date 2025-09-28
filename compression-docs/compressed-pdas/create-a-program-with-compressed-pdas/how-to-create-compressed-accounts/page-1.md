@@ -58,11 +58,13 @@ Your program calls the Light System program to create compressed accounts via CP
 
 ## Get Started
 
-To build a program that creates compressed accounts, you'll need to:
+Use the `light-sdk` to create compressed accounts in these three phases:&#x20;
 
-1. Set up Light SDK dependencies and specify on-chain address with `declare_id!`,
-2. Define account struct with `LightHasher` and `LightDiscriminator` derives, and
-3. Implement instruction within the `#[program]` module.
+1. deterministic address derivation,
+2. compressed account initialization, and
+3. cross-program invocation.&#x20;
+
+The stepper below covers each phase with detailed parameter explanations and implementation requirements.
 
 {% stepper %}
 {% step %}
