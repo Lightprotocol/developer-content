@@ -36,6 +36,10 @@
   * [Compressed PDA Derivation](compressed-pdas/the-basics/compressed-pda-derivation.md)
   * [Cross Program Invocations](compressed-pdas/the-basics/cross-program-invocations.md)
   * [Comparing Regular and Compressed Accounts](compressed-pdas/the-basics/comparing-regular-and-compressed-accounts.md)
+* [Client Library](compressed-pdas/client-library.md)
+* [Testing Libraries](compressed-pdas/testing-libraries/README.md)
+  * [Light Program Test](compressed-pdas/testing-libraries/light-program-test.md)
+  * [Light Client](compressed-pdas/testing-libraries/light-client.md)
 
 ## Resources
 
