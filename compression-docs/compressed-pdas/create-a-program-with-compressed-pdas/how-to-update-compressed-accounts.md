@@ -7,286 +7,359 @@ hidden: true
 
 # How to Update Compressed Accounts
 
-This guide shows you how to write a Solana program that updates compressed accounts with the `update_compressed_account` instruction.
+Learn how to update compressed accounts in Solana programs. This guide breaks down each implementation step. Find a full code example at the end for Anchor, native Rust, and Pinocchio.
 
-The stepper below walks through each implementation step. You can find a working [full code example at the end.](how-to-update-compressed-accounts.md#update-account-example)
+### Compressed Account Update Flow
 
-A compressed account is updated by the program, when called by a client.
-
-The client
-
-1. creates [instruction with proof and data](#user-content-fn-1)[^1],
-2. then sends transaction to your program. Learn here how to call your program from a client.
-
-Your program
-
-1. loads the current account state and
-2. performs a CPI from your custom program to the Light System program
-
-The Light System program nullifies the old account and creates a new one with updated data.
-
-{% hint style="success" %}
-Regular accounts update their data fields when state changes. Compressed accounts are identified by their hash. When compressed account state changes, the hash changes, so a new account needs to be created. The old account is nullified to prevent double spending.
-{% endhint %}
+```
+CLIENT
+   ├─ 1. Fetch current account state
+   │  ├─ getCompressedAccount() RPC call
+   │  ├─ Current account data and metadata
+   │  └─ State tree information
+   │
+   ├─ 2. Generate inclusion proof
+   │  ├─ getValidityProof() with existing account
+   │  ├─ Proves account exists in state tree
+   │  └─ Returns merkle proof for inclusion
+   │
+   └─ 3. PROGRAM
+      ├─ Validate input account
+      │  ├─ Verify account ownership
+      │  ├─ Confirm address derivation
+      │  └─ Validate account state consistency
+      │
+      ├─ Create updated account structure
+      │  ├─ LightAccount::new_mut() with current state
+      │  ├─ Apply data updates to fields
+      │  └─ Preserve immutable identity fields
+      │
+      └─ 4. Light System Program CPI
+         ├─ Verify inclusion proof (proves account exists)
+         ├─ Nullify old account hash in state tree
+         ├─ Create new account hash entry
+         └─ Complete atomic state transition
+```
 
 ## Get Started
 
-To build a program that updates compressed accounts, you'll need to:
+Set up your program and use the `light-sdk` to update compressed accounts:
 
-1. Set up Light SDK dependencies and specify on-chain address with `declare_id!`,
-2. Define account struct with `LightHasher` and `LightDiscriminator` derives, and
-3. Implement `update_compressed_account` instruction within the `#[program]` module.
+1. Configure instruction data,
+2. initialize the compressed account, and
+3. CPI Light System program
 
-{% hint style="info" %}
-`declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.
+{% hint style="success" %}
+Regular accounts update their data fields when state changes. Compressed accounts are identified by their hash. When compressed account state changes, the hash changes, so a new account needs to be created. The old account is nullified to prevent double spending.
 {% endhint %}
 
 {% stepper %}
 {% step %}
 ### Prerequisites
 
-Set up Light SDK dependencies, import essential types, and configure program constants with `declare_id!`.
+Set up dependencies, constants, and compressed account data structure.
 
 <details>
 
-<summary>Dependencies, Imports, Program Constants</summary>
+<summary>Dependencies, Constants, Account Data Structure</summary>
 
-Add Light SDK and Anchor framework dependencies to your `Cargo.toml`:
+#### Dependencies
+
+Set up `light-sdk` dependencies.
 
 ```toml
 [dependencies]
-anchor-lang = "0.31.1"
 light-sdk = "0.13.0"
 borsh = "0.10.0"
 ```
 
-Import the essential types and macros.
+#### Constants
+
+Set program address and CPI authority to call Light System program.
 
 ```rust
-use anchor_lang::prelude::*;
-use borsh::{BorshDeserialize, BorshSerialize};
-use light_sdk::{
-    // Wrapper for hashing and serialization for compressed accounts
-    account::LightAccount,
-    // Derives address from provided seeds. Returns address and a singular seed
-    address::v1::derive_address,
-    // Structures for calling Light System program via CPI
-    cpi::{CpiAccounts, CpiInputs, CpiSigner},
-    // Macro that computes PDA signer with "cpi_authority" seed at compile time
-    derive_light_cpi_signer,
-    // ZK proof for merkle inclusion/non-inclusion verification and account metadata
-    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
-    // Traits for account type discrimination and Poseidon hash derivation
-    LightDiscriminator, LightHasher,
-};
-```
-
-Set up your program ID and CPI authority for Light System program calls.
-
-```rust
-declare_id!("YOUR_PROGRAM_ID");
+declare_id!("PROGRAM_ID");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("YOUR_PROGRAM_ID");
-
-pub const SEED: &[u8] = b"your_seed";
+    derive_light_cpi_signer!("PROGRAM_ID");
 ```
+
+**`Program_ID`**: The on-chain address of your program to derive address.
+
+**`CPISigner`**: Configuration struct for CPI's to Light System Program. Contains your program ID, the derived CPI authority PDA, and PDA bump.
+
+#### Account Data Structure
+
+Define your compressed account struct:
+
+```rust
+#[derive(
+    Clone, 
+    Debug, 
+    Default, 
+    BorshSerialize, // AnchorSerialize
+    BorshDeserialize, // AnchorDeserialize 
+    LightHasher, 
+    LightDiscriminator
+)]
+pub struct DataAccount {
+    #[hash]
+    pub owner: Pubkey,
+    #[hash]
+    pub message: String,
+}
+```
+
+`DataAccount` defines your account's data structure.
+
+* `#[hash]` fields define the what's included in the compressed account hash.
+* Changing any `#[hash]` field creates a new account hash. Requires creating a new compressed account via CPI with validity proof. Old hash becomes invalid.
+* Non-`#[hash]` fields can be updated without creating new accounts
+
+Compression Derives:
+
+* `LightHasher` generates compressed account hash from `DataAccount`.
+* `LightDiscriminator` gives struct unique type ID for deserialization. Required to distinguish `DataAccount` from other compressed account types.
 
 </details>
 {% endstep %}
 
 {% step %}
-### Account Data Structure
+### Instruction Data for `update_compressed_account`
 
-Define your compressed account struct with the required derives:
+The `update_compressed_account` instruction requires the following inputs:
 
 ```rust
-#[derive(Clone, Debug, Default, BorshSerialize, BorshDeserialize, LightHasher, LightDiscriminator)]
-pub struct DataAccount {
-    #[hash]
-    pub owner: Pubkey,
-    #[hash]
-    pub message: String,
+pub struct InstructionData {
+    proof: ValidityProof, // client fetches with `getValidityProof()`
+    my_compressed_account: MyCompressedAccount, // client fetches with `getCompressedAccount()`
+    account_meta: CompressedAccountMeta,
+    nested_data: NestedData,
 }
 ```
 
-Add `#[hash]` to fields with data types greater than 31 bytes (like Pubkeys) and fields you want verified in proofs.
+**Parameters:**
+
+* `ValidityProof`: A zero-knowledge proof to validate inclusion of the existing compressed account in the state tree. Fetched by the client via `getValidityProof()` with current account hash.
+* `my_compressed_account`: Current account data structure to validate ownership and acccount data. Fetched by client via `getCompressedAccount()`. Must match on-chain account data.
+* `account_meta`: Current account's state tree position metadata to locate and nullify existing account hash. Metadata must match current on-chain state, obtained from `getCompressedAccount()` response metadata field.
+* `nested_data`: Updates the custom data field defined in `DataAccount`. Non-`#[hash]` fields in the account structure. Constructed by client with modified field values.
+
+The instruction data references two Merkle trees. Both are maintained by the protocol. You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls).
+
+Updating a compressed account requires an interaction with **Address trees**, when:
+
+* validate the account's address was created with the same seeds and program ID that the current transaction is using
+* `getValidityProof()` may need address tree information to build complete inclusion proofs
+* `CompressedAccountMeta` contains address information that requires validation against the address tree
+
+{% hint style="info" %}
+You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls)_._
+{% endhint %}
 {% endstep %}
 
 {% step %}
-### Implement `update_compressed_account` Instruction
+### Initialize Compressed Account
 
-Implement the instruction to load existing account data and update to new state via Light System CPI.
+Initialize the compressed account data structure using the derived address from Step 5.
 
 ```rust
-#[program]
-pub mod update_compressed_account {
-    use super::*;
-
-    pub fn update_compressed_account<'info>(
-        ctx: Context<'_, '_, '_, 'info, UpdateCompressedAccount<'info>>, // standard Anchor context
-        proof: ValidityProof, // ZK proof verifying existing account inclusion
-        account_meta: CompressedAccountMeta, // Contains current account metadata and state tree index
-        current_message: String,
-        new_message: String,
-    ) -> Result<()> {
-        // Create CPI accounts struct
-        let light_cpi_accounts = CpiAccounts::new(
-            ctx.accounts.signer.as_ref(), // fee payer and transaction signer for CPI
-            ctx.remaining_accounts, // merkle tree and system accounts required for Light System program CPI
-            LIGHT_CPI_SIGNER, // program signer
-        );
-
-        // Initialize compressed account wrapper for existing account with current data
-        let mut data_account = LightAccount::<'_, DataAccount>::new_mut(
-            &crate::ID,
-            &account_meta, // current account metadata containing state tree index
-            DataAccount {
-                owner: ctx.accounts.signer.key(),
-                message: current_message,
-            },
+let owner = crate::ID;
+let mut my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_mut(
+            &owner,
+            &account_meta,
+            my_compressed_account,
         )?;
 
-        // Update account with new data
-        data_account.message = new_message;
-
-        // Package validity proof and updated account data
-        let cpi_inputs = CpiInputs::new(
-            proof, // ZK proof for existing account inclusion
-            vec![data_account.to_account_info()?], // updated account info for Light System
-        );
-
-        // Invoke light system program to update compressed account
-        cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
-
-        Ok(())
-    }
-}
-
-#[derive(Accounts)]
-pub struct UpdateCompressedAccount<'info> {
-    #[account(mut)]
-    pub signer: Signer<'info>,
-}
+        my_compressed_account.nested = nested_data;
 ```
+
+**Parameters for `LightAccount::new_mut()`:**
+
+* `&owner`: Program ID to set authority for CPI to Light System program.
+* `account_meta`: Current account's state tree position metadata defined in _Step 2 Instruction Data for `update_compressed_account`_
+* `my_compressed_account` current account data defined in _Step 2 Instruction Data for `update_compressed_account`_.
+
+**Field assignments:**
+
+* `my_compressed_account.nested`: Updates the `nested` field in `MyCompressedAccount` struct with new `NestedData` values.
 {% endstep %}
 
 {% step %}
-### Success!
+### CPI
 
-You've implemented a program that updates compressed accounts via Light System program CPI.
+Invoke the Light System program to update the compressed account using
+
+1. `proof` from _Step 2_ _Instruction Data for `update_compressed_account`_, and
+2. `my_compressed_account` from _Step 3_ _Initialize Compressed Account_.
+
+```rust
+let light_cpi_accounts = CpiAccounts::new(
+    ctx.accounts.signer.as_ref(),
+    ctx.remaining_accounts,
+    crate::LIGHT_CPI_SIGNER,
+);
+
+InstructionDataInvokeCpiWithReadOnly::new_cpi(LIGHT_CPI_SIGNER, proof)
+    .with_light_account(my_compressed_account)?
+    .invoke(light_cpi_accounts)?;
+```
+
+**Parameters for `CpiAccounts::new()`:**
+
+* `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer
+* `ctx.remaining_accounts`: Account slice containing Light System program and merkle tree accounts\[^1]. Generated via client's `getValidityProof()` RPC call.
+* `LIGHT_CPI_SIGNER`: Program signer derived at compile time via `derive_light_cpi_signer!()` macro
+
+**Parameters for `InstructionDataInvokeCpiWithReadOnly::new_cpi()`:**
+
+* `LIGHT_CPI_SIGNER`: Program signer authority for CPI authentication with Light System program.
+* `proof`: Zero-knowledge proof from instruction input to validate account inclusion in state tree.
+{% endstep %}
+
+{% step %}
+### That's it!
+
+Now that you understand the concepts to create a compressed account, start building with the create account example below.
 {% endstep %}
 {% endstepper %}
 
 ## Update Account Example
 
-Copy the complete example and built with `anchor build`. Find the [source code](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update) here.
-
-{% hint style="success" %}
-Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first:
+Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
 
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
 light init testprogram
 ```
+
+{% hint style="success" %}
+Find the [source code](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update) here.
+{% endhint %}
+
+{% tabs %}
+{% tab title="Anchor" %}
+{% hint style="info" %}
+`declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.
 {% endhint %}
 
 ```rust
 #![allow(unexpected_cfgs)]
+#![allow(deprecated)]
 
-use anchor_lang::prelude::*;
-use borsh::{BorshDeserialize, BorshSerialize};
+use anchor_lang::{prelude::*, Discriminator};
 use light_sdk::{
-    // Wrapper for hashing and serialization for compressed accounts
     account::LightAccount,
-    // Derives address from provided seeds. Returns address and a singular seed
     address::v1::derive_address,
-    // Structures for calling Light System program via CPI
-    cpi::{CpiAccounts, CpiInputs, CpiSigner},
-    // Macro that computes PDA signer with "cpi_authority" seed at compile time
+    cpi::{
+        CpiAccounts, CpiSigner, InstructionDataInvokeCpiWithReadOnly, InvokeLightSystemProgram,
+        LightCpiInstruction,
+    },
     derive_light_cpi_signer,
-    // ZK proof for merkle inclusion/non-inclusion verification and account metadata
-    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
-    // Traits for account type discrimination and Poseidon hash derivation
-    LightDiscriminator, LightHasher,
+    instruction::{
+        account_meta::{CompressedAccountMeta, CompressedAccountMetaBurn},
+        PackedAddressTreeInfo, ValidityProof,
+    },
+    LightDiscriminator,
+    LightHasher,
 };
 
-declare_id!("HNqStLMpNuNJqhBF1FbGTKHEFbBLJmq8RdJJmZKWz6jH");
+declare_id!("2tzfijPBGbrR5PboyFUFKzfEoLTwdDSHUjANCw929wyt");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("HNqStLMpNuNJqhBF1FbGTKHEFbBLJmq8RdJJmZKWz6jH");
-
-pub const SEED: &[u8] = b"your_seed";
-
-#[derive(Clone, Debug, Default, BorshSerialize, BorshDeserialize, LightHasher, LightDiscriminator)]
-pub struct DataAccount {
-    #[hash]
-    pub owner: Pubkey,
-    #[hash]
-    pub message: String,
-}
+    derive_light_cpi_signer!("2tzfijPBGbrR5PboyFUFKzfEoLTwdDSHUjANCw929wyt");
 
 #[program]
-pub mod update_compressed_account {
+pub mod sdk_anchor_test {
     use super::*;
 
     pub fn update_compressed_account<'info>(
-        ctx: Context<'_, '_, '_, 'info, UpdateCompressedAccount<'info>>, // standard Anchor context
-        proof: ValidityProof, // ZK proof verifying existing account inclusion
-        account_meta: CompressedAccountMeta, // Contains current account metadata and state tree index
-        current_message: String,
-        new_message: String,
+        ctx: Context<'_, '_, '_, 'info, UpdateNestedData<'info>>,
+        proof: ValidityProof,
+        my_compressed_account: MyCompressedAccount,
+        account_meta: CompressedAccountMeta,
+        nested_data: NestedData,
     ) -> Result<()> {
-        // Create CPI accounts struct
-        let light_cpi_accounts = CpiAccounts::new(
-            ctx.accounts.signer.as_ref(), // fee payer and transaction signer for CPI
-            ctx.remaining_accounts, // merkle tree and system accounts required for Light System program CPI
-            LIGHT_CPI_SIGNER, // program signer
-        );
-
-        // Initialize compressed account wrapper for existing account with current data
-        let mut data_account = LightAccount::<'_, DataAccount>::new_mut(
+        let mut my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_mut(
             &crate::ID,
-            &account_meta, // current account metadata containing state tree index
-            DataAccount {
-                owner: ctx.accounts.signer.key(),
-                message: current_message,
-            },
+            &account_meta,
+            my_compressed_account,
         )?;
 
-        // Update account with new data
-        data_account.message = new_message;
+        my_compressed_account.nested = nested_data;
 
-        // Package validity proof and updated account data
-        let cpi_inputs = CpiInputs::new(
-            proof, // ZK proof for existing account inclusion
-            vec![data_account.to_account_info()?], // updated account info for Light System
+        let light_cpi_accounts = CpiAccounts::new(
+            ctx.accounts.signer.as_ref(),
+            ctx.remaining_accounts,
+            crate::LIGHT_CPI_SIGNER,
         );
-
-        // Invoke light system program to update compressed account
-        cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
+        InstructionDataInvokeCpiWithReadOnly::new_cpi(LIGHT_CPI_SIGNER, proof)
+            .with_light_account(my_compressed_account)?
+            .invoke(light_cpi_accounts)?;
 
         Ok(())
     }
 }
 
+#[event]
+#[derive(Clone, Debug, Default, LightHasher, LightDiscriminator)]
+pub struct MyCompressedAccount {
+    #[hash]
+    pub name: String,
+    pub nested: NestedData,
+}
+
+#[derive(LightHasher, Clone, Debug, AnchorSerialize, AnchorDeserialize)]
+pub struct NestedData {
+    pub one: u16,
+    pub two: u16,
+    pub three: u16,
+    pub four: u16,
+    pub five: u16,
+    pub six: u16,
+    pub seven: u16,
+    pub eight: u16,
+    pub nine: u16,
+    pub ten: u16,
+    pub eleven: u16,
+    pub twelve: u16,
+}
+
+impl Default for NestedData {
+    fn default() -> Self {
+        Self {
+            one: 1,
+            two: 2,
+            three: 3,
+            four: 4,
+            five: 5,
+            six: 6,
+            seven: 7,
+            eight: 8,
+            nine: 9,
+            ten: 10,
+            eleven: 11,
+            twelve: 12,
+        }
+    }
+}
+
 #[derive(Accounts)]
-pub struct UpdateCompressedAccount<'info> {
+pub struct UpdateNestedData<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
 }
 ```
+{% endtab %}
 
-## Next steps
+{% tab title="Native" %}
 
-Learn how to Call Your Program from a Client Learn how to Create Compressed Accounts Learn how to Close Compressed Accounts
+{% endtab %}
 
-[^1]: Instructions:
+{% tab title="Pinocchio" %}
 
-    * `ValidityProof` for the existing account
+{% endtab %}
+{% endtabs %}
 
-    - `CompressedAccountMeta` containing current account metadata
+## Next Steps
 
-    * Current account data to update
-
-    - New account data to store
