@@ -190,7 +190,7 @@ let mut data_account = LightAccount::<'_, DataAccount>::new_init(
 
 ```
 
-**Parameters for `LightAccount`:**
+**Parameters for `LightAccount::new_init``()`:**
 
 * `&owner`: Program ID to set authority for CPI to Light System program.
 * `Some(address)`: The derived address from [_Step 3_](how-to-create-compressed-accounts.md#derive-address) _Derive Address_, where the compressed account will be created.
