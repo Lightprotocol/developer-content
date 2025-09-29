@@ -130,6 +130,12 @@ pub struct InstructionData {
 }
 ```
 
+**Parameters:**
+
+* `ValidityProof`: A zero-knowledge proof that validates non-inclusion of an address in the specified address tree. Fetched by the client via `getValidityProof()` with empty input accounts array.
+* `PackedAddressTreeInfo`: Specifies pubkey of address tree to derive the adress with `derive_address()`. Ensure client and program reference the same address tree.
+* `output_state_tree_index`: Specifies which state tree will store the compressed account hash and its index (`u8`).
+
 The instruction data references two Merkle trees. Both are maintained by the protocol. You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls)_._
 
 * **Address trees** are used to derive and store addresses for compressed accounts.
@@ -137,12 +143,6 @@ The instruction data references two Merkle trees. Both are maintained by the pro
   * _uniqueness check_
   * If your program requires addresses to identify accounts but not uniqueness over all address trees, the used address Merkle tree does not need to be checked.
 * **State trees** store compressed account hashes and are fungible.
-
-**Parameters:**
-
-* `ValidityProof`: A zero-knowledge proof that validates non-inclusion of an address in the specified address tree. Fetched by the client via `getValidityProof()` with empty input accounts array.
-* `PackedAddressTreeInfo`: Specifies pubkey of address tree to derive the adress with `derive_address()`. Ensure client and program reference the same address tree.
-* `output_state_tree_index`: Specifies which state tree will store the compressed account hash and its index (`u8`). State trees are fungible - find their addresses [here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endstep %}
 
 {% step %}
