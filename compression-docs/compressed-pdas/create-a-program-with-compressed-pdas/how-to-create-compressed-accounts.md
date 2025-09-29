@@ -7,9 +7,7 @@ hidden: true
 
 # How to Create Compressed Accounts
 
-This guide  you how to write a Solana program that creates compressed accounts.&#x20;
-
-Each phase is explained with parameter explanations and implementation requirements.
+Learn how to create compressed accounts in Solana programs. This guide breaks down each implementation step. Find a working [full code example at the end](how-to-create-compressed-accounts.md#create-account-example) for Anchor, native Rust, and Pinocchio.
 
 ```
 Compressed Account Creation Flow
@@ -255,16 +253,12 @@ Now that you understand the concepts to create a compressed account, start build
 
 ### Create Account Example
 
-Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
+Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first:
 
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
 light init testprogram
 ```
-
-{% hint style="success" %}
-Find the [source code](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update) here.
-{% endhint %}
 
 {% tabs %}
 {% tab title="Anchor" %}
