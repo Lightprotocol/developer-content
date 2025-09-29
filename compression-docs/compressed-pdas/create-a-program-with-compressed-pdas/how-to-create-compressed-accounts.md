@@ -130,17 +130,13 @@ pub struct InstructionData {
 }
 ```
 
-The transaction interacts with two Merkle trees. Both are maintained by the protocol
+The instruction data references two Merkle trees. Both are maintained by the protocol. You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls)_._
 
 * **Address trees** are used to derive and store addresses for compressed accounts.
   * An address derived from a specified address tree is unique within that tree. Multiple address trees exist, and the same address seeds can be reused across different trees.
   * _uniqueness check_
   * If your program requires addresses to identify accounts but not uniqueness over all address trees, the used address Merkle tree does not need to be checked.
 * **State trees** store compressed account hashes and are fungible.
-
-{% hint style="info" %}
-You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls)_._
-{% endhint %}
 
 **Parameters:**
 
