@@ -68,7 +68,7 @@ borsh = "0.10.0"
 {% step %}
 ### Constants
 
-Define program identity and CPI authority for Light System program calls.
+Set program address and CPI authority to call Light System program.
 
 ```rust
 declare_id!("PROGRAM_ID");
@@ -105,16 +105,16 @@ pub struct DataAccount {
 }
 ```
 
-`DataAccount`: Define your account's data structure.
+`DataAccount` defines your account's data structure.
 
-* `#[hash]` fields define the identity of your account.
-* Account hash changes when any #\[hash] field changes. Requires proof of account ownership.
+* `#[hash]` fields define the what's included in the compressed account hash.
+* Changing any `#[hash]` field creates a new account hash. Requires creating a new compressed account via CPI with validity proof. Old hash becomes invalid.
 * Non-`#[hash]` fields can be updated without creating new accounts
 
 Compression Derives:
 
 * `LightHasher` generates compressed account hash from `DataAccount`.
-* `LightDiscriminator` gives struct unique type ID for deserialization. Required to distinguish DataAccount from other compressed account types.
+* `LightDiscriminator` gives struct unique type ID for deserialization. Required to distinguish `DataAccount` from other compressed account types.
 {% endstep %}
 
 {% step %}
@@ -131,13 +131,17 @@ pub struct InstructionData {
 }
 ```
 
-The transaction interacts with two Merkle trees, both are maintained by the protocol
+The transaction interacts with two Merkle trees. Both are maintained by the protocol
 
 * **Address trees** are used to derive and store addresses for compressed accounts.
   * An address derived from a specified address tree is unique within that tree. Multiple address trees exist, and the same address seeds can be reused across different trees.
   * _uniqueness check_
   * If your program requires addresses to identify accounts but not uniqueness over all address trees, the used address Merkle tree does not need to be checked.
 * **State trees** store compressed account hashes and are fungible.
+
+{% hint style="info" %}
+You can specify any Merkle tree listed in [_Addresses_](../../../resources/addresses-and-urls.md)_._
+{% endhint %}
 
 **Parameters:**
 
@@ -158,7 +162,7 @@ let program_id = crate::ID;
 <strong>let (address, address_seed) = derive_address(
 </strong><strong>                &#x26;custom_seeds,
 </strong><strong>                &#x26;address_merkle_tree_pubkey,
-</strong><strong>                &#x26;program_id, // must match client
+</strong><strong>                &#x26;program_id, 
 </strong><strong>            );
 </strong></code></pre>
 
@@ -166,7 +170,7 @@ let program_id = crate::ID;
 
 * `&custom_seeds`: Array with program `SEED` and signer pubkey. Client must use identical seeds.
 * `&address_merkle_tree_pubkey`: Pubkey of address tree retrieved via `get_tree_pubkey()`. Must match tree selected by client.
-* `&program_id`: The program's on-chain address (`crate::ID`). The client must use same program ID.
+* `&program_id`: The program's on-chain address. The client must use same program ID.
 
 The parameters return:
 
@@ -177,7 +181,7 @@ The parameters return:
 {% step %}
 ### Initialize Compressed Account
 
-Initialize the compressed account data structure using the derived address.
+Initialize the compressed account data structure using the derived address from [Step 5](page-1.md#derive-address).
 
 ```rust
 let owner = crate::ID;
@@ -187,19 +191,19 @@ let mut data_account = LightAccount::<'_, DataAccount>::new_init(
         output_state_tree_index, // configured in create_account instruction
     );
     data_account.owner = ctx.accounts.signer.key();
-    data_account.message = message;
+    data_account.message = message; // different from &owner
 
 ```
 
 **Parameters for `LightAccount`:**
 
 * `&owner`: Program ID (`crate::ID`) to set account owner for Light System program.
-* `Some(address)`: The derived address from the previous step where the compressed account will be created.
-* `output_state_tree_index` to specify which state tree will store the compressed account hash and its index (defined in the `create_compressed_account` instruction)
+* `Some(address)`: The derived address from [_Step 5_](page-1.md#derive-address) _Derive Address_, where the compressed account will be created.
+* `output_state_tree_index` to specify which state tree will store the compressed account hash and its index, defined in  [_Step 4_](page-1.md#instruction-data-for-create_compressed_account) _Instruction Data for `create_compressed_account`_.
 
 **Field assignments:**
 
-* `data_account.owner`: Sets the transaction signer as the account's data owner (different from `&owner` above).
+* `data_account.owner`: Sets the transaction signer as the account's data owner, e.g. the user, different from `&owner` above.
 * `data_account.message`: Populates the custom data field defined in `DataAccount` struct.
 {% endstep %}
 
@@ -208,9 +212,9 @@ let mut data_account = LightAccount::<'_, DataAccount>::new_init(
 
 Invoke the Light System program to create the compressed account using
 
-1. `proof` from _Instruction Data for `create_compressed_account`_,
-2. `data_account` from _Initialize Compressed Account_, and
-3. `address_seed` from _Derive Address_.
+1. `proof` from [_Step 4_](page-1.md#instruction-data-for-create_compressed_account) _Instruction Data for `create_compressed_account`_,
+2. `data_account` from [_Step 6_](page-1.md#initialize-compressed-account) _Initialize Compressed Account_, and
+3. `address_seed` from [_Step 5_](page-1.md#derive-address) _Derive Address_.
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
@@ -231,7 +235,7 @@ cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
 **Parameters for `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer
-* `ctx.remaining_accounts`: Account slice containing Light System program and merkle tree accounts. Generated via client's `getValidityProof()` RPC call.
+* `ctx.remaining_accounts`: Account slice [containing Light System program and merkle tree accounts](#user-content-fn-2)[^2]. Generated via client's `getValidityProof()` RPC call.
 * `LIGHT_CPI_SIGNER`: Program signer derived at compile time via `derive_light_cpi_signer!()` macro
 
 **Parameters for `CpiInputs::new_with_address()`:**
@@ -263,8 +267,6 @@ Find the [source code](https://github.com/Lightprotocol/program-examples/tree/ma
 
 {% tabs %}
 {% tab title="Anchor" %}
-Copy the complete example and built with `anchor build`.&#x20;
-
 {% hint style="info" %}
 `declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.
 {% endhint %}
@@ -275,17 +277,11 @@ Copy the complete example and built with `anchor build`.&#x20;
 use anchor_lang::prelude::*;
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_sdk::{
-    // Wrapper for hashing and serialization for compressed accounts
     account::LightAccount,
-    // Derives address from provided seeds. Returns address and a singular seed
     address::v1::derive_address,
-    // Structures for calling Light System program via CPI
     cpi::{CpiAccounts, CpiInputs, CpiSigner},
-    // Macro that computes PDA signer with "cpi_authority" seed at compile time
     derive_light_cpi_signer,
-    // ZK proof for merkle inclusion/non-inclusion verification
     instruction::{PackedAddressTreeInfo, ValidityProof},
-    // Traits for account type discrimination and Poseidon hash derivation
     LightDiscriminator, LightHasher,
 };
 
@@ -309,44 +305,38 @@ pub mod create_compressed_account {
     use super::*;
 
     pub fn create_compressed_account<'info>(
-        ctx: Context<'_, '_, '_, 'info, CreateCompressedAccount<'info>>, // standard Anchor context
-        proof: ValidityProof, // ZK proof verifying address non-inclusion
-        address_tree_info: PackedAddressTreeInfo, // Specifies address tree to use for derivation
-        output_state_tree_index: u8, // Specifies state tree to store the new account
+        ctx: Context<'_, '_, '_, 'info, CreateCompressedAccount<'info>>,
+        proof: ValidityProof,
+        address_tree_info: PackedAddressTreeInfo,
+        output_state_tree_index: u8,
         message: String,
     ) -> Result<()> {
-        // Create CPI accounts struct
         let light_cpi_accounts = CpiAccounts::new(
-            ctx.accounts.signer.as_ref(), // fee payer and transaction signer for CPI
-            ctx.remaining_accounts, // merkle tree and system accounts required for Light System program CPI
-            LIGHT_CPI_SIGNER, // program signer
+            ctx.accounts.signer.as_ref(),
+            ctx.remaining_accounts,
+            LIGHT_CPI_SIGNER,
         );
 
-        // Derive deterministic address from seeds and address tree
-        // must match client-side derivation
         let (address, address_seed) = derive_address(
             &[SEED, ctx.accounts.signer.key().as_ref()],
-            &address_tree_info.get_tree_pubkey(&light_cpi_accounts)?, // merkle tree pubkey for final address computation
+            &address_tree_info.get_tree_pubkey(&light_cpi_accounts)?,
             &crate::ID,
         );
 
-        // Initialize compressed account wrapper with owner, address, and output state tree index
         let mut data_account = LightAccount::<'_, DataAccount>::new_init(
             &crate::ID,
             Some(address),
-            output_state_tree_index, // specifies which state tree will store account
+            output_state_tree_index,
         );
         data_account.owner = ctx.accounts.signer.key();
         data_account.message = message;
 
-        // Package validity proof, compressed account data, and address registration params
         let cpi_inputs = CpiInputs::new_with_address(
-            proof, // ZK proof for address non-inclusion
-            vec![data_account.to_account_info()?], // compressed account info for Light System
-            vec![address_tree_info.into_new_address_params_packed(address_seed)], // packed address registration parameters
+            proof,
+            vec![data_account.to_account_info()?],
+            vec![address_tree_info.into_new_address_params_packed(address_seed)],
         );
 
-        // Invoke light system program to create compressed account
         cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
 
         Ok(())
@@ -380,3 +370,12 @@ Learn how to Call Your Program from a Client Learn how to Update Compressed Acco
     * `PackedAddressTreeInfo` containing tree metadata
     * `output_tree_index` specifying which state tree to use
     * Account data to store
+
+[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+    2. CPI Authority - Program-derived authority PDA
+    3. Registered Program PDA - Registration account for your program
+    4. Noop Program - For transaction logging
+    5. Account Compression Authority - Authority for merkle tree operations
+    6. Account Compression Program - SPL Account Compression program
+    7. Invoking Program - Your program's address
+    8. System Program - Standard Solana System program
