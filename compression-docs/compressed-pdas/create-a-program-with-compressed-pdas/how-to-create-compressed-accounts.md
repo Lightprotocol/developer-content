@@ -192,7 +192,7 @@ let mut data_account = LightAccount::<'_, DataAccount>::new_init(
 
 **Parameters for `LightAccount`:**
 
-* `&owner`: Program ID (`crate::ID`) to set account owner for Light System program.
+* `&owner`: Program ID to set authority for CPI to Light System program.
 * `Some(address)`: The derived address from [_Step 3_](how-to-create-compressed-accounts.md#derive-address) _Derive Address_, where the compressed account will be created.
 * `output_state_tree_index` to specify which state tree will store the compressed account hash and its index, defined in [_Step 2_](how-to-create-compressed-accounts.md#instruction-data-for-create_compressed_account) _Instruction Data for `create_compressed_account`_.
 
