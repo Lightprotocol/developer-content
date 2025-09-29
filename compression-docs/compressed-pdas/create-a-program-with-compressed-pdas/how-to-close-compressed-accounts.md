@@ -47,7 +47,7 @@ Set up your program and use the `light-sdk` to close compressed accounts:
 
 1. [Configure instruction data](how-to-close-compressed-accounts.md#instruction-data-for-close_compressed_account),
 2. initialize the [compressed account](how-to-close-compressed-accounts.md#initialize-compressed-account), and
-3. [CPI](how-to-close-compressed-accounts.md#cpi) Light System program
+3. [invoke](how-to-close-compressed-accounts.md#cpi) the Light System program.
 
 Once closed, you can [reinitialize](how-to-close-compressed-accounts.md#reinitialize-closed-account) a compressed account or [permanently burn](how-to-close-compressed-accounts.md#burn-compressed-account) it. A burned account cannot be reinitialized.
 

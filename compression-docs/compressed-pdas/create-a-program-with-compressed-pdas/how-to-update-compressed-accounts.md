@@ -7,7 +7,7 @@ hidden: true
 
 # How to Update Compressed Accounts
 
-Learn how to update compressed accounts in Solana programs. This guide breaks down each implementation step. Find a full code example at the end for Anchor, native Rust, and Pinocchio.
+Learn how to update compressed accounts in Solana programs. This guide breaks down each implementation step. Find a [full code example at the end](how-to-update-compressed-accounts.md#update-account-example) for Anchor, native Rust, and Pinocchio.
 
 ### Compressed Account Update Flow
 
@@ -45,9 +45,9 @@ CLIENT
 
 Set up your program and use the `light-sdk` to update compressed accounts:
 
-1. Configure instruction data,
-2. initialize the compressed account, and
-3. CPI Light System program
+1. [Configure instruction data](how-to-update-compressed-accounts.md#instruction-data-for-update_compressed_account),
+2. [initialize](how-to-update-compressed-accounts.md#initialize-compressed-account) the compressed account, and
+3. [invoke](how-to-update-compressed-accounts.md#cpi) the Light System program
 
 {% hint style="success" %}
 Regular accounts update their data fields when state changes. Compressed accounts are identified by their hash. When compressed account state changes, the hash changes, so a new account needs to be created. The old account is nullified to prevent double spending.
