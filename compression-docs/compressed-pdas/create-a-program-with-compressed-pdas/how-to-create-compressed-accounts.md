@@ -7,7 +7,9 @@ hidden: true
 
 # How to Create Compressed Accounts
 
-This guide shows you how to write a Solana program that creates compressed accounts.
+This guide  you how to write a Solana program that creates compressed accounts.&#x20;
+
+Each phase is explained with parameter explanations and implementation requirements.
 
 ```
 Compressed Account Creation Flow
@@ -31,33 +33,19 @@ Compressed Account Creation Flow
       └─ Create Compressed Account in State Tree
 ```
 
-**Compressed Account Creation Flow**
 
-The client
-
-1. creates [instruction with proof and data](#user-content-fn-1)[^1]
-2. then sends transaction to your program. Learn here how to call your program from a client.
-
-Your program
-
-1. derives a address and
-2. performs a CPI from your custom program to the Light System program
-
-The Light System program creates the compressed account.
-
-{% hint style="success" %}
-Your program calls the Light System program to create compressed accounts via CPI, similar to the System program to create regular accounts.
-{% endhint %}
 
 ## Get Started
 
 Set up your program and use the `light-sdk` to create compressed accounts:
 
-1. Configure instruction data,
-2. derive an address and initialize the compressed account, and
-3. CPI Light System program
+1. Configure [instruction data](how-to-create-compressed-accounts.md#instruction-data-for-create_compressed_account),
+2. [derive an address](how-to-create-compressed-accounts.md#derive-address) and [initialize the compressed account](how-to-create-compressed-accounts.md#initialize-compressed-account), and
+3. [CPI Light System program](how-to-create-compressed-accounts.md#cpi).
 
-The guide covers each phase with detailed parameter explanations and implementation requirements.
+{% hint style="success" %}
+Your program calls the Light System program to create compressed accounts via CPI, similar to the System program to create regular accounts.
+{% endhint %}
 
 {% stepper %}
 {% step %}
@@ -376,10 +364,3 @@ pub struct CreateCompressedAccount<'info> {
 ### Next steps
 
 Learn how to Call Your Program from a Client Learn how to Update Compressed Accounts Learn how to Close Compressed Accounts
-
-[^1]: Instruction:
-
-    * `ValidityProof` for the new address
-    * `PackedAddressTreeInfo` containing tree metadata
-    * `output_tree_index` specifying which state tree to use
-    * Account data to store
