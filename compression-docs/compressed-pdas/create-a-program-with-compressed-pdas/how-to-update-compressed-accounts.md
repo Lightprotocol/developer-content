@@ -147,15 +147,16 @@ pub struct InstructionData {
 
 The instruction data references two Merkle trees. Both are maintained by the protocol. You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls).
 
-Updating a compressed account requires an interaction with **Address trees**, when:
+**State trees** are referenced to:
 
-* validate the account's address was created with the same seeds and program ID that the current transaction is using
-* `getValidityProof()` may need address tree information to build complete inclusion proofs
-* `CompressedAccountMeta` contains address information that requires validation against the address tree
+* locate the existing account hash with the inclusion proof from `getValidityProof()`
+* nullify the account hash in the state tree, and
+* append the new account hash with modified output state.
 
-{% hint style="info" %}
-You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls)_._
-{% endhint %}
+**Address trees** are referenced to
+
+* verify the account address matches derivation from the transaction's seeds and program ID, and
+* verify the address in `CompressedAccountMeta` matches the address stored in the address tree
 {% endstep %}
 
 {% step %}
