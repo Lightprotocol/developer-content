@@ -162,7 +162,7 @@ The instruction data references two Merkle trees. Both are maintained by the pro
 {% step %}
 ### Initialize Compressed Account
 
-Initialize the compressed account data structure using the derived address from Step 5.
+Initialize the compressed account wrapper for the existing account:
 
 ```rust
 let owner = crate::ID;
