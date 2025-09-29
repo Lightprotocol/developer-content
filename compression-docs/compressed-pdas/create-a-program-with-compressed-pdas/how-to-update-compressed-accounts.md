@@ -210,11 +210,11 @@ InstructionDataInvokeCpiWithReadOnly::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer
 * `ctx.remaining_accounts`: Account slice containing Light System program and merkle tree accounts\[^1]. Generated via client's `getValidityProof()` RPC call.
-* `LIGHT_CPI_SIGNER`: Program signer derived at compile time via `derive_light_cpi_signer!()` macro
+* `LIGHT_CPI_SIGNER`: Your program as CPI signer defined in Constants.
 
 **Parameters for `InstructionDataInvokeCpiWithReadOnly::new_cpi()`:**
 
-* `LIGHT_CPI_SIGNER`: Program signer authority for CPI authentication with Light System program.
+* `LIGHT_CPI_SIGNER`: Your program as CPI signer defined in Constants.
 * `proof`: Zero-knowledge proof from instruction input to validate account inclusion in state tree.
 {% endstep %}
 

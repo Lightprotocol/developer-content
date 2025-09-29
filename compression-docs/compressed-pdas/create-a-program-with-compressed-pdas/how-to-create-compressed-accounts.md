@@ -190,7 +190,7 @@ let mut data_account = LightAccount::<'_, DataAccount>::new_init(
 
 ```
 
-**Parameters for `LightAccount::new_init``()`:**
+**Parameters for `LightAccount::new_init()`:**
 
 * `&owner`: Program ID to set authority for CPI to Light System program.
 * `Some(address)`: The derived address from [_Step 3_](how-to-create-compressed-accounts.md#derive-address) _Derive Address_, where the compressed account will be created.
@@ -230,8 +230,8 @@ cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
 **Parameters for `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer
-* `ctx.remaining_accounts`: Account slice containing Light System program and merkle tree accounts\[^2]. Generated via client's `getValidityProof()` RPC call.
-* `LIGHT_CPI_SIGNER`: Program signer derived at compile time via `derive_light_cpi_signer!()` macro
+* `ctx.remaining_accounts`: Account slice containing Light System program and merkle tree accounts. Generated via client's `getValidityProof()` RPC call.
+* `LIGHT_CPI_SIGNER`: Your program as CPI signer defined in Constants.
 
 **Parameters for `CpiInputs::new_with_address()`:**
 
