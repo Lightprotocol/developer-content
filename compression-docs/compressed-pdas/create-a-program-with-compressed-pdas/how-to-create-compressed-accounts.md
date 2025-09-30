@@ -139,7 +139,7 @@ pub struct InstructionData {
 **Parameters:**
 
 * `ValidityProof`: Proves  that an address does not exist yet (non-inclusion) in the specified address tree. Clients fetch validity proofs from their rpc provider with `getValidityProof()` .
-* `PackedAddressTreeInfo`: Specifies the index to address tree account. The address tree is necessary to derive the adress with `derive_address() and create it via cpi to the light system program`.
+* `PackedAddressTreeInfo`: Specifies the index to address tree account. The address tree is necessary to derive the address with `derive_address() and create it via cpi to the light system program`.
 * `output_state_tree_index`: Specifies which state tree will store the compressed account hash and its index (`u8`).
 
 Account packing:
@@ -149,9 +149,6 @@ The indices in the instruction data point to accounts packed in the client. This
 The instruction data references two Merkle trees. Both are maintained by the protocol. You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls)_._
 
 * **Address trees** are used to derive and store addresses for compressed accounts.
-  * An address derived from a specified address tree is unique within that tree. Multiple address trees exist, and the same address seeds can be reused across different trees.
-  * _uniqueness check_
-  * If your program requires addresses to identify accounts but not uniqueness over all address trees, the used address Merkle tree does not need to be checked.
 * **State trees** store compressed account hashes and are fungible.
 {% endstep %}
 
@@ -172,7 +169,7 @@ let program_id = crate::ID;
 </strong><strong>            
 </strong></code></pre>
 
-If your program verifies global uniqueness over all address trees, the used address Merkle tree needs to be checked:
+If your program requires global uniqueness over all address trees, the used address Merkle tree needs to be checked:
 
 ```rust
 pub const ALLOWED_ADDRESS_TREE: Pubkey = pubkey!("amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2");
@@ -181,7 +178,7 @@ pub const ALLOWED_ADDRESS_TREE: Pubkey = pubkey!("amt1Ayt45jfbdw5YSo7iz6WZxUmnZs
           [address_tree_info.address_merkle_tree_pubkey_index as usize];
 
       if address_tree != ALLOWED_ADDRESS_TREE { 
-          return Err(ProgramError::InvalidAccountData.into());
+          return Err(ProgramError::IhavenvalidAccountData.into());
       }
 ```
 
@@ -193,43 +190,46 @@ pub const ALLOWED_ADDRESS_TREE: Pubkey = pubkey!("amt1Ayt45jfbdw5YSo7iz6WZxUmnZs
 
 The parameters return:
 
-* the final 32-byte `address` where the compressed account will be created, and
-* the 32-byte intermediate `address_seed` used in the Light System program CPI via `into_new_address_params_packed()` below.
+* the final 32-byte `address` that we assign to our new compressed account, and
+* the 32-byte `address_seed`  the Light System program CPI uses to check and create the address. The address sees is passed to the light system program as part of new address params together with additional metadata to verify the validity proof.
 {% endstep %}
 
 {% step %}
 ### Initialize Compressed Account
 
-Initialize the compressed account data structure using the derived address from [_Step 3_](how-to-create-compressed-accounts.md#derive-address).
+Initialize the compressed account data structure with the derived address from [_Step 3_](how-to-create-compressed-accounts.md#derive-address).
 
-```rust
-let owner = crate::ID;
-let mut data_account = LightAccount::<'_, DataAccount>::new_init(
-        &owner,
-        Some(address), // derived with derive_address
-        output_state_tree_index, // configured in create_account instruction
-    );
-    data_account.owner = ctx.accounts.signer.key();
-    data_account.message = message; // different from &owner
-
-```
+<pre class="language-rust"><code class="lang-rust">let owner = crate::ID;
+let mut data_account = LightAccount::&#x3C;'_, DataAccount>::new_init(
+<strong>    &#x26;owner,
+</strong><strong>    Some(address),
+</strong>    output_state_tree_index,
+);
+data_account.owner = ctx.accounts.signer.key();
+data_account.message = message;
+</code></pre>
 
 **Parameters for `LightAccount::new_init()`:**
 
-* `&owner`: Program ID to set authority for CPI to Light System program.
-* `Some(address)`: The derived address from [_Step 3_](how-to-create-compressed-accounts.md#derive-address) _Derive Address_, where the compressed account will be created.
-* `output_state_tree_index` to specify which state tree will store the compressed account hash and its index, defined in [_Step 2_](how-to-create-compressed-accounts.md#instruction-data-for-create_compressed_account) _Instruction Data for `create_compressed_account`_.
+* `&owner`: of the compressed account. A compressed account is owned by the program that creates it. The light system program checks that only the owner program can update the compressed accounts data.
+* `Some(address)`: The address that is assigned to the compressed account (derived in [_Step 3_](how-to-create-compressed-accounts.md#derive-address)_)_. Addresses are persistent unique identifiers for compressed accounts. The account hash is an additional unique identifier but changes with every write to the account. If your account does not need a persistent unique id you can create the compressed account without an address. For example compressed token accounts do not need addresses.\
+  For Solana pda like behavior your compressed account needs an address.
+* `output_state_tree_index` specifies the state tree that will store the compressed account. We use the index passed in with instruction data, defined in [_Step 2_](how-to-create-compressed-accounts.md#instruction-data-for-create_compressed_account) _Instruction Data._
 
-**Field assignments:**
+**Initialize compressed account data:**
 
-* `data_account.owner`: Sets the transaction signer as the account's data owner, e.g. the user, different from `&owner` above.
-* `data_account.message`: Populates the custom data field defined in `DataAccount` struct.
+This is custom depending on your compressed account struct.
+
+For this example it looks like this:
+
+* `data_account.owner`
+* `data_account.message`
 {% endstep %}
 
 {% step %}
 ### CPI
 
-Invoke the Light System program to create the compressed account using
+Invoke the Light System program to create the compressed account with the
 
 1. `proof` from [_Step 2_](how-to-create-compressed-accounts.md#instruction-data-for-create_compressed_account) _Instruction Data for `create_compressed_account`_,
 2. `address_seed` from [_Step 3_](how-to-create-compressed-accounts.md#derive-address) _Derive Address, and_
@@ -262,6 +262,12 @@ cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
 * `proof`: Zero-knowledge proof from instruction input to validate address non-inclusion.
 * `vec![data_account.to_account_info()?]`: Compressed account information from `LightAccount` wrapper.
 * `vec![address_tree_info.into_new_address_params_packed(address_seed)]`: Address registration parameters using address\_seed from `derive_address()`.
+
+Under the hood:
+
+1. 'to\_account\_info'&#x20;
+   1. hashes the account state, this is the data hash that is used to create the compressed account hash. The compressed account hash is appended to the state Merkle tree. To update your compressed account your program will produce the exact same data hash to prove that the account exists with the current state.
+   2.
 {% endstep %}
 
 {% step %}
@@ -277,7 +283,7 @@ Make sure you have your [developer environment](https://www.zkcompression.com/co
 
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
-light init testprogram
+light init testprograms
 ```
 
 {% tabs %}
