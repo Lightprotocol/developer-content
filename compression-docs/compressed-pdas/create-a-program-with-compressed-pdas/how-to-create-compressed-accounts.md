@@ -138,9 +138,13 @@ pub struct InstructionData {
 
 **Parameters:**
 
-* `ValidityProof`: A zero-knowledge proof that validates non-inclusion of an address in the specified address tree. Fetched by the client via `getValidityProof()` with empty input accounts array.
-* `PackedAddressTreeInfo`: Specifies pubkey of address tree to derive the adress with `derive_address()`. Ensure client and program reference the same address tree.
+* `ValidityProof`: Proves  that an address does not exist yet (non-inclusion) in the specified address tree. Clients fetch validity proofs from their rpc provider with `getValidityProof()` .
+* `PackedAddressTreeInfo`: Specifies the index to address tree account. The address tree is necessary to derive the adress with `derive_address() and create it via cpi to the light system program`.
 * `output_state_tree_index`: Specifies which state tree will store the compressed account hash and its index (`u8`).
+
+Account packing:
+
+The indices in the instruction data point to accounts packed in the client. This way we avoid sending the same account multiple times in the instruction. The client has a helper method to create packed accounts. In anchor programs packed accounts are passed in the remaining accounts slice.
 
 The instruction data references two Merkle trees. Both are maintained by the protocol. You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls)_._
 
