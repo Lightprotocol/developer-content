@@ -132,31 +132,30 @@ The `update_compressed_account` instruction requires the following inputs:
 ```rust
 pub struct InstructionData {
     proof: ValidityProof, // client fetches with `getValidityProof()`
-    my_compressed_account: MyCompressedAccount, // client fetches with `getCompressedAccount()`
+    existing_account_data: MyCompressedAccount, // client fetches with `getCompressedAccount()`
     account_meta: CompressedAccountMeta,
-    nested_data: NestedData,
+    new_account_data: NestedData,
 }
 ```
 
 **Parameters:**
 
-* `ValidityProof`: A zero-knowledge proof to validate inclusion of the existing compressed account in the state tree. Fetched by the client via `getValidityProof()` with current account hash.
-* `my_compressed_account`: Current account data structure to validate ownership and acccount data. Fetched by client via `getCompressedAccount()`. Must match on-chain account data.
+* `ValidityProof`: A zero-knowledge proof to validate inclusion of the existing compressed account in the state tree. Client fetches validity proof for current account state from RPC provider with `getValidityProof()`.
+* `_account`: Current account data structure to validate ownership and acccount data. Fetched by client via `getCompressedAccount()`. Must match on-chain account data.
+  * we need the existing account data to recreate the data hash of the existing state and be able to update it.
+  * The LightAccount abstraction takes care of the hash generation.
+  * It is critical for security to compute the hash in your program.
 * `account_meta`: Current account's state tree position metadata to locate and nullify existing account hash. Metadata must match current on-chain state, obtained from `getCompressedAccount()` response metadata field.
-* `nested_data`: Updates the custom data field defined in `DataAccount`. Non-`#[hash]` fields in the account structure. Constructed by client with modified field values.
+* `nested_data`: Updates the custom data field defined in `DataAccount`.
+  * custom data we use to update the compressed account with. Can be anything depends on your logic.
 
-The instruction data references two Merkle trees. Both are maintained by the protocol. You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls).
+
 
 **State trees** are referenced to:
 
-* locate the existing account hash with the inclusion proof from `getValidityProof()`
+* prove that your account exists with the validity proof `getValidityProof()`
 * nullify the account hash in the state tree, and
 * append the new account hash with modified output state.
-
-**Address trees** are referenced to
-
-* verify the account address matches derivation from the transaction's seeds and program ID, and
-* verify the address in `CompressedAccountMeta` matches the address stored in the address tree
 {% endstep %}
 
 {% step %}
