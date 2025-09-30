@@ -242,7 +242,7 @@ let light_cpi_accounts = CpiAccounts::new(
     crate::LIGHT_CPI_SIGNER,
 );
 
-InstructionDataInvokeCpiWithReadOnly::new_cpi(LIGHT_CPI_SIGNER, proof)
+LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .with_new_addresses(&[
         address_tree_info.into_new_address_params_packed(address_seed)

@@ -204,7 +204,7 @@ let light_cpi_accounts = CpiAccounts::new(
     crate::LIGHT_CPI_SIGNER,
 );
 
-InstructionDataInvokeCpiWithReadOnly::new_cpi(LIGHT_CPI_SIGNER, proof)
+LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .invoke(light_cpi_accounts)?;
 ```
