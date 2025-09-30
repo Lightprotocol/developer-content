@@ -37,6 +37,12 @@ Compressed Account Creation Flow
 
 Set up your program and use the `light-sdk` to create compressed accounts:
 
+light-sdk bundles (...) utilities&#x20;
+
+like solana-program for Solana
+
+
+
 1. Configure [instruction data](how-to-create-compressed-accounts.md#instruction-data-for-create_compressed_account),
 2. [derive an address](how-to-create-compressed-accounts.md#derive-address) and [initialize the compressed account](how-to-create-compressed-accounts.md#initialize-compressed-account), and
 3. [CPI Light System program](how-to-create-compressed-accounts.md#cpi).
@@ -159,7 +165,21 @@ let program_id = crate::ID;
 </strong><strong>                &#x26;address_merkle_tree_pubkey,
 </strong><strong>                &#x26;program_id, 
 </strong><strong>            );
+</strong><strong>            
 </strong></code></pre>
+
+If your program verifies global uniqueness over all address trees, the used address Merkle tree needs to be checked:
+
+```rust
+pub const ALLOWED_ADDRESS_TREE: Pubkey = pubkey!("amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2");
+
+  let address_tree = light_cpi_accounts.tree_pubkeys().unwrap()
+          [address_tree_info.address_merkle_tree_pubkey_index as usize];
+
+      if address_tree != ALLOWED_ADDRESS_TREE { 
+          return Err(ProgramError::InvalidAccountData.into());
+      }
+```
 
 **Parameters:**
 
