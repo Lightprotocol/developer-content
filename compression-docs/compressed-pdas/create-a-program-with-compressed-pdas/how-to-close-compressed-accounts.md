@@ -133,9 +133,9 @@ The `close_compressed_account` instruction requires the following inputs:
 
 ```rust
 pub struct InstructionData {
-    proof: ValidityProof, // client fetches with `getValidityProof()`
-    my_compressed_account: MyCompressedAccount, // client fetches with `getCompressedAccount()`
-    account_meta: CompressedAccountMeta, // to burn compressed account use CompressedAccountMetaBurn
+    proof: ValidityProof, 
+    my_compressed_account: MyCompressedAccount,
+    account_meta: CompressedAccountMeta,
 }
 ```
 
@@ -145,17 +145,10 @@ pub struct InstructionData {
 * `my_compressed_account`: Current account data structure to validate ownership and account data. Fetched by client via `getCompressedAccount()`. Must match on-chain account data.
 * `account_meta`: Current account's state tree position metadata to locate and nullify existing account hash. Metadata must match current on-chain state, obtained from `getCompressedAccount()` response metadata field.
 
-The instruction data references two Merkle trees. Both are maintained by the protocol. You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls):
-
-**State trees** are referenced to:
+The instruction data references s**tate trees** to:
 
 * locate the existing account hash using the inclusion proof from `getValidityProof()`
 * nullify the account hash in the state tree. No new compressed account hash is created, since `close` does not have output state.
-
-**Address trees** are referenced to
-
-* validate the account's address was created with the same seeds and program ID that the current transaction is using
-* verify the address in `CompressedAccountMeta` matches the address stored in the address tree.
 
 {% hint style="info" %}
 You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls)_._
@@ -221,7 +214,7 @@ A compressed account can be burned after reinitialize or close using `LightAccou
 let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_burn(
     &crate::ID,
     &account_meta, // CompressedAccountMetaBurn type required in instruction data
-    MyCompressedAccount::default(),
+    my_compressed_account,
 )?;
 
 let light_cpi_accounts = CpiAccounts::new(

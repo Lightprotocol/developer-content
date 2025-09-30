@@ -159,7 +159,7 @@ pub struct InstructionData {
 {% endstep %}
 
 {% step %}
-### Initialize Compressed Account
+### Initialize Existing Compressed Account
 
 Initialize the compressed account wrapper for the existing account:
 
@@ -183,6 +183,10 @@ let mut my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_mut
 **Field assignments:**
 
 * `my_compressed_account.nested`: Updates the `nested` field in `MyCompressedAccount` struct with new `NestedData` values.
+
+**Additional info:**
+
+1. new mut creates the input compressed account data hash (the complementary operation of to\_account\_info() to create the output account data hash
 {% endstep %}
 
 {% step %}
@@ -215,6 +219,10 @@ InstructionDataInvokeCpiWithReadOnly::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 * `LIGHT_CPI_SIGNER`: Your program as CPI signer defined in Constants.
 * `proof`: Zero-knowledge proof from instruction input to validate account inclusion in state tree.
+
+**Additional info:**
+
+1. with\_light\_account calls _to\_account\_info_ creates output data hash and **serializes output data with borsh** so that the indexer can pick up the data from the cpi.
 {% endstep %}
 
 {% step %}
@@ -302,46 +310,16 @@ pub mod sdk_anchor_test {
 }
 
 #[event]
-#[derive(Clone, Debug, Default, LightHasher, LightDiscriminator)]
+#[derive(Clone, Debug, Default, LightDiscriminator)]
 pub struct MyCompressedAccount {
-    #[hash]
     pub name: String,
     pub nested: NestedData,
 }
 
-#[derive(LightHasher, Clone, Debug, AnchorSerialize, AnchorDeserialize)]
+#[derive(LightHasher, Default, Clone, Debug, AnchorSerialize, AnchorDeserialize)]
 pub struct NestedData {
     pub one: u16,
     pub two: u16,
-    pub three: u16,
-    pub four: u16,
-    pub five: u16,
-    pub six: u16,
-    pub seven: u16,
-    pub eight: u16,
-    pub nine: u16,
-    pub ten: u16,
-    pub eleven: u16,
-    pub twelve: u16,
-}
-
-impl Default for NestedData {
-    fn default() -> Self {
-        Self {
-            one: 1,
-            two: 2,
-            three: 3,
-            four: 4,
-            five: 5,
-            six: 6,
-            seven: 7,
-            eight: 8,
-            nine: 9,
-            ten: 10,
-            eleven: 11,
-            twelve: 12,
-        }
-    }
 }
 
 #[derive(Accounts)]

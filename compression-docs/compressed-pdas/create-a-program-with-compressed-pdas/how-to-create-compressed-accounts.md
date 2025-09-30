@@ -237,18 +237,17 @@ Invoke the Light System program to create the compressed account with the
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
-    ctx.accounts.fee_payer.as_ref(),
-    ctx.remaining_accounts, // included in getValidityProof() by client
-    LIGHT_CPI_SIGNER,
+    ctx.accounts.signer.as_ref(),
+    ctx.remaining_accounts,
+    crate::LIGHT_CPI_SIGNER,
 );
 
-let cpi_inputs = CpiInputs::new_with_address(
-    proof,
-    vec![data_account.to_account_info()?],
-    vec![address_tree_info.into_new_address_params_packed(address_seed)],
-);
-
-cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
+InstructionDataInvokeCpiWithReadOnly::new_cpi(LIGHT_CPI_SIGNER, proof)
+    .with_light_account(my_compressed_account)?
+    .with_new_addresses(&[
+        address_tree_info.into_new_address_params_packed(address_seed)
+    ])
+    .invoke(light_cpi_accounts)?;
 ```
 
 **Parameters for `CpiAccounts::new()`:**
@@ -260,12 +259,18 @@ cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
 **Parameters for `CpiInputs::new_with_address()`:**
 
 * `proof`: Zero-knowledge proof from instruction input to validate address non-inclusion.
-* `vec![data_account.to_account_info()?]`: Compressed account information from `LightAccount` wrapper.
-* `vec![address_tree_info.into_new_address_params_packed(address_seed)]`: Address registration parameters using address\_seed from `derive_address()`.
+* with\_light\_account
+  * `vec![data_account.to_account_info()?]`: Compressed account information from `LightAccount` wrapper.
+* with\_new\_addresses
+  * `vec![address_tree_info.into_new_address_params_packed(address_seed)]`: Address registration parameters using address\_seed from `derive_address()`.
+* ```
+      .invoke(light_cpi_accounts)?;
+          account info
+  ```
 
 Under the hood:
 
-1. 'to\_account\_info'&#x20;
+1. 'with\_light\_account'&#x20;
    1. hashes the account state, this is the data hash that is used to create the compressed account hash. The compressed account hash is appended to the state Merkle tree. To update your compressed account your program will produce the exact same data hash to prove that the account exists with the current state.
    2.
 {% endstep %}
