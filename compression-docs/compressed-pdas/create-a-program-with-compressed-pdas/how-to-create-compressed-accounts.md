@@ -11,19 +11,19 @@ Learn how to create compressed accounts in Solana programs. Find a [full code ex
 
 This guide breaks down compressed account creation in 7 implementation steps:
 
-1. [Set up dependencies](how-to-create-compressed-accounts.md#dependencies) for `light-sdk` and serialization/deserialization of compressed accounts.
+1. [**Set up dependencies**](how-to-create-compressed-accounts.md#dependencies) for `light-sdk` and serialization/deserialization of compressed accounts.
 
 * Provides macros, wrappers and CPI interface to interact with compressed accounts.
 
-2. [Define program constants](how-to-create-compressed-accounts.md#constants) to derive an address (Step 5) and CPI calls to the Light System program (Step 7).
-3. [Define the Account Data Structure](how-to-create-compressed-accounts.md#account-data-structure) for your compressed account.
-4. Build the [instruction data](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account):
+2. [**Define program constants**](how-to-create-compressed-accounts.md#constants) to derive an address (Step 5) and CPI calls to the Light System program (Step 7).
+3. [**Define the Account Data Structure**](how-to-create-compressed-accounts.md#account-data-structure) for your compressed account.
+4. **Build the** [**instruction data**](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account):
    * Include validity proof to prove the derived address does not yet exist in the address tree. Client fetches proof with `getValidityProof()` from RPC provider and passes to program.
    * Specify address and state tree indices where address and compressed account hash are stored.
    * Add the account's custom data.
-5. [Derive an address](how-to-create-compressed-accounts.md#derive-address) from seeds and address tree public key to set a unique identifier to your compressed account. Adds PDA functionality to your compressed account.
-6. [​Initialize Compressed Account](how-to-create-compressed-accounts.md#initialize-compressed-account) with `LightAccount::new_init()` to wrap its data structure and metadata. Abstracts serialization and `data_hash` generation for your CPI in Step 7.
-7. Create the compressed account via [CPI to Light System Program](how-to-create-compressed-accounts.md#cpi).
+5. [**Derive an address**](how-to-create-compressed-accounts.md#derive-address) from seeds and address tree public key to set a unique identifier to your compressed account. Adds PDA functionality to your compressed account.
+6. [**​Initialize Compressed Account**](how-to-create-compressed-accounts.md#initialize-compressed-account) with `LightAccount::new_init()` to wrap its data structure and metadata. Abstracts serialization and `data_hash` generation for your CPI in Step 7.
+7. Create the compressed account via [**CPI to Light System Program**](how-to-create-compressed-accounts.md#cpi).
 
 {% hint style="success" %}
 Your program calls the Light System Program via CPI to create compressed accounts, similar to how programs call the System Program to create regular accounts.&#x20;
@@ -251,10 +251,11 @@ let light_cpi_accounts = CpiAccounts::new(
     crate::LIGHT_CPI_SIGNER,
 );
 
+let new_address_params = address_tree_info.into_new_address_params_packed(address_seed);
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .with_new_addresses(&[
-        address_tree_info.into_new_address_params_packed(address_seed)
+new_address_params        
     ])
     .invoke(light_cpi_accounts)?;
 ```
