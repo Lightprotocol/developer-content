@@ -26,8 +26,7 @@ ZK Compression is a framework that reduces the storage cost of Solana accounts b
 {% step %}
 #### State Compression
 
-Instead of storing account data in millions of on-chain accounts, state compression stores account data on the [Solana ledger](#user-content-fn-2)[^2] with cryptographic security. Only a small fingerprint is stored on-chain. This fingerprint allows transactions to use the account data inside Solana's virtual machine as if it were stored on-chain. \
-Compression is also the only technology that sustainably solves state bloat in blockchains like Solana. We've designed the compression protocol to be highly performant with minimal integration overhead for developers.
+Instead of storing account data in millions of on-chain accounts, state compression stores account data on the [Solana ledger](#user-content-fn-2)[^2] with cryptographic security. Only a small fingerprint is stored on-chain. This fingerprint allows transactions to use the account data inside Solana's virtual machine as if it were stored on-chain.&#x20;
 {% endstep %}
 
 {% step %}
@@ -36,6 +35,10 @@ Compression is also the only technology that sustainably solves state bloat in b
 The protocol uses small zero-knowledge proofs (validity proofs) to verify the integrity of the compressed accounts. By default, this is all done under the hood. You can fetch validity proofs from RPC providers that support ZK Compression.
 {% endstep %}
 {% endstepper %}
+
+{% hint style="info" %}
+Compression is the only technology that sustainably solves state bloat in blockchains like Solana. We've designed the compression protocol to be highly performant with minimal integration overhead for developers.
+{% endhint %}
 
 ### Using AI to work with ZK Compression
 
