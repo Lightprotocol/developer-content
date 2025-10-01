@@ -251,11 +251,12 @@ let light_cpi_accounts = CpiAccounts::new(
     crate::LIGHT_CPI_SIGNER,
 );
 
-let new_address_params = address_tree_info.into_new_address_params_packed(address_seed);
+let new_address_params = 
+    address_tree_info.into_new_address_params_packed(address_seed);
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .with_new_addresses(&[
-new_address_params        
+        address_tree_info.into_new_address_params_packed(address_seed)
     ])
     .invoke(light_cpi_accounts)?;
 ```
