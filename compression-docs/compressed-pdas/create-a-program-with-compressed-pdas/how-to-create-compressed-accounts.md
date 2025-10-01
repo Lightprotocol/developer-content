@@ -29,7 +29,9 @@ This guide breaks down compressed account creation in 7 implementation steps:
 Your program calls the Light System Program via CPI to create compressed accounts, similar to how programs call the System Program to create regular accounts.&#x20;
 {% endhint %}
 
-### Create Compressed Account Flow
+<details>
+
+<summary>Complete Create Compressed Account Flow (Client -> Program -> CPI)</summary>
 
 ```
 CLIENT
@@ -66,6 +68,8 @@ CLIENT
                    ├─ register address in address tree
                    └─ create compressed account hash in state tree
 ```
+
+</details>
 
 ## Get Started
 
