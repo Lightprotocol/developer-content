@@ -1,5 +1,7 @@
 ---
-description: Overview to Local Sidetracks to the Cypherpunk Hackathon.
+description: >-
+  Overview to Local Sidetracks to the Cypherpunk Hackathon. Available for
+  participants in Portugal and Germany.
 hidden: true
 ---
 
