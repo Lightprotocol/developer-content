@@ -7,47 +7,72 @@ hidden: true
 
 # How to Create Compressed Accounts
 
-Learn how to create compressed accounts in Solana programs. Find a full code example at the end for Anchor, native Rust, and Pinocchio. light-sdk = { version = "0.13.0", features = \["anchor", "v2"] }
+Learn how to create compressed accounts in Solana programs. Find a [full code example at the end](how-to-create-compressed-accounts.md#create-account-example) for Anchor, native Rust, and Pinocchio.
 
-This guide breaks down compressed account creation in 6 implementation steps:
+This guide breaks down compressed account creation in 7 implementation steps:
 
-1. [Prerequisites](how-to-create-compressed-accounts.md#prerequisites) - Set up dependencies and program constants
-2. Define the [Account Data Structure](how-to-create-compressed-accounts.md#account-data-structure)  of the compressed account. Produces the `data_hash`.
-3. Build the [instruction Data](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account):
+1. [Set up dependencies](how-to-create-compressed-accounts.md#dependencies) for `light-sdk` and serialization/deserialization of compressed accounts.
 
-* fetch a proof from the RPC provider that the address does not exist yet &#x20;
-* &#x20;specify [address and state tree](#user-content-fn-1)[^1] indices where address and compressed account hash are stored
-* &#x20;add the account's custom data.
+* Provides macros, wrappers and CPI interface to interact with compressed accounts.
 
-4. [Derive a unique address](how-to-create-compressed-accounts.md#derive-address) from seeds and address tree public key.
-
-* Multiple seeds are hashed into a single 32 bytes seed for address creation.&#x20;
-* Addresses are optional, unique identifiers for compressed accounts. Only required for PDA like functionality, not for e.g. token accounts.
-
-5. [Initialize Compressed Account](how-to-create-compressed-accounts.md#initialize-compressed-account) with `LightAccount`
-
-* This creates a wrapper around a compressed account similar to anchor Account.&#x20;
-* `LightAccount` abstracts hashing of compressed account data
-
-6. [CPI to Light System Program](how-to-create-compressed-accounts.md#cpi) to create the compressed account.
+2. [Define program constants](how-to-create-compressed-accounts.md#constants) to derive an address (Step 5) and CPI calls to the Light System program (Step 7).
+3. [Define the Account Data Structure](how-to-create-compressed-accounts.md#account-data-structure) for your compressed account.
+4. Build the [instruction data](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account):
+   * Include validity proof to prove the derived address does not yet exist in the address tree. Client fetches proof with `getValidityProof()` from RPC provider and passes to program.
+   * Specify address and state tree indices where address and compressed account hash are stored.
+   * Add the account's custom data.
+5. [Derive an address](how-to-create-compressed-accounts.md#derive-address) from seeds and address tree public key to set a unique identifier to your compressed account. Adds PDA functionality to your compressed account.
+6. [​Initialize Compressed Account](how-to-create-compressed-accounts.md#initialize-compressed-account) with `LightAccount::new_init()` to wrap its data structure and metadata. Abstracts serialization and `data_hash` generation for your CPI in Step 7.
+7. Create the compressed account via [CPI to Light System Program](how-to-create-compressed-accounts.md#cpi).
 
 {% hint style="success" %}
 Your program calls the Light System Program via CPI to create compressed accounts, similar to how programs call the System Program to create regular accounts.&#x20;
 {% endhint %}
 
+### Create Compressed Account Flow
+
 ```
-// add end to end flow
+CLIENT
+   ├─ 1. Derive address for new account
+   │     └─ from program ID, custom seeds, address tree
+   │
+   ├─ 2. Fetch non-inclusion proof
+   │     ├─ fetched from RPC provider with `getValidityProof()`
+   │     └─ proves address does NOT exist in address tree yet
+   │
+   ├─ 3. Pack merkle tree accounts
+   │     ├─ Fetch address tree and state tree accounts
+   │     └─ Includes index pointing to which address tree account 
+   │        to use from remaining_accounts
+   │
+   └─ 4. Submit transaction with instruction data
+         ├─ ValidityProof (non-inclusion proof from step 2)
+         ├─ PackedAddressTreeInfo (index of address in tree)
+         ├─ output_state_tree_index (which state tree will store account hash)
+         └─ Custom account data (message, owner fields, etc.)
+            │
+            PROGRAM receives instruction data
+            │
+            ├─ 5. Re-Derive address
+            │     ├─ use same seeds as client
+            │     └─ returns the address and address_seed for proof verification
+            │
+            ├─ 6. Initialize compressed account with LightAccount::new_init()
+            │     ├─ wraps data with Metadata (owner, address, tree index)
+            │     ├─ set account data fields (owner, message, etc.)
+            │     └─ abstracts data_hash generation for CPI
+            │
+            └─ 7. Light System Program CPI
+                   ├─ verify non-inclusion proof (proves address doesn't exist)
+                   ├─ register address in address tree
+                   └─ create compressed account hash in state tree
 ```
 
 ## Get Started
 
 {% stepper %}
 {% step %}
-### Prerequisites
-
-Set up dependencies and program constants.
-
-#### Dependencies
+### Dependencies
 
 Set up `light-sdk` dependencies. Use `borsh` or for serialization/deserialization of compressed accounts, when you are not using Anchor.
 
@@ -56,8 +81,10 @@ Set up `light-sdk` dependencies. Use `borsh` or for serialization/deserializatio
 light-sdk = { version = "0.13.0", features = ["anchor", "v2"] }
 borsh = "0.10.0"
 ```
+{% endstep %}
 
-#### Constants
+{% step %}
+### Constants
 
 Set program address and CPI authority to call Light System program.
 
@@ -100,7 +127,7 @@ pub struct DataAccount {
 
 * For serialization use `BorshSerialize`/ `BorshDeserialize`, or `AnchorSerialize`/ `AnchorDeserialize` for Anchor programs
 * `LightHasher` generates compressed account hash from `DataAccount`.
-* `LightDiscriminator` gives struct unique type ID (8 bytes) for deserialization. Required to distinguish `DataAccount` from other compressed account types.
+* `LightDiscriminator` gives the struct a unique type ID (8 bytes) for deserialization. Required to distinguish `DataAccount` from other compressed account types.
 {% endstep %}
 
 {% step %}
@@ -235,7 +262,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Parameters for `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer
-* `ctx.remaining_accounts`: Account slice [with Light System program and merkle tree accounts](#user-content-fn-2)[^2]. Fetched by client with `getValidityProof()` from RPC provider that supports ZK Compression (Helius, Triton).
+* `ctx.remaining_accounts`: Account slice [with Light System program and merkle tree accounts](#user-content-fn-1)[^1]. Fetched by client with `getValidityProof()` from RPC provider that supports ZK Compression (Helius, Triton).
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Parameters for `CpiInputs::new_with_address()`:**
@@ -372,14 +399,7 @@ pub struct CreateCompressedAccount<'info> {
 
 Learn how to Call Your Program from a Client Learn how to Update Compressed Accounts Learn how to Close Compressed Accounts
 
-[^1]: Both Merkle trees are maintained by the protocol:
-
-    * **State trees** store compressed account hashes and are fungible.
-    * **Address trees** are used to derive and store addresses for compressed accounts.
-
-    You can specify any Merkle tree listed in [_Addresses_](https://www.zkcompression.com/resources/addresses-and-urls).
-
-[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+[^1]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
     2. CPI Authority - Program-derived authority PDA
     3. Registered Program PDA - Registration account for your program
     4. Noop Program - For transaction logging
