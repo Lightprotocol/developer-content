@@ -9,13 +9,13 @@ hidden: true
 
 Learn how to create compressed accounts in Solana programs. Find a [full code example at the end](how-to-create-compressed-accounts.md#create-account-example) for Anchor, native Rust, and Pinocchio.
 
-This guide breaks down compressed account creation in 7 implementation steps:
+This guide breaks down 7 implementation steps to create compressed accounts:
 
 1. [**Set up dependencies**](how-to-create-compressed-accounts.md#dependencies) for `light-sdk` and serialization/deserialization of compressed accounts.
 
 * Provides macros, wrappers and CPI interface to interact with compressed accounts.
 
-2. [**Define program constants**](how-to-create-compressed-accounts.md#constants) to derive an address (Step 5) and CPI calls to the Light System program (Step 7).
+2. [**Define program constants**](how-to-create-compressed-accounts.md#constants) to for address derivation and CPI calls
 3. [**Define the Account Data Structure**](how-to-create-compressed-accounts.md#account-data-structure) for your compressed account.
 4. **Build the** [**instruction data**](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account):
    * Include validity proof to prove the derived address does not yet exist in the address tree. Client fetches proof with `getValidityProof()` from RPC provider and passes to program.
