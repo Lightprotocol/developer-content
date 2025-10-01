@@ -289,7 +289,7 @@ Now that you understand the concepts to create a compressed account, start build
 {% endstep %}
 {% endstepper %}
 
-## Create Account Example
+## Full Code Example
 
 Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.&#x20;
 
