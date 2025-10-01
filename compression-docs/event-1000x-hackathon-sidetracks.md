@@ -13,7 +13,8 @@ icon: calendar-exclamation
 
 1000x is a dedicated side track to the Solana Cypherpunk hackathon, hosted by [Light Protocol](https://x.com/LightProtocol) in collaboration with [Superteam Germany](https://x.com/SuperteamDE) and [Shipyard Portugal](https://x.com/SolanaPT).&#x20;
 
-Here's how you can participate
+Scale your application with rent-free tokens and accounts.\
+Here's how you can participate:
 
 1. **Use ZK Compression** in your Cypherpunk project
 2. **Submit by October 30,** 2025 via Superteam Earn
