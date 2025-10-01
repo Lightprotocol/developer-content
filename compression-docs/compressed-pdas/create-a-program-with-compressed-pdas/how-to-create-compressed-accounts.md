@@ -238,11 +238,13 @@ my_compressed_account.nested = nested_data;
 {% step %}
 ### CPI
 
-Invoke the Light System program to create the compressed account and address
+Here is where the compressed account, its address and hash are created.
 
-1. `proof` from _Step 2_ _Instruction Data for `create_compressed_account`_,
-2. `address_seed` from _Step 3_ _Derive Address_, and
-3. `my_compressed_account` from _Step 4_ _Initialize Compressed Account_.
+Invoke the Light System program with&#x20;
+
+1. `proof` from [_Step 4_](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account) _Instruction Data for `create_compressed_account`_,
+2. `address_seed` from _Step 5_ _Derive Address_, and
+3. `my_compressed_account` from _Step 6_ _Initialize Compressed Account_.
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
@@ -269,17 +271,11 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Parameters for `CpiInputs::new_with_address()`:**
 
-Initializes CPI instruction data with `proof` from Step 2 to validate address non-inclusion.
+Initializes CPI instruction data with `proof` from Step 4 to validate address non-inclusion.
 
 * `with_light_account` converts the compressed account for the CPI call to instruction data format from `LightAccount`.
-
-<details>
-
-<summary>Under the hood of `with_light_account`</summary>
-
-\- The parameter calls \`to\_account\_info()\` to get the \`data\_hash\` of an account - the \`data\_hash, owner, leaf\_index, merkle\_tree\_pubkey, lamports, address, discriminator\` is used to create the compressed account hash - The compressed account hash is appended to state tree.
-
-</details>
+* `with_new_addresses` registers new address in address tree with `address_seed` from _Step 3 `derive_address()`_. Light System Program also validates address non-inclusion proof using `address_seed`.
+* `invoke(light_cpi_accounts)` calls the Light System Program with packed accounts.
 {% endstep %}
 
 {% step %}
@@ -291,7 +287,7 @@ Now that you understand the concepts to create a compressed account, start build
 
 ## Create Account Example
 
-Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first. See [this page](../../resources/errors/), if you run into any errors.
+Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.&#x20;
 
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
@@ -299,7 +295,7 @@ light init testprogram
 ```
 
 {% hint style="success" %}
-Find the [source code](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update) here.
+For errors see [this page](../../resources/errors/).
 {% endhint %}
 
 {% tabs %}
@@ -307,6 +303,8 @@ Find the [source code](https://github.com/Lightprotocol/program-examples/tree/ma
 {% hint style="info" %}
 `declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.
 {% endhint %}
+
+Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update).
 
 ```rust
 #![allow(unexpected_cfgs)]
