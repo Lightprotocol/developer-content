@@ -22,7 +22,7 @@ This guide breaks down 7 implementation steps to create compressed accounts:
    * Specify address and state tree indices where address and compressed account hash are stored.
    * Add the account's custom data.
 5. [**Derive an address**](how-to-create-compressed-accounts.md#derive-address) from seeds and address tree public key to set a unique identifier to your compressed account. Adds PDA functionality to your compressed account.
-6. [**​Initialize Compressed Account**](how-to-create-compressed-accounts.md#initialize-compressed-account) with `LightAccount::new_init()` to wrap its data structure and metadata. Abstracts serialization and `data_hash` generation for your CPI in Step 7.
+6. [**​Initialize Compressed Account**](how-to-create-compressed-accounts.md#initialize-compressed-account) with `LightAccount::new_init()` to wrap its data structure and metadata. Abstracts serialization and `data_hash` generation the CPI.
 7. Create the compressed account via [**CPI to Light System Program**](how-to-create-compressed-accounts.md#cpi).
 
 {% hint style="success" %}
