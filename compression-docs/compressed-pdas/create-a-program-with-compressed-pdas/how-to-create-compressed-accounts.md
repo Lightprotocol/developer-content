@@ -11,7 +11,7 @@ Learn how to create compressed accounts in Solana programs. Find a [full code ex
 
 This guide breaks down 7 implementation steps to create compressed accounts:
 
-1. [**Set up dependencies**](how-to-create-compressed-accounts.md#dependencies) for `light-sdk` and serialization/deserialization of compressed accounts.
+1. [**Set up dependencies**](how-to-create-compressed-accounts.md#dependencies) for `light-sdk` and add `borsh` serialization library.
 
 * Provides macros, wrappers and CPI interface to interact with compressed accounts.
 
