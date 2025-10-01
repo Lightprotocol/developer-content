@@ -2,10 +2,10 @@
 description: >-
   Overview to Local Sidetracks to the Cypherpunk Hackathon. Available for
   participants in Portugal and Germany.
-hidden: true
+icon: calendar-exclamation
 ---
 
-# Event: 1000x Sidetracks
+# Event: 1000x Hackathon Sidetracks
 
 <figure><img src=".gitbook/assets/1000x-cypherpunk-docs.svg" alt=""><figcaption></figcaption></figure>
 
