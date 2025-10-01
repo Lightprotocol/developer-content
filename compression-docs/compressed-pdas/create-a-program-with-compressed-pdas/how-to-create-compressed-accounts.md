@@ -230,7 +230,7 @@ my_compressed_account.nested = nested_data;
 **Parameters for `LightAccount::new_init`:**
 
 * The `&owner` of the compressed account is the program that creates it. The Light System Program checks that only the `&owner` can update the compressed account data.
-* `Some(address)` is the address assigned to the compressed account (derived in _Step 3_). `None` for accounts without persistent IDs.
+* `Some(address)` is the address assigned to the compressed account (derived in _Step 3_).
 * `output_state_tree_index` specifies the state tree that will store the compressed account hash. We use the index passed in the instruction data (_Step 4)_.
 
 **Initialize compressed account data:** This is custom depending on your compressed account struct. In this example the data is:
