@@ -77,7 +77,7 @@ light-sdk = "0.13.0"
 borsh = "0.10.0"
 ```
 
-* The `light-sdk` provides macros, wrappers and CPI interface to interact with compressed accounts.
+* The `light-sdk` provides macros, wrappers and CPI interface to interact with compressed accounts. Builds on top of the Solana SDK.
 * Add the serialization library (`borsh` for native Rust, or Anchor's built-in serialization).&#x20;
 {% endstep %}
 
