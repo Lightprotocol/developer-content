@@ -1,13 +1,11 @@
 ---
-description: >-
-  Overview to ZK Compression Sidetracks to the Cypherpunk Hackathon hosted by
-  Colosseum.
+description: Overview to Local Sidetracks to the Cypherpunk Hackathon.
 hidden: true
 ---
 
 # Event: 1000x Hackathon
 
-<figure><img src=".gitbook/assets/1000x-cypherpunk-docs (1).svg" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/1000x-cypherpunk-docs (2).svg" alt=""><figcaption></figcaption></figure>
 
 ## Overview
 
