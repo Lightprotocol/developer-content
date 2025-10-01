@@ -92,7 +92,7 @@ borsh = "0.10.0"
 {% step %}
 ### Constants
 
-Set program address and CPI authority to call Light System program in Step 7.
+Set program address and CPI authority to call Light System program.
 
 ```rust
 declare_id!("PROGRAM_ID");
@@ -212,7 +212,7 @@ if address_tree != ALLOWED_ADDRESS_TREE {
 {% step %}
 ### Initialize Compressed Account
 
-Initialize the compressed account data structure with the derived address from Step 3.
+Initialize the compressed account data structure with the derived address from Step 5.
 
 ```rust
 let owner = crate::ID;
@@ -231,7 +231,7 @@ my_compressed_account.nested = nested_data;
 
 * The `&owner` of the compressed account is the program that creates it. The Light System Program checks that only the `&owner` can update the compressed account data.
 * `Some(address)` is the address assigned to the compressed account (derived in _Step 3_). `None` for accounts without persistent IDs.
-* `output_state_tree_index` specifies the state tree that will store the compressed account hash. We use the index passed in _Step 2_.
+* `output_state_tree_index` specifies the state tree that will store the compressed account hash. We use the index passed in the instruction data (_Step 4)_.
 
 **Initialize compressed account data:** This is custom depending on your compressed account struct. In this example the data is:
 
@@ -247,8 +247,8 @@ Here is where the compressed account, its address and hash are created.
 Invoke the Light System program with&#x20;
 
 1. `proof` from [_Step 4_](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account) _Instruction Data for `create_compressed_account`_,
-2. `address_seed` from _Step 5_ _Derive Address_, and
-3. `my_compressed_account` from _Step 6_ _Initialize Compressed Account_.
+2. `address_seed` from [_Step 5_](how-to-create-compressed-accounts.md#derive-address) _Derive Address_, and
+3. `my_compressed_account` from [_Step 6_](how-to-create-compressed-accounts.md#initialize-compressed-account) _Initialize Compressed Account_.
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
@@ -311,82 +311,6 @@ For errors see [this page](../../resources/errors/).
 Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update).
 
 ```rust
-#![allow(unexpected_cfgs)]
-
-use anchor_lang::prelude::*;
-use borsh::{BorshDeserialize, BorshSerialize};
-use light_sdk::{
-    account::LightAccount,
-    address::v1::derive_address,
-    cpi::{CpiAccounts, CpiInputs, CpiSigner},
-    derive_light_cpi_signer,
-    instruction::{PackedAddressTreeInfo, ValidityProof},
-    LightDiscriminator, LightHasher,
-};
-
-declare_id!("HNqStLMpNuNJqhBF1FbGTKHEFbBLJmq8RdJJmZKWz6jH");
-
-pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("HNqStLMpNuNJqhBF1FbGTKHEFbBLJmq8RdJJmZKWz6jH");
-
-pub const SEED: &[u8] = b"your_seed";
-
-#[derive(Clone, Debug, Default, BorshSerialize, BorshDeserialize, LightHasher, LightDiscriminator)]
-pub struct DataAccount {
-    #[hash]
-    pub owner: Pubkey,
-    #[hash]
-    pub message: String,
-}
-
-#[program]
-pub mod create_compressed_account {
-    use super::*;
-
-    pub fn create_compressed_account<'info>(
-        ctx: Context<'_, '_, '_, 'info, CreateCompressedAccount<'info>>,
-        proof: ValidityProof,
-        address_tree_info: PackedAddressTreeInfo,
-        output_state_tree_index: u8,
-        message: String,
-    ) -> Result<()> {
-        let light_cpi_accounts = CpiAccounts::new(
-            ctx.accounts.signer.as_ref(),
-            ctx.remaining_accounts,
-            LIGHT_CPI_SIGNER,
-        );
-
-        let (address, address_seed) = derive_address(
-            &[SEED, ctx.accounts.signer.key().as_ref()],
-            &address_tree_info.get_tree_pubkey(&light_cpi_accounts)?,
-            &crate::ID,
-        );
-
-        let mut data_account = LightAccount::<'_, DataAccount>::new_init(
-            &crate::ID,
-            Some(address),
-            output_state_tree_index,
-        );
-        data_account.owner = ctx.accounts.signer.key();
-        data_account.message = message;
-
-        let cpi_inputs = CpiInputs::new_with_address(
-            proof,
-            vec![data_account.to_account_info()?],
-            vec![address_tree_info.into_new_address_params_packed(address_seed)],
-        );
-
-        cpi_inputs.invoke_light_system_program(light_cpi_accounts)?;
-
-        Ok(())
-    }
-}
-
-#[derive(Accounts)]
-pub struct CreateCompressedAccount<'info> {
-    #[account(mut)]
-    pub signer: Signer<'info>,
-}
 ```
 {% endtab %}
 
