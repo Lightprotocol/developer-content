@@ -36,8 +36,7 @@ CLIENT
    ├─ 1. Derive address for new account
    │     └─ from program ID, custom seeds, address tree
    │
-   ├─ 2. Fetch non-inclusion proof
-   │     ├─ fetched from RPC provider with `getValidityProof()`
+   ├─ 2. Fetch non-inclusion proof from RPC provider with `getValidityProof()`
    │     └─ proves address does NOT exist in address tree yet
    │
    ├─ 3. Pack merkle tree accounts
@@ -45,7 +44,7 @@ CLIENT
    │     └─ Includes index pointing to which address tree account 
    │        to use from remaining_accounts
    │
-   └─ 4. Submit transaction with instruction data
+   └─ 4. Build transaction with instruction data
          ├─ ValidityProof (non-inclusion proof from step 2)
          ├─ PackedAddressTreeInfo (index of address in tree)
          ├─ output_state_tree_index (which state tree will store account hash)
@@ -74,19 +73,22 @@ CLIENT
 {% step %}
 ### Dependencies
 
-Set up `light-sdk` dependencies. Use `borsh` or for serialization/deserialization of compressed accounts, when you are not using Anchor.
+Add dependencies to your program.
 
 ```toml
 [dependencies]
-light-sdk = { version = "0.13.0", features = ["anchor", "v2"] }
+light-sdk = "0.13.0"
 borsh = "0.10.0"
 ```
+
+* The `light-sdk` provides macros, wrappers and CPI interface to interact with compressed accounts.
+* Add the serialization library (`borsh` for native Rust, or Anchor's built-in serialization).
 {% endstep %}
 
 {% step %}
 ### Constants
 
-Set program address and CPI authority to call Light System program.
+Set program address and CPI authority to call Light System program in Step 7.
 
 ```rust
 declare_id!("PROGRAM_ID");
@@ -126,8 +128,7 @@ pub struct DataAccount {
 **Derives:**
 
 * For serialization use `BorshSerialize`/ `BorshDeserialize`, or `AnchorSerialize`/ `AnchorDeserialize` for Anchor programs
-* `LightHasher` generates compressed account hash from `DataAccount`.
-* `LightDiscriminator` gives the struct a unique type ID (8 bytes) for deserialization. Required to distinguish `DataAccount` from other compressed account types.
+* `LightDiscriminator` gives struct unique type ID (8 bytes) for deserialization. Required to distinguish `DataAccount` from other compressed account types.
 {% endstep %}
 
 {% step %}
@@ -147,26 +148,25 @@ pub struct InstructionData {
 **Parameters:**
 
 * For compressed account creation, `ValidityProof` proves that an address does not exist yet in the specified address tree (non-inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* `PackedAddressTreeInfo` specifies the index to the address tree account that is used to derive the adress with `derive_address()` via CPI to the Light System Program. Must point to valid `AccountInfo` in `CpiAccounts`.
+* `output_state_tree_index` specifies which state tree will store the compressed account hash.
+* `message`: Data to include in the compressed account. This depends on your program logic. Used as seed for `derive_address()`.
 
-The instruction data includes indices (`u8`, 1 byte each) instead of full pubkeys (32 bytes) to reduce transaction size:
-
-* `PackedAddressTreeInfo` specifies the index to the address tree account that is used to derive the adress with `derive_address()` via CPI to the Light System Program. Must point to valid address merkle tree account in `CpiAccounts`. The client has a helper method to pass the index position of address merkle tree in the transaction's remaining accounts.
-* `output_state_tree_index` specifies which state tree will store the compressed account hash and its index.
-* `message`: Data to include in the compressed account. This varies by program logic. Used as seed for `derive_address()`.
-
-The client packs accounts into the instructions `accounts` (`remaining_accounts` for Anchor programs). This avoids sending the same account multiple times in the instruction.
+{% hint style="info" %}
+**Account indices are used to reduce transaction size.** The client packs accounts once to `accounts` (`remaining_accounts` for Anchor programs). The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
+{% endhint %}
 {% endstep %}
 
 {% step %}
 ### Derive Address
 
-Derive the compressed account address with the same parameters as the client.
+Derive the address as persistent unique identifier for the compressed account.
 
 {% hint style="info" %}
-Addresses are persistent unique identifiers for compressed accounts, but optional. The account hash is an additional unique identifier but changes with every write to the account.
+By default, addresses are optional for compressed accounts. The account hash is an additional unique identifier but changes with every write to the account.
 
-* For Solana PDA like behavior your compressed account needs an address.
-* If your account does not need a persistent unique identifier, you can create the compressed account without an address. For example compressed token accounts do not need addresses. Learn how to create token accounts here.
+* For Solana PDA like behavior your compressed account needs an address as persistent identifier.
+* For example compressed token accounts do not need addresses. Learn how to create compressed token accounts [here](../../compressed-tokens/cookbook/how-to-create-compressed-token-accounts.md).
 {% endhint %}
 
 <pre class="language-rust"><code class="lang-rust">let address_merkle_tree_pubkey =
@@ -174,21 +174,21 @@ Addresses are persistent unique identifiers for compressed accounts, but optiona
 let custom_seeds = [SEED, ctx.accounts.signer.key().as_ref()];
 let program_id = crate::ID;
 <strong>let (address, address_seed) = derive_address(
-</strong><strong>                &#x26;custom_seeds,
-</strong><strong>                &#x26;address_tree_pubkey,
-</strong><strong>                &#x26;program_id, 
-</strong><strong>            );
+</strong><strong>    &#x26;custom_seeds,
+</strong><strong>    &#x26;address_tree_pubkey,
+</strong><strong>    &#x26;program_id, 
+</strong><strong>);
 </strong></code></pre>
 
 **Parameters:**
 
-* `&custom_seeds`: Array with program `SEED` and signer pubkey. Client must use identical seeds.
-* `&address_tree_pubkey`: Pubkey of address tree retrieved via `get_tree_pubkey()`. Must match tree selected by client.
-* `&program_id`: The program's on-chain address. The client must use same program ID.
+* `&custom_seeds`: Array with program `SEED` and signer pubkey.&#x20;
+* `&address_tree_pubkey`: Pubkey of address tree retrieved via `get_tree_pubkey()`.
+* `&program_id`: The program's on-chain address.
 
 The parameters return:
 
-* The final 32-byte `address` for the created compressed account. Combines `address_seed` + `address_tree_pubkey`. The `address_tree_pubkey` ensures uniqueness to both program and tree.
+* The final 32-byte `address` for the created compressed account. Combines `address_seed` + `address_tree_pubkey`.
 * A 32-byte `address_seed` the Light System program CPI uses to verify `ValidityProof` and create the address. Combines `program_id` and `SEED`. The `address_seed` is passed to the Light System Program as part of new address params together with additional metadata to verify the `proof` from Step 2.
 
 Your program can require global uniqueness of the derived address. In that case the address tree needs to be checked:
@@ -229,7 +229,7 @@ my_compressed_account.nested = nested_data;
 * `Some(address)` is the address assigned to the compressed account (derived in _Step 3_). `None` for accounts without persistent IDs.
 * `output_state_tree_index` specifies the state tree that will store the compressed account hash. We use the index passed in _Step 2_.
 
-**Initialize compressed account data:** This is custom depending on your compressed account struct. For this example it looks like this:
+**Initialize compressed account data:** This is custom depending on your compressed account struct. In this example the data is:
 
 * my\_compressed\_account.name = name;
 * my\_compressed\_account.nested = nested\_data;
@@ -238,7 +238,7 @@ my_compressed_account.nested = nested_data;
 {% step %}
 ### CPI
 
-Invoke the Light System program to create the compressed account using
+Invoke the Light System program to create the compressed account and address
 
 1. `proof` from _Step 2_ _Instruction Data for `create_compressed_account`_,
 2. `address_seed` from _Step 3_ _Derive Address_, and
@@ -289,7 +289,7 @@ Now that you understand the concepts to create a compressed account, start build
 
 ## Create Account Example
 
-Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
+Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first. See [this page](../../resources/errors/), if you run into any errors.
 
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
