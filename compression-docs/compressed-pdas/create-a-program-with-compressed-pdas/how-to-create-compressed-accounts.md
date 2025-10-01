@@ -184,14 +184,14 @@ let program_id = crate::ID;
 **Parameters:**
 
 * `&custom_seeds`: Array with program `SEED` and signer pubkey.&#x20;
-* `&address_tree_pubkey`: Public key of the address merkle tree account retrieved via `get_tree_pubkey()`.
-* `&program_id`: The program's on-chain address.
+* `&address_tree_pubkey` is the public key of the address merkle tree account retrieved via `get_tree_pubkey()`. The index passed in the instruction data is not sufficient to derive an address.
+* `&program_id`: The program's on-chain address set in constants _(Step 2)_
 
 The parameters return:
 
-* The final 32-byte `address` for the created compressed account. Combines `address_seed` + `address_tree_pubkey`. This ensures addresses are unique to\
+* The 32-byte `address` for the created compressed account. Combines `address_seed` + `address_tree_pubkey`. This ensures addresses are unique to\
   both the program and the specific address tree.
-* A 32-byte `address_seed` the Light System program CPI uses to verify `ValidityProof` and create the address. Combines `program_id` and `SEED`. The `address_seed` is passed to the Light System Program as part of new address params together with additional metadata to verify the `proof` from Step 2.
+* A 32-byte `address_seed` the Light System program CPI uses to verify `ValidityProof` and create the address. Combines `program_id` and `SEED`. The `address_seed` is passed to the Light System Program as part of new address params together with additional metadata to verify the `proof` from Step 4.
 
 Your program can require global uniqueness of the derived address. In that case the address tree needs to be checked:
 
@@ -210,28 +210,83 @@ if address_tree != ALLOWED_ADDRESS_TREE {
 {% step %}
 ### Initialize Compressed Account
 
-Initialize the compressed account data structure with the derived address from Step 5.
+Initialize the compressed account data structure with the derived address from _Step 5_.
+
+<pre class="language-rust"><code class="lang-rust">let owner = crate::ID;
+let mut my_compressed_account 
+        = LightAccount::&#x3C;'_, MyCompressedAccount>::new_init(
+<strong>    &#x26;owner,
+</strong><strong>    Some(address),
+</strong><strong>    discriminator,
+</strong><strong>    output_state_tree_index,
+</strong>)?;
+
+<strong>my_compressed_account.name = name;
+</strong><strong>my_compressed_account.nested = nested_data;
+</strong></code></pre>
+
+The `LightAccount` wraps the custom data (name, nested\_data) and compression metadata (owner, address, discriminator, output\_tree\_index).
+
+<details>
+
+<summary>What `LightAccount` abstracts for you</summary>
+
+`LightAccount` handles all of this automatically with the CPI:
 
 ```rust
-let owner = crate::ID;
-let mut my_compressed_account 
-        = LightAccount::<'_, MyCompressedAccount>::new_mut(
-    &owner,
-    Some(address),
-    my_compressed_account,
-)?;
+// 1. Create your data structure
+let data = MyCompressedAccount { name, nested };
 
-my_compressed_account.name = name;
-my_compressed_account.nested = nested_data;
+// 2. Serialize to bytes
+let serialized = data.try_to_vec()?;
+
+// 3. Hash the serialized data
+let data_hash = sha256(serialized)?;
+
+// 4. Compute discriminator
+let discriminator = compute_discriminator("MyCompressedAccount");
+
+// 5. Build compressed account info
+let compressed_account_info = CompressedAccountInfo {
+    data_hash,
+    owner: crate::ID,
+    address: Some(address),
+    discriminator,
+    lamports: 0,
+    output: Some(OutAccountInfo {
+        output_merkle_tree_index: output_state_tree_index,
+        discriminator,
+        ..Default::default()
+    }),
+    input: None,
+};
+
+// 6. Manually construct CPI inputs
+let cpi_inputs = CpiInputs {
+    proof,
+    compressed_accounts: vec![compressed_account_info],
+    new_address_params: vec![NewAddressParams {
+        address_seed,
+        address_merkle_tree_pubkey_index: address_tree_info.address_merkle_tree_pubkey_index,
+        address_queue_pubkey_index: address_tree_info.address_queue_pubkey_index,
+        address_merkle_tree_root_index: 0,
+    }],
+    ..Default::default()
+};
+
+// 7. Invoke Light System Program
+invoke_cpi(cpi_inputs, light_cpi_accounts)?;
 ```
+
+</details>
 
 **Parameters for `LightAccount::new_init`:**
 
 * The `&owner` of the compressed account is the program that creates it. The Light System Program checks that only the `&owner` can update the compressed account data.
-* `Some(address)` is the address assigned to the compressed account (derived in _Step 3_).
+* `Some(address)` is the address assigned to the compressed account (derived in _Step 5_).
 * `output_state_tree_index` specifies the state tree that will store the compressed account hash. We use the index passed in the instruction data (_Step 4)_.
 
-**Initialize compressed account data:** This is custom depending on your compressed account struct. In this example the data is:
+**Initialize compressed account data:** This is custom depending on your compressed account struct (_Step 3_). In this example the data is:
 
 * my\_compressed\_account.name = name;
 * my\_compressed\_account.nested = nested\_data;
@@ -250,13 +305,11 @@ Invoke the Light System program with&#x20;
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
-    ctx.accounts.signer.as_ref(),
+    ctx.accounts.fee_payer.as_ref(),
     ctx.remaining_accounts,
     crate::LIGHT_CPI_SIGNER,
 );
 
-let new_address_params = 
-    address_tree_info.into_new_address_params_packed(address_seed);
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .with_new_addresses(&[
@@ -267,8 +320,10 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Parameters for `CpiAccounts::new()`:**
 
-* `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer
-* `ctx.remaining_accounts`: Account slice [with Light System program and merkle tree accounts](#user-content-fn-1)[^1]. Fetched by client with `getValidityProof()` from RPC provider that supports ZK Compression (Helius, Triton).
+This struct organizes all accounts needed for the Light System Program CPI:
+
+* `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
+* `ctx.remaining_accounts`: Account slice [with Light System program and merkle tree accounts](#user-content-fn-1)[^1]. Extracts `AccountInfo` structs. Fetched by client with `getValidityProof()` from RPC provider that supports ZK Compression (Helius, Triton).
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Parameters for `CpiInputs::new_with_address()`:**
@@ -276,7 +331,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 Initializes CPI instruction data with `proof` from Step 4 to validate address non-inclusion.
 
 * The Light System Program verifies the `proof` against the address tree's merkle root
-* `with_light_account` converts the compressed account for the CPI call to instruction data format from `LightAccount`.
+* `with_light_account` adds the instruction data from `LightAccount` to the CPI inputs.
 * `with_new_addresses` registers new address in address tree with `address_seed` from _Step 3 `derive_address()`_. Light System Program also validates address non-inclusion proof using `address_seed`.
 * `invoke(light_cpi_accounts)` calls the Light System Program with packed accounts.
 {% endstep %}
@@ -284,11 +339,16 @@ Initializes CPI instruction data with `proof` from Step 4 to validate address no
 {% step %}
 ### That's it!
 
-Now that you understand the concepts to create a compressed account, start building with the create account example below.
+With successful CPI, the Light System Program creates your compressed account and
+
+* adds the address to the address tree
+* appends the compressed account hash to the state tree.
 {% endstep %}
 {% endstepper %}
 
 ## Full Code Example
+
+Now that you understand the concepts to create a compressed account, start building with the create account example below.
 
 Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.&#x20;
 
