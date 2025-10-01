@@ -3,7 +3,7 @@
 * [Introduction](README.md)
 * [Quickstart](quickstart.md)
 * [Support](support.md)
-* [Event: 1000x Hackathon](event-1000x-hackathon.md)
+* [Event: 1000x Sidetracks](event-1000x-sidetracks.md)
 
 ## Compressed Tokens
 

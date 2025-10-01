@@ -3,9 +3,9 @@ description: Overview to Local Sidetracks to the Cypherpunk Hackathon.
 hidden: true
 ---
 
-# Event: 1000x Hackathon
+# Event: 1000x Sidetracks
 
-<figure><img src=".gitbook/assets/1000x-cypherpunk-docs (2).svg" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/1000x-cypherpunk-docs.svg" alt=""><figcaption></figcaption></figure>
 
 ## Overview
 
@@ -23,7 +23,7 @@ Participants must submit their project from **Germany** _or_ **Portugal**. [Sola
 
 ## **Sign Up to your Local Track!**
 
-<table data-card-size="large" data-view="cards"><thead><tr><th></th><th data-hidden data-card-cover data-type="image">Cover image</th></tr></thead><tbody><tr><td><h3>Germany</h3></td><td><a href=".gitbook/assets/ger-card (1).svg">ger-card (1).svg</a></td></tr><tr><td><h3>Portugal</h3></td><td><a href=".gitbook/assets/pt-card.svg">pt-card.svg</a></td></tr></tbody></table>
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th data-hidden data-card-cover data-type="image">Cover image</th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><h3>Germany</h3></td><td><a href=".gitbook/assets/ger-card (1).svg">ger-card (1).svg</a></td><td><a href="https://earn.superteam.fun/listing/1000x-or-local-track-with-superteam-germany">https://earn.superteam.fun/listing/1000x-or-local-track-with-superteam-germany</a></td></tr><tr><td><h3>Portugal</h3></td><td><a href=".gitbook/assets/pt-card.svg">pt-card.svg</a></td><td><a href="https://earn.superteam.fun/listing/1000x-or-local-track-with-shipyard-portugal">https://earn.superteam.fun/listing/1000x-or-local-track-with-shipyard-portugal</a></td></tr></tbody></table>
 
 <details>
 
@@ -68,4 +68,8 @@ We encourage you to build things that you're excited about building. For inspira
 
 ## Next Steps
 
-Get an overview &#x20;
+Get started in less than 5 minutes with compressed tokens.
+
+{% content-ref url="quickstart.md" %}
+[quickstart.md](quickstart.md)
+{% endcontent-ref %}
