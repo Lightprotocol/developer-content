@@ -42,25 +42,24 @@ This guide breaks down 7 implementation steps to create compressed accounts:
 
 <summary>Complete Create Compressed Account Flow (Client -> Program -> CPI)</summary>
 
-```
-𝐂𝐋𝐈𝐄𝐍𝐓
+<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Derive unique address for the compressed account
    ├─ Fetch proof that address doesn't exist yet with `getValidityProof()`
    ├─ Prepare address and state tree accounts for the transaction
    ├─ Build instruction with proof and account data
    └─ Send transaction
       │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Re-derive the address
-      ├─ Parse address and state tree accounts from transaction
-      ├─ Initialize compressed account with data and metadata
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify address non-existence proof
+<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+</strong><strong>      ├─ Re-derive the address
+</strong><strong>      ├─ Parse address and state tree accounts from transaction
+</strong><strong>      ├─ Initialize compressed account with data and metadata
+</strong><strong>      │
+</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+</strong>         ├─ Verify address non-existence proof
          ├─ Register address in address merkle tree
          ├─ Create compressed account hash in state merkle tree
          └─ Complete atomic account creation
-```
+</code></pre>
 
 </details>
 
