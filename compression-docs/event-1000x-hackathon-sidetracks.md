@@ -51,7 +51,7 @@ After the judges complete individual evaluations, they will discuss and choose t
 
 ## Project Ideas & Resources
 
-We encourage you to build things that you're excited about building. For inspiration, we have compiled a list of ideas to explore » [Project Ideas](https://github.com/Lightprotocol/1000x-hackathon/blob/main/ideas.md).
+We encourage you to build things that you're excited about. For inspiration, we have compiled a list of ideas to explore » [Project Ideas](https://github.com/Lightprotocol/cypherpunk-hackathon/blob/main/ideas.md).
 
 ### **Additional Resources:**
 
