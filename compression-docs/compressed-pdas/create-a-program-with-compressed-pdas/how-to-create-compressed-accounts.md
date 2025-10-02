@@ -354,7 +354,7 @@ light init testprogram
 ```
 
 {% hint style="warning" %}
-For errors see [this page](../../resources/errors/).
+For errors see [this page](../../resources/error-cheatsheet/).
 {% endhint %}
 
 {% tabs %}
