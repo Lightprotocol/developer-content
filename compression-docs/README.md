@@ -36,10 +36,6 @@ The protocol uses small zero-knowledge proofs (validity proofs) to verify the in
 {% endstep %}
 {% endstepper %}
 
-{% hint style="info" %}
-Compression is the only technology that sustainably solves state bloat in blockchains like Solana. We've designed the compression protocol to be highly performant with minimal integration overhead for developers.
-{% endhint %}
-
 ### Using AI to work with ZK Compression
 
 Integrate ZK Compression in your existing AI workflow by following the steps below.
