@@ -1,7 +1,7 @@
 ---
 description: >-
   Complete guide to create compressed accounts in Solana programs with the
-  Light-SDK. Includes a step-by-step guide and full code examples.
+  `light-sdk`. Includes a step-by-step guide and full code examples.
 hidden: true
 ---
 
