@@ -9,16 +9,6 @@ hidden: true
 
 Learn how to create compressed accounts in Solana programs. Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#create-account-example) for Anchor, native Rust, and Pinocchio.
 
-### Overview to Compressed Accounts
-
-Solana programs can use compressed accounts to store data without paying for rent-exemption. Key differences are how accounts are identified and stored:
-
-* The data of a compressed account is hashed and committed to a state Merkle tree.
-* Each compressed account can be identified by its hash.
-* Each write to a compressed account changes its hash
-* All compressed accounts are stored in the leaf of state Merkle trees.
-* An address can optionally be set as persistent unique identifier. Addresses are stored in separate address Merkle trees.
-
 {% hint style="success" %}
 Your program calls the Light System Program via CPI to create compressed accounts, similar to how programs call the System Program to create regular accounts. \
 Learn more on the Compressed Account Model [here](../../learn/core-concepts/compressed-account-model.md).
