@@ -7,65 +7,53 @@ hidden: true
 
 # How to Update Compressed Accounts
 
-Learn how to update compressed accounts in Solana programs. This guide breaks down each implementation step. Find a [full code example at the end](how-to-update-compressed-accounts.md#update-account-example) for Anchor, native Rust, and Pinocchio.
+Learn how to update compressed accounts in Solana programs. Find full code examples at the end for Anchor, native Rust, and Pinocchio.
 
-### Compressed Account Update Flow
+{% hint style="success" %}
+Updating a [compressed account](https://www.zkcompression.com/learn/core-concepts/compressed-account-model) works similar to Bitcoin's UTXO model: each update consumes an input (old hash) and produces an output (new hash). The old account is nullified to prevent double spending. This is different from regular accounts, where the data field is simply updated with every state change.
+{% endhint %}
 
-```
-CLIENT
-   ├─ 1. Fetch current account state
-   │  ├─ getCompressedAccount() RPC call
-   │  ├─ Current account data and metadata
-   │  └─ State tree information
-   │
-   ├─ 2. Generate inclusion proof
-   │  ├─ getValidityProof() with existing account
-   │  ├─ Proves account exists in state tree
-   │  └─ Returns merkle proof for inclusion
-   │
-   └─ 3. PROGRAM
-      ├─ Validate input account
-      │  ├─ Verify account ownership
-      │  ├─ Confirm address derivation
-      │  └─ Validate account state consistency
+### What you will learn
+
+This guide breaks down 6 implementation steps to update one compressed account:
+
+1. **Set up dependencies** for `light-sdk` and serialization library. The `light-sdk` provides abstractions to handle compressed accounts and uses `borsh` to serialize account data.
+2. **Define program constants**
+3. **Define the Account Data Structure** for your compressed account.
+4. **Define the** **instruction data**:
+   * Include the validity proof to prove the account exists in the state tree. The client fetches this proof with `getValidityProof()` from its RPC provider and passes it to the program.
+   * Include `CompressedAccountMeta` to identify the existing account.
+   * Include current account data to reconstruct account hash for proof verification (input hash).
+5. **Load Compressed Account** with `LightAccount::new_mut()` to create the input hash and output state to modify
+6. **CPI the Light System Program** to nullify the input hash and create a new account hash from the the output state.
+
+### Complete Update Flow of Compressed Accounts
+
+<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
+   ├─ Fetch proof that account exists with `getValidityProof`
+   ├─ Prepare state tree accounts for the transaction
+   ├─ Build instruction with proof, current data and metadata
+   └─ Send transaction
       │
-      ├─ Create updated account structure
-      │  ├─ LightAccount::new_mut() with current state
-      │  ├─ Apply data updates to fields
-      │  └─ Preserve immutable identity fields
-      │
-      └─ 4. Light System Program CPI
-         ├─ Verify inclusion proof (proves account exists)
-         ├─ Nullify old account hash in state tree
-         ├─ Create new account hash entry
-         └─ Complete atomic state transition
-```
+<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+</strong><strong>      ├─ Reconstruct existing compressed account
+</strong><strong>      ├─ Parse state tree accounts from transaction
+</strong><strong>      ├─ Modify compressed account data output
+</strong><strong>      │
+</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+</strong>         ├─ Verify input account exists (inclusion proof)
+         ├─ Nullify existing compressed account hash
+         ├─ Create new compressed account hash with updated data
+         └─ Complete atomic account update
+</code></pre>
 
 ## Get Started
 
-Set up your program and use the `light-sdk` to update compressed accounts:
-
-1. [Configure instruction data](how-to-update-compressed-accounts.md#instruction-data-for-update_compressed_account),
-2. [initialize](how-to-update-compressed-accounts.md#initialize-compressed-account) the compressed account, and
-3. [invoke](how-to-update-compressed-accounts.md#cpi) the Light System program
-
-{% hint style="success" %}
-Regular accounts update their data fields when state changes. Compressed accounts are identified by their hash. When compressed account state changes, the hash changes, so a new account needs to be created. The old account is nullified to prevent double spending.
-{% endhint %}
-
 {% stepper %}
 {% step %}
-### Prerequisites
+### Dependencies
 
-Set up dependencies, constants, and compressed account data structure.
-
-<details>
-
-<summary>Dependencies, Constants, Account Data Structure</summary>
-
-#### Dependencies
-
-Set up `light-sdk` dependencies.
+Add dependencies to your program.
 
 ```toml
 [dependencies]
@@ -73,22 +61,31 @@ light-sdk = "0.13.0"
 borsh = "0.10.0"
 ```
 
-#### Constants
+* The `light-sdk` provides macros, wrappers and CPI interface to interact with compressed accounts. Builds on top of the Solana SDK.
+* Use `borsh` for native Rust, or use `AnchorSerialize` for Anchor programs.
+{% endstep %}
 
-Set program address and CPI authority to call Light System program.
+{% step %}
+### Program Constants
+
+Set program address and derive the CPI authority PDA to call Light System Program.
 
 ```rust
-declare_id!("PROGRAM_ID");
+declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("PROGRAM_ID");
+    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 ```
 
-**`Program_ID`**: The on-chain address of your program to derive address.
+**`CPISigner`**: Configuration struct for CPIs to Light System Program. The CPI to the Light System Program must be signed with a PDA derived by your program with the seed `b"authority"` . `derive_light_cpi_signer!` derives this PDA for you at compile time.
 
-**`CPISigner`**: Configuration struct for CPI's to Light System Program. Contains your program ID, the derived CPI authority PDA, and PDA bump.
+{% hint style="info" %}
+The Light System Program uses the PDA and its bump to perform its signer check.
+{% endhint %}
+{% endstep %}
 
-#### Account Data Structure
+{% step %}
+### Account Data Structure
 
 Define your compressed account struct:
 
@@ -99,140 +96,130 @@ Define your compressed account struct:
     Default, 
     BorshSerialize, // AnchorSerialize
     BorshDeserialize, // AnchorDeserialize 
-    LightHasher, 
     LightDiscriminator
 )]
 pub struct DataAccount {
-    #[hash]
     pub owner: Pubkey,
-    #[hash]
     pub message: String,
 }
 ```
 
-`DataAccount` defines your account's data structure.
+**Derives:**
 
-* `#[hash]` fields define the what's included in the compressed account hash.
-* Changing any `#[hash]` field creates a new account hash. Requires creating a new compressed account via CPI with validity proof. Old hash becomes invalid.
-* Non-`#[hash]` fields can be updated without creating new accounts
+* `LightAccount` requires `borsh` or `AnchorSerialize` to be implemented.
+* `LightDiscriminator` gives struct unique type ID (8 bytes) for deserialization. This helps programs distinguish `DataAccount` from other compressed account types.
 
-Compression Derives:
-
-* `LightHasher` generates compressed account hash from `DataAccount`.
-* `LightDiscriminator` gives struct unique type ID for deserialization. Required to distinguish `DataAccount` from other compressed account types.
-
-</details>
+The `DataAccount` struct defines the data structure of the compressed account.
 {% endstep %}
 
 {% step %}
-### Instruction Data for `update_compressed_account`
-
-The `update_compressed_account` instruction requires the following inputs:
+### Define Instruction Data for `update_compressed_account`
 
 ```rust
 pub struct InstructionData {
-    proof: ValidityProof, // client fetches with `getValidityProof()`
-    existing_account_data: MyCompressedAccount, // client fetches with `getCompressedAccount()`
+    proof: ValidityProof,
     account_meta: CompressedAccountMeta,
-    new_account_data: NestedData,
+    // Current account data
 }
 ```
 
 **Parameters:**
 
-* `ValidityProof`: A zero-knowledge proof to validate inclusion of the existing compressed account in the state tree. Client fetches validity proof for current account state from RPC provider with `getValidityProof()`.
-* `_account`: Current account data structure to validate ownership and acccount data. Fetched by client via `getCompressedAccount()`. Must match on-chain account data.
-  * we need the existing account data to recreate the data hash of the existing state and be able to update it.
-  * The LightAccount abstraction takes care of the hash generation.
-  * It is critical for security to compute the hash in your program.
-* `account_meta`: Current account's state tree position metadata to locate and nullify existing account hash. Metadata must match current on-chain state, obtained from `getCompressedAccount()` response metadata field.
-* `nested_data`: Updates the custom data field defined in `DataAccount`.
-  * custom data we use to update the compressed account with. Can be anything depends on your logic.
+* For compressed account updates, `ValidityProof` proves that the account exists in the state tree (inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* `CompressedAccountMeta` identifies the existing compressed account and specifies the output state tree. Contains:
+  * `tree_info: PackedStateTreeInfo` specifies indices to the state tree account (leaf index, root index, tree pubkey index).
+  * The account's `address`
+  * `output_state_tree_index` specifies which state tree will store the updated compressed account hash
+* Current account data includes fields from your program's account structure. Used by the program to reconstruct the current account hash for proof verification.
 
-
-
-**State trees** are referenced to:
-
-* prove that your account exists with the validity proof `getValidityProof()`
-* nullify the account hash in the state tree, and
-* append the new account hash with modified output state.
+{% hint style="info" %}
+**Account indices are used to reduce transaction size.** The client uses the `PackedAccounts` abstraction to generate indices for `remaining_accounts`. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
+{% endhint %}
 {% endstep %}
 
 {% step %}
-### Initialize Existing Compressed Account
+### Load Compressed Account
 
-Initialize the compressed account wrapper for the existing account:
+Load the existing compressed account with:
 
-```rust
-let owner = crate::ID;
-let mut my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_mut(
-            &owner,
-            &account_meta,
-            my_compressed_account,
-        )?;
-
-        my_compressed_account.nested = nested_data;
-```
+<pre class="language-rust"><code class="lang-rust">let mut my_compressed_account
+        = LightAccount::&#x3C;'_, MyCompressedAccount>::new_mut(
+<strong>    &#x26;crate::ID,
+</strong><strong>    &#x26;account_meta,
+</strong><strong>    MyCompressedAccount {
+</strong><strong>        owner: *signer.key,
+</strong><strong>        message: current_message,
+</strong><strong>    },
+</strong>)?;
+<strong>my_compressed_account.message = new_message;
+</strong></code></pre>
 
 **Parameters for `LightAccount::new_mut()`:**
 
-* `&owner`: Program ID to set authority for CPI to Light System program.
-* `account_meta`: Current account's state tree position metadata defined in _Step 2 Instruction Data for `update_compressed_account`_
-* `my_compressed_account` current account data defined in _Step 2 Instruction Data for `update_compressed_account`_.
+* `&crate::ID`: The program that owns this compressed account.
+* `&account_meta` identifies which existing compressed account to update and specifies the output state tree. Contains the `CompressedAccountMeta` from instruction data (_Step 4_).
+* `MyCompressedAccount` contains the current account data defined in _Step 4_ as input. The input state is hashed and used for verification against the current on-chain state.
 
-**Field assignments:**
+**Here's where you modify account data** based on your program's instruction handler. In this example its `my_compressed_account.message`.
 
-* `my_compressed_account.nested`: Updates the `nested` field in `MyCompressedAccount` struct with new `NestedData` values.
-
-**Additional info:**
-
-1. new mut creates the input compressed account data hash (the complementary operation of to\_account\_info() to create the output account data hash
+{% hint style="info" %}
+In this step, `new_mut()` hashes the input state immediately for proof verification and produces output state. Output state is hashed during the CPI by the Light System Program in the next step.
+{% endhint %}
 {% endstep %}
 
 {% step %}
 ### CPI
 
-Invoke the Light System program to update the compressed account using
+The CPI nullifies the old and creates an updated compressed account hash.
 
-1. `proof` from _Step 2_ _Instruction Data for `update_compressed_account`_, and
-2. `my_compressed_account` from _Step 3_ _Initialize Compressed Account_.
+Invoke the Light System program with:
+
+1. `proof` from _Step 4_ _Instruction Data for `update_compressed_account`_, and
+2. the updated data in `my_compressed_account` from _Step 5_ _Load Compressed Account_.
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
-    ctx.accounts.signer.as_ref(),
+    ctx.accounts.fee_payer.as_ref(),
     ctx.remaining_accounts,
     crate::LIGHT_CPI_SIGNER,
 );
 
-LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
+LightSystemProgramCpiV1::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .invoke(light_cpi_accounts)?;
 ```
 
 **Parameters for `CpiAccounts::new()`:**
 
-* `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer
-* `ctx.remaining_accounts`: Account slice containing Light System program and merkle tree accounts\[^1]. Generated via client's `getValidityProof()` RPC call.
-* `LIGHT_CPI_SIGNER`: Your program as CPI signer defined in Constants.
+`CpiAccounts` parses accounts consistent with `PackedAccounts` in the client and converts them for the Light System Program CPI:
 
-**Parameters for `InstructionDataInvokeCpiWithReadOnly::new_cpi()`:**
+* `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
+* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-1)[^1]
+* `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants
 
-* `LIGHT_CPI_SIGNER`: Your program as CPI signer defined in Constants.
-* `proof`: Zero-knowledge proof from instruction input to validate account inclusion in state tree.
+**CPI flow:**
 
-**Additional info:**
+* `LightSystemProgramCpiV1::new_cpi()` initializes CPI with `proof` from Step 4 to validate inclusion of the existing compressed account
+* `with_light_account()` adds the modified compressed account (input and output states) to the CPI instruction data
+* `invoke()` calls the Light System Program with packed accounts
 
-1. with\_light\_account calls _to\_account\_info_ creates output data hash and **serializes output data with borsh** so that the indexer can pick up the data from the cpi.
+{% hint style="info" %}
+The Light System Program:
+
+* Validates the inclusion proof (account exists in state tree)
+* Nullifies the old account hash in the state tree (input)
+* Appends the updated account hash to the state tree (output)
+{% endhint %}
 {% endstep %}
 
 {% step %}
 ### That's it!
-
-Now that you understand the concepts to create a compressed account, start building with the create account example below.
 {% endstep %}
 {% endstepper %}
 
-## Update Account Example
+## Full Code Example
+
+Now that you understand the concepts to update a compressed account, start building with the counter program below.
 
 Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
 
@@ -241,8 +228,8 @@ npm -g i @lightprotocol/zk-compression-cli
 light init testprogram
 ```
 
-{% hint style="success" %}
-Find the [source code](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update) here.
+{% hint style="warning" %}
+For errors see [this page](https://www.zkcompression.com/resources/error-cheatsheet).
 {% endhint %}
 
 {% tabs %}
@@ -251,93 +238,322 @@ Find the [source code](https://github.com/Lightprotocol/program-examples/tree/ma
 `declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.
 {% endhint %}
 
+Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/dc0f79a0542c4e4370652bafa0be2d481e30a952/counter/anchor/programs/counter/src/lib.rs#L73).
+
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
 
-use anchor_lang::{prelude::*, Discriminator};
+use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
 use light_sdk::{
     account::LightAccount,
-    address::v1::derive_address,
-    cpi::{
-        CpiAccounts, CpiSigner, InstructionDataInvokeCpiWithReadOnly, InvokeLightSystemProgram,
-        LightCpiInstruction,
-    },
+    cpi::{CpiAccounts, CpiSigner},
     derive_light_cpi_signer,
-    instruction::{
-        account_meta::{CompressedAccountMeta, CompressedAccountMetaBurn},
-        PackedAddressTreeInfo, ValidityProof,
-    },
-    LightDiscriminator,
-    LightHasher,
+    instruction::{account_meta::CompressedAccountMeta, ValidityProof},
+    LightDiscriminator, LightHasher,
 };
 
-declare_id!("2tzfijPBGbrR5PboyFUFKzfEoLTwdDSHUjANCw929wyt");
+declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("2tzfijPBGbrR5PboyFUFKzfEoLTwdDSHUjANCw929wyt");
+    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 
 #[program]
-pub mod sdk_anchor_test {
-    use super::*;
+pub mod counter {
 
-    pub fn update_compressed_account<'info>(
-        ctx: Context<'_, '_, '_, 'info, UpdateNestedData<'info>>,
+    use super::*;
+    use light_sdk::cpi::{InvokeLightSystemProgram, LightCpiInstruction, LightSystemProgramCpiV1};
+
+    pub fn increment_counter<'info>(
+        ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
         proof: ValidityProof,
-        my_compressed_account: MyCompressedAccount,
+        counter_value: u64,
         account_meta: CompressedAccountMeta,
-        nested_data: NestedData,
     ) -> Result<()> {
-        let mut my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_mut(
+        // LightAccount::new_mut will create an account with input state and output state.
+        // The input state is hashed immediately when calling new_mut().
+        // Modifying the account will modify the output state that when converted to_account_info()
+        // is hashed with poseidon hashes, serialized with borsh
+        // and created with invoke_light_system_program by invoking the light-system-program.
+        // The hashing scheme is the account structure derived with LightHasher.
+        let mut counter = LightAccount::<'_, CounterAccount>::new_mut(
             &crate::ID,
             &account_meta,
-            my_compressed_account,
+            CounterAccount {
+                owner: ctx.accounts.signer.key(),
+                value: counter_value,
+            },
         )?;
 
-        my_compressed_account.nested = nested_data;
+        msg!("counter {}", counter.value);
+
+        counter.value = counter.value.checked_add(1).ok_or(CustomError::Overflow)?;
 
         let light_cpi_accounts = CpiAccounts::new(
             ctx.accounts.signer.as_ref(),
             ctx.remaining_accounts,
             crate::LIGHT_CPI_SIGNER,
         );
-        InstructionDataInvokeCpiWithReadOnly::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(my_compressed_account)?
-            .invoke(light_cpi_accounts)?;
 
+        LightSystemProgramCpiV1::new_cpi(LIGHT_CPI_SIGNER, proof)
+            .with_light_account(counter)?
+            .invoke(light_cpi_accounts)?;
         Ok(())
     }
 }
 
-#[event]
-#[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct MyCompressedAccount {
-    pub name: String,
-    pub nested: NestedData,
-}
-
-#[derive(LightHasher, Default, Clone, Debug, AnchorSerialize, AnchorDeserialize)]
-pub struct NestedData {
-    pub one: u16,
-    pub two: u16,
+#[error_code]
+pub enum CustomError {
+    #[msg("No authority to perform this action")]
+    Unauthorized,
+    #[msg("Counter overflow")]
+    Overflow,
+    #[msg("Counter underflow")]
+    Underflow,
 }
 
 #[derive(Accounts)]
-pub struct UpdateNestedData<'info> {
+pub struct GenericAnchorAccounts<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
+}
+
+// declared as event so that it is part of the idl. 
+#[event]
+#[derive(Clone, Debug, Default, LightDiscriminator, LightHasher)]
+pub struct CounterAccount {
+    #[hash]
+    pub owner: Pubkey,
+    pub value: u64,
 }
 ```
 {% endtab %}
 
 {% tab title="Native" %}
+{% hint style="info" %}
+Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/dc0f79a0542c4e4370652bafa0be2d481e30a952/counter/native/src/lib.rs#L200).
+{% endhint %}
 
+```rust
+#![allow(unexpected_cfgs)]
+
+use borsh::{BorshDeserialize, BorshSerialize};
+use light_macros::pubkey;
+use light_sdk::{
+    account::LightAccount,
+    cpi::{CpiAccounts, CpiSigner, LightSystemProgramCpiV1},
+    derive_light_cpi_signer,
+    instruction::{account_meta::CompressedAccountMeta, ValidityProof},
+    LightDiscriminator, LightHasher,
+};
+use solana_program::{
+    account_info::AccountInfo,
+    entrypoint,
+    program_error::ProgramError,
+    pubkey::Pubkey,
+};
+
+pub const ID: Pubkey = pubkey!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+pub const LIGHT_CPI_SIGNER: CpiSigner =
+    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+
+entrypoint!(process_instruction);
+
+#[derive(Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher)]
+pub struct CounterAccount {
+    #[hash]
+    pub owner: Pubkey,
+    pub value: u64,
+}
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct IncrementCounterInstructionData {
+    pub proof: ValidityProof,
+    pub counter_value: u64,
+    pub account_meta: CompressedAccountMeta,
+}
+
+#[derive(Debug, Clone)]
+pub enum CounterError {
+    Unauthorized,
+    Overflow,
+    Underflow,
+}
+
+impl From<CounterError> for ProgramError {
+    fn from(e: CounterError) -> Self {
+        match e {
+            CounterError::Unauthorized => ProgramError::Custom(1),
+            CounterError::Overflow => ProgramError::Custom(2),
+            CounterError::Underflow => ProgramError::Custom(3),
+        }
+    }
+}
+
+pub fn process_instruction(
+    program_id: &Pubkey,
+    accounts: &[AccountInfo],
+    instruction_data: &[u8],
+) -> Result<(), ProgramError> {
+    if program_id != &crate::ID {
+        return Err(ProgramError::IncorrectProgramId);
+    }
+
+    let instruction_data = IncrementCounterInstructionData::try_from_slice(instruction_data)
+        .map_err(|_| ProgramError::InvalidInstructionData)?;
+
+    increment_counter(accounts, instruction_data)
+}
+
+pub fn increment_counter(
+    accounts: &[AccountInfo],
+    instruction_data: IncrementCounterInstructionData,
+) -> Result<(), ProgramError> {
+    let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
+
+    let mut counter = LightAccount::<'_, CounterAccount>::new_mut(
+        &ID,
+        &instruction_data.account_meta,
+        CounterAccount {
+            owner: *signer.key,
+            value: instruction_data.counter_value,
+        },
+    )?;
+
+    counter.value = counter.value.checked_add(1).ok_or(CounterError::Overflow)?;
+
+    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+
+    LightSystemProgramCpiV1::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+        .with_light_account(counter)?
+        .invoke(light_cpi_accounts)?;
+
+    Ok(())
+}
+```
 {% endtab %}
 
 {% tab title="Pinocchio" %}
+{% hint style="info" %}
+Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/dc0f79a0542c4e4370652bafa0be2d481e30a952/counter/pinocchio/src/lib.rs#L202).
+{% endhint %}
 
+```rust
+#![allow(unexpected_cfgs)]
+
+use borsh::{BorshDeserialize, BorshSerialize};
+use light_macros::pubkey_array;
+use light_sdk_pinocchio::{
+    account::LightAccount,
+    cpi::{CpiAccounts, CpiInputs, CpiSigner},
+    derive_light_cpi_signer,
+    instruction::account_meta::CompressedAccountMeta,
+    LightDiscriminator, LightHasher, ValidityProof,
+};
+use pinocchio::{
+    account_info::AccountInfo,
+    entrypoint,
+    program_error::ProgramError,
+    pubkey::Pubkey,
+};
+
+pub const ID: Pubkey = pubkey_array!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+pub const LIGHT_CPI_SIGNER: CpiSigner =
+    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+
+entrypoint!(process_instruction);
+
+#[derive(Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher)]
+pub struct CounterAccount {
+    #[hash]
+    pub owner: Pubkey,
+    pub value: u64,
+}
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct IncrementCounterInstructionData {
+    pub proof: ValidityProof,
+    pub counter_value: u64,
+    pub account_meta: CompressedAccountMeta,
+}
+
+#[derive(Debug, Clone)]
+pub enum CounterError {
+    Unauthorized,
+    Overflow,
+    Underflow,
+}
+
+impl From<CounterError> for ProgramError {
+    fn from(e: CounterError) -> Self {
+        match e {
+            CounterError::Unauthorized => ProgramError::Custom(1),
+            CounterError::Overflow => ProgramError::Custom(2),
+            CounterError::Underflow => ProgramError::Custom(3),
+        }
+    }
+}
+
+pub fn process_instruction(
+    program_id: &Pubkey,
+    accounts: &[AccountInfo],
+    instruction_data: &[u8],
+) -> Result<(), ProgramError> {
+    if program_id != &crate::ID {
+        return Err(ProgramError::IncorrectProgramId);
+    }
+
+    let instruction_data = IncrementCounterInstructionData::try_from_slice(instruction_data)
+        .map_err(|_| ProgramError::InvalidInstructionData)?;
+
+    increment_counter(accounts, instruction_data)
+}
+
+pub fn increment_counter(
+    accounts: &[AccountInfo],
+    instruction_data: IncrementCounterInstructionData,
+) -> Result<(), ProgramError> {
+    let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
+
+    let mut counter = LightAccount::<'_, CounterAccount>::new_mut(
+        &ID,
+        &instruction_data.account_meta,
+        CounterAccount {
+            owner: *signer.key(),
+            value: instruction_data.counter_value,
+        },
+    )
+    .map_err(ProgramError::from)?;
+
+    counter.value = counter.value.checked_add(1).ok_or(CounterError::Overflow)?;
+
+    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+
+    let cpi_inputs = CpiInputs::new(
+        instruction_data.proof,
+        vec![counter.to_account_info().map_err(ProgramError::from)?],
+    );
+    cpi_inputs
+        .invoke_light_system_program(light_cpi_accounts)
+        .map_err(ProgramError::from)?;
+
+    Ok(())
+}
+```
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+### Next steps
 
+{% content-ref url="how-to-close-compressed-accounts.md" %}
+[how-to-close-compressed-accounts.md](how-to-close-compressed-accounts.md)
+{% endcontent-ref %}
+
+[^1]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+    2. CPI Authority - Program-derived authority PDA
+    3. Registered Program PDA - Registration account for your program
+    4. Noop Program - For transaction logging
+    5. Account Compression Authority - Authority for merkle tree operations
+    6. Account Compression Program - SPL Account Compression program
+    7. Invoking Program - Your program's address
+    8. System Program - Solana System program
