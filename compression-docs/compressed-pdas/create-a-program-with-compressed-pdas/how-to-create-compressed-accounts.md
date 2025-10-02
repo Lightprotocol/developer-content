@@ -319,14 +319,14 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 This struct organizes all accounts needed for the Light System Program CPI:
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: Account slice [with Light System program and merkle tree accounts](#user-content-fn-1)[^1]. Extracts `AccountInfo` structs. Fetched by client with `getValidityProof()` from RPC provider that supports ZK Compression (Helius, Triton).
+* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System program and merkle tree accounts](#user-content-fn-1)[^1].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Parameters for `CpiInputs::new_with_address()`:**
 
 Initializes CPI instruction data with `proof` from Step 4 to validate address non-inclusion.
 
-* The Light System Program verifies the `proof` against the address tree's merkle root
+* The Light System Program verifies the `proof` against the address tree's Merkle root
 * `with_light_account` adds the instruction data from `LightAccount` to the CPI inputs.
 * `with_new_addresses` registers new address in address tree with `address_seed` from _Step 3 `derive_address()`_. Light System Program also validates address non-inclusion proof using `address_seed`.
 * `invoke(light_cpi_accounts)` calls the Light System Program with packed accounts.
@@ -353,7 +353,7 @@ npm -g i @lightprotocol/zk-compression-cli
 light init testprogram
 ```
 
-{% hint style="success" %}
+{% hint style="warning" %}
 For errors see [this page](../../resources/errors/).
 {% endhint %}
 
