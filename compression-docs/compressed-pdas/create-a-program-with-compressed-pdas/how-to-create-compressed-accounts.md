@@ -109,7 +109,7 @@ pub struct DataAccount {
 
 **Derives:**
 
-* `LightAccount` requires `borsh` or `AnchorSerialize` to be implemented.&#x20;
+* `LightAccount` requires `borsh` or `AnchorSerialize` to be implemented. Wraps your custom data in _Step 6,_ when you initialize the account.
 * `LightDiscriminator` gives struct unique type ID (8 bytes) for deserialization. This helps programs distinguish `DataAccount` from other compressed account types.
 
 The `DataAccount` struct defines the data structure of the compressed account you will create.
