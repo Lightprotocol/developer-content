@@ -7,11 +7,11 @@ description: >-
 
 # Rust
 
-Learn how to build a Rust client to create, update, and close compressed accounts. This guide breaks down each client implementation step with full code examples at the end.
+Learn how to build a Rust client to create, update, and close compressed accounts. Find a [full code example](rust.md#full-code-example) at the end with counter programs in Anchor and native Rust.
 
 ### What you will learn
 
-This guide breaks down 7 client implementation steps to interact with compressed accounts:
+This guide breaks down each client implementation step:
 
 1. **Dependencies**: Add `light-program-test`, `light-sdk`, and serialization libraries to test and interact with compressed accounts.
 2. **Environment**: Set up test validator with `LightProgramTest` that provides prover, indexer, and auto-funded payer.
@@ -856,12 +856,6 @@ where
         .await
 }
 ```
-
-{% hint style="info" %}
-Find the [source code here](https://github.com/Lightprotocol/program-examples/blob/9cdeea7e655463afbfc9a58fb403d5401052e2d2/counter/native/tests/test.rs).
-{% endhint %}
-
-
 {% endtab %}
 
 {% tab title="Native Rust" %}
@@ -1255,6 +1249,10 @@ Find the [source code here](https://github.com/Lightprotocol/program-examples/bl
 {% endtabs %}
 
 ## Next Steps
+
+{% content-ref url="../create-a-program-with-compressed-pdas/" %}
+[create-a-program-with-compressed-pdas](../create-a-program-with-compressed-pdas/)
+{% endcontent-ref %}
 
 
 
