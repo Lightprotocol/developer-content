@@ -130,7 +130,7 @@ pub struct InstructionData {
 **Parameters:**
 
 * For compressed account creation, `ValidityProof` proves that an address does not exist yet in the specified address tree (non-inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
-* `PackedAddressTreeInfo` specifies the index to the address tree account that is used to derive the address with `derive_address()` via CPI to the Light System Program. Must point to the correct address tree `AccountInfo` in `CpiAccounts`.
+* `PackedAddressTreeInfo` specifies the index to the address tree account that is used to derive the address in _Step 5_. Must point to the correct address tree `AccountInfo` in `CpiAccounts`.
 * `output_state_tree_index` specifies which state tree will store the compressed account.
 * `message`: Data to include in the compressed account. This depends on your program logic.
 
@@ -162,18 +162,22 @@ let program_id = crate::ID;
 </strong><strong>);
 </strong></code></pre>
 
-**Parameters:**
+**Parameters for `derive_address`:**
 
 * In this example, the `&custom_seeds` array contains program `SEED` and signer pubkey.&#x20;
 * `&address_tree_pubkey` is the public key of the address merkle tree account retrieved via `get_tree_pubkey()`. The index passed in the instruction data is not sufficient to derive an address.
-* `&program_id`: The program's on-chain address set in constants _(Step 2)_
+* `&program_id`: The program's on-chain address set in constants _(Step 2)._
+
+{% hint style="info" %}
+The address is derived via CPI to the Light System Program in _Step 7_.
+{% endhint %}
 
 The parameters return:
 
 * The 32-byte `address` for the created compressed account. Combines `address_seed` + `address_tree_pubkey`. This ensures addresses are unique to both the program and the specific address tree.  An address can not be created again in the same tree.
 * A 32-byte `address_seed` the Light System program CPI uses to verify `ValidityProof` and create the address. Combines `program_id` and `SEED`. The `address_seed` is passed to the Light System Program as part of new address params together with additional metadata to verify the `proof` from Step 4.
 
-Check the address tree to ensure global uniqueness of the derived address. Without this check, the same seeds on different address trees produce different addresses. Use this pattern for user profiles, token mints, or singleton configs that require global uniqueness.
+Check the address tree to ensure global uniqueness of the derived address. Without this check, the same seeds on different address trees produce different addresses.
 
 ```rust
 pub const ALLOWED_ADDRESS_TREE: Pubkey = pubkey!("amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2");
