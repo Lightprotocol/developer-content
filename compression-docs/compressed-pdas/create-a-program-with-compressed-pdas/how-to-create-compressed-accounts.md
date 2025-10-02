@@ -11,12 +11,9 @@ Learn how to create compressed accounts in Solana programs. Find [full code exam
 
 ### Overview to Compressed Accounts
 
-Solana programs can use compressed accounts to store data without paying for rent-exemption. To store data in a compressed account, the data is hashed and committed to a state Merkle tree
+Solana programs can use compressed accounts to store data without paying for rent-exemption. Key differences are how accounts are identified and stored:
 
-* Compressed accounts and addressess are created via CPI to the Light System Program.&#x20;
-
-Compressed accounts provide the same functionality as Solana accounts. Key differences are how accounts are identified and stored:
-
+* The data of a compressed account is hashed and committed to a state Merkle tree.
 * Each compressed account can be identified by its hash.
 * Each write to a compressed account changes its hash
 * All compressed accounts are stored in the leaf of state Merkle trees.
