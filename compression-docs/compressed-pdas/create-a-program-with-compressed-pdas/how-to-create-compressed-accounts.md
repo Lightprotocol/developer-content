@@ -7,7 +7,7 @@ hidden: true
 
 # How to Create Compressed Accounts
 
-Learn how to create compressed accounts in Solana programs. Find [full code examples at the end](how-to-create-compressed-accounts.md#create-account-example) for Anchor, native Rust, and Pinocchio.
+Learn how to create compressed accounts in Solana programs. Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#create-account-example) for Anchor, native Rust, and Pinocchio.
 
 ### Overview to Compressed Accounts
 
