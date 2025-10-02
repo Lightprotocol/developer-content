@@ -1,15 +1,19 @@
 ---
 description: >-
   Complete guide to create compressed accounts in Solana programs with the
-  Light-SDK. Includes Step-by-Step guide and Full Code Examples.
+  Light-SDK. Includes a step-by-step guide and full code examples.
 hidden: true
 ---
 
 # How to Create Compressed Accounts
 
-Learn how to create compressed accounts in Solana programs. Find a [full code example at the end](how-to-create-compressed-accounts.md#create-account-example) for Anchor, native Rust, and Pinocchio.
+Learn how to create compressed accounts in Solana programs. Find [full code examples at the end](how-to-create-compressed-accounts.md#create-account-example) for Anchor, native Rust, and Pinocchio.
 
 ### Overview to Compressed Accounts
+
+Solana programs can use compressed accounts to store data without paying for rent-exemption. To store data in a compressed account, the data is hashed and committed to a state Merkle tree
+
+* Compressed accounts and addressess are created via CPI to the Light System Program.&#x20;
 
 Compressed accounts provide the same functionality as Solana accounts. Key differences are how accounts are identified and stored:
 
@@ -25,15 +29,15 @@ Learn more on the Compressed Account Model [here](../../learn/core-concepts/comp
 
 ### What you will learn
 
-This guide breaks down 7 implementation steps to create compressed accounts:
+This guide breaks down 7 implementation steps to create one compressed account:
 
 1. [**Set up dependencies**](how-to-create-compressed-accounts.md#dependencies) for `light-sdk` and serialization library. The `light-sdk` provides macros, account wrapper and CPI interface to interact with compressed accounts.
-2. [**Define program constants**](how-to-create-compressed-accounts.md#constants) for address derivation and CPI calls
+2. [**Define program constants**](how-to-create-compressed-accounts.md#constants)
 3. [**Define the Account Data Structure**](how-to-create-compressed-accounts.md#account-data-structure) for your compressed account.
-4. **Build the** [**instruction data**](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account):
+4. **Define the** [**instruction data**](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account):
    * Include validity proof to prove the derived address does not yet exist in the address tree. Client fetches proof with `getValidityProof()` from RPC provider and passes to program.
    * Specify address and state tree indices where address and compressed account hash are stored.
-   * Add the account's custom data.
+   * Add custom data to  account's custom data.
 5. [**Derive an address**](how-to-create-compressed-accounts.md#derive-address) from seeds and address tree public key to set a unique identifier to your compressed account. Adds PDA functionality to your compressed account.
 6. [**​Initialize Compressed Account**](how-to-create-compressed-accounts.md#initialize-compressed-account) with `LightAccount::new_init()` to wrap its data structure and metadata. `LightAccount` abstracts serialization and hashing for the CPI.
 7. Create the compressed account via [**CPI to Light System Program**](how-to-create-compressed-accounts.md#cpi).
@@ -110,7 +114,6 @@ Define your compressed account struct:
     Default, 
     BorshSerialize, // AnchorSerialize
     BorshDeserialize, // AnchorDeserialize 
-    LightHasher, 
     LightDiscriminator
 )]
 pub struct DataAccount {
@@ -124,17 +127,11 @@ pub struct DataAccount {
 * For serialization use `BorshSerialize`/ `BorshDeserialize`, or `AnchorSerialize`/ `AnchorDeserialize` for Anchor programs
 * `LightDiscriminator` gives struct unique type ID (8 bytes) for deserialization. This helps programs distinguish `DataAccount` from other compressed account types.
 
-**`DataAccount`** struct:&#x20;
-
-* Defines the data structure of the compressed account you will create.
-* Changing any value updates the compressed account hash. The old hash is\
-  marked as "spent" (nullified), and the new hash is added to the tree.
+The `DataAccount` struct defines the data structure of the compressed account you will create.
 {% endstep %}
 
 {% step %}
 ### Define Instruction Data for `create_compressed_account`
-
-The client sends the following parameters to your instruction handler:
 
 ```rust
 pub struct InstructionData {
