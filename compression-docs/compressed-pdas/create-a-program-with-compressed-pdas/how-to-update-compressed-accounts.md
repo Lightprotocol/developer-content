@@ -235,7 +235,7 @@ For errors see [this page](https://www.zkcompression.com/resources/error-cheatsh
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/dc0f79a0542c4e4370652bafa0be2d481e30a952/counter/anchor/programs/counter/src/lib.rs#L73).
+Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/anchor/programs/counter/src/lib.rs#L71).
 {% endhint %}
 
 ```rust
@@ -325,7 +325,7 @@ pub struct CounterAccount {
 
 {% tab title="Native" %}
 {% hint style="info" %}
-Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/dc0f79a0542c4e4370652bafa0be2d481e30a952/counter/native/src/lib.rs#L200).
+Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/native/src/lib.rs#L197).
 {% endhint %}
 
 ```rust
@@ -431,7 +431,7 @@ pub fn increment_counter(
 
 {% tab title="Pinocchio" %}
 {% hint style="info" %}
-Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/dc0f79a0542c4e4370652bafa0be2d481e30a952/counter/pinocchio/src/lib.rs#L202).
+Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/pinocchio/src/lib.rs#L199).
 {% endhint %}
 
 ```rust
