@@ -23,16 +23,15 @@ This guide breaks down each client implementation step:
 
 ### Client Flow Overview
 
-```
-𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Derive unique address for the compressed account (create only)
-   ├─ Get validity proof from RPC
-   │  ├─ Create: Prove address doesn't exist (non-inclusion)
-   │  ├─ Update/Close: Prove account exists (inclusion)
-   ├─ Prepare address and state tree accounts for the transaction
-   ├─ Build instruction with proof and account data
-   └─ Send transaction
-      │
+<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
+</strong><strong>   ├─ Derive unique address for the compressed account (create only)
+</strong><strong>   ├─ Get validity proof from RPC
+</strong><strong>   │  ├─ Create: Prove address doesn't exist (non-inclusion)
+</strong><strong>   │  ├─ Update/Close: Prove account exists (inclusion)
+</strong><strong>   ├─ Prepare address and state tree accounts for the transaction
+</strong><strong>   ├─ Build instruction with proof and account data
+</strong><strong>   └─ Send transaction
+</strong>      │
       𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
       ├─ Re-derive the address
       ├─ Parse address and state tree accounts from transaction
@@ -43,7 +42,7 @@ This guide breaks down each client implementation step:
          ├─ Register address in address merkle tree
          ├─ Create compressed account hash in state merkle tree
          └─ Complete atomic account creation
-```
+</code></pre>
 
 ## Get Started
 
