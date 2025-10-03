@@ -9,7 +9,7 @@ hidden: true
 
 Compressed accounts and addresses are created via CPI to the Light System Program.&#x20;
 
-Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#create-account-example) for Anchor, native Rust, and Pinocchio.
+Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Derive unique compressed account address
