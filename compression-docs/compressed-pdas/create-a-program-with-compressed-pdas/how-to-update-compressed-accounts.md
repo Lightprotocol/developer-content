@@ -1,22 +1,23 @@
 ---
 description: >-
-  Complete guide to a Solana program that updates compressed accounts using
-  Light SDK and update_compressed_account()`instruction handler.
+  Complete guide to update compressed accounts in Solana programs with the
+  light-sdk. Includes step-by-step guide and full code examples.
 hidden: true
 ---
 
 # How to Update Compressed Accounts
 
-Learn how to update compressed accounts in Solana programs. Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+Compressed accounts are updated via CPI to the Light System Program.  Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 
 {% hint style="success" %}
-Compressed account updates follow UTXO patterns:&#x20;
+Compressed account updates follow a UTXO pattern:
 
-* each update consumes an input (old hash) and&#x20;
-* produces an output (new hash).&#x20;
-* The old account is nullified to prevent double spending.&#x20;
+* each update consumes the old account hash (input) and
+* produces a new hash with modified data (output).&#x20;
 
-This is different from regular accounts, where the data field is simply updated with every state change.
+The old hash is nullified to prevent double spending.
+
+Regular Solana accounts overwrite data in place. Compressed accounts create new state with each update.
 {% endhint %}
 
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
@@ -37,6 +38,73 @@ This is different from regular accounts, where the data field is simply updated 
 {% stepper %}
 {% step %}
 ### Program Setup
+
+The dependencies, constants and compressed account struct are identical for create and updates for compressed accounts.
+
+<details>
+
+<summary>Dependencies, Constants, Compressed Account</summary>
+
+#### Dependencies
+
+Add dependencies to your program.
+
+```toml
+[dependencies]
+light-sdk = "0.13.0"
+// anchor_lang = "0.31.1"
+// light-sdk-pinocchio = "0.13.0"
+// pinocchio = "0.8.4"
+```
+
+* The `light-sdk` provides macros, wrappers and CPI interface to interact with compressed accounts.
+* Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).
+
+#### Constants
+
+Set program address and derive the CPI authority PDA to call the Light System program.
+
+```rust
+declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+
+pub const LIGHT_CPI_SIGNER: CpiSigner =
+    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+```
+
+**`CPISigner`** is the configuration struct for CPI's to the Light System Program.
+
+* CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
+* `derive_light_cpi_signer!` derives this PDA for you at compile time.
+
+#### Compressed Account
+
+Define your compressed account struct.
+
+```rust
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    BorshSerialize, // AnchorSerialize
+    BorshDeserialize, // AnchorDeserialize
+    LightDiscriminator
+)]
+pub struct DataAccount {
+    pub owner: Pubkey,
+    pub message: String,
+}
+```
+
+Besides the standard traits (`Clone`, `Debug`, `Default`), the following are required:
+
+* `borsh` or `AnchorSerialize` to serialize account data.
+* `LightDiscriminator` trait gives struct unique type ID (8 bytes) for deserialization
+
+{% hint style="info" %}
+The traits are required for `LightAccount`. `LightAccount` wraps `DataAccount` to set the discriminator and create the compressed account's data hash.
+{% endhint %}
+
+</details>
 {% endstep %}
 
 {% step %}
@@ -54,20 +122,21 @@ pub struct InstructionData {
 
 1. **Inclusion Proof**
 
-* `ValidityProof` proves that the account exists in the state tree (inclusion). This proof is passed by the client.
+* `ValidityProof` proves that the account exists in the state tree (inclusion).  This proof is [passed by the client](#user-content-fn-1)[^1].
 
-2. **Specify account and output state tree**
+2. **Specify existing account and output state tree**
 
-* `CompressedAccountMeta` identifies the existing compressed account and specifies the output state tree.
-* Contains `tree_info: PackedStateTreeInfo` which specifies indices to the state tree account (leaf index, root index, tree pubkey index).
-* Contains the account's `address` and `output_state_tree_index` which specifies which state tree will store the updated compressed account hash.
+* `CompressedAccountMeta` identifies the existing compressed account and specifies the output state tree with these fields:
+  * `tree_info: PackedStateTreeInfo` locates the old account hash (merkle tree pubkey index, leaf index, root index) for nullification
+  * `address` specifies the account's derived address
+  * `output_state_tree_index` specifies the state tree that will store the new account hash
 
-3. **Custom account data**
+3. **Updated account data**
 
-* `new_value`: New data to update in the compressed account. This depends on your program logic.
+* `new_value` specifies pdated data for the compressed account. This depends on your program logic.
 
 {% hint style="info" %}
-Packed structs use indices to point to `remaining_accounts` to reduce transaction size. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
+Packed structs like  `PackedStateTreeInfo` use indices to point to `remaining_accounts` to reduce transaction size. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
 {% endhint %}
 {% endstep %}
 
@@ -131,7 +200,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up CPI context with `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer.
-* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-1)[^1].
+* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-2)[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **CPI instruction** :
@@ -148,17 +217,11 @@ The Light System Program
 * appends the updated account hash to the state tree (output).
 {% endhint %}
 {% endstep %}
-
-{% step %}
-### That's it!
-{% endstep %}
 {% endstepper %}
 
 ## Full Code Example
 
-Now that you understand the concepts to update a compressed account, start building with the counter program below.
-
-Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
+The counter programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
 
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
@@ -172,10 +235,8 @@ For errors see [this page](https://www.zkcompression.com/resources/error-cheatsh
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-`declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.
-{% endhint %}
-
 Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/dc0f79a0542c4e4370652bafa0be2d481e30a952/counter/anchor/programs/counter/src/lib.rs#L73).
+{% endhint %}
 
 ```rust
 #![allow(unexpected_cfgs)]
@@ -477,7 +538,23 @@ pub fn increment_counter(
 
 ### Next steps
 
-[^1]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+{% columns %}
+{% column %}
+{% content-ref url="../client-library/" %}
+[client-library](../client-library/)
+{% endcontent-ref %}
+{% endcolumn %}
+
+{% column %}
+{% content-ref url="how-to-close-compressed-accounts.md" %}
+[how-to-close-compressed-accounts.md](how-to-close-compressed-accounts.md)
+{% endcontent-ref %}
+{% endcolumn %}
+{% endcolumns %}
+
+[^1]: Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+
+[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
     2. CPI Authority - Program-derived authority PDA
     3. Registered Program PDA - Registration account for your program
     4. Noop Program - For transaction logging
