@@ -289,7 +289,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-2)[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**CPI instruction builder**:
+**CPI instruction** :
 
 * `new_cpi()` initializes the CPI instruction with the `proof` from _Step 4_.
 * `with_light_account` adds the compressed account data from `LightAccount` (Step 7) to the CPI instruction data
