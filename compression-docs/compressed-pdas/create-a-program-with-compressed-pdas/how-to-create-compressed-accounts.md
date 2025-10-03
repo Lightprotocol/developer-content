@@ -249,7 +249,7 @@ let mut my_compressed_account
 * The `address` assigned to the compressed account (derived in _Step 5_).
 * `output_state_tree_index` specifies the state tree that will store the compressed account hash. We use the index passed in the instruction data (_Step 4)_.
 
-After initialization, set custom account fields defined in your compressed account struct in `DataAccount` (_Step 3_).
+After initialization, set custom account fields defined in your compressed account struct in `DataAccount` (_Step 3_). In this example:
 
 * `my_compressed_account.owner` is set to the signer's pubkey
 * `my_compressed_account.data` is set to custom string data
@@ -281,9 +281,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .invoke(light_cpi_accounts)?;
 ```
 
-**Parameters for `CpiAccounts::new()`:**
-
-`CpiAccounts` parses accounts consistent with `PackedAccounts` in the client and converts them for the CPI:
+**Set up CPI context with `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
 * `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-2)[^2].
