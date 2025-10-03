@@ -7,53 +7,37 @@ hidden: true
 
 # How to Update Compressed Accounts
 
-Learn how to update compressed accounts in Solana programs. Find full code examples at the end for Anchor, native Rust, and Pinocchio.
+Updating a [compressed account](https://www.zkcompression.com/learn/core-concepts/compressed-account-model) works similar to Bitcoin's UTXO model:&#x20;
 
-{% hint style="success" %}
-Updating a [compressed account](https://www.zkcompression.com/learn/core-concepts/compressed-account-model) works similar to Bitcoin's UTXO model: each update consumes an input (old hash) and produces an output (new hash). The old account is nullified to prevent double spending. This is different from regular accounts, where the data field is simply updated with every state change.
-{% endhint %}
+* each update consumes an input (old hash) and produces an output (new hash).&#x20;
+* The old account is nullified to prevent double spending.&#x20;
 
-### What you will learn
-
-This guide breaks down 6 implementation steps to update one compressed account:
-
-1. **Set up dependencies** for `light-sdk` and serialization library. The `light-sdk` provides abstractions to handle compressed accounts and uses `borsh` to serialize account data.
-2. **Define program constants**
-3. **Define the Account Data Structure** for your compressed account.
-4. **Define the** **instruction data**:
-   * Include the validity proof to prove the account exists in the state tree. The client fetches this proof with `getValidityProof()` from its RPC provider and passes it to the program.
-   * Include `CompressedAccountMeta` to identify the existing account.
-   * Include current account data to reconstruct account hash for proof verification (input hash).
-5. **Load Compressed Account** with `LightAccount::new_mut()` to create the input hash and output state to modify
-6. **CPI the Light System Program** to nullify the input hash and create a new account hash from the the output state.
-
-### Complete Update Flow of Compressed Accounts
+Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Fetch proof that account exists with `getValidityProof`
-   ├─ Prepare state tree accounts for the transaction
    ├─ Build instruction with proof, current data and metadata
    └─ Send transaction
       │
 <strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Reconstruct existing compressed account
-</strong><strong>      ├─ Parse state tree accounts from transaction
-</strong><strong>      ├─ Modify compressed account data output
+</strong><strong>      ├─ Reconstruct existing compressed account hash (input hash)
+</strong><strong>      ├─ Modify compressed account data (output)
 </strong><strong>      │
 </strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify input account exists (inclusion proof)
-         ├─ Nullify existing compressed account hash
-         ├─ Create new compressed account hash with updated data
+</strong>         ├─ Verify and nullify input hash 
+         ├─ Create new compressed account hash with updated data (output hash) 
          └─ Complete atomic account update
 </code></pre>
 
-## Get Started
-
 {% stepper %}
 {% step %}
-### Dependencies
+### Program Setup
 
-Add dependencies to your program.
+<details>
+
+<summary>Dependencies, Program Constant, Account Data Structure</summary>
+
+#### Dependencies
 
 ```toml
 [dependencies]
@@ -63,29 +47,8 @@ borsh = "0.10.0"
 
 * The `light-sdk` provides macros, wrappers and CPI interface to interact with compressed accounts. Builds on top of the Solana SDK.
 * Use `borsh` for native Rust, or use `AnchorSerialize` for Anchor programs.
-{% endstep %}
 
-{% step %}
-### Program Constants
-
-Set program address and derive the CPI authority PDA to call Light System Program.
-
-```rust
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-
-pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-```
-
-**`CPISigner`**: Configuration struct for CPIs to Light System Program. The CPI to the Light System Program must be signed with a PDA derived by your program with the seed `b"authority"` . `derive_light_cpi_signer!` derives this PDA for you at compile time.
-
-{% hint style="info" %}
-The Light System Program uses the PDA and its bump to perform its signer check.
-{% endhint %}
-{% endstep %}
-
-{% step %}
-### Account Data Structure
+#### Account Data Structure
 
 Define your compressed account struct:
 
@@ -110,10 +73,29 @@ pub struct DataAccount {
 * `LightDiscriminator` gives struct unique type ID (8 bytes) for deserialization. This helps programs distinguish `DataAccount` from other compressed account types.
 
 The `DataAccount` struct defines the data structure of the compressed account.
+
+#### Program Constants
+
+Set program address and derive the CPI authority PDA to call Light System Program.
+
+```rust
+declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+
+pub const LIGHT_CPI_SIGNER: CpiSigner =
+    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+```
+
+**`CPISigner`**: Configuration struct for CPIs to Light System Program. The CPI must be signed with a PDA derived by your program with the seed `b"authority"` . `derive_light_cpi_signer!` derives this PDA for you at compile time.
+
+{% hint style="info" %}
+The Light System Program uses the PDA and its bump to perform its signer check.
+{% endhint %}
+
+</details>
 {% endstep %}
 
 {% step %}
-### Define Instruction Data for `update_compressed_account`
+### Define Instruction Data
 
 ```rust
 pub struct InstructionData {
@@ -160,7 +142,7 @@ Load the existing compressed account with:
 * `&account_meta` identifies which existing compressed account to update and specifies the output state tree. Contains the `CompressedAccountMeta` from instruction data (_Step 4_).
 * `MyCompressedAccount` contains the current account data defined in _Step 4_ as input. The input state is hashed and used for verification against the current on-chain state.
 
-**Here's where you modify account data** based on your program's instruction handler. In this example its `my_compressed_account.message`.
+**Here's where you update account data** based on your program's instruction handler. In this example its `my_compressed_account.message`.
 
 {% hint style="info" %}
 In this step, `new_mut()` hashes the input state immediately for proof verification and produces output state. Output state is hashed during the CPI by the Light System Program in the next step.
@@ -168,7 +150,7 @@ In this step, `new_mut()` hashes the input state immediately for proof verificat
 {% endstep %}
 
 {% step %}
-### CPI
+### Light System Program CPI
 
 The CPI nullifies the old and creates an updated compressed account hash.
 
@@ -210,10 +192,6 @@ The Light System Program:
 * Nullifies the old account hash in the state tree (input)
 * Appends the updated account hash to the state tree (output)
 {% endhint %}
-{% endstep %}
-
-{% step %}
-### That's it!
 {% endstep %}
 {% endstepper %}
 
