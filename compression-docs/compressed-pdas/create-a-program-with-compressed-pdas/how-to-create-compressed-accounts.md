@@ -333,7 +333,7 @@ use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
 use light_sdk::{
     account::LightAccount,
     address::v1::derive_address,
-    cpi::{CpiAccounts, CpiSigner},
+    cpi::{v1::CpiAccounts, CpiSigner},
     derive_light_cpi_signer,
     instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
     LightDiscriminator,
@@ -348,7 +348,9 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 pub mod counter {
 
     use super::*;
-    use light_sdk::cpi::{InvokeLightSystemProgram, LightCpiInstruction, LightSystemProgramCpiV1};
+    use light_sdk::cpi::{
+        v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
+    };
 
     pub fn create_counter<'info>(
         ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
@@ -358,7 +360,7 @@ pub mod counter {
     ) -> Result<()> {
         // LightAccount::new_init will create an account with empty output state (no input state).
         // Modifying the account will modify the output state that when converted to_account_info()
-        // is hashed with poseidon hashes, serialized with borsh
+        // is hashed with SHA256, serialized with borsh
         // and created with invoke_light_system_program by invoking the light-system-program.
         // The hashing scheme is the account structure derived with LightHasher.
         let light_cpi_accounts = CpiAccounts::new(
@@ -386,22 +388,13 @@ pub mod counter {
         counter.owner = ctx.accounts.signer.key();
         counter.value = 0;
 
-        LightSystemProgramCpiV1::new_cpi(LIGHT_CPI_SIGNER, proof)
+        LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
             .with_light_account(counter)?
             .with_new_addresses(&[new_address_params])
             .invoke(light_cpi_accounts)?;
 
         Ok(())
     }
-    
-#[error_code]
-pub enum CustomError {
-    #[msg("No authority to perform this action")]
-    Unauthorized,
-    #[msg("Counter overflow")]
-    Overflow,
-    #[msg("Counter underflow")]
-    Underflow,
 }
 
 #[derive(Accounts)]
@@ -412,7 +405,7 @@ pub struct GenericAnchorAccounts<'info> {
 
 // declared as event so that it is part of the idl.
 #[event]
-#[derive(Clone, Debug, Default, LightDiscriminator, LightHasher)]
+#[derive(Clone, Debug, Default, LightDiscriminator)]
 pub struct CounterAccount {
     #[hash]
     pub owner: Pubkey,
@@ -434,25 +427,42 @@ use light_macros::pubkey;
 use light_sdk::{
     account::LightAccount,
     address::v1::derive_address,
-    cpi::{CpiAccounts, CpiSigner, LightSystemProgramCpiV1},
+    cpi::{
+        v1::{CpiAccounts, LightSystemProgramCpi},
+        CpiSigner, InvokeLightSystemProgram, LightCpiInstruction,
+    },
     derive_light_cpi_signer,
-    instruction::{PackedAddressTreeInfo, ValidityProof},
-    LightDiscriminator, LightHasher,
+    error::LightSdkError,
+    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
+    LightDiscriminator,
 };
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint,
-    program_error::ProgramError,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
 };
-
 pub const ID: Pubkey = pubkey!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 pub const LIGHT_CPI_SIGNER: CpiSigner =
     derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 
 entrypoint!(process_instruction);
 
-#[derive(Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher)]
+#[repr(u8)]
+pub enum InstructionType {
+    CreateCounter = 0,
+}
+
+impl TryFrom<u8> for InstructionType {
+    type Error = LightSdkError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(InstructionType::CreateCounter),
+        }
+    }
+}
+
+#[derive(
+    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
+)]
 pub struct CounterAccount {
     #[hash]
     pub owner: Pubkey,
@@ -466,6 +476,13 @@ pub struct CreateCounterInstructionData {
     pub output_state_tree_index: u8,
 }
 
+#[derive(Debug, Clone)]
+pub enum CounterError {
+    Unauthorized,
+    Overflow,
+    Underflow,
+}
+
 pub fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -474,16 +491,26 @@ pub fn process_instruction(
     if program_id != &crate::ID {
         return Err(ProgramError::IncorrectProgramId);
     }
+    if instruction_data.is_empty() {
+        return Err(ProgramError::InvalidInstructionData);
+    }
 
-    let instruction_data = CreateCounterInstructionData::try_from_slice(instruction_data)
+    let discriminator = InstructionType::try_from(instruction_data[0])
         .map_err(|_| ProgramError::InvalidInstructionData)?;
 
-    create_counter(accounts, instruction_data)
+    match discriminator {
+        InstructionType::CreateCounter => {
+            let instuction_data =
+                CreateCounterInstructionData::try_from_slice(&instruction_data[1..])
+                    .map_err(|_| ProgramError::InvalidInstructionData)?;
+            create_counter(accounts, instuction_data)
+        }
+    }
 }
 
 pub fn create_counter(
     accounts: &[AccountInfo],
-    instruction_data: CreateCounterInstructionData,
+    instuction_data: CreateCounterInstructionData,
 ) -> Result<(), ProgramError> {
     let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
@@ -491,32 +518,33 @@ pub fn create_counter(
 
     let (address, address_seed) = derive_address(
         &[b"counter", signer.key.as_ref()],
-        &instruction_data
+        &instuction_data
             .address_tree_info
             .get_tree_pubkey(&light_cpi_accounts)
             .map_err(|_| ProgramError::NotEnoughAccountKeys)?,
         &ID,
     );
 
-    let new_address_params = instruction_data
+    let new_address_params = instuction_data
         .address_tree_info
         .into_new_address_params_packed(address_seed);
 
     let mut counter = LightAccount::<'_, CounterAccount>::new_init(
         &ID,
         Some(address),
-        instruction_data.output_state_tree_index,
+        instuction_data.output_state_tree_index,
     );
     counter.owner = *signer.key;
     counter.value = 0;
 
-    LightSystemProgramCpiV1::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instuction_data.proof)
         .with_light_account(counter)?
         .with_new_addresses(&[new_address_params])
         .invoke(light_cpi_accounts)?;
 
     Ok(())
 }
+
 ```
 {% endtab %}
 
@@ -533,16 +561,17 @@ use light_macros::pubkey_array;
 use light_sdk_pinocchio::{
     account::LightAccount,
     address::v1::derive_address,
-    cpi::{CpiAccounts, CpiInputs, CpiSigner},
+    cpi::{
+        v1::{CpiAccounts, LightSystemProgramCpi},
+        InvokeLightSystemProgram, LightCpiInstruction,
+    },
     derive_light_cpi_signer,
-    instruction::PackedAddressTreeInfo,
-    LightDiscriminator, LightHasher, ValidityProof,
+    error::LightSdkError,
+    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo},
+    CpiSigner, LightDiscriminator, ValidityProof,
 };
 use pinocchio::{
-    account_info::AccountInfo,
-    entrypoint,
-    program_error::ProgramError,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
 };
 
 pub const ID: Pubkey = pubkey_array!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
@@ -551,7 +580,33 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 entrypoint!(process_instruction);
 
-#[derive(Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher)]
+#[repr(u8)]
+pub enum InstructionType {
+    CreateCounter = 0,
+    IncrementCounter = 1,
+    DecrementCounter = 2,
+    ResetCounter = 3,
+    CloseCounter = 4,
+}
+
+impl TryFrom<u8> for InstructionType {
+    type Error = LightSdkError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(InstructionType::CreateCounter),
+            1 => Ok(InstructionType::IncrementCounter),
+            2 => Ok(InstructionType::DecrementCounter),
+            3 => Ok(InstructionType::ResetCounter),
+            4 => Ok(InstructionType::CloseCounter),
+            _ => panic!("Invalid instruction discriminator."),
+        }
+    }
+}
+
+#[derive(
+    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
+)]
 pub struct CounterAccount {
     #[hash]
     pub owner: Pubkey,
@@ -565,6 +620,51 @@ pub struct CreateCounterInstructionData {
     pub output_state_tree_index: u8,
 }
 
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct IncrementCounterInstructionData {
+    pub proof: ValidityProof,
+    pub counter_value: u64,
+    pub account_meta: CompressedAccountMeta,
+}
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct DecrementCounterInstructionData {
+    pub proof: ValidityProof,
+    pub counter_value: u64,
+    pub account_meta: CompressedAccountMeta,
+}
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct ResetCounterInstructionData {
+    pub proof: ValidityProof,
+    pub counter_value: u64,
+    pub account_meta: CompressedAccountMeta,
+}
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct CloseCounterInstructionData {
+    pub proof: ValidityProof,
+    pub counter_value: u64,
+    pub account_meta: CompressedAccountMeta,
+}
+
+#[derive(Debug, Clone)]
+pub enum CounterError {
+    Unauthorized,
+    Overflow,
+    Underflow,
+}
+
+impl From<CounterError> for ProgramError {
+    fn from(e: CounterError) -> Self {
+        match e {
+            CounterError::Unauthorized => ProgramError::Custom(1),
+            CounterError::Overflow => ProgramError::Custom(2),
+            CounterError::Underflow => ProgramError::Custom(3),
+        }
+    }
+}
+
 pub fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -573,11 +673,21 @@ pub fn process_instruction(
     if program_id != &crate::ID {
         return Err(ProgramError::IncorrectProgramId);
     }
+    if instruction_data.is_empty() {
+        return Err(ProgramError::InvalidInstructionData);
+    }
 
-    let instruction_data = CreateCounterInstructionData::try_from_slice(instruction_data)
+    let discriminator = InstructionType::try_from(instruction_data[0])
         .map_err(|_| ProgramError::InvalidInstructionData)?;
 
-    create_counter(accounts, instruction_data)
+    match discriminator {
+        InstructionType::CreateCounter => {
+            let instruction_data =
+                CreateCounterInstructionData::try_from_slice(&instruction_data[1..])
+                    .map_err(|_| ProgramError::InvalidInstructionData)?;
+            create_counter(accounts, instruction_data)
+        }
+    }
 }
 
 pub fn create_counter(
@@ -610,16 +720,14 @@ pub fn create_counter(
     counter.owner = *signer.key();
     counter.value = 0;
 
-    let cpi = CpiInputs::new_with_address(
-        instruction_data.proof,
-        vec![counter.to_account_info().map_err(ProgramError::from)?],
-        vec![new_address_params],
-    );
-    cpi.invoke_light_system_program(light_cpi_accounts)
-        .map_err(ProgramError::from)?;
+    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+        .with_light_account(counter)?
+        .with_new_addresses(&[new_address_params])
+        .invoke(light_cpi_accounts)?;
 
     Ok(())
 }
+
 ```
 {% endtab %}
 {% endtabs %}
