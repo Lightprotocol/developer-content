@@ -164,14 +164,14 @@ Compressed accounts store hashes on-chain, not full data. Programs reconstruct a
 
 **Parameters for `LightAccount::new_mut()`:**
 
-* `crate::ID` is the program ID that owns the compressed account.
-* `account_meta` identifies the existing compressed account and specifies the output state tree from the instruction data (_Step 4_).
-* `DataAccount` contains the current account data. This input state is hashed for proof verification by the Light System Program.
+* `crate::ID` specifies the program's ID that owns the compressed account.
+* `account_meta` identifies the existing compressed account and specifies the output state tree from the instruction data (_Step 2_).
+* `DataAccount` contains the current account data. This input state is hashed by `new_mut()`.
 
-After loading the compressed account, your custom program modifies the account fields. In this example it's `my_compressed_account.message = new_message`.
+When `new_mut()` returns, modify the account fields to define the output state. The example shows `my_compressed_account.message = new_message`.
 
 {% hint style="info" %}
-`new_mut()` hashes the input state for proof verification and creates the output state with updated data. The output state is hashed in the next step via CPI by the Light System Program.
+The output state is hashed in the next step via CPI by the Light System Program. `new_mut()` only hashes the input state.&#x20;
 {% endhint %}
 {% endstep %}
 
