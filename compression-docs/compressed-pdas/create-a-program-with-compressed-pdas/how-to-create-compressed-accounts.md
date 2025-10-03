@@ -77,7 +77,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
     derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 ```
 
-**`CPISigner`** is the configuration struct for CPI's to Light System Program.&#x20;
+**`CPISigner`** is the configuration struct for CPI's to the Light System Program.&#x20;
 
 * CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`&#x20;
 * `derive_light_cpi_signer!` derives this PDA for you at compile time.
@@ -202,7 +202,7 @@ The address is created via CPI to the Light System Program in _Step 8_.
 The parameters return:
 
 * The `address`, derived with `address_seed` + `address_tree_pubkey`.
-* The `address_seed`, which is passed to the Light System Program to create the address (_Step 87_.
+* The `address_seed`, which is passed to the Light System Program to create the address (_Step 8)_.
 {% endstep %}
 
 {% step %}
@@ -251,8 +251,8 @@ let mut my_compressed_account
 
 After initialization, set custom account fields defined in your compressed account struct in `DataAccount` (_Step 3_).
 
-* `my_compressed_account.owner`: Set to the signer's pubkey
-* `my_compressed_account.data`: Set to your custom string data
+* `my_compressed_account.owner` is set to the signer's pubkey
+* `my_compressed_account.data` is set to custom string data
 {% endstep %}
 
 {% step %}
@@ -260,7 +260,7 @@ After initialization, set custom account fields defined in your compressed accou
 
 The Light System Program CPI creates the compressed account and its hash.
 
-Invoke the Light System program with&#x20;
+Build the CPI instruction with&#x20;
 
 1. `proof` from [_Step 4_](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account) _Instruction Data_,
 2. `address_seed` from [_Step 5_](how-to-create-compressed-accounts.md#derive-address) _Derive Address_, and
@@ -289,11 +289,12 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-2)[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**Parameters for new\_cpi():**
+**CPI instruction builder**:
 
-* `with_light_account` adds the compressed account data from `LightAccount` to the CPI instruction data.
-* `with_new_addresses` adds the address seed and metadata to the CPI instruction data.&#x20;
-* `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
+* `new_cpi()` initializes the CPI instruction with the `proof` from _Step 4_.
+* `with_light_account` adds the compressed account data from `LightAccount` (Step 7) to the CPI instruction data
+* `with_new_addresses` adds the `address_seed` (_Step 5_) and metadata to the CPI instruction data
+* `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts.`
 
 {% hint style="info" %}
 The Light System Program&#x20;

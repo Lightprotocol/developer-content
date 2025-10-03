@@ -9,18 +9,6 @@ description: >-
 
 Learn how to build a Rust client to create, update, and close compressed accounts. Find a [full code example](rust.md#full-code-example) at the end for create, update and close.
 
-### What you will learn
-
-This guide breaks down each client implementation step:
-
-1. **Dependencies**: Add `light-program-test`, `light-sdk`, and serialization libraries to test and interact with compressed accounts.
-2. **Environment**: Set up test validator with `LightProgramTest` that provides prover, indexer, and auto-funded payer.
-3. **Tree Configuration**: Fetch address and state tree public keys from the test environment.
-4. **Derive persistent address** from seeds, address tree, and program ID to set a unique identifier to your compressed account.
-5. **Validity Proof**: Fetch zero-knowledge proof from RPC that proves address doesn't exist (create) or account hash exists (update/close).
-6. **Pack Accounts**: Combine program accounts with Light System Program infrastructure accounts with u8 indices instead of pubkeys to reduce instruction size.
-7. **Instruction Data**: Build instruction with validity proof, packed tree indices, and custom account data.
-
 ### Client Flow Overview
 
 <pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
