@@ -19,8 +19,9 @@ The old hash is nullified to prevent double spending.
 {% endhint %}
 
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
+   ├─ Fetch current account data 
    ├─ Fetch validity proof (proves that account exists)
-   ├─ Build instruction with proof, current data and metadata
+   ├─ Build instruction with proof, current data, new data and metadata
    └─ Send transaction
       │
 <strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
@@ -28,8 +29,9 @@ The old hash is nullified to prevent double spending.
 </strong><strong>      ├─ Modify compressed account data (output)
 </strong><strong>      │
 </strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify and nullify input hash 
-         ├─ Create new compressed account hash with updated data (output hash) 
+</strong>         ├─ Verify input hash 
+         ├─ Nullify input hash 
+         ├─ Create output hash with updated data
          └─ Complete atomic account update
 </code></pre>
 
@@ -37,7 +39,7 @@ The old hash is nullified to prevent double spending.
 {% step %}
 ### Program Setup
 
-The dependencies, constants and compressed account struct are identical for create and updates for compressed accounts.
+The dependencies, constants and compressed account struct are identical for compressed account creation and updates.
 
 <details>
 
@@ -129,9 +131,9 @@ pub struct InstructionData {
   * `address` specifies the account's derived address
   * `output_state_tree_index` specifies the state tree that will store the new account hash
 
-3. **Updated account data**
+3. **Update account data**
 
-* `new_value` specifies pdated data for the compressed account. This depends on your program logic.
+* `new_value` specifies updated data for the compressed account. This depends on your program logic.
 
 {% hint style="info" %}
 Packed structs like  `PackedStateTreeInfo` use indices to point to `remaining_accounts` to reduce transaction size. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
@@ -144,19 +146,19 @@ Packed structs like  `PackedStateTreeInfo` use indices to point to `remaining_ac
 Load the compressed account with `LightAccount::new_mut()`.
 
 {% hint style="info" %}
-The program must reconstruct the full account data from values provided by the client to verify the hash matches the on-chain state. Compressed accounts don't store data directly in on-chain accounts, unlike regular Solana accounts.&#x20;
+Compressed accounts store hashes on-chain, not full data. Programs reconstruct account data from client-provided values to verify the input hash.
 {% endhint %}
 
 <pre class="language-rust"><code class="lang-rust">let mut my_compressed_account
         = LightAccount::&#x3C;'_, DataAccount>::new_mut(
 <strong>    &#x26;crate::ID,
 </strong><strong>    &#x26;account_meta,
-</strong><strong>    DataAccount { // current state provided from client
+</strong><strong>    DataAccount {
 </strong><strong>        owner: *signer.key,
-</strong><strong>        message: current_message, // must match on-chain hash
+</strong><strong>        message: current_message, 
 </strong><strong>    },
 </strong>)?;
-// modify fields
+
 <strong>my_compressed_account.message = new_message;
 </strong></code></pre>
 
@@ -166,7 +168,7 @@ The program must reconstruct the full account data from values provided by the c
 * `account_meta` identifies the existing compressed account and specifies the output state tree from the instruction data (_Step 4_).
 * `DataAccount` contains the current account data. This input state is hashed for proof verification by the Light System Program.
 
-After loading, modify the account fields based on your program logic. In this example it's `my_compressed_account.message = new_message`.
+After loading the compressed account, your custom program modifies the account fields. In this example it's `my_compressed_account.message = new_message`.
 
 {% hint style="info" %}
 `new_mut()` hashes the input state for proof verification and creates the output state with updated data. The output state is hashed in the next step via CPI by the Light System Program.

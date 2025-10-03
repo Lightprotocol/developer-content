@@ -245,7 +245,7 @@ let mut my_compressed_account
 
 `LightAccount` creates a wrapper struct for the custom data (`DataAccount`) and metadata:
 
-* The `owner` is the program ID that owns the compressed account.
+* `owner` specifies the program's ID that owns the compressed account.
 * The `address` assigned to the compressed account (derived in _Step 5_).
 * `output_state_tree_index` specifies the state tree that will store the compressed account hash. We use the index passed in the instruction data (_Step 4)_.
 
