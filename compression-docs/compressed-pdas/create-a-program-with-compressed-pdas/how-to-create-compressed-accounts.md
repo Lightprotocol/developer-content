@@ -153,7 +153,7 @@ pub struct InstructionData {
 
 1. **Non-inclusion Proof**
 
-* `ValidityProof` proves that an address does not exist yet in the specified address tree (non-inclusion).  Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* `ValidityProof` proves that an address does not exist yet in the specified address tree (non-inclusion).  Clients fetch proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify Merkle trees to store address and account hash**
 
