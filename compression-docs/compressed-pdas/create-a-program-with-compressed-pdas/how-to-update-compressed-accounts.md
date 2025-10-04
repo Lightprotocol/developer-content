@@ -50,11 +50,26 @@ The dependencies, constants and compressed account struct are identical for comp
 Add dependencies to your program.
 
 ```toml
+// Anchor
 [dependencies]
 light-sdk = "0.13.0"
-// anchor_lang = "0.31.1"
-// light-sdk-pinocchio = "0.13.0"
-// pinocchio = "0.9"
+anchor_lang = "0.31.1"
+```
+
+```toml
+// Native Rust
+[dependencies]
+light-sdk = "0.13.0"
+borsh = "0.10.0"
+solana-sdk = "2.2"
+```
+
+```toml
+// Pinocchio
+[dependencies]
+light-sdk-pinocchio = "0.13.0"
+borsh = "0.10.0"
+pinocchio = "0.9"
 ```
 
 * The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.&#x20;
