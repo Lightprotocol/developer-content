@@ -50,6 +50,7 @@ anchor_lang = "0.31.1"
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
+solana-sdk = "2.2"
 ```
 {% endtab %}
 
