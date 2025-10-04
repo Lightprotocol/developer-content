@@ -11,26 +11,97 @@ Learn how to build a Rust client to create, update, and close compressed account
 
 ### Client Flow Overview
 
+{% tabs %}
+{% tab title="Create" %}
 <pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
-</strong><strong>   ├─ Derive unique address for the compressed account (create only)
-</strong><strong>   ├─ Get validity proof from RPC
-</strong><strong>   │  ├─ Create: Prove address doesn't exist (non-inclusion)
-</strong><strong>   │  ├─ Update/Close: Prove account exists (inclusion)
-</strong><strong>   ├─ Prepare address and state tree accounts for the transaction
-</strong><strong>   ├─ Build instruction with proof and account data
+</strong><strong>   ├─ Derive unique compressed account address
+</strong><strong>   ├─ Fetch validity proof (proves that address doesn't exist)
+</strong><strong>   ├─ Pack accounts and build instruction
 </strong><strong>   └─ Send transaction
 </strong>      │
       𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Re-derive the address
-      ├─ Parse address and state tree accounts from transaction
-      ├─ Initialize compressed account with data and metadata
+      ├─ Derive and check address
+      ├─ Initialize compressed account
       │
       └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify address non-existence proof
-         ├─ Register address in address merkle tree
-         ├─ Create compressed account hash in state merkle tree
+         ├─ Verify validity proof (non-inclusion)
+         ├─ Create address (address tree)
+         ├─ Create compressed account (state tree)
          └─ Complete atomic account creation
 </code></pre>
+{% endtab %}
+
+{% tab title="Update" %}
+<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
+</strong><strong>   ├─ Fetch current account data
+</strong><strong>   ├─ Fetch validity proof (proves that account exists)
+</strong><strong>   ├─ Build instruction with proof, current data, new data and metadata
+</strong><strong>   └─ Send transaction
+</strong>      │
+      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+      ├─ Reconstruct existing compressed account hash (input hash)
+      ├─ Modify compressed account data (output)
+      │
+      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+         ├─ Verify and nullify input hash
+         ├─ Create new compressed account hash with updated data (output hash)
+         └─ Complete atomic account update
+</code></pre>
+{% endtab %}
+
+{% tab title="Close" %}
+<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
+</strong><strong>   ├─ Fetch current account data
+</strong><strong>   ├─ Fetch validity proof (proves that account exists)
+</strong><strong>   ├─ Build instruction with proof, current data and metadata
+</strong><strong>   └─ Send transaction
+</strong>      │
+      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+      ├─ Reconstruct existing compressed account hash (input hash)
+      │
+      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+         ├─ Verify input hash
+         ├─ Nullify input hash
+         └─ Create DEFAULT_DATA_HASH with zero discriminator (output)
+</code></pre>
+{% endtab %}
+
+{% tab title="Reinitialize" %}
+<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
+</strong><strong>   ├─ Fetch closed account metadata
+</strong><strong>   ├─ Fetch validity proof (proves closed account hash exists)
+</strong><strong>   ├─ Build instruction with proof and new data
+</strong><strong>   └─ Send transaction
+</strong>      │
+      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+      ├─ Reconstruct existing closed account hash (input hash)
+      ├─ Initialize account with new data (output)
+      │
+      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+         ├─ Verify input hash exists
+         ├─ Nullify input hash
+         ├─ Create new account with new hash and default values at same address
+         └─ Complete atomic account reinitialization
+</code></pre>
+{% endtab %}
+
+{% tab title="Burn" %}
+<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
+</strong><strong>   ├─ Fetch current account data
+</strong><strong>   ├─ Fetch validity proof (proves that account exists)
+</strong><strong>   ├─ Build instruction with proof and current data
+</strong><strong>   └─ Send transaction
+</strong>      │
+      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+      ├─ Reconstruct existing compressed account hash (input hash)
+      │
+      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+         ├─ Verify input hash
+         ├─ Nullify input hash (permanent)
+         └─ No output state created
+</code></pre>
+{% endtab %}
+{% endtabs %}
 
 ## Get Started
 
