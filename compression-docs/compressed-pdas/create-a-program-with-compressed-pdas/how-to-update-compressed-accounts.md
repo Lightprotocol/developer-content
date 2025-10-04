@@ -205,7 +205,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **CPI instruction** :
 
-* `new_cpi()` initializes the CPI instruction with the `proof` from _Step 4_.
+* `new_cpi()` initializes the CPI instruction with the `proof` from _Step 4_ to prove inclusion of the compressed account.
 * `with_light_account` adds the modified compressed account from _Step 5_ to the CPI instruction data.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 
