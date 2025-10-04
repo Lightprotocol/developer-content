@@ -161,9 +161,9 @@ Packed structs like  `PackedStateTreeInfo` use indices to point to `remaining_ac
 {% endstep %}
 
 {% step %}
-### Instantiate Compressed Account
+### Update Compressed Account
 
-Instantiate the compressed account with `LightAccount::new_mut()`. `new_mut()` hashes the current account data and lets your program define the output state.
+Update the compressed account with `LightAccount::new_mut()`. `new_mut()` hashes the current account data and lets your program define the output state.
 
 <pre class="language-rust"><code class="lang-rust">let mut my_compressed_account
         = LightAccount::&#x3C;'_, DataAccount>::new_mut(
