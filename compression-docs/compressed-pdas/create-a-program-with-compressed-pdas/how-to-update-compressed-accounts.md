@@ -54,10 +54,10 @@ Add dependencies to your program.
 light-sdk = "0.13.0"
 // anchor_lang = "0.31.1"
 // light-sdk-pinocchio = "0.13.0"
-// pinocchio = "0.8.4"
+// pinocchio = "0.9"
 ```
 
-* The `light-sdk` provides macros, wrappers and CPI interface to interact with compressed accounts.
+* The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.&#x20;
 * Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).
 
 #### Constants
@@ -74,7 +74,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.
 
 * CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
-* `derive_light_cpi_signer!` derives this PDA for you at compile time.
+* `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 
 #### Compressed Account
 
@@ -98,7 +98,7 @@ pub struct DataAccount {
 Besides the standard traits (`Clone`, `Debug`, `Default`), the following are required:
 
 * `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` trait gives struct unique type ID (8 bytes) for deserialization
+* `LightDiscriminator` trait gives struct unique type ID (8 bytes) to distinguish account types.
 
 {% hint style="info" %}
 The traits are required for `LightAccount`. `LightAccount` wraps `DataAccount` to set the discriminator and create the compressed account's data hash.
@@ -122,14 +122,14 @@ pub struct InstructionData {
 
 1. **Inclusion Proof**
 
-* `ValidityProof` proves that the account exists in the state tree (inclusion).  This proof is [passed by the client](#user-content-fn-1)[^1].
+* `ValidityProof` proves that the account exists in the state tree (inclusion).  Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify existing account and output state tree**
 
 * `CompressedAccountMeta` identifies the existing compressed account and specifies the output state tree with these fields:
-  * `tree_info: PackedStateTreeInfo` locates the old account hash (merkle tree pubkey index, leaf index, root index) for nullification
-  * `address` specifies the account's derived address
-  * `output_state_tree_index` specifies the state tree that will store the new account hash
+  * `tree_info: PackedStateTreeInfo` locates the old account hash (merkle tree pubkey index, leaf index, root index) for nullification.
+  * `address` specifies the account's derived address.
+  * `output_state_tree_index` specifies the state tree that will store the updated compressed account hash.
 
 3. **Update account data**
 
@@ -197,10 +197,10 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .invoke(light_cpi_accounts)?;
 ```
 
-**Set up CPI context with `CpiAccounts::new()`:**
+**Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer.
-* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-2)[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-1)[^1].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **CPI instruction** :
@@ -552,9 +552,7 @@ pub fn increment_counter(
 {% endcolumn %}
 {% endcolumns %}
 
-[^1]: Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
-
-[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+[^1]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
     2. CPI Authority - Program-derived authority PDA
     3. Registered Program PDA - Registration account for your program
     4. Noop Program - For transaction logging

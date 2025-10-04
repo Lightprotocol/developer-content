@@ -7,9 +7,10 @@ hidden: true
 
 # How to Create Compressed Accounts
 
-Compressed accounts and addresses are created via CPI to the Light System Program.&#x20;
+Compressed accounts and addresses are created via CPI to the Light System Program. Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 
-Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+{% hint style="info" %}
+### Complete Create Compressed Account Flow
 
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Derive unique compressed account address
@@ -27,6 +28,7 @@ Find [full code examples of a counter program at the end](how-to-create-compress
          ├─ Create compressed account (state tree)
          └─ Complete atomic account creation
 </code></pre>
+{% endhint %}
 
 {% stepper %}
 {% step %}
@@ -56,12 +58,12 @@ borsh = "0.10.0"
 [dependencies]
 light-sdk-pinocchio = "0.13.0"
 borsh = "0.10.0"
-pinocchio = "0.8.4
+pinocchio = "0.9
 ```
 {% endtab %}
 {% endtabs %}
 
-* The `light-sdk` provides macros, wrappers and CPI interface to interact with compressed accounts.&#x20;
+* The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.&#x20;
 * Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).&#x20;
 {% endstep %}
 
@@ -80,7 +82,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.&#x20;
 
 * CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`&#x20;
-* `derive_light_cpi_signer!` derives this PDA for you at compile time.
+* `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 {% endstep %}
 
 {% step %}
@@ -112,8 +114,8 @@ pub struct DataAccount {
     Clone, 
     Debug, 
     Default, 
-    BorshSerialize, // AnchorSerialize
-    BorshDeserialize, // AnchorDeserialize 
+    BorshSerialize,
+    BorshDeserialize,
     LightDiscriminator
 )]
 pub struct DataAccount {
@@ -127,7 +129,7 @@ pub struct DataAccount {
 Besides the standard traits (`Clone`, `Debug`, `Default`), the following are required:
 
 * `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` trait gives struct unique type ID (8 bytes) for deserialization
+* `LightDiscriminator` trait gives struct unique type ID (8 bytes) to distinguish account types.
 
 {% hint style="info" %}
 The traits are required for `LightAccount`. `LightAccount` wraps `DataAccount` in Step 7 to set the discriminator and create the compressed account's data hash.       &#x20;
@@ -150,12 +152,12 @@ pub struct InstructionData {
 
 1. **Non-inclusion Proof**
 
-* `ValidityProof` proves that an address does not exist yet in the specified address tree (non-inclusion).  This proof is [passed by the client](#user-content-fn-1)[^1].
+* `ValidityProof` proves that an address does not exist yet in the specified address tree (non-inclusion).  Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify Merkle trees to store address and account hash**
 
 * `PackedAddressTreeInfo` specifies the index to the address tree account that is used to derive the address in _Step 5_. The index must point to the correct address tree `AccountInfo` in `CpiAccounts`.
-* `output_state_tree_index` specifies which state tree will store the compressed account. hash.
+* `output_state_tree_index` specifies which state tree will store the compressed account hash.
 
 3. **Custom account data**
 
@@ -208,10 +210,10 @@ The parameters return:
 {% step %}
 ### Address Tree Check
 
-Verify the address tree pubkey matches the program's tree constant to ensure global uniqueness of an address.
+Verify that the address tree pubkey matches the program's tree constant to ensure global uniqueness of an address.
 
 {% hint style="info" %}
-An address is by default only unique to the program and the specific address tree. Without this check, the same seeds can be used in different address trees.
+Every address is unique, but the same seeds can be used to create different addresses in different address trees. To enforce that a compressed PDA can only be created once with the same seed, you must check the address tree pubkey.
 {% endhint %}
 
 ```rust
@@ -258,7 +260,7 @@ After initialization, set custom account fields defined in your compressed accou
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI creates the compressed account and its hash.
+The Light System Program CPI creates the compressed account and its address.
 
 Build the CPI instruction with&#x20;
 
@@ -281,10 +283,10 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .invoke(light_cpi_accounts)?;
 ```
 
-**Set up CPI context with `CpiAccounts::new()`:**
+**Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-2)[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-1)[^1].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **CPI instruction** :
@@ -746,9 +748,7 @@ pub fn create_counter(
 {% endcolumn %}
 {% endcolumns %}
 
-[^1]: Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
-
-[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+[^1]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
     2. CPI Authority - Program-derived authority PDA
     3. Registered Program PDA - Registration account for your program
     4. Noop Program - For transaction logging
