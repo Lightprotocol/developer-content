@@ -12,10 +12,9 @@ Compressed accounts are updated via CPI to the Light System Program.  Find [full
 {% hint style="success" %}
 Compressed account updates follow a UTXO pattern, unlike regular Solana accounts that overwrite data in place:
 
-* each update consumes the old account hash (input) and
+* each update consumes the existing account hash (input) and
 * produces a new hash with modified data (output).&#x20;
-
-The old hash is nullified to prevent double spending.
+* The existing hash is nullified to prevent double spending.
 {% endhint %}
 
 {% tabs %}
@@ -56,14 +55,14 @@ The dependencies, constants and compressed account struct are identical for comp
 Add dependencies to your program.
 
 ```toml
-// Anchor
+# Native Rust
 [dependencies]
 light-sdk = "0.13.0"
 anchor_lang = "0.31.1"
 ```
 
 ```toml
-// Native Rust
+# Native Rust
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
@@ -71,7 +70,7 @@ solana-sdk = "2.2"
 ```
 
 ```toml
-// Pinocchio
+# Pinocchio
 [dependencies]
 light-sdk-pinocchio = "0.13.0"
 borsh = "0.10.0"
@@ -145,10 +144,10 @@ pub struct InstructionData {
 
 * `ValidityProof` proves that the account exists in the state tree (inclusion).  Clients fetch proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
-2. **Specify existing account and output state tree**
+2. **Specify input compressed account hash and output state tree**
 
-* `CompressedAccountMeta` locates the input compressed account hash and specifies the output state tree with these fields:
-  * `tree_info: PackedStateTreeInfo` locates the old account hash (merkle tree pubkey index, leaf index, root index) for nullification.
+* `CompressedAccountMeta` points to the input hash and specifies the output state tree with these fields:
+  * `tree_info: PackedStateTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) for nullification.
   * `address` specifies the account's derived address.
   * `output_state_tree_index` specifies the state tree that will store the updated compressed account hash.
 
@@ -162,13 +161,9 @@ Packed structs like  `PackedStateTreeInfo` use indices to point to `remaining_ac
 {% endstep %}
 
 {% step %}
-### Load Compressed Account
+### Instantiate Compressed Account
 
-Load the compressed account with `LightAccount::new_mut()`. `new_mut()` hashes the current account data and lets your program define the output state.
-
-{% hint style="info" %}
-Compressed accounts store hashes on-chain, not full data. Programs reconstruct account data from client-provided values to verify the input hash.
-{% endhint %}
+Instantiate the compressed account with `LightAccount::new_mut()`. `new_mut()` hashes the current account data and lets your program define the output state.
 
 <pre class="language-rust"><code class="lang-rust">let mut my_compressed_account
         = LightAccount::&#x3C;'_, DataAccount>::new_mut(
@@ -192,14 +187,14 @@ Compressed accounts store hashes on-chain, not full data. Programs reconstruct a
 When `new_mut()` returns, modify the account fields to define the output state. The example shows `my_compressed_account.message = new_message`.
 
 {% hint style="info" %}
-The output state is hashed in the next step via CPI by the Light System Program. `new_mut()` only hashes the input state.&#x20;
+The new state is hashed in the next step via CPI by the Light System Program. `new_mut()` only hashes the input state.&#x20;
 {% endhint %}
 {% endstep %}
 
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI nullifies the old and creates the updated compressed account hash.
+The Light System Program CPI nullifies the existing and creates the updated compressed account hash.
 
 Build the CPI instruction with
 
@@ -220,7 +215,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Set up `CpiAccounts::new()`:**
 
-* `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer.
+* `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer.
 * `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-1)[^1].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
