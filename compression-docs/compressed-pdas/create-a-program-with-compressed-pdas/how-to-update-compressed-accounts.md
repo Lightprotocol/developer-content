@@ -18,9 +18,8 @@ Compressed account updates follow a UTXO pattern, unlike regular Solana accounts
 The old hash is nullified to prevent double spending.
 {% endhint %}
 
-{% hint style="info" %}
-#### Complete Compressed Account Update
-
+{% tabs %}
+{% tab title="Complete Compressed Account Update Flow" %}
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Fetch current account data 
    ├─ Fetch validity proof (proves that account exists)
@@ -37,7 +36,10 @@ The old hash is nullified to prevent double spending.
          ├─ Create output hash with updated data
          └─ Complete atomic account update
 </code></pre>
-{% endhint %}
+{% endtab %}
+{% endtabs %}
+
+
 
 {% stepper %}
 {% step %}
