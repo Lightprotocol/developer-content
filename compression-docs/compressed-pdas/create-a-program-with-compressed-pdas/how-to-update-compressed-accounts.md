@@ -143,7 +143,7 @@ Packed structs like  `PackedStateTreeInfo` use indices to point to `remaining_ac
 {% step %}
 ### Load Compressed Account
 
-Load the compressed account with `LightAccount::new_mut()`.
+Load the compressed account with `LightAccount::new_mut()`. `new_mut()` hashes the current account data and lets your program define the output state.
 
 {% hint style="info" %}
 Compressed accounts store hashes on-chain, not full data. Programs reconstruct account data from client-provided values to verify the input hash.
