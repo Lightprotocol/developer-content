@@ -7,9 +7,7 @@ description: >-
 
 # Rust
 
-Learn how to build a Rust client to create, update, and close compressed accounts. Find a [full code example](rust.md#full-code-example) at the end for create, update and close.
-
-### Client Flow Overview
+Learn how to build a Rust client to create, update, and close compressed accounts.&#x20;
 
 {% tabs %}
 {% tab title="Create" %}
@@ -103,7 +101,9 @@ Learn how to build a Rust client to create, update, and close compressed account
 {% endtab %}
 {% endtabs %}
 
-## Get Started
+{% hint style="info" %}
+Find [full code examples for a counter program](rust.md#full-code-example) at the end for create, update and close.
+{% endhint %}
 
 {% stepper %}
 {% step %}

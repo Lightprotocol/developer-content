@@ -12,7 +12,7 @@ Compressed PDAs are derived using a specific program address and seed, like regu
 
 #### Compressed PDAs at a Glance
 
-<table data-view="cards"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Rent free PDAs</strong></td><td>Create accounts at program-derived addresses without upfront rent exempt balance.</td></tr><tr><td><strong>Full PDA Functionality</strong></td><td>Deterministic seed generation and program ownership.</td></tr><tr><td><strong>Composable</strong></td><td>CPI support between compressed and regular PDAs.</td></tr></tbody></table>
+<table data-view="cards"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Rent free PDAs</strong></td><td>Create accounts at program-derived addresses without upfront rent exempt balance.</td></tr><tr><td><strong>Full PDA Functionality</strong></td><td>Persistent unique identification and program ownership.</td></tr><tr><td><strong>Composable</strong></td><td>CPI support between compressed and regular PDAs.</td></tr></tbody></table>
 
 ### Start Building
 

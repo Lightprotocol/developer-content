@@ -7,7 +7,7 @@ hidden: true
 
 # How to Create Compressed Accounts
 
-Compressed accounts and addresses are created via CPI to the Light System Program. Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+Compressed accounts and addresses are created via CPI to the Light System Program.&#x20;
 
 {% tabs %}
 {% tab title="Complete Flow Compressed Account Creation" %}
@@ -29,6 +29,10 @@ Compressed accounts and addresses are created via CPI to the Light System Progra
 </code></pre>
 {% endtab %}
 {% endtabs %}
+
+{% hint style="success" %}
+Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+{% endhint %}
 
 {% stepper %}
 {% step %}

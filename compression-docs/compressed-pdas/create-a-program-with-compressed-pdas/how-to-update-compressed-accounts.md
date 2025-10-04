@@ -7,7 +7,7 @@ hidden: true
 
 # How to Update Compressed Accounts
 
-Compressed accounts are updated via CPI to the Light System Program.  Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+Compressed accounts are updated via CPI to the Light System Program. &#x20;
 
 {% hint style="success" %}
 Compressed account updates follow a UTXO pattern, unlike regular Solana accounts that overwrite data in place:
@@ -38,7 +38,9 @@ Compressed account updates follow a UTXO pattern, unlike regular Solana accounts
 {% endtab %}
 {% endtabs %}
 
-
+{% hint style="success" %}
+Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+{% endhint %}
 
 {% stepper %}
 {% step %}
