@@ -7,13 +7,13 @@ hidden: true
 
 # How to Close Compressed Accounts
 
-Compressed accounts are closed via CPI to the Light System Program. Once closed, you can reinitialize a compressed account or permanently burn it. A burned account cannot be reinitialized.
+Compressed accounts are closed via CPI to the Light System Program.&#x20;
 
-{% hint style="info" %}
-Compressed accounts are rent-free, wherefore no rent can be reclaimed after closing compressed account.
-{% endhint %}
+Once closed, you can reinitialize a compressed account or permanently burn it. A burned account cannot be reinitialized. Compressed accounts are rent-free, wherefore no rent can be reclaimed after closing compressed account.
 
+{% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+{% endhint %}
 
 {% tabs %}
 {% tab title="Close" %}

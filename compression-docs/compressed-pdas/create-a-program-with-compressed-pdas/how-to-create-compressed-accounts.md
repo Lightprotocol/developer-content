@@ -7,14 +7,19 @@ hidden: true
 
 # How to Create Compressed Accounts
 
-Compressed accounts and addresses are created via CPI to the Light System Program.&#x20;
+Compressed accounts and addresses are created via CPI to the Light System Program.
+
+Compressed accounts are identified by its address (optional) and account hash. The account hash is not persistent and changes with every write to the account.
+
+* For Solana PDA like behavior your compressed account needs an address as persistent identifier.
+* For example compressed token accounts do not need addresses. Learn [how to create compressed token accounts here](../../compressed-tokens/cookbook/how-to-create-compressed-token-accounts.md).
 
 {% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
 {% tabs %}
-{% tab title="Complete Flow Compressed Account Creation" %}
+{% tab title="Create Compressed Account Complete Flow" %}
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Derive unique compressed account address
    ├─ Fetch validity proof (proves that address doesn't exist)
@@ -178,13 +183,6 @@ Packed structs like `PackedAddressTreeInfo` use indices to point to `remaining_a
 
 Derive the address as persistent unique identifier for the compressed account.
 
-{% hint style="info" %}
-Compressed accounts are identified by its address (optional) and account hash. The account hash is not persistent and changes with every write to the account.
-
-* For Solana PDA like behavior your compressed account needs an address as persistent identifier.
-* For example compressed token accounts do not need addresses. Learn how to create compressed token accounts [here](../../compressed-tokens/cookbook/how-to-create-compressed-token-accounts.md).
-{% endhint %}
-
 <pre class="language-rust"><code class="lang-rust">let address_merkle_tree_pubkey =
     address_tree_info.get_tree_pubkey(&#x26;light_cpi_accounts)?;
     
@@ -304,10 +302,10 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-2)[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**CPI instruction** :
+**Build the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` from _Step 4_.
-* `with_light_account` adds the compressed account data from `LightAccount` (Step 7) to the CPI instruction data
+* `new_cpi()` initializes the CPI instruction with the `proof` to prove  that an address does not exist yet in the specified address tree (non-inclusion) _- defined in the Instruction Data (Step 4)._
+* `with_light_account` adds `LightAccount` with the initial compressed account data from  to the CPI instruction _- defined in Step 7_.
 * `with_new_addresses` adds the `address_seed` (_Step 5_) and metadata to the CPI instruction data
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts.`
 {% endstep %}

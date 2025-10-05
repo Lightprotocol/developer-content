@@ -9,16 +9,18 @@ hidden: true
 
 Compressed accounts are updated via CPI to the Light System Program. &#x20;
 
-{% hint style="success" %}
 Compressed account updates follow a UTXO pattern, unlike regular Solana accounts that overwrite data in place:
 
 * each update consumes the existing account hash (input) and
-* produces a new hash with modified data (output).&#x20;
-* The existing hash is nullified to prevent double spending.
+* produces a new account hash with modified data (output).
+* The existing account hash is nullified to remove state (prevents double spending).
+
+{% hint style="success" %}
+Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
 {% tabs %}
-{% tab title="Complete Compressed Account Update Flow" %}
+{% tab title="Update Compressed Account Complete Flow" %}
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Fetch current account data 
    ├─ Fetch validity proof (proves that account exists)
@@ -37,10 +39,6 @@ Compressed account updates follow a UTXO pattern, unlike regular Solana accounts
 </code></pre>
 {% endtab %}
 {% endtabs %}
-
-{% hint style="success" %}
-Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
-{% endhint %}
 
 {% stepper %}
 {% step %}
@@ -167,6 +165,10 @@ Packed structs like  `PackedStateTreeInfo` use indices to point to `remaining_ac
 
 Update the compressed account with `LightAccount::new_mut()`. `new_mut()` hashes the current account data and lets your program define the output state.
 
+{% hint style="info" %}
+`new_mut()` only hashes the input state. The output state is hashed in the next step when the `LightAccount` is added to the CPI instruction for the CPI to the Light System Program
+{% endhint %}
+
 <pre class="language-rust"><code class="lang-rust">let mut my_compressed_account
         = LightAccount::&#x3C;'_, DataAccount>::new_mut(
 <strong>    &#x26;crate::ID,
@@ -186,11 +188,9 @@ Update the compressed account with `LightAccount::new_mut()`. `new_mut()` hashes
 * `account_meta` identifies the existing compressed account and specifies the output state tree from the instruction data (_Step 2_).
 * `DataAccount` contains the current account data. This input state is hashed by `new_mut()`.
 
-When `new_mut()` returns, modify the account fields to define the output state. The example shows `my_compressed_account.message = new_message`.
+**Define the Output State:**
 
-{% hint style="info" %}
-The new state is hashed in the next step via CPI by the Light System Program. `new_mut()` only hashes the input state.&#x20;
-{% endhint %}
+When `new_mut()` returns, modify the account fields to define the output state. The example shows `my_compressed_account.message = new_message`.
 {% endstep %}
 
 {% step %}
@@ -198,10 +198,13 @@ The new state is hashed in the next step via CPI by the Light System Program. `n
 
 The Light System Program CPI nullifies the existing and creates the updated compressed account hash.
 
-Build the CPI instruction with
+{% hint style="info" %}
+The Light System Program
 
-1. `proof` from _Step 4_ _Instruction Data_, and
-2. the updated data in `my_compressed_account` from _Step 5_ _Load Compressed Account_.
+* validates the inclusion proof (account exists in state tree),
+* nullifies the existing account hash in the state tree (input), and
+* appends the updated account hash to the state tree (output).
+{% endhint %}
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
@@ -219,21 +222,13 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer.
 * `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-1)[^1].
-* `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
+* `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants (_Step 1_).
 
-**CPI instruction** :
+**Build the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` from _Step 4_ to prove inclusion of the compressed account.
-* `with_light_account` adds the modified compressed account from _Step 5_ to the CPI instruction data.
+* `new_cpi()` initializes the CPI instruction with the `proof` to prove that the account exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
+* `with_light_account` adds `LightAccount` with the modified compressed account data to the CPI instruction data _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
-
-{% hint style="info" %}
-The Light System Program
-
-* validates the inclusion proof (account exists in state tree),
-* nullifies the old account hash in the state tree (input), and
-* appends the updated account hash to the state tree (output).
-{% endhint %}
 {% endstep %}
 {% endstepper %}
 
@@ -247,7 +242,7 @@ light init testprogram
 ```
 
 {% hint style="warning" %}
-For errors see [this page](https://www.zkcompression.com/resources/error-cheatsheet).
+For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
 {% endhint %}
 
 {% tabs %}
