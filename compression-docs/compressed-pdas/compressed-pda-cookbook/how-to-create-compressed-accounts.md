@@ -331,9 +331,6 @@ Find the [source code for this example ](https://github.com/Lightprotocol/progra
 {% endhint %}
 
 ```rust
-#![allow(unexpected_cfgs)]
-#![allow(deprecated)]
-
 use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
 use light_sdk::{
     account::LightAccount,
@@ -425,8 +422,6 @@ Find the [source code for this example here](https://github.com/Lightprotocol/pr
 {% endhint %}
 
 ```rust
-#![allow(unexpected_cfgs)]
-
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey;
 use light_sdk::{
@@ -559,8 +554,6 @@ Find the [source code for this example here](https://github.com/Lightprotocol/pr
 {% endhint %}
 
 ```rust
-#![allow(unexpected_cfgs)]
-
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey_array;
 use light_sdk_pinocchio::{
