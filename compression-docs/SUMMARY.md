@@ -77,6 +77,7 @@
   * [Validity Proofs](https://www.zkcompression.com/learn/core-concepts/compressed-account-model#validity-proofs)
   * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
   * [Considerations](learn/core-concepts/considerations.md)
+  * [State Cost per Transaction](learn/core-concepts/considerations.md#state-cost-per-transaction)
 * [Node Operators](learn/node-operators.md)
 
 ## References
