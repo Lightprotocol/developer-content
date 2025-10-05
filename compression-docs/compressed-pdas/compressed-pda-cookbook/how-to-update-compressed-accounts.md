@@ -55,14 +55,12 @@ The dependencies, constants and compressed account struct are identical for comp
 Add dependencies to your program.
 
 ```toml
-# Native Rust
 [dependencies]
 light-sdk = "0.13.0"
 anchor_lang = "0.31.1"
 ```
 
 ```toml
-# Native Rust
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
@@ -70,14 +68,13 @@ solana-sdk = "2.2"
 ```
 
 ```toml
-# Pinocchio
 [dependencies]
 light-sdk-pinocchio = "0.13.0"
 borsh = "0.10.0"
 pinocchio = "0.9"
 ```
 
-* The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.&#x20;
+* The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.
 * Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).
 
 #### Constants
@@ -118,10 +115,10 @@ pub struct DataAccount {
 Besides the standard traits (`Clone`, `Debug`, `Default`), the following are required:
 
 * `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` trait gives struct unique type ID (8 bytes) to distinguish account types.
+* `LightDiscriminator` implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
 
 {% hint style="info" %}
-The traits are required for `LightAccount`. `LightAccount` wraps `DataAccount` to set the discriminator and create the compressed account's data hash.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `DataAccount` in Step 7 to set the discriminator and create the compressed account's data.
 {% endhint %}
 
 </details>
@@ -221,7 +218,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer.
-* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-1)[^1].
+* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-2)[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants (_Step 1_).
 
 **Build and invoke the CPI instruction**:
@@ -565,7 +562,9 @@ pub fn increment_counter(
 {% endcolumn %}
 {% endcolumns %}
 
-[^1]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+[^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
+
+[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
     2. CPI Authority - Program-derived authority PDA
     3. Registered Program PDA - Registration account for your program
     4. Noop Program - For transaction logging
