@@ -169,7 +169,7 @@ pub struct InstructionData {
 * `PackedAddressTreeInfo` specifies the index to the address tree account that is used to derive the address in _Step 5_. The index must point to the correct address tree `AccountInfo` in `CpiAccounts`.
 * `output_state_tree_index` points to the state tree `AccountInfo` that will store the compressed account hash.
 
-3. **Custom account data**
+3. **Initial account data**
 
 * `message` defines data to include in the compressed account. This depends on your program logic.
 

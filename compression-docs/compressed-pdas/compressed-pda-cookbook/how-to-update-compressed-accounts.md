@@ -546,7 +546,7 @@ pub fn increment_counter(
 {% endtab %}
 {% endtabs %}
 
-### Next steps
+## Next steps
 
 {% columns %}
 {% column %}
