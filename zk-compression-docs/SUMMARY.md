@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Introduction](README.md)
+* [CLAUDE.md](claude.md.md)
 * [Quickstart](../compression-docs/quickstart.md)
 * [Support](../compression-docs/support.md)
 * [Event: 1000x Hackathon Sidetracks](../compression-docs/event-1000x-hackathon-sidetracks.md)
@@ -88,7 +89,6 @@
 * [Whitepaper](../compression-docs/references/whitepaper.md)
 * [Terminology](../compression-docs/references/terminology.md)
 * [Security](../compression-docs/references/security.md)
-* [CLAUDE.md](references/claude.md.md)
 
 ## Links
 
