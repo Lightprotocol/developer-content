@@ -9,7 +9,7 @@ hidden: true
 
 Compressed accounts are closed via CPI to the Light System Program.&#x20;
 
-When a compressed account is closed, it's output hash consists of zero bytes to mark it as closed. Closed compressed accounts can be [reinitialized](how-to-reinitialize-compressed-accounts.md) at the same address with `new_empty()`.
+When a compressed account is closed, it's output hash consists of zero bytes to mark it as closed. Closed compressed accounts can be [reinitialized](how-to-reinitialize-compressed-accounts.md) at the same address with `LightAccount::new_empty()`.
 
 {% hint style="success" %}
 Compressed accounts are rent-free. No rent can be reclaimed after closing compressed accounts.
@@ -29,7 +29,9 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
 </strong><strong>    └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
 </strong>       ├─ Verify input hash
        ├─ Nullify input hash
-       └─ Append zero-byte hash to state tree (marks account as closed)
+       ├─ Append hash to state tree 
+       │  (marks account as closed with zero-bytes)
+       └─ Complete atomic account creation
 </code></pre>
 
 {% stepper %}
@@ -147,7 +149,7 @@ pub struct InstructionData {
 {% step %}
 ### Close Compressed Account
 
-Close the compressed account with `LightAccount::new_close()`. `new_close()` hashes the current account data as input state and creates output state with zero bytes and zero discriminator (`DEFAULT_DATA_HASH`).
+Close the compressed account with `LightAccount::new_close()`. `new_close()` hashes the current account data as input state and creates output state with zero bytes and zero discriminator.
 
 ```rust
 let my_compressed_account = LightAccount::<'_, DataAccount>::new_close(
