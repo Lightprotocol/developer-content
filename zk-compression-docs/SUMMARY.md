@@ -93,4 +93,5 @@
 ## Links
 
 * [GitHub](https://github.com/Lightprotocol)
+* [DeepWiki](https://deepwiki.com/Lightprotocol/light-protocol)
 * [Discord](https://discord.com/invite/CYvjBgzRFP)
