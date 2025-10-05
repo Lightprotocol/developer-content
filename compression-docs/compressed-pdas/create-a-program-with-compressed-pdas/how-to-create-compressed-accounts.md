@@ -1,7 +1,7 @@
 ---
 description: >-
   Complete guide to create compressed accounts in Solana programs with the
-  light-sdk. Includes a step-by-step guide and full code examples.
+  light-sdk crate. Includes a step-by-step guide and full code examples.
 hidden: true
 ---
 
@@ -54,7 +54,7 @@ anchor_lang = "0.31.1"
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
-solana-sdk = "2.2"
+solana-program   = "2.2"
 ```
 {% endtab %}
 
@@ -134,10 +134,10 @@ pub struct DataAccount {
 These traits are derived besides the standard traits (`Clone`, `Debug`, `Default`):
 
 * `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` trait gives struct unique type ID (8 bytes) to distinguish account types.
+* `LightDiscriminator` defines a unique type ID (8 bytes) to distinguish account types.
 
 {% hint style="info" %}
-The traits are required for `LightAccount`. `LightAccount` wraps `DataAccount` in Step 7 to set the discriminator and create the compressed account's data.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `DataAccount` in Step 7 to set the discriminator and create the compressed account's data.
 {% endhint %}
 {% endstep %}
 
@@ -162,7 +162,7 @@ pub struct InstructionData {
 2. **Specify Merkle trees to store address and account hash**
 
 * `PackedAddressTreeInfo` specifies the index to the address tree account that is used to derive the address in _Step 5_. The index must point to the correct address tree `AccountInfo` in `CpiAccounts`.
-* `output_state_tree_index` specifies which state tree will store the compressed account hash.
+* `output_state_tree_index` points to the state tree `AccountInfo` that will store the compressed account hash.
 
 3. **Custom account data**
 
@@ -179,7 +179,7 @@ Packed structs like `PackedAddressTreeInfo` use indices to point to `remaining_a
 Derive the address as persistent unique identifier for the compressed account.
 
 {% hint style="info" %}
-Compressed accounts are identified by its hash and optionally by an address. The account hash is not persistent and changes with every write to the account.
+Compressed accounts are identified by its address (optional) and account hash. The account hash is not persistent and changes with every write to the account.
 
 * For Solana PDA like behavior your compressed account needs an address as persistent identifier.
 * For example compressed token accounts do not need addresses. Learn how to create compressed token accounts [here](../../compressed-tokens/cookbook/how-to-create-compressed-token-accounts.md).
@@ -200,7 +200,7 @@ let program_id = crate::ID;
 
 **Parameters for `derive_address`:**
 
-* In this example, the `&custom_seeds` array contains program `SEED` and signer pubkey.&#x20;
+* In this example, the `&custom_seeds` array contains `SEED` and signer pubkey.&#x20;
 * `&address_tree_pubkey` is the public key of the address Merkle tree account retrieved via `get_tree_pubkey()`.
 * `&program_id`: The program's on-chain address set in constants _(Step 2)._
 
@@ -238,7 +238,7 @@ if address_tree != ALLOWED_ADDRESS_TREE {
 {% step %}
 ### Initialize Compressed Account
 
-Initialize the compressed account struct with `LightAccount::new_init()`. `new_init()` creates a new account wrapper and lets your program define the initial account data.
+Initialize the compressed account struct with `LightAccount::new_init()`. `new_init()` creates a `LightAccount` instance similar to anchor `Account` and lets your program define the initial account data.
 
 <pre class="language-rust"><code class="lang-rust">let owner = crate::ID;
 let mut my_compressed_account 
@@ -252,16 +252,16 @@ let mut my_compressed_account
 </strong><strong>my_compressed_account.data = data.to_string();
 </strong></code></pre>
 
-`LightAccount` creates a wrapper struct for the custom data (`DataAccount`) and metadata:
+Parameters for `LightAccount::new_init()`: &#x20;
 
 * `owner` specifies the program's ID that owns the compressed account.
 * The `address` assigned to the compressed account (derived in _Step 5_).
-* `output_state_tree_index` specifies the state tree that will store the compressed account hash. We use the index passed in the instruction data (_Step 4)_.
+* `output_state_tree_index` points to the state tree `AccountInfo` that will store the compressed account hash. We use the index passed in the instruction data (_Step 4)_.
 
 After initialization, set custom account fields defined in your compressed account struct in `DataAccount` (_Step 3_). In this example:
 
 * `my_compressed_account.owner` is set to the signer's pubkey
-* `my_compressed_account.data` is set to custom string data
+* `my_compressed_account.data` is set to custom string.
 {% endstep %}
 
 {% step %}
@@ -279,7 +279,7 @@ The Light System Program&#x20;
 
 Build the CPI instruction with&#x20;
 
-1. `proof` from [_Step 4_](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account) _Instruction Data_,
+1. `proof` from _Instruction Data_,
 2. `address_seed` from [_Step 5_](how-to-create-compressed-accounts.md#derive-address) _Derive Address_, and
 3. `my_compressed_account` from [_Step 7_](how-to-create-compressed-accounts.md#initialize-compressed-account) _Initialize Compressed Account_.
 
