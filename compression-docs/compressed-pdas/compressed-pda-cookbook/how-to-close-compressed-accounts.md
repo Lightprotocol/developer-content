@@ -7,16 +7,14 @@ hidden: true
 
 # How to Close Compressed Accounts
 
-Compressed accounts are closed via CPI to the Light System Program.&#x20;
+Compressed accounts are closed via CPI to the Light System Program. Closing an account nullifies the current state and creates a hash with zero bytes that marks the account as closed.
 
-Once closed, you can reinitialize a compressed account or permanently burn it. A burned account cannot be reinitialized. Compressed accounts are rent-free, wherefore no rent can be reclaimed after closing compressed account.
-
-{% hint style="success" %}
-Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+{% hint style="info" %}
+Closed accounts can be reinitialized at the same address with `new_empty()`.
 {% endhint %}
 
-{% tabs %}
-{% tab title="Close" %}
+Find full code examples of a counter program at the end for Anchor, native Rust, and Pinocchio.
+
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Fetch current account data
    ├─ Fetch validity proof (proves that account exists)
@@ -31,50 +29,12 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
          ├─ Nullify input hash
          └─ Create DEFAULT_DATA_HASH with zero discriminator (output)
 </code></pre>
-{% endtab %}
-
-{% tab title="Reinitialize" %}
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Fetch closed account metadata
-   ├─ Fetch validity proof (proves DEFAULT_DATA_HASH exists)
-   ├─ Build instruction with proof and new data
-   └─ Send transaction
-      │
-<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Reconstruct existing closed account hash (input hash)
-</strong><strong>      ├─ Initialize account with zero data
-</strong><strong>      │
-</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify DEFAULT_DATA_HASH exists
-         ├─ Nullify DEFAULT_DATA_HASH
-         ├─ Create new account hash with default values
-         └─ Complete atomic account reinitialization
-</code></pre>
-{% endtab %}
-
-{% tab title="Burn" %}
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Fetch current account data
-   ├─ Fetch validity proof (proves that account exists)
-   ├─ Build instruction with proof and current data
-   └─ Send transaction
-      │
-<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>      │
-</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify input hash
-         ├─ Nullify input hash (permanent)
-         └─ No output state created
-</code></pre>
-{% endtab %}
-{% endtabs %}
 
 {% stepper %}
 {% step %}
 ### Program Setup
 
-The dependencies, constants and compressed account struct are identical for create, update and closing of compressed accounts.
+The dependencies, constants and compressed account struct are identical for create and updates for compressed accounts.
 
 <details>
 
@@ -85,14 +45,12 @@ The dependencies, constants and compressed account struct are identical for crea
 Add dependencies to your program.
 
 ```toml
-// Anchor
 [dependencies]
 light-sdk = "0.13.0"
 anchor_lang = "0.31.1"
 ```
 
 ```toml
-// Native Rust
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
@@ -100,7 +58,6 @@ solana-sdk = "2.2"
 ```
 
 ```toml
-// Pinocchio
 [dependencies]
 light-sdk-pinocchio = "0.13.0"
 borsh = "0.10.0"
@@ -145,13 +102,13 @@ pub struct DataAccount {
 }
 ```
 
-Besides the standard traits (`Clone`, `Debug`, `Default`), the following are required:
+These traits are derived besides the standard traits (`Clone`, `Debug`, `Default`):
 
 * `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` trait gives struct unique type ID (8 bytes) to distinguish account types.
+* `LightDiscriminator` implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
 
 {% hint style="info" %}
-The traits are required for `LightAccount`. `LightAccount` wraps `DataAccount` to set the discriminator and create the compressed account's data hash.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `DataAccount` to set the discriminator and create the compressed account's data hash.
 {% endhint %}
 
 </details>
@@ -165,24 +122,31 @@ Define the instruction data with the following parameters:
 ```rust
 pub struct InstructionData {
     proof: ValidityProof,
-    my_compressed_account: MyCompressedAccount,
-    account_meta: CompressedAccountMeta, // CompressedAccountMetaBurn
+    account_meta: CompressedAccountMeta,
+    current_value: u64,
 }
 ```
 
-**`close_compressed_account` Parameters:**
+1. **Inclusion Proof**
 
-*
+* `ValidityProof` proves that the account exists in the state tree (inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+
+2. **Specify input hash and output state tree**
+
+* `CompressedAccountMeta` points to the input hash and output state tree:
+  * `tree_info: PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index) for nullification
+  * `address` specifies the account's derived address
+  * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed (the `DEFAULT_DATA_HASH`).
+
+3. **Current data for close**
+
+* `current_value` includes the current data to hash and verify the input state. This depends on your program logic.
 {% endstep %}
 
 {% step %}
 ### Close Compressed Account
 
-Close the compressed account with `LightAccount::new_close()`. `new_close()` hashes the current account data as input state and creates output state with zero's.
-
-{% hint style="info" %}
-A closed account can be reinitialized with `new_empty`.
-{% endhint %}
+Close the compressed account with `LightAccount::new_close()`. `new_close()` hashes the current account data as input state and creates output state with zero bytes and zero discriminator (`DEFAULT_DATA_HASH`).
 
 ```rust
 let my_compressed_account = LightAccount::<'_, DataAccount>::new_close(
@@ -198,69 +162,24 @@ let my_compressed_account = LightAccount::<'_, DataAccount>::new_close(
 **Parameters for `LightAccount::new_close()`:**
 
 * `crate::ID` specifies the program ID that owns the compressed account.
-* `account_meta` points to the existing account hash for nullification defined in  `CompressedAccountMeta` (_Step 2_)
+* `account_meta` locates the existing account hash for nullification from Instruction Data (_Step 2_).
 * `DataAccount` contains the current account data. This input state is hashed by `new_close()` and verified during CPI.
 
-{% hint style="info" %}
-`new_close()` creates output state with `DEFAULT_DATA_HASH` and zero discriminator. The Light System Program nullifies the old account hash and creates the new hash.
-{% endhint %}
-{% endstep %}
-
-{% step %}
-### Reinitialize Closed Account
-
-A compressed account can be reinitialized after close with `LightAccount::new_empty()`. This creates a new account at the same address with default values, effectively "reopening" a previously closed account.
-
-{% hint style="info" %}
-Closed accounts have `DEFAULT_DATA_HASH` with zero discriminator. `new_empty()` uses this constant as input to prove the account is closed. The Light System Program verifies the input hash and nullifies it to create a new account at the same addres&#x73;_._
-{% endhint %}
-
-```rust
-let my_compressed_account = LightAccount::<'_, DataAccount>::new_empty(
-    &crate::ID,
-    &account_meta,
-    DataAccount::default(),
-)?;
-```
-
-**Parameters for `LightAccount::new_empty()`:**
-
-* `&crate::ID`: Program ID to set authority for CPI to Light System program.
-* `&account_meta`: Account's state tree position metadata for the closed account address, defined in _Step 2_ Instruction Data.
-* `DataAccount::default()` contains default values for the reinitialized account data structure.
-{% endstep %}
-
-{% step %}
-### Burn Compressed Account
-
-A compressed account can be burned after reinitialize or close with `LightAccount::new_burn()`. A burned compressed account's address can't be reinitialized.
-
-```rust
-let my_compressed_account = LightAccount::<'_, DataAccount>::new_burn(
-    &crate::ID,
-    &account_meta, // use CompressedAccountMetaBurn in instruction data
-    DataAccount::default(),
-)?;
-```
-
-**Parameters for `LightAccount::new_burn()`:**
-
-* `crate::ID` specifies the program's ID that owns the compressed account.
-* `&account_meta` identifies the existing compressed account's state tree position via `CompressedAccountMetaBurn` (_Step 2 Instruction Data for `close_compressed_account`_).
-* `DataAccount::default()`contains default values for burn.
+`new_close` sets the flag `should_remove_data = true` to enforce the `DEFAULT_DATA_HASH` output during the CPI in the next step.
 {% endstep %}
 
 {% step %}
 ### Light System Program CPI
 
-The CPI pattern for `new_close`, `new_empty` and `new_burn` are identical. Invoke the Light System program to perform the respective operation on the compressed account with
+The Light System Program CPI closes the compressed account and creates the `DEFAULT_DATA_HASH`.
 
-1. `proof` from _Step 2_ _Instruction Data_, and
-2. `my_compressed_account` from _Step 3_ _Initialize Compressed Account_.
+{% hint style="info" %}
+The Light System Program
 
-<details>
-
-<summary>CPI Context and Instruction</summary>
+* validates the account exists in state tree with `proof`,
+* nullifies the input account hash, and
+* appends the `DEFAULT_DATA_HASH` with zero discriminator and zero bytes to the state tree.
+{% endhint %}
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
@@ -276,32 +195,21 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Set up `CpiAccounts::new()`:**
 
-* `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer
-* `ctx.remaining_accounts`: `AccountInfo` slice with Light System accounts\[^1].
-* `LIGHT_CPI_SIGNER`: Your program as CPI signer defined in Constants.
+* `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
+* `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**CPI instruction** :
+**Build and invoke the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` from _Step 4_ to prove inclusion of the compressed account.
-* `with_light_account` adds the respective account wrapper to the CPI instruction data:
-  * `new_close()` with current data to nullify
-  * `new_empty()` with default values for creation
-  * `new_burn()` with default values for permanent burn
+* `new_cpi()` initializes the CPI instruction with the `proof` to prove the compressed account exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
+* `with_light_account` adds the `LightAccount` wrapper configured to close the account with the `should_remove_data = true` flag _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
-
-</details>
-
-{% hint style="info" %}
-**Light System Program operations:**
-{% endhint %}
-
-<table><thead><tr><th width="120.250732421875">Operation</th><th>Validates Proof</th><th>Nullifies Input</th><th>Creates Output</th></tr></thead><tbody><tr><td><code>new_close()</code></td><td>Account exists in state tree</td><td>Existing<br>account hash</td><td>Closed Account Hash<br>(with zeros as value)</td></tr><tr><td><code>new_empty()</code></td><td>Account is closed</td><td>Closed Account Hash</td><td>New hash with default values</td></tr><tr><td><code>new_burn()</code></td><td>Account exists in state tree</td><td>Existing<br>account hash</td><td>No output state</td></tr></tbody></table>
 {% endstep %}
 {% endstepper %}
 
 ## Full Code Example
 
-The counter programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
+The counter programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first, or simply run:
 
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
@@ -609,10 +517,16 @@ pub fn close_counter(
 
 {% columns %}
 {% column %}
-
+{% content-ref url="../client-library/" %}
+[client-library](../client-library/)
+{% endcontent-ref %}
 {% endcolumn %}
 
 {% column %}
-
+{% content-ref url="how-to-reinitialize-compressed-accounts.md" %}
+[how-to-reinitialize-compressed-accounts.md](how-to-reinitialize-compressed-accounts.md)
+{% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
+
+[^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.

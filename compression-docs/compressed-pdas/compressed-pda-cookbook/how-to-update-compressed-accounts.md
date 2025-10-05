@@ -141,7 +141,7 @@ pub struct InstructionData {
 
 * `ValidityProof` proves that the account exists in the state tree (inclusion).  Clients fetch proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
-2. **Specify input compressed account hash and output state tree**
+2. **Specify input hash and output state tree**
 
 * `CompressedAccountMeta` points to the input hash and output state tree:
   * `tree_info: PackedStateTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) for nullification.
