@@ -298,7 +298,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-2)[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**Build the CPI instruction**:
+**Build and invoke the CPI instruction**:
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove  that an address does not exist yet in the specified address tree (non-inclusion) _- defined in the Instruction Data (Step 4)._
 * `with_light_account` adds the `LightAccount` wrapper with the initial compressed account data to the CPI instruction _- defined in Step 7_.
