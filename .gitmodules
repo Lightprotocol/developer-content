@@ -1,0 +1,12 @@
+[submodule "program-examples"]
+    path = program-examples
+    url = https://github.com/Lightprotocol/program-examples.git
+    branch = jorrit/update-sdk-version-0.15.0
+
+[submodule "light-protocol"]
+    path = light-protocol
+    url = https://github.com/Lightprotocol/light-protocol.git
+
+[submodule "cypherpunk-hackathon"]
+    path = cypherpunk-hackathon
+    url = https://github.com/Lightprotocol/cypherpunk-hackathon.git
