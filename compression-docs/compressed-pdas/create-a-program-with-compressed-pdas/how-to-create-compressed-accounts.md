@@ -131,13 +131,13 @@ pub struct DataAccount {
 {% endtab %}
 {% endtabs %}
 
-Besides the standard traits (`Clone`, `Debug`, `Default`), the following are required:
+These traits are derived besides the standard traits (`Clone`, `Debug`, `Default`):
 
 * `borsh` or `AnchorSerialize` to serialize account data.
 * `LightDiscriminator` trait gives struct unique type ID (8 bytes) to distinguish account types.
 
 {% hint style="info" %}
-The traits are required for `LightAccount`. `LightAccount` wraps `DataAccount` in Step 7 to set the discriminator and create the compressed account's data hash.       &#x20;
+The traits are required for `LightAccount`. `LightAccount` wraps `DataAccount` in Step 7 to set the discriminator and create the compressed account's data.
 {% endhint %}
 {% endstep %}
 
@@ -166,10 +166,10 @@ pub struct InstructionData {
 
 3. **Custom account data**
 
-* `message`: Data to include in the compressed account. This depends on your program logic.
+* `message` defines data to include in the compressed account. This depends on your program logic.
 
 {% hint style="info" %}
-Packed structs use indices to point to `remaining_accounts` to reduce transaction size. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
+Packed structs like `PackedAddressTreeInfo` use indices to point to `remaining_accounts` to reduce transaction size. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
 {% endhint %}
 {% endstep %}
 
@@ -187,7 +187,9 @@ Compressed accounts are identified by its hash and optionally by an address. The
 
 <pre class="language-rust"><code class="lang-rust">let address_merkle_tree_pubkey =
     address_tree_info.get_tree_pubkey(&#x26;light_cpi_accounts)?;
+    
 let custom_seeds = [SEED, ctx.accounts.signer.key().as_ref()];
+
 let program_id = crate::ID;
 <strong>let (address, address_seed) = derive_address(
 </strong><strong>    &#x26;custom_seeds,
@@ -267,6 +269,14 @@ After initialization, set custom account fields defined in your compressed accou
 
 The Light System Program CPI creates the compressed account and its address.
 
+{% hint style="info" %}
+The Light System Program&#x20;
+
+* verifies the `proof` against the address tree's Merkle root,
+* adds the address to the address tree, and
+* appends the compressed account hash to the state tree.
+{% endhint %}
+
 Build the CPI instruction with&#x20;
 
 1. `proof` from [_Step 4_](how-to-create-compressed-accounts.md#define-instruction-data-for-create_compressed_account) _Instruction Data_,
@@ -300,14 +310,6 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `with_light_account` adds the compressed account data from `LightAccount` (Step 7) to the CPI instruction data
 * `with_new_addresses` adds the `address_seed` (_Step 5_) and metadata to the CPI instruction data
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts.`
-
-{% hint style="info" %}
-The Light System Program&#x20;
-
-* verifies the `proof` against the address tree's Merkle root,
-* adds the address to the address tree, and
-* appends the compressed account hash to the state tree.
-{% endhint %}
 {% endstep %}
 {% endstepper %}
 
