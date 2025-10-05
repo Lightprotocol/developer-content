@@ -6,7 +6,7 @@ description: >-
 
 # Addresses & URLs
 
-#### RPC URLs
+### RPC URLs
 
 {% tabs %}
 {% tab title="Mainnet" %}
@@ -19,18 +19,26 @@ description: >-
 {% endtabs %}
 
 {% hint style="info" %}
-Find all JSON RPC Methods for ZK Compression here.
+Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 {% endhint %}
 
-#### Program IDs
+### Program IDs
 
 <table><thead><tr><th width="279"></th><th></th></tr></thead><tbody><tr><td>Light System Program</td><td><strong>SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7</strong></td></tr><tr><td>Compressed Token Program</td><td><strong>cTokenmWW8bLPjZEBAUgYy3zKxQZW6VKi7bqNFEVv3m</strong></td></tr><tr><td>Account Compression Program</td><td><strong>compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq</strong></td></tr></tbody></table>
 
-#### State Trees, Queues and Token Escrow PDA
+### State Trees & Queues&#x20;
 
-<table><thead><tr><th width="279"></th><th></th></tr></thead><tbody><tr><td>Public State Tree #1</td><td><strong>smt1NamzXdq4AMqS2fS2F1i5KTYPZRhoHgWx38d8WsT</strong></td></tr><tr><td>Public Nullifier Queue #1</td><td><strong>nfq1NvQDJ2GEgnS8zt9prAe8rjjpAW1zFkrvZoBR148</strong></td></tr><tr><td>Public Address Tree #1</td><td><strong>amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2</strong></td></tr><tr><td>Public Address Queue #1</td><td><strong>aq1S9z4reTSQAdgWHGD2zDaS39sjGrAxbR31vxJ2F4F</strong></td></tr><tr><td>Token Escrow Owner PDA</td><td><strong>GXtd2izAiMJPwMEjfgTRH3d7k9mjn4Jq3JrWFv9gySYy</strong></td></tr></tbody></table>
+<table><thead><tr><th width="279">State Tree and Queue #1</th><th></th></tr></thead><tbody><tr><td>Public State Tree #1</td><td><strong>smt1NamzXdq4AMqS2fS2F1i5KTYPZRhoHgWx38d8WsT</strong></td></tr><tr><td>Public Nullifier Queue #1</td><td><strong>nfq1NvQDJ2GEgnS8zt9prAe8rjjpAW1zFkrvZoBR148</strong></td></tr></tbody></table>
 
-#### Lookup Tables
+### Address Trees & Queues&#x20;
+
+<table><thead><tr><th width="279">Address Tree #1</th><th></th></tr></thead><tbody><tr><td>Public Address Tree #1</td><td><strong>amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2</strong></td></tr><tr><td>Public Address Queue #1</td><td><strong>aq1S9z4reTSQAdgWHGD2zDaS39sjGrAxbR31vxJ2F4F</strong></td></tr></tbody></table>
+
+### Token Escrow PDA
+
+<table><thead><tr><th width="279">Address Tree #1</th><th></th></tr></thead><tbody><tr><td>Token Escrow Owner PDA</td><td><strong>GXtd2izAiMJPwMEjfgTRH3d7k9mjn4Jq3JrWFv9gySYy</strong></td></tr></tbody></table>
+
+### Lookup Tables
 
 {% hint style="info" %}
 [Lookup tables](https://solana.com/docs/advanced/lookup-tables) reduce your transaction size. We provide pre-initialized lookup tables that cover the Light's program IDs and accounts:
