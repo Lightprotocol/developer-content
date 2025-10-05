@@ -72,12 +72,11 @@
 ## Learn
 
 * [Core Concepts](learn/core-concepts/README.md)
-  * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
-  * [State Merkle Trees](https://www.zkcompression.com/learn/core-concepts/compressed-account-model#state-merkle-trees)
-  * [Validity Proofs](https://www.zkcompression.com/learn/core-concepts/compressed-account-model#validity-proofs)
+  * [Compressed Account Model](learn/core-concepts/compressed-account-model/README.md)
+    * [State Merkle Trees](learn/core-concepts/compressed-account-model/README.md#state-merkle-trees)
+    * [Validity Proofs](learn/core-concepts/compressed-account-model/README.md#validity-proofs)
   * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
   * [Considerations](learn/core-concepts/considerations.md)
-  * [State Cost per Transaction](learn/core-concepts/considerations.md#state-cost-per-transaction)
 * [Node Operators](learn/node-operators.md)
 
 ## References

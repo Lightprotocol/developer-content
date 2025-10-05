@@ -112,8 +112,8 @@ For those interested in learning more about the fundamentals of ZK and its appli
 
 Now that you understand the core concepts of ZK Compression, here's the lifecycle of a transaction.
 
-{% content-ref url="lifecycle-of-a-transaction.md" %}
-[lifecycle-of-a-transaction.md](lifecycle-of-a-transaction.md)
+{% content-ref url="../lifecycle-of-a-transaction.md" %}
+[lifecycle-of-a-transaction.md](../lifecycle-of-a-transaction.md)
 {% endcontent-ref %}
 
 [^1]: are succinct zero-knowledge proofs (ZKPs)
