@@ -36,7 +36,9 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
 {% step %}
 ### Program Setup
 
-The dependencies, constants and compressed account struct are identical for create and updates for compressed accounts.
+{% hint style="success" %}
+Dependencies, constants, and account struct is defined once and reused for all operations (create, update, close).
+{% endhint %}
 
 <details>
 

@@ -44,7 +44,9 @@ Find [full code examples at the end](how-to-update-compressed-accounts.md#full-c
 {% step %}
 ### Program Setup
 
-The dependencies, constants and compressed account struct are identical for compressed account creation and updates.
+{% hint style="success" %}
+Dependencies, constants, and account struct is defined once and reused for all operations (create, update, close).
+{% endhint %}
 
 <details>
 
