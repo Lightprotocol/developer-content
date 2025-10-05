@@ -88,6 +88,7 @@
 * [Whitepaper](../compression-docs/references/whitepaper.md)
 * [Terminology](../compression-docs/references/terminology.md)
 * [Security](../compression-docs/references/security.md)
+* [CLAUDE.md](references/claude.md.md)
 
 ## Links
 
