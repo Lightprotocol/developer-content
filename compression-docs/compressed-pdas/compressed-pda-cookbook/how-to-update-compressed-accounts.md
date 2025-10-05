@@ -146,7 +146,7 @@ pub struct InstructionData {
 * `CompressedAccountMeta` points to the input hash and specifies the output state tree with these fields:
   * `tree_info: PackedStateTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) for nullification.
   * `address` specifies the account's derived address.
-  * `output_state_tree_index` specifies the state tree that will store the updated compressed account hash.
+  * `output_state_tree_index` points to the state tree that will store the updated compressed account hash.
 
 3. **Update account data**
 
