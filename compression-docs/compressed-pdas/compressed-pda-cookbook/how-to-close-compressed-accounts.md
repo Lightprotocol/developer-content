@@ -18,18 +18,18 @@ Compressed accounts are rent-free. No rent can be reclaimed after closing compre
 Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Fetch current account data
-   ├─ Fetch validity proof (proves that account exists)
-   ├─ Build instruction with proof, current data and metadata
-   └─ Send transaction
-      │
-<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>      │
-</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify input hash
-         ├─ Nullify input hash
-         └─ Append zero-byte hash to state tree (marks account as closed)
+├─ Fetch current account data
+├─ Fetch validity proof (proves that account exists)
+├─ Build instruction with proof, current data and metadata
+└─ Send transaction
+    │
+<strong>  𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+</strong><strong>    ├─ Reconstruct existing compressed account hash (input hash)
+</strong><strong>    │
+</strong><strong>    └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+</strong>       ├─ Verify input hash
+       ├─ Nullify input hash
+       └─ Append zero-byte hash to state tree (marks account as closed)
 </code></pre>
 
 {% stepper %}

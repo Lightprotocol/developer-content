@@ -21,20 +21,20 @@ Find [full code examples of a counter program at the end](how-to-create-compress
 {% tabs %}
 {% tab title="Create Compressed Account Complete Flow" %}
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Derive unique compressed account address
-   ├─ Fetch validity proof (proves that address doesn't exist)
-   ├─ Pack accounts and build instruction
-   └─ Send transaction
-      │
-<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Derive and check address
-</strong><strong>      ├─ Initialize compressed account
-</strong><strong>      │
-</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify validity proof (non-inclusion)
-         ├─ Create address (address tree)
-         ├─ Create compressed account (state tree)
-         └─ Complete atomic account creation
+├─ Derive unique compressed account address
+├─ Fetch validity proof (proves that address doesn't exist)
+├─ Pack accounts and build instruction
+└─ Send transaction
+   │
+<strong> 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+</strong><strong>   ├─ Derive and check address
+</strong><strong>   ├─ Initialize compressed account
+</strong><strong>   │
+</strong><strong>   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+</strong>      ├─ Verify validity proof (non-inclusion)
+      ├─ Create address (address tree)
+      ├─ Create compressed account (state tree)
+      └─ Complete atomic account creation
 </code></pre>
 {% endtab %}
 {% endtabs %}

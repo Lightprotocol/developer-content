@@ -22,20 +22,20 @@ Find [full code examples at the end](how-to-update-compressed-accounts.md#full-c
 {% tabs %}
 {% tab title="Update Compressed Account Complete Flow" %}
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Fetch current account data 
-   ├─ Fetch validity proof (proves that account exists)
-   ├─ Build instruction with proof, current data, new data and metadata
-   └─ Send transaction
-      │
-<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>      ├─ Modify compressed account data (output)
-</strong><strong>      │
-</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify input hash 
-         ├─ Nullify input hash 
-         ├─ Create output hash with updated data
-         └─ Complete atomic account update
+├─ Fetch current account data 
+├─ Fetch validity proof (proves that account exists)
+├─ Build instruction with proof, current data, new data and metadata
+└─ Send transaction
+   │
+<strong>  𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+</strong><strong>   ├─ Reconstruct existing compressed account hash (input hash)
+</strong><strong>   ├─ Modify compressed account data (output)
+</strong><strong>   │
+</strong><strong>   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+</strong>      ├─ Verify input hash 
+      ├─ Nullify input hash 
+      ├─ Create output hash with updated data
+      └─ Complete atomic account update
 </code></pre>
 {% endtab %}
 {% endtabs %}
