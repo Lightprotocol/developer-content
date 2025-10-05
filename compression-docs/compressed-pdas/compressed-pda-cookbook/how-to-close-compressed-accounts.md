@@ -12,7 +12,7 @@ Compressed accounts are closed via CPI to the Light System Program.&#x20;
 When a compressed account is closed, it's output hash consists of zero bytes to mark it as closed. Closed compressed accounts can be [reinitialized](how-to-reinitialize-compressed-accounts.md) at the same address with `new_empty()`.
 
 {% hint style="success" %}
-Compressed accounts are rent-free. No rent can be reclaimed when closing compressed accounts.
+Compressed accounts are rent-free. No rent can be reclaimed after closing compressed accounts.
 {% endhint %}
 
 Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
