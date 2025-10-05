@@ -7,13 +7,15 @@ hidden: true
 
 # How to Close Compressed Accounts
 
-Compressed accounts are closed via CPI to the Light System Program. Closing an account nullifies the current state and creates a hash with zero bytes that marks the account as closed.
+Compressed accounts are closed via CPI to the Light System Program.&#x20;
 
-{% hint style="info" %}
-Closed accounts can be reinitialized at the same address with `new_empty()`.
+When a compressed account is closed, it's output hash consists of zero bytes to mark it as closed. Closed compressed accounts can be [reinitialized](how-to-reinitialize-compressed-accounts.md) at the same address with `new_empty()`.
+
+{% hint style="success" %}
+Compressed accounts are rent-free. No rent can be reclaimed when closing compressed accounts.
 {% endhint %}
 
-Find full code examples of a counter program at the end for Anchor, native Rust, and Pinocchio.
+Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Fetch current account data
@@ -27,7 +29,7 @@ Find full code examples of a counter program at the end for Anchor, native Rust,
 </strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
 </strong>         ├─ Verify input hash
          ├─ Nullify input hash
-         └─ Create DEFAULT_DATA_HASH with zero discriminator (output)
+         └─ Append zero-byte hash to state tree (marks account as closed)
 </code></pre>
 
 {% stepper %}
@@ -133,10 +135,7 @@ pub struct InstructionData {
 
 2. **Specify input hash and output state tree**
 
-* `CompressedAccountMeta` points to the input hash and output state tree:
-  * `tree_info: PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index) for nullification
-  * `address` specifies the account's derived address
-  * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed (the `DEFAULT_DATA_HASH`).
+* [`CompressedAccountMeta`](#user-content-fn-2)[^2] points to the input hash and output state tree
 
 3. **Current data for close**
 
@@ -530,3 +529,11 @@ pub fn close_counter(
 {% endcolumns %}
 
 [^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
+
+[^2]: 
+
+    * `tree_info: PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index) for nullification
+
+    - `address` specifies the account's derived address
+
+    * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed (the `DEFAULT_DATA_HASH`).

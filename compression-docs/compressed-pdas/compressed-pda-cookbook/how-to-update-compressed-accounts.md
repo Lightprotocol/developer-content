@@ -143,18 +143,11 @@ pub struct InstructionData {
 
 2. **Specify input hash and output state tree**
 
-* `CompressedAccountMeta` points to the input hash and output state tree:
-  * `tree_info: PackedStateTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) for nullification.
-  * `address` specifies the account's derived address.
-  * `output_state_tree_index` points to the state tree that will store the updated compressed account hash.
+* [`CompressedAccountMeta`](#user-content-fn-2)[^2] points to the input hash and output state tree.
 
 3. **Update account data**
 
 * `new_value` specifies updated data for the compressed account. This depends on your program logic.
-
-{% hint style="info" %}
-Packed structs like  `PackedStateTreeInfo` use indices to point to `remaining_accounts` to reduce transaction size. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
-{% endhint %}
 {% endstep %}
 
 {% step %}
@@ -218,7 +211,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer.
-* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-2)[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-3)[^3].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants (_Step 1_).
 
 **Build and invoke the CPI instruction**:
@@ -564,7 +557,15 @@ pub fn increment_counter(
 
 [^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
 
-[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+[^2]: 
+
+    * `tree_info: PackedStateTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) for nullification.
+
+    - `address` specifies the account's derived address.
+
+    * `output_state_tree_index` points to the state tree that will store the updated compressed account hash.
+
+[^3]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
     2. CPI Authority - Program-derived authority PDA
     3. Registered Program PDA - Registration account for your program
     4. Noop Program - For transaction logging
