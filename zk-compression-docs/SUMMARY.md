@@ -27,6 +27,7 @@
 
 * [Overview](../compression-docs/compressed-pdas/overview.md)
 * [Create a Program with Compressed PDAs](../compression-docs/compressed-pdas/create-a-program-with-compressed-pdas.md)
+* [Copy of Create a Program with Compressed PDAs](compressed-pdas/copy-of-create-a-program-with-compressed-pdas.md)
 * [Compressed PDA Cookbook](../compression-docs/compressed-pdas/compressed-pda-cookbook/README.md)
   * [How to Create Compressed Accounts](../compression-docs/compressed-pdas/compressed-pda-cookbook/how-to-create-compressed-accounts.md)
   * [How to Update Compressed Accounts](../compression-docs/compressed-pdas/compressed-pda-cookbook/how-to-update-compressed-accounts.md)
