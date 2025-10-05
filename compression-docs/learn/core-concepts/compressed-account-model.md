@@ -93,7 +93,7 @@ Lastly, `owner_hashed` determines which program owns this account and `lamports`
 
 <figure><img src="https://content.gitbook.com/content/GcNj6jjKQBC0HgPwNdGy/blobs/PpPbEKFXwnxGN6Y9FrlU/leaf%20hash%20structure%20state%20tree.png" alt="Here&#x27;s an alt text for this image:  &#x22;Diagram showing the compressed account data structure within leaves of a Merkle tree. Four leaf nodes (Leaf 0, Leaf 1, Leaf 2, Leaf 3) are displayed at the top, each containing &#x27;Compressed Account Hash&#x27;. Below this, the data structure is broken down into components: Datahash, Lamports, OwnerHash, Address, Discriminator, StateTreeHash, and Leaf_Index in the top row, with Data, Owner, and State Tree shown in the bottom row. Leaf 1 is highlighted in green. The diagram illustrates how compressed account data is organized within the Merkle tree structure.&#x22;"><figcaption><p><a href="https://github.com/Lightprotocol/light-protocol/blob/9df1ca508813ec792f756fb65b0b266a2438d080/program-libs/compressed-account/src/compressed_account.rs#L303">Compressed Account Data Structure</a> in Leaf of Merkle Tree.</p></figcaption></figure>
 
-#### Validity Proofs
+### Validity Proofs
 
 [Validity proofs](#user-content-fn-1)[^1] prove the existence of compressed accounts as leaves within state trees with a constant 128-byte size. These proofs are generated off-chain and verified on-chain. ZK Compression uses [Groth16](https://docs.rs/groth16-solana/latest/groth16_solana/), a well-known [pairing-based](https://en.wikipedia.org/wiki/Pairing-based_cryptography) [zk-SNARK](https://www.helius.dev/blog/zero-knowledge-proofs-its-applications-on-solana#-zk-snarks-and-circuits), for its proof system.
 
