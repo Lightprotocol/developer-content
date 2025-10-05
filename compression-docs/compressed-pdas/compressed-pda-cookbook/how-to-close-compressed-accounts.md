@@ -9,14 +9,19 @@ hidden: true
 
 Compressed accounts are closed via CPI to the Light System Program.&#x20;
 
-When a compressed account is closed, it's output hash consists of zero bytes to mark it as closed. Closed compressed accounts are empty accounts that can be [reinitialized](how-to-reinitialize-compressed-accounts.md) at the same address with `LightAccount::new_empty()`.
+Closing a compressed account
+
+* consumes the existing account hash (input), and
+* produces a new account hash with zero values to mark it as closed (output).
+
+&#x20;A closed compressed account [can be reinitialized](how-to-reinitialize-compressed-accounts.md) from the output account hash at the same address with `LighAccount::new_empty()`.
 
 {% hint style="success" %}
-Compressed accounts are rent-free. No rent can be reclaimed after closing compressed accounts.
+Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
-Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
-
+{% tabs %}
+{% tab title="Close Compressed Account Complete Flow" %}
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
 ├─ Fetch current account data
 ├─ Fetch validity proof (proves that account exists)
@@ -30,16 +35,18 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
 </strong>       ├─ Verify input hash
        ├─ Nullify input hash
        ├─ Append hash to state tree 
-       │  (marked as closed via zero-bytes and discriminator)
+       │  (output is marked as closed via zero-bytes and discriminator)
        └─ Complete atomic account closure
 </code></pre>
+{% endtab %}
+{% endtabs %}
 
 {% stepper %}
 {% step %}
 ### Program Setup
 
-{% hint style="success" %}
-Dependencies, constants, and account struct is defined once and reused for all operations (create, update, close).
+{% hint style="info" %}
+The compressed account struct is defined once and reused for all operations (create, update, close).
 {% endhint %}
 
 <details>
@@ -111,7 +118,7 @@ pub struct DataAccount {
 These traits are derived besides the standard traits (`Clone`, `Debug`, `Default`):
 
 * `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
+* `LightDiscriminator` implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, not the first 8 bytes of the data field\[^1].
 
 {% hint style="info" %}
 The traits listed above are required for `LightAccount`. `LightAccount` wraps `DataAccount` to set the discriminator and create the compressed account's data hash.
@@ -139,7 +146,10 @@ pub struct InstructionData {
 
 2. **Specify input hash and output state tree**
 
-* [`CompressedAccountMeta`](#user-content-fn-2)[^2] points to the input hash and output state tree
+* `CompressedAccountMeta` points to the input hash and output state tree:
+  * `tree_info: PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index) for nullification
+  * `address` specifies the account's derived address
+  * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed (the `DEFAULT_DATA_HASH`).
 
 3. **Current data for close**
 
@@ -149,7 +159,14 @@ pub struct InstructionData {
 {% step %}
 ### Close Compressed Account
 
-Close the compressed account with `LightAccount::new_close()`. `new_close()` hashes the current account data as input state and creates output state with zero bytes and zero discriminator.
+Close the compressed account with `LightAccount::new_close()`.
+
+{% hint style="info" %}
+`new_close()`
+
+1. hashes the current account data as input state and
+2. creates output state with zero values to mark the account as closed.
+{% endhint %}
 
 ```rust
 let my_compressed_account = LightAccount::<'_, DataAccount>::new_close(
@@ -165,23 +182,31 @@ let my_compressed_account = LightAccount::<'_, DataAccount>::new_close(
 **Parameters for `LightAccount::new_close()`:**
 
 * `crate::ID` specifies the program ID that owns the compressed account.
-* `account_meta` locates the existing account hash for nullification from Instruction Data (_Step 2_).
+* `account_meta` points to the existing account hash for nullification - defined in the _Instruction Data (Step 2)_.
 * `DataAccount` contains the current account data. This input state is hashed by `new_close()` and verified during CPI.
 
-`new_close` creates output state without data, `DEFAULT_DATA_HASH`, and zeroed discriminator.&#x20;
+`new_close` automatically creates output state to mark the account as closed with zero values:
+
+1. The Zero discriminator (`0u8; 8`) removes type identification of the account.
+2. The output contains a zero data hash that indicates no data content (`DEFAULT_DATA_HASH`)
+3. The data field contains an empty vector, instead of serialized account fields.
+
+{% hint style="info" %}
+The output state with all zero values is hashed in the next step via CPI by the Light System Program. `new_close()` only hashes the input state.
+{% endhint %}
 {% endstep %}
 
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI closes the compressed account. This creates an empty compressed account with the address of the closed account.
+The Light System Program CPI nullifies the account hash and appends the compressed account hash that includes the zero values at the same address. This empty account can be reinitialized with `LightAccount::new_empty()`.
 
 {% hint style="info" %}
 The Light System Program
 
 * validates the account exists in state tree with `proof`,
 * nullifies the input account hash, and
-* appends the `DEFAULT_DATA_HASH` with zero discriminator and zero bytes to the state tree.
+* appends the output account hash with zero values to the state tree.
 {% endhint %}
 
 ```rust
@@ -199,13 +224,13 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice with [Light System and packed tree accounts](#user-content-fn-3)[^3].
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build and invoke the CPI instruction**:
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove the compressed account exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
-* `with_light_account` adds the `LightAccount` wrapper configured to close the account with the `should_remove_data = true` flag _- defined in Step 3_.
+* `with_light_account` adds the `LightAccount` wrapper configured to close the account with the zero values _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 {% endstep %}
 {% endstepper %}
@@ -524,23 +549,3 @@ pub fn close_counter(
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
-
-[^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
-
-[^2]: 
-
-    * `tree_info: PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index) for nullification
-
-    - `address` specifies the account's derived address
-
-    * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed (the `DEFAULT_DATA_HASH`).
-
-[^3]: 
-
-    1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7 \
-       2\. CPI Authority - Program-derived authority PDA \
-       3\. Registered Program PDA - Registration account for your program \
-       4\. Noop Program - For transaction logging \
-       5\. Account Compression Authority - Authority for merkle tree operations 6. Account Compression Program - SPL Account Compression program \
-       7\. Invoking Program - Your program's address \
-       8\. System Program - Solana System program

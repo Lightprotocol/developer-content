@@ -236,7 +236,11 @@ if address_tree != ALLOWED_ADDRESS_TREE {
 {% step %}
 ### Initialize Compressed Account
 
-Initialize the compressed account struct with `LightAccount::new_init()`. `new_init()` creates a `LightAccount` instance similar to anchor `Account` and lets your program define the initial account data.
+Initialize the compressed account struct with `LightAccount::new_init()`.
+
+{% hint style="info" %}
+`new_init()` creates a `LightAccount` instance similar to anchor `Account` and lets your program define the initial account data.
+{% endhint %}
 
 <pre class="language-rust"><code class="lang-rust">let owner = crate::ID;
 let mut my_compressed_account 

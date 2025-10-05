@@ -155,10 +155,13 @@ pub struct InstructionData {
 {% step %}
 ### Update Compressed Account
 
-Update the compressed account with `LightAccount::new_mut()`. `new_mut()` hashes the current account data and lets your program define the output state.
+Update the compressed account with `LightAccount::new_mut()`.&#x20;
 
 {% hint style="info" %}
-`new_mut()` only hashes the input state. The output state is hashed in the next step when the `LightAccount` is added to the CPI instruction for the CPI to the Light System Program
+`new_mut()`
+
+1. hashes the current account data as input state and
+2. lets your program define the output state.
 {% endhint %}
 
 <pre class="language-rust"><code class="lang-rust">let mut my_compressed_account
@@ -183,6 +186,10 @@ Update the compressed account with `LightAccount::new_mut()`. `new_mut()` hashes
 **Define the Output State:**
 
 When `new_mut()` returns, modify the account fields to define the output state. The example shows `my_compressed_account.message = new_message`.
+
+{% hint style="info" %}
+`new_mut()` only hashes the input state. The output state is hashed in the next step when the `LightAccount` is added to the CPI instruction for the CPI to the Light System Program
+{% endhint %}
 {% endstep %}
 
 {% step %}
