@@ -9,7 +9,7 @@ hidden: true
 
 Compressed accounts are closed via CPI to the Light System Program.&#x20;
 
-When a compressed account is closed, it's output hash consists of zero bytes to mark it as closed. Closed compressed accounts can be [reinitialized](how-to-reinitialize-compressed-accounts.md) at the same address with `LightAccount::new_empty()`.
+When a compressed account is closed, it's output hash consists of zero bytes to mark it as closed. Closed compressed accounts are empty accounts that can be [reinitialized](how-to-reinitialize-compressed-accounts.md) at the same address with `LightAccount::new_empty()`.
 
 {% hint style="success" %}
 Compressed accounts are rent-free. No rent can be reclaimed after closing compressed accounts.
@@ -30,8 +30,8 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
 </strong>       ├─ Verify input hash
        ├─ Nullify input hash
        ├─ Append hash to state tree 
-       │  (marks account as closed with zero-bytes)
-       └─ Complete atomic account creation
+       │  (marked as closed via zero-bytes and discriminator)
+       └─ Complete atomic account closure
 </code></pre>
 
 {% stepper %}
@@ -168,13 +168,13 @@ let my_compressed_account = LightAccount::<'_, DataAccount>::new_close(
 * `account_meta` locates the existing account hash for nullification from Instruction Data (_Step 2_).
 * `DataAccount` contains the current account data. This input state is hashed by `new_close()` and verified during CPI.
 
-`new_close` sets the flag `should_remove_data = true` to enforce the `DEFAULT_DATA_HASH` output during the CPI in the next step.
+`new_close` creates output state without data, `DEFAULT_DATA_HASH`, and zeroed discriminator.&#x20;
 {% endstep %}
 
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI closes the compressed account and creates the `DEFAULT_DATA_HASH`.
+The Light System Program CPI closes the compressed account. This creates an empty compressed account with the address of the closed account.
 
 {% hint style="info" %}
 The Light System Program
@@ -199,7 +199,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice with [Light System and packed tree accounts](#user-content-fn-3)[^3].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build and invoke the CPI instruction**:
@@ -226,9 +226,6 @@ Find the source code for this example [here](https://github.com/Lightprotocol/pr
 {% endhint %}
 
 ```rust
-#![allow(unexpected_cfgs)]
-#![allow(deprecated)]
-
 use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
 use light_sdk::{
     account::LightAccount,
@@ -305,8 +302,6 @@ Find the source code for this example [here](https://github.com/Lightprotocol/pr
 {% endhint %}
 
 ```rust
-#![allow(unexpected_cfgs)]
-
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey;
 use light_sdk::{
@@ -407,8 +402,6 @@ Find the source code for this example [here](https://github.com/Lightprotocol/pr
 {% endhint %}
 
 ```rust
-#![allow(unexpected_cfgs)]
-
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey_array;
 use light_sdk_pinocchio::{
@@ -541,3 +534,13 @@ pub fn close_counter(
     - `address` specifies the account's derived address
 
     * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed (the `DEFAULT_DATA_HASH`).
+
+[^3]: 
+
+    1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7 \
+       2\. CPI Authority - Program-derived authority PDA \
+       3\. Registered Program PDA - Registration account for your program \
+       4\. Noop Program - For transaction logging \
+       5\. Account Compression Authority - Authority for merkle tree operations 6. Account Compression Program - SPL Account Compression program \
+       7\. Invoking Program - Your program's address \
+       8\. System Program - Solana System program
