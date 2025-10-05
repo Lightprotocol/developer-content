@@ -41,8 +41,8 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
    └─ Send transaction
       │
 <strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>            ├─ Reconstruct existing closed account hash (input hash)
-</strong><strong>      ├─ Initialize account with new data
+</strong><strong>      ├─ Reconstruct existing closed account hash (input hash)
+</strong><strong>      ├─ Initialize account with zero data
 </strong><strong>      │
 </strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
 </strong>         ├─ Verify DEFAULT_DATA_HASH exists

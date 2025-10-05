@@ -250,11 +250,13 @@ let mut my_compressed_account
 </strong><strong>my_compressed_account.data = data.to_string();
 </strong></code></pre>
 
-Parameters for `LightAccount::new_init()`: &#x20;
+**Parameters for `LightAccount::new_init()`:** &#x20;
 
 * `owner` specifies the program's ID that owns the compressed account.
 * The `address` assigned to the compressed account (derived in _Step 5_).
 * `output_state_tree_index` points to the state tree `AccountInfo` that will store the compressed account hash. We use the index passed in the instruction data (_Step 4)_.
+
+**Add initial account data:**
 
 After initialization, set custom account fields defined in your compressed account struct in `DataAccount` (_Step 3_). In this example:
 
@@ -274,12 +276,6 @@ The Light System Program&#x20;
 * adds the address to the address tree, and
 * appends the compressed account hash to the state tree.
 {% endhint %}
-
-Build the CPI instruction with&#x20;
-
-1. `proof` from _Instruction Data_,
-2. `address_seed` from [_Step 5_](how-to-create-compressed-accounts.md#derive-address) _Derive Address_, and
-3. `my_compressed_account` from [_Step 7_](how-to-create-compressed-accounts.md#initialize-compressed-account) _Initialize Compressed Account_.
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
@@ -305,8 +301,8 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Build the CPI instruction**:
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove  that an address does not exist yet in the specified address tree (non-inclusion) _- defined in the Instruction Data (Step 4)._
-* `with_light_account` adds `LightAccount` with the initial compressed account data from  to the CPI instruction _- defined in Step 7_.
-* `with_new_addresses` adds the `address_seed` (_Step 5_) and metadata to the CPI instruction data
+* `with_light_account` adds the `LightAccount` wrapper with the initial compressed account data to the CPI instruction _- defined in Step 7_.
+* `with_new_addresses` adds the `address_seed` and metadata to the CPI instruction data - returned by `derive_address` _in Step 5_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts.`
 {% endstep %}
 {% endstepper %}
