@@ -26,10 +26,11 @@
 ## Compressed PDAs
 
 * [Overview](compressed-pdas/overview.md)
-* [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas/README.md)
-  * [How to Create Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-create-compressed-accounts.md)
-  * [How to Update Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-update-compressed-accounts.md)
-  * [How to Close Compressed Accounts](compressed-pdas/create-a-program-with-compressed-pdas/how-to-close-compressed-accounts.md)
+* [Create a Program with Compressed PDAs](compressed-pdas/create-a-program-with-compressed-pdas.md)
+* [Compressed PDA Cookbook](compressed-pdas/compressed-pda-cookbook/README.md)
+  * [How to Create Compressed Accounts](compressed-pdas/compressed-pda-cookbook/how-to-create-compressed-accounts.md)
+  * [How to Update Compressed Accounts](compressed-pdas/compressed-pda-cookbook/how-to-update-compressed-accounts.md)
+  * [How to Close Compressed Accounts](compressed-pdas/compressed-pda-cookbook/how-to-close-compressed-accounts.md)
 * [Client Library](compressed-pdas/client-library/README.md)
   * [Rust](compressed-pdas/client-library/rust.md)
   * [Typescript](compressed-pdas/client-library/typescript.md)

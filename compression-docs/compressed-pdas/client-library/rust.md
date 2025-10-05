@@ -1442,8 +1442,8 @@ where
 
 ## Next Steps
 
-{% content-ref url="../create-a-program-with-compressed-pdas/" %}
-[create-a-program-with-compressed-pdas](../create-a-program-with-compressed-pdas/)
+{% content-ref url="../create-a-program-with-compressed-pdas.md" %}
+[create-a-program-with-compressed-pdas.md](../create-a-program-with-compressed-pdas.md)
 {% endcontent-ref %}
 
 

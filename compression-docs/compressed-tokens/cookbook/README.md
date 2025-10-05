@@ -1,7 +1,8 @@
 ---
 description: >-
-  Reference table mapping cookbook guides with descriptions. Guides to
-  compressed token operations, troubleshooting, and advanced configurations.
+  Overview of guides to compressed token operations and reference table with
+  descriptions. Guides include full code examples, troubleshooting, and advanced
+  configurations.
 ---
 
 # Cookbook

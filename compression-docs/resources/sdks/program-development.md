@@ -49,6 +49,6 @@ These are the required version for program development.
 
 Get an overview of compressed PDAs and create your custom program.
 
-{% content-ref url="../../compressed-pdas/create-a-program-with-compressed-pdas/" %}
-[create-a-program-with-compressed-pdas](../../compressed-pdas/create-a-program-with-compressed-pdas/)
+{% content-ref url="../../compressed-pdas/create-a-program-with-compressed-pdas.md" %}
+[create-a-program-with-compressed-pdas.md](../../compressed-pdas/create-a-program-with-compressed-pdas.md)
 {% endcontent-ref %}
