@@ -315,7 +315,7 @@ The RPC returns validity proof context with
 
 * the non-inclusion `compressedProof`, passed to the program in the instruction data. The Light System Program verifies the proof against the current Merkle root.
 * `newAddressParams` contains the tree metadata for your address (tree, root, leaf index)
-* an empty `merkleTrees` field for create operations
+* an empty `merkleTrees` field for account creation, since no account hash exists as input
 {% endtab %}
 
 {% tab title="Update & Close:" %}
@@ -343,7 +343,7 @@ The RPC returns validity proof context with
 
 * the inclusion `compressedProof`, passed to the program in the instruction data. The Light System Program verifies the proof against the current Merkle root.
 * `merkleTrees` contains the tree metadata for the account hash (tree, root, leaf index) for the Light System program to nullify.
-* an empty `newAddressParams` field for update/close operations.
+* an empty `newAddressParams` field for update/close, since the address was already created. The instruction data references the address via `CompressedAccountMeta`
 {% endtab %}
 {% endtabs %}
 {% endstep %}

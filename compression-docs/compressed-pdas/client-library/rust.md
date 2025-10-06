@@ -229,8 +229,8 @@ let state_tree_info = rpc.get_random_state_tree_info().unwrap();
 ```
 
 * `get_address_tree_v1()` returns the address tree pubkey. It's used
-* to derive an address for a compressed account with `derive_address()`
-* for `getValidityProof()` to prove the address does not exist yet in this tree with .
+  * to derive an address for a compressed account with `derive_address()`
+  * for `getValidityProof()` to prove the address does not exist yet in this tree with .
 * `get_random_state_tree_info()` returns `TreeInfo` (pubkey, queue, cpi conetxt...) for a state tree to store the compressed account hash.
 {% endstep %}
 
@@ -258,8 +258,8 @@ let (address, _) = derive_address(
 **Parameters**:
 
 * `&[b"my-seed"]`: Arbitrary byte slices that uniquely identify the account
-* `&address_tree_info.tree` specifies the tree pubkey where this address will be registered. An address is unique to a n address tree.
-* `ProgramID`: The program that owns this account
+* `&address_tree_info.tree` specifies the tree pubkey where this address will be registered. An address is unique to an address tree.
+* `ProgramID` specifies the program that owns this account
 {% endstep %}
 
 {% step %}
@@ -299,7 +299,7 @@ The RPC returns `ValidityProofWithContext` with
 
 * the non-inclusion `proof`, passed to the program in the instruction data. The Light System Program verifies the `proof` against the current Merkle root.
 * `addresses` contains the tree metadata for your address (tree, root, leaf index)
-* an empty `accounts` field for create operations
+* an empty `accounts` field, since no input account exists
 {% endtab %}
 
 {% tab title="Update & Close" %}
@@ -322,16 +322,16 @@ let rpc_result = rpc
 
 The `compressed_account.hash` contains the hash that's currently in the state tree. The indexer searches for this value to generate the proof.
 
-**Parameters**:
-
-* (`vec![hash]`) contains the hash of the existing compressed account to prove its existence in the state tree.
-* (`vec![]`) is empty for update/close operations, since the address already exists from account creation.
-
 The RPC returns `ValidityProofWithContext` with
 
 * the inclusion `proof`, passed to the program in the instruction data. The Light System Program verifies the `proof` against the current Merkle root.
 * `accounts` contains the tree metadata for the account hash (tree, root, leaf index) for the Light System program to nullify.
-* an empty `addresses` field for update/close operations.
+* an empty `addresses` field for update/close, since the address was already created. The instruction data references the address via `CompressedAccountMeta`
+
+**Parameters**:
+
+* (`vec![hash]`) contains the hash of the existing compressed account to prove its existence in the state tree.
+* (`vec![]`) is empty for update/close, since the address already exists from account creation.
 {% endtab %}
 {% endtabs %}
 {% endstep %}
@@ -516,7 +516,8 @@ let instruction_data = create_and_update::instruction::UpdateCompressedAccount {
 
 {% tab title="Close" %}
 ```rust
-let instruction_data = create_and_update::instruction::CloseCompressedAccount {
+let instruction_data 
+        = create_and_update::instruction::CloseCompressedAccount {
     proof: rpc_result.proof,
     account_meta: CompressedAccountMeta {
         tree_info: packed_state_tree_accounts.packed_tree_infos[0],
