@@ -27,7 +27,7 @@ Find [full code examples at the end](how-to-update-compressed-accounts.md#full-c
 ├─ Build instruction with proof, current data, new data and metadata
 └─ Send transaction
    │
-<strong>  𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+<strong> 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
 </strong><strong>   ├─ Reconstruct existing compressed account hash (input hash)
 </strong><strong>   ├─ Modify compressed account data
 </strong><strong>   │

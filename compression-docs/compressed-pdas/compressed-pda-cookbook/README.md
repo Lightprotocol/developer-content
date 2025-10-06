@@ -26,62 +26,100 @@ hidden: true
 
 {% tabs %}
 {% tab title="Create" %}
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Derive unique compressed account address
-   ├─ Fetch validity proof (proves that address doesn't exist)
-   ├─ Pack accounts and build instruction
-   └─ Send transaction
-      │
-<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Derive and check address
-</strong><strong>      ├─ Initialize compressed account
-</strong><strong>      │
-</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify validity proof (non-inclusion)
-         ├─ Create address (address tree)
-         ├─ Create compressed account (state tree)
-         └─ Complete atomic account creation
-</code></pre>
+```
+𝐂𝐋𝐈𝐄𝐍𝐓
+├─ Derive unique compressed account address
+├─ Fetch validity proof (proves that address doesn't exist)
+├─ Pack accounts and build instruction
+└─ Send transaction
+   │
+ 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+   ├─ Derive and check address
+   ├─ Initialize compressed account
+   │
+   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+      ├─ Verify validity proof (non-inclusion)
+      ├─ Create address (address tree)
+      ├─ Create compressed account (state tree)
+      └─ Complete atomic account creation
+```
 {% endtab %}
 
 {% tab title="Update" %}
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Fetch current account data
-   ├─ Fetch validity proof (proves that account exists)
-   ├─ Build instruction with proof, current data, new data and metadata
-   └─ Send transaction
-      │
-<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>      ├─ Modify compressed account data (output)
-</strong><strong>      │
-</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify and nullify input hash
-         ├─ Create new compressed account hash with updated data (output hash)
-         └─ Complete atomic account update
-</code></pre>
+```
+𝐂𝐋𝐈𝐄𝐍𝐓
+├─ Fetch current account data 
+├─ Fetch validity proof (proves that account exists)
+├─ Build instruction with proof, current data, new data and metadata
+└─ Send transaction
+   │
+ 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+   ├─ Reconstruct existing compressed account hash (input hash)
+   ├─ Modify compressed account data
+   │
+   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+      ├─ Verify input hash 
+      ├─ Nullify input hash 
+      ├─ Create new account hash with updated data (output hash)
+      └─ Complete atomic account update
+```
 {% endtab %}
 
 {% tab title="Close" %}
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
+```
+𝐂𝐋𝐈𝐄𝐍𝐓
+├─ Fetch current account data
+├─ Fetch validity proof (proves that account exists)
+├─ Build instruction with proof, current data and metadata
+└─ Send transaction
+    │
+  𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+    ├─ Reconstruct existing compressed account hash (input hash)
+    │
+    └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+       ├─ Verify input hash
+       ├─ Nullify input hash
+       ├─ Append new account hash to state tree 
+       │  (output hash is marked as closed via zero-bytes and discriminator)
+       └─ Complete atomic account closure
+```
+{% endtab %}
+
+{% tab title="Reinit" %}
+```
+𝐂𝐋𝐈𝐄𝐍𝐓
+├─ Fetch closed account metadata
+├─ Fetch validity proof (proves closed account hash exists)
+├─ Build instruction with proof and new data
+└─ Send transaction
+   │
+𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+   ├─ Reconstruct closed account hash with zero values (input hash)
+   ├─ Initialize account with new data
+   │
+   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+      ├─ Verify input hash
+      ├─ Nullify input hash
+      └─ Append new account hash with new values (output hash)
+```
+{% endtab %}
+
+{% tab title="Burn" %}
+```
+𝐂𝐋𝐈𝐄𝐍𝐓
    ├─ Fetch current account data
    ├─ Fetch validity proof (proves that account exists)
-   ├─ Build instruction with proof, current data and metadata
+   ├─ Build instruction with proof and current data
    └─ Send transaction
       │
-<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>      │
-</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify input hash
-         ├─ Nullify input hash
-         ├─ Append hash to state tree
-         │  (marked as closed via zero-bytes and discriminator)
-         └─ Complete atomic account closure
-</code></pre>
+      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+      ├─ Reconstruct existing compressed account hash (input hash)
+      │
+      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+         ├─ Verify input hash
+         ├─ Nullify input hash (permanent)
+         ├─ No output state created
+         └─ Complete atomic state transition
+```
 {% endtab %}
 {% endtabs %}
-
-{% hint style="info" %}
-Packed structs use indices to point to `remaining_accounts` to reduce transaction size. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
-{% endhint %}
