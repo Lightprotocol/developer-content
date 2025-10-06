@@ -35,8 +35,8 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
 </strong><strong>    └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
 </strong>       ├─ Verify input hash
        ├─ Nullify input hash
-       ├─ Append hash to state tree 
-       │  (output is marked as closed via zero-bytes and discriminator)
+       ├─ Append new account hash to state tree 
+       │  (output hash is marked as closed via zero-bytes and discriminator)
        └─ Complete atomic account closure
 </code></pre>
 {% endtab %}

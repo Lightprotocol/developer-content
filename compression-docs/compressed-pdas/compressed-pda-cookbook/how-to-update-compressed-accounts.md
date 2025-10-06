@@ -29,12 +29,12 @@ Find [full code examples at the end](how-to-update-compressed-accounts.md#full-c
    │
 <strong>  𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
 </strong><strong>   ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>   ├─ Modify compressed account data (output)
+</strong><strong>   ├─ Modify compressed account data
 </strong><strong>   │
 </strong><strong>   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
 </strong>      ├─ Verify input hash 
       ├─ Nullify input hash 
-      ├─ Create output hash with updated data
+      ├─ Create new account hash with updated data (output hash)
       └─ Complete atomic account update
 </code></pre>
 {% endtab %}
