@@ -6,7 +6,7 @@ description: >-
 hidden: true
 ---
 
-# Compressed PDA Cookbook
+# Compressed PDA Guides
 
 
 
@@ -41,7 +41,7 @@ hidden: true
 
 {% tab title="Update" %}
 ```
-𝐂𝐋𝐈𝐄𝐍𝐓
+Client
 ├─ Fetch current account data 
 ├─ Fetch validity proof (proves that account exists)
 ├─ Build instruction with proof, current data, new data and metadata
