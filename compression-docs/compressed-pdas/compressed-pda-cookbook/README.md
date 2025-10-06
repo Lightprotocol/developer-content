@@ -14,13 +14,7 @@ hidden: true
 
 ### Guides Overview <a href="#subsection-jvtgde75u" id="subsection-jvtgde75u"></a>
 
-| Guide                                                                     | Description                                                                     |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| [How to Create Compressed Accounts](how-to-create-compressed-accounts.md) | Create compressed accounts with addresses                                       |
-| [How to Update Compressed Accounts](how-to-update-compressed-accounts.md) | Update compressed accounts                                                      |
-| [How to Close Compressed Accounts](how-to-close-compressed-accounts.md)   | Close compressed accounts, retain address                                       |
-| How to Reinitialize Compressed Accounts                                   | Reinitialize closed compressed accounts at the same address with default values |
-| How to Burn Compressed Accounts                                           | Burn compressed accounts and their address permanently.                         |
+<table><thead><tr><th width="332.7890625">Guide</th><th>Description</th></tr></thead><tbody><tr><td><a href="how-to-create-compressed-accounts.md">How to Create Compressed Accounts</a></td><td>Create compressed accounts with addresses</td></tr><tr><td><a href="how-to-update-compressed-accounts.md">How to Update Compressed Accounts</a></td><td>Update compressed accounts</td></tr><tr><td><a href="how-to-close-compressed-accounts.md">How to Close Compressed Accounts</a></td><td>Close compressed accounts, retain address</td></tr><tr><td><a href="how-to-reinitialize-compressed-accounts.md">How to Reinitialize Compressed Accounts</a></td><td>Reinitialize closed compressed accounts at the same address with new values</td></tr><tr><td><a href="how-to-burn-compressed-accounts.md">How to Burn Compressed Accounts</a></td><td>Burn compressed accounts and their address permanently.</td></tr></tbody></table>
 
 ### Complete Flow Overview
 
