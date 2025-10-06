@@ -314,18 +314,24 @@ remaining_accounts.add_system_accounts(config);
 ```
 
 * `SystemAccountMetaConfig::new(program_id)` stores your program's ID to derive the CPI signer PDA
-* `add_system_accounts(config)` extends the system\_accounts vector with 8 Light System Program accounts in this exact sequence:
+* `add_system_accounts(config)` extends the system\_accounts vector with 8 Light System Program accounts in this exact sequence below.
+
+<details>
+
+<summary><em>System Accounts List</em></summary>
 
 | # | Account                       | Purpose                                                 | Derivation/Address                                                             |
 | - | ----------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | 1 | Light System Program          | Verifies proofs and creates compressed accounts         | `SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7`                                  |
-| 2 | CPI Signer                    | Your program's authority to invoke Light System Program | PDA derived from`[b"authority", invoking_program_id]`                          |
+| 2 | CPI Signer                    | Your program's authority to invoke Light System Program | PDA derived from `[b"authority", invoking_program_id]`                         |
 | 3 | Registered Program PDA        | Proves your program is authorized                       | PDA derived from `[LIGHT_SYSTEM_PROGRAM_ID]` under Account Compression Program |
 | 4 | Noop Program                  | Logs compressed account data for indexers               | SPL Noop Program                                                               |
 | 5 | Account Compression Authority | Authority for merkle tree writes                        | PDA derived from `[CPI_AUTHORITY_PDA_SEED]` under Light System Program         |
 | 6 | Account Compression Program   | Manages state trees and address trees                   | SPL Account Compression Program                                                |
 | 7 | Invoking Program              | Your program's ID                                       | `config.self_program`                                                          |
 | 8 | System Program                | Solana System Program                                   | `11111111111111111111111111111111`                                             |
+
+</details>
 
 #### 3. Pack Tree Accounts from Validity Proof
 
@@ -373,7 +379,7 @@ let output_state_tree_index = rpc
 * `get_random_state_tree_info()` selects a state tree to write the account hash
 * `pack_output_tree_index(&mut remaining_accounts)` adds the output state tree pubkey to `remaining_accounts` and returns its u8 index for instruction data.
 
-#### Summary
+#### 5. Summary
 
 You initialized the `PackedAccounts::default()` helper struct to merge the following accounts into the `remaining_accounts` array for the instruction data:
 
@@ -487,37 +493,40 @@ Account indices reduce transaction size. Instruction data references the `remain
 
 Build the instruction from the `PackedAccounts` (Step 6) and instruction data (Step 7).
 
-```rust
-let accounts = counter::accounts::GenericAnchorAccounts {
+<pre class="language-rust"><code class="lang-rust">let accounts = counter::accounts::GenericAnchorAccounts {
     signer: payer.pubkey(),
 };
 
 let (remaining_accounts_metas, _, _) = remaining_accounts.to_account_metas();
-let instruction = Instruction {
-    program_id: your_program::ID,
-    accounts: [
-        accounts.to_account_metas(Some(true)),
+<strong>let instruction = Instruction {
+</strong><strong>    program_id: your_program::ID,
+</strong><strong>    accounts: [
+</strong>        accounts.to_account_metas(Some(true)),
         remaining_accounts_metas,
     ].concat(),                        
-    data: instruction_data.data(),   
-};
-```
+<strong>    data: instruction_data.data(),   
+</strong>};
+</code></pre>
 
 The `Instruction` struct packages three components:
 
-1. `program_id`: Your program's on-chain address
-2. The `accounts` array contains your program accounts with Light System accounts and tree accounts from the validity proof:
+* `program_id` contains your program's on-chain address.
+* The `accounts` array includes your program accounts, Light System accounts and tree accounts from the validity proof, as shown below.
+* `data` contains the instruction data with the validity proof, tree indices, and account data _from Step 7_.
 
-* **Create your program's accounts struct** - `GenericAnchorAccounts` mirrors your on-chain `#[derive(Accounts)]` struct. Include only signers, PDAs, and program-specific accounts.
-* **Extract Light System accounts** - `remaining_accounts.to_account_metas()` returns `(Vec<AccountMeta>, usize, usize)`. The tuple contains the account vector and offset values for indexing.
+#### What to include in the `accounts`:
+
+1. **Create your program's accounts struct** - `GenericAnchorAccounts` mirrors your on-chain `#[derive(Accounts)]` struct. Include only signers, PDAs, and program-specific accounts.
+2. **Extract Light System accounts** - `remaining_accounts.to_account_metas()` returns `(Vec<AccountMeta>, usize, usize)`. The tuple contains the account vector and offset values for indexing.
 
 {% hint style="info" %}
 For non-Anchor programs, create `Vec<AccountMeta>` directly instead of using `.to_account_metas()`.
 {% endhint %}
 
-* **Merge into single array** - `.concat()` combines both vectors:
-  * `accounts.to_account_metas(Some(true))` converts your Anchor struct to `Vec<AccountMeta>` (Anchor auto-generates this method)
-  * `remaining_accounts_metas` contains Light System accounts + tree accounts from Step 6
+3. **Merge into single array** - `.concat()` combines both vectors:
+
+* `accounts.to_account_metas(Some(true))` converts your Anchor struct to `Vec<AccountMeta>` (Anchor auto-generates this method)
+* `remaining_accounts_metas` contains Light System accounts + tree accounts from Step 6
 
 **Final account order:**
 
@@ -530,8 +539,6 @@ For non-Anchor programs, create `Vec<AccountMeta>` directly instead of using `.t
 ```
 
 Your program receives account `[0]` via `ctx.accounts` and accounts `[1..]` via `ctx.remaining_accounts`.
-
-3. `data` must contain borsh-serialized instruction data with the validity proof, tree indices, and account data
 {% endstep %}
 
 {% step %}
