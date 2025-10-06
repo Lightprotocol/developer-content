@@ -9,6 +9,10 @@ description: >-
 
 Learn how to build a Rust client to create, update, and close compressed accounts.&#x20;
 
+{% hint style="info" %}
+Find [full code examples for a counter program](rust.md#full-code-example) at the end for create, update and close.
+{% endhint %}
+
 {% tabs %}
 {% tab title="Create" %}
 <pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
@@ -101,18 +105,9 @@ Learn how to build a Rust client to create, update, and close compressed account
 {% endtab %}
 {% endtabs %}
 
-{% hint style="info" %}
-Find [full code examples for a counter program](rust.md#full-code-example) at the end for create, update and close.
-{% endhint %}
-
 {% stepper %}
 {% step %}
 ### Dependencies
-
-{% hint style="info" %}
-* For testing, `LightProgramTest` provides a validator with auto-funded keypair and all infrastructure.
-* For production, use `LightClient` with your filesystem wallet at `~/.config/solana/id.json`.
-{% endhint %}
 
 ```toml
 [dev-dependencies]
@@ -124,19 +119,25 @@ solana-sdk = "2.0"
 anchor-lang = "0.30"  # if using Anchor programs
 ```
 
-**`light-program-test`** is a local test environment for Solana programs using compressed accounts and tokens. It creates an in-process Solana VM optimized for compressed account testing via [LiteSVM](https://github.com/LiteSVM/LiteSVM). Includes built-in prover and in-memory indexer.
+Add `light-program-test`, `light-sdk`, and `borsh` to test and interact with compressed accounts.
 
-**`light-test-utils`**: Helper utilities to test compressed accounts.
-
-**`light-sdk`**: Builds on Solana SDK for compressed accounts. Provides macros, wrappers and utilities to derive addresses, pack accounts, and build instructions.
+* **`light-program-test`:** A local test environment for Solana programs that use compressed accounts and tokens. It creates an in-process Solana VM via [LiteSVM](https://github.com/LiteSVM/LiteSVM) with built-in prover and in-memory indexer.
+* **`light-sdk`**: Provides macros, wrappers and CPI interface to create and interact with compressed accounts
 {% endstep %}
 
 {% step %}
+{% hint style="info" %}
+For devnet and mainnet rust clients use `LightClient` .
+{% endhint %}
+
 ### Environment
 
-In-process test validator. Auto-funded payer, no external setup required.
+Set up test environment with `LightProgramTest` that provides prover, indexer, and auto- funded payer.
 
 ```rust
+let config = ProgramTestConfig::new_v2(
+    true,
+    Some(vec![("create_and_update", create_and_update::ID)])
 );
 let mut rpc = LightProgramTest::new(config).await.unwrap();
 let payer = rpc.get_payer().insecure_clone();
@@ -180,7 +181,7 @@ let state_tree_info = rpc.get_random_state_tree_info().unwrap();
 {% step %}
 ### Derive Address (Create only)
 
-Derive a persistent address for the compressed account as unique identifier. The address is computed from seeds, the address tree, and the program ID.
+Derive a persistent address from seeds, address tree, and program ID as unique identifier for your compressed account.&#x20;
 
 {% hint style="warning" %}
 This step is only required for **create** operations. Update and close operations use the existing account's address.
@@ -282,12 +283,16 @@ The RPC returns `ValidityProofWithContext` with
 {% step %}
 ### Pack Accounts
 
-Pack the account metadata for the transaction. Combines your program's accounts with Light System Program accounts needed to create, update, and close compressed accounts.
+The interaction with compressed account requires the inclusion in the instruction data of the following accounts.
+
+Include program accounts, static Light System Program accounts with dynamic Merkle tree and queue accounts, and create instruction data that references queue and Merkle trees. accounts  for the transaction.
+
+Packed structs  to reduce transaction size. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
 
 {% hint style="info" %}
 **Understanding "Packed" terminology:**
 
-* **Packed structs** (e.g., `PackedAddressTreeInfo`, `PackedStateTreeInfo`) contain account **indices** (u8) instead of pubkeys to reduce instruction size.
+* **Packed structs** (e.g., `PackedAddressTreeInfo`, `PackedStateTreeInfo`) contain account **indices** (u8) instead of pubkeys to reduce instruction size. The indices to point to  the `remaining_accounts` array.
 * Non-Packed structs: Contain full pubkeys for use in the client. These are returned by RPC methods.
 * `PackedAccounts` is a helper that deduplicates accounts and assigns sequential indices to create Packed\* structs.
 {% endhint %}
@@ -347,7 +352,7 @@ let accounts = [
 
 **1. Initialize account packer** with `PackedAccounts::default()`. This creates a helper struct that collects Light System Program account metadata.
 
-**2. Add Light System Program** [**infrastructure accounts**](#user-content-fn-1)[^1]
+**2. Add** [**Light System  accounts**](#user-content-fn-1)[^1]
 
 * `SystemAccountMetaConfig::new(program_id)` configures which program will invoke the Light System Program.
 * `add_system_accounts(config)` adds infrastructure accounts needed for CPIs
@@ -386,6 +391,10 @@ The packed accounts are then used in your instruction data.
 
 Build the instruction data with the proof, packed tree info, and your custom data.
 
+{% hint style="success" %}
+The complete compressed account data to create or update a compressed account must be included in the instruction data.
+{% endhint %}
+
 {% tabs %}
 {% tab title="Create" %}
 ```rust
@@ -396,6 +405,10 @@ let instruction_data = create_and_update::instruction::CreateCompressedAccount {
     message,
 };
 ```
+
+* **`proof`** verifies the address (create) or account hash (update/close) against the current Merkle root, fetched from RPC in _Step 5_.
+* **`address_tree_info`** (Create only): u8 index to the address tree from _Step 6_ (`packed_address_tree_accounts[0]`). Points to the tree where the new address will be registered.
+* **`output_state_tree_index`** (Create only): u8 index from _Step 6_ to the state tree where the account hash will be written. For Update/Close, this field is inside `account_meta`.
 {% endtab %}
 
 {% tab title="Update" %}
@@ -410,6 +423,11 @@ let instruction_data = create_and_update::instruction::UpdateCompressedAccount {
     message,
 };
 ```
+
+* **`account_meta`** (Update/Close only): Metadata struct from _Step 6_ containing:
+  * `tree_info`: u8 index to the state tree holding the current account hash
+  * `address`: The compressed account's 32-byte address (from _Step 4_)
+* **`message`**: Your custom account data (Create/Update only). Omitted for Close operations.
 {% endtab %}
 
 {% tab title="Close" %}
@@ -426,34 +444,25 @@ let instruction_data = create_and_update::instruction::CloseCompressedAccount {
 {% endtab %}
 {% endtabs %}
 
-**`proof`** verifies the address (create) or account hash (update/close) against the current Merkle root, fetched from RPC in _Step 5_.
-
-**`address_tree_info`** (Create only): u8 index to the address tree from _Step 6_ (`packed_address_tree_accounts[0]`). Points to the tree where the new address will be registered.
-
-**`output_state_tree_index`** (Create only): u8 index from _Step 6_ to the state tree where the account hash will be written. For Update/Close, this field is inside `account_meta`.
-
-**`account_meta`** (Update/Close only): Metadata struct from _Step 6_ containing:
-
-* `tree_info`: u8 index to the state tree holding the current account hash
-* `address`: The compressed account's 32-byte address (from _Step 4_)
-
-**`message`**: Your custom account data (Create/Update only). Omitted for Close operations.
-
 {% hint style="info" %}
-Account indices reduce transaction size. The client packs accounts in Step 6. Instruction data references these accounts with u8 indices instead of full 32-byte pubkeys.
+Account indices reduce transaction size. Instruction data references the `remaining_accounts` array with u8 indices instead of full 32-byte pubkeys. The client packs accounts in Step 6.
 {% endhint %}
 {% endstep %}
 
 {% step %}
-### That's it!
+### Send transaction to the Program
 
-You've assembled all components needed for a Rust Client with ZK Compression. Creating the `Instruction` and sending the transaction follows standard Solana patterns.
+Creating the `Instruction` and sending the transaction follows standard Solana patterns.
 {% endstep %}
 {% endstepper %}
 
 ## Full Code Example
 
 The full code examples below walk you through the complete lifecycle of a counter program: create, increment, decrement, reset, close.
+
+{% hint style="warning" %}
+For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
+{% endhint %}
 
 {% tabs %}
 {% tab title="Create" %}
@@ -574,13 +583,6 @@ where
         .concat(),
         data: instruction_data.data(),
     };
-
-    rpc.create_and_send_transaction(
-        &[instruction], 
-        &payer.pubkey(), 
-        &[payer])
-        .await
-}
 
     rpc.create_and_send_transaction(
         &[instruction], 
