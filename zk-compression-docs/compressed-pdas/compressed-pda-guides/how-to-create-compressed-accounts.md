@@ -12,7 +12,7 @@ Compressed accounts and addresses are created via CPI to the Light System Progra
 Compressed accounts are identified by its address (optional) and account hash. The account hash is not persistent and changes with every write to the account.
 
 * For Solana PDA like behavior your compressed account needs an address as persistent identifier.
-* For example compressed token accounts do not need addresses. Learn [how to create compressed token accounts here](../../compressed-tokens/cookbook/how-to-create-compressed-token-accounts.md).
+* For example compressed token accounts do not need addresses. Learn [how to create compressed token accounts here](../../compressed-tokens/compressed-token-guides/how-to-create-compressed-token-accounts.md).
 
 {% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
@@ -321,7 +321,7 @@ light init testprogram
 ```
 
 {% hint style="warning" %}
-For help with debugging, see the [Error Cheatsheet](../../resources/error-cheatsheet/).
+For help with debugging, see the [Error Cheatsheet](../../../compression-docs/resources/error-cheatsheet/).
 {% endhint %}
 
 {% tabs %}
@@ -734,8 +734,8 @@ pub fn create_counter(
 
 {% columns %}
 {% column %}
-{% content-ref url="../client-library/" %}
-[client-library](../client-library/)
+{% content-ref url="../../../compression-docs/compressed-pdas/client-library/" %}
+[client-library](../../../compression-docs/compressed-pdas/client-library/)
 {% endcontent-ref %}
 {% endcolumn %}
 

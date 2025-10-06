@@ -671,6 +671,6 @@ Find the Source Code here.
 
 ## Next Steps
 
-{% content-ref url="../compressed-pda-cookbook/" %}
-[compressed-pda-cookbook](../compressed-pda-cookbook/)
+{% content-ref url="../../../zk-compression-docs/compressed-pdas/compressed-pda-guides/" %}
+[compressed-pda-guides](../../../zk-compression-docs/compressed-pdas/compressed-pda-guides/)
 {% endcontent-ref %}

@@ -240,6 +240,6 @@ FLAGS
 
 Get started with our cookbook guides.
 
-{% content-ref url="../compressed-tokens/cookbook/" %}
-[cookbook](../compressed-tokens/cookbook/)
+{% content-ref url="../../zk-compression-docs/compressed-tokens/compressed-token-guides/" %}
+[compressed-token-guides](../../zk-compression-docs/compressed-tokens/compressed-token-guides/)
 {% endcontent-ref %}

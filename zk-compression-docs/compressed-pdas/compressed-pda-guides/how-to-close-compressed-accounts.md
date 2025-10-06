@@ -539,8 +539,8 @@ pub fn close_counter(
 
 {% columns %}
 {% column %}
-{% content-ref url="../client-library/" %}
-[client-library](../client-library/)
+{% content-ref url="../../../compression-docs/compressed-pdas/client-library/" %}
+[client-library](../../../compression-docs/compressed-pdas/client-library/)
 {% endcontent-ref %}
 {% endcolumn %}
 

@@ -549,6 +549,6 @@ If `getCompressedTokenBalancesByOwnerV2` returns empty:
 
 Explore more guides in our cookbook section.
 
-{% content-ref url="../cookbook/" %}
-[cookbook](../cookbook/)
+{% content-ref url="../../../zk-compression-docs/compressed-tokens/compressed-token-guides/" %}
+[compressed-token-guides](../../../zk-compression-docs/compressed-tokens/compressed-token-guides/)
 {% endcontent-ref %}

@@ -461,8 +461,8 @@ That's it! Explore more guides in our cookbook section, or check out the advance
 {% endcolumn %}
 
 {% column %}
-{% content-ref url="../advanced-guides/" %}
-[advanced-guides](../advanced-guides/)
+{% content-ref url="../../../compression-docs/compressed-tokens/advanced-guides/" %}
+[advanced-guides](../../../compression-docs/compressed-tokens/advanced-guides/)
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
