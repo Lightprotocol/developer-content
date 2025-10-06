@@ -1,16 +1,25 @@
 ---
 description: >-
-  Build a Rust client to create, update, and close compressed accounts using
-  LightProgramTest with the light-sdk crate. Includes a step-by-step
-  implementation guide and full code examples.
+  Build a Rust client with LightClient or LightProgramTest to create, update,
+  and close compressed accounts. Includes a step-by-step implementation guide
+  and full code examples.
 ---
 
 # Rust
 
-Learn how to build a Rust client to test compressed accounts with `LightProgramTest`. For devnet and mainnet rust clients use `LightClient` .
+Learn how to build a Rust client to create and interact with compressed accounts with `LightClient` or `LightProgramTest`.
+
+* **For local testing, use `light-program-test`.**
+  * `light-program-test` is a local test environment for Solana programs that use compressed accounts and tokens.
+  * It creates an in-process Solana VM via [LiteSVM](https://github.com/LiteSVM/LiteSVM) with built-in prover and in-memory indexer.
+* **For devnet and mainnet use `light-client`**
+  * `light-client` provides the core RPC abstraction layer for Rust applications
+  * It includes an RPC client with Photon indexer API support for Devnet and Mainnet to fetch compressed account data and validity proofs.
 
 {% hint style="success" %}
 Find [full code examples for a counter program](rust.md#full-code-example) at the end for create, update and close.
+
+Both `LightProgramTest` and `LightClient` implement the same Rpc and Indexer traits.
 {% endhint %}
 
 {% tabs %}
@@ -73,26 +82,111 @@ Find [full code examples for a counter program](rust.md#full-code-example) at th
 {% step %}
 ### Dependencies
 
-```toml
-[dev-dependencies]
-light-program-test = "0.13.0"
-light-test-utils = "0.13.0"
-light-sdk = "0.13.0"
-tokio = { version = "1.0", features = ["full"] }
+{% tabs %}
+{% tab title="LightClient" %}
+<pre class="language-toml"><code class="lang-toml">[dependencies]
+<strong>light-client = "0.13.1"
+</strong><strong>light-sdk = "0.13.0"
+</strong>tokio = { version = "1.0", features = ["full"] }
 solana-sdk = "2.0"
 anchor-lang = "0.30"  # if using Anchor programs
-```
+</code></pre>
+{% endtab %}
 
-Add `light-program-test`, `light-sdk`, and `borsh` to test and interact with compressed accounts.
+{% tab title="LightProgramTest" %}
+<pre class="language-toml"><code class="lang-toml">[dev-dependencies]
+<strong>light-program-test = "0.13.0"
+</strong>light-test-utils = "0.13.0"
+<strong>light-sdk = "0.13.0"
+</strong>tokio = { version = "1.0", features = ["full"] }
+solana-sdk = "2.0"
+anchor-lang = "0.30"  # if using Anchor programs
+</code></pre>
+{% endtab %}
+{% endtabs %}
 
-* **`light-program-test`:** A local test environment for Solana programs that use compressed accounts and tokens. It creates an in-process Solana VM via [LiteSVM](https://github.com/LiteSVM/LiteSVM) with built-in prover and in-memory indexer.
-* **`light-sdk`**: Provides macros, wrappers and CPI interface to create and interact with compressed accounts
+{% hint style="info" %}
+The `light-sdk` provides abstractions similar to Anchor's `Account` type. It provides macros, wrappers and CPI interface to create and interact with compressed accounts on Solana.
+{% endhint %}
 {% endstep %}
 
 {% step %}
 ### Environment
 
-Set up test environment with `LightProgramTest`:
+{% tabs %}
+{% tab title="LightClient" %}
+Connect to local, devnet or mainnet with `LightClient`.
+
+{% tabs %}
+{% tab title="Mainnet" %}
+```rust
+use light_client::{LightClient, LightClientConfig};
+use solana_sdk::signature::{Keypair, read_keypair_file};
+
+let payer = read_keypair_file("~/.config/solana/id.json")
+    .expect("Failed to load keypair");
+
+let config = LightClientConfig::new(
+    "https://api.mainnet-beta.solana.com".to_string(),
+    Some("https://mainnet.helius.xyz".to_string()),
+    Some("YOUR_API_KEY".to_string())
+);
+
+let mut client = LightClient::new(payer, config).await?;
+```
+
+* Use `LightClientConfig::new()` for mainnet with custom RPC endpoints
+* Photon indexer URL and API key are required to query compressed accounts
+{% endtab %}
+
+{% tab title="Devnet" %}
+```rust
+use light_client::{LightClient, LightClientConfig};
+use solana_sdk::signature::{Keypair, read_keypair_file};
+
+let payer = read_keypair_file("~/.config/solana/id.json")
+    .expect("Failed to load keypair");
+
+let config = LightClientConfig::devnet(
+    Some("https://devnet.helius.xyz".to_string()), // 
+    Some("YOUR_API_KEY".to_string())
+);
+
+let mut client = LightClient::new(payer, config).await?;
+```
+
+* `LightClientConfig::devnet()` sets `url` to `https://api.devnet.solana.com` and `fetch_active_tree` to `true`
+* Photon indexer URL and API key are required for compressed account queries
+{% endtab %}
+
+{% tab title="Localnet" %}
+```rust
+use light_client::{LightClient, LightClientConfig};
+use solana_sdk::signature::Keypair;
+
+let payer = Keypair::new();
+
+let config = LightClientConfig::local();
+
+let mut client = LightClient::new(payer, config).await?;
+```
+
+* `LightClientConfig::local()` sets `url` to `http://127.0.0.1:8899` and `photon_url` to `http://127.0.0.1:8784`
+* Requires running `light test-validator` locally
+{% endtab %}
+{% endtabs %}
+
+**Configuration fields:**
+
+* `url`: Solana RPC endpoint
+* `photon_url`: Photon indexer endpoint to query compressed accounts
+* `api_key`: API key for Photon indexer ([Get your API key](https://www.helius.dev/zk-compression), if you don't have one yet)
+* `commitment_config`: Transaction commitment level (defaults to `confirmed`)
+* `fetch_active_tree`: Fetches active state trees on initialization (default `true` for devnet/mainnet)
+{% endtab %}
+
+{% tab title="LightProgramTest" %}
+Set up test environment with `LightProgramTest` .
 
 ```rust
 let config = ProgramTestConfig::new_v2(
@@ -102,6 +196,8 @@ let config = ProgramTestConfig::new_v2(
 let mut rpc = LightProgramTest::new(config).await.unwrap();
 let payer = rpc.get_payer().insecure_clone();
 ```
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 
 {% step %}
