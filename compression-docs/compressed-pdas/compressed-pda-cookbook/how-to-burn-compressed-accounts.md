@@ -186,7 +186,7 @@ let my_compressed_account = LightAccount::<'_, DataAccount>::new_burn(
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI permanently burns the compressed account permanently.
+The Light System Program CPI burns the compressed account permanently.
 
 {% hint style="info" %}
 The Light System Program
