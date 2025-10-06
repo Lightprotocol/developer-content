@@ -319,7 +319,7 @@ remaining_accounts.add_system_accounts(config);
 | # | Account                       | Purpose                                                 | Derivation/Address                                                             |
 | - | ----------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | 1 | Light System Program          | Verifies proofs and creates compressed accounts         | `SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7`                                  |
-| 2 | CPI Signer                    | Your program's authority to invoke Light System Program | PDA: `[b"authority", invoking_program_id]`                                     |
+| 2 | CPI Signer                    | Your program's authority to invoke Light System Program | PDA derived from`[b"authority", invoking_program_id]`                          |
 | 3 | Registered Program PDA        | Proves your program is authorized                       | PDA derived from `[LIGHT_SYSTEM_PROGRAM_ID]` under Account Compression Program |
 | 4 | Noop Program                  | Logs compressed account data for indexers               | SPL Noop Program                                                               |
 | 5 | Account Compression Authority | Authority for merkle tree writes                        | PDA derived from `[CPI_AUTHORITY_PDA_SEED]` under Light System Program         |
