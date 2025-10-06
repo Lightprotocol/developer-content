@@ -66,11 +66,11 @@ hidden: true
 ├─ Fetch validity proof (proves that account exists)
 ├─ Build instruction with proof, current data and metadata
 └─ Send transaction
-    │
-  𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-    ├─ Reconstruct existing compressed account hash (input hash)
-    │
-    └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+   │
+ 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+   ├─ Reconstruct existing compressed account hash (input hash)
+   │
+   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
        ├─ Verify input hash
        ├─ Nullify input hash
        ├─ Append new account hash to state tree 
@@ -87,7 +87,7 @@ hidden: true
 ├─ Build instruction with proof and new data
 └─ Send transaction
    │
-𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+ 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
    ├─ Reconstruct closed account hash with zero values (input hash)
    ├─ Initialize account with new data
    │
@@ -99,21 +99,20 @@ hidden: true
 {% endtab %}
 
 {% tab title="Burn" %}
-```
-𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Fetch current account data
-   ├─ Fetch validity proof (proves that account exists)
-   ├─ Build instruction with proof and current data
-   └─ Send transaction
-      │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Reconstruct existing compressed account hash (input hash)
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify input hash
-         ├─ Nullify input hash (permanent)
-         ├─ No output state created
-         └─ Complete atomic state transition
-```
+<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
+├─ Fetch current account data
+├─ Fetch validity proof (proves that account exists)
+├─ Build instruction with proof and current data
+└─ Send transaction
+   │
+<strong> 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+</strong><strong>   ├─ Reconstruct existing compressed account hash (input hash)
+</strong><strong>   │
+</strong><strong>   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+</strong>      ├─ Verify input hash
+        ├─ Nullify input hash (permanent)
+        ├─ No output state created
+        └─ Complete atomic state transition
+</code></pre>
 {% endtab %}
 {% endtabs %}
