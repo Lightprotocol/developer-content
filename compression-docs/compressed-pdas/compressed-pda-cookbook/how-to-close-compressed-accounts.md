@@ -225,7 +225,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice with [Light System and packed tree accounts](#user-content-fn-1)[^1].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build and invoke the CPI instruction**:
@@ -550,3 +550,19 @@ pub fn close_counter(
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
+
+[^1]: * Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+
+    - CPI Authority - Program-derived authority PDA
+
+    * Registered Program PDA - Registration account for your program
+
+    - Noop Program - For transaction logging
+
+    * Account Compression Authority - Authority for merkle tree operations
+
+    - Account Compression Program - SPL Account Compression program
+
+    * Invoking Program - Your program's address
+
+    - System Program - Solana System program
