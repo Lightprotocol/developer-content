@@ -148,7 +148,7 @@ pub struct InstructionData {
 2. **Specify input hash and output state tree**
 
 * `CompressedAccountMeta` points to the input hash and output state tree:
-  * `tree_info`: `PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index) so the Light System Program can mark it as nullified
+  * `tree_info`: `PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index) so the Light System Program nullify it
   * `address` specifies the account's derived address
   * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed (the `DEFAULT_DATA_HASH`).
 
