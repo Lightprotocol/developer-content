@@ -1049,7 +1049,7 @@ If you have a custom FE, you can let users swap compressed tokens using the Jup-
 
 Explore more guides in our cookbook section.
 
-{% content-ref url="../../../zk-compression-docs/compressed-tokens/compressed-token-guides/" %}
-[compressed-token-guides](../../../zk-compression-docs/compressed-tokens/compressed-token-guides/)
+{% content-ref url="../../../zk-compression-docs/compressed-tokens/guides/" %}
+[guides](../../../zk-compression-docs/compressed-tokens/guides/)
 {% endcontent-ref %}
 

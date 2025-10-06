@@ -655,7 +655,7 @@ Find the source Code here.
 
 ## Next Steps
 
-{% content-ref url="../../../zk-compression-docs/compressed-pdas/compressed-pda-guides/" %}
-[compressed-pda-guides](../../../zk-compression-docs/compressed-pdas/compressed-pda-guides/)
+{% content-ref url="../../../zk-compression-docs/compressed-pdas/guides/" %}
+[guides](../../../zk-compression-docs/compressed-pdas/guides/)
 {% endcontent-ref %}
 
