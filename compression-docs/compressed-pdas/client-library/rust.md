@@ -67,42 +67,6 @@ Find [full code examples for a counter program](rust.md#full-code-example) at th
          └─ Create DEFAULT_DATA_HASH with zero discriminator (output)
 </code></pre>
 {% endtab %}
-
-{% tab title="Reinitialize" %}
-<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
-</strong><strong>   ├─ Fetch closed account metadata
-</strong><strong>   ├─ Fetch validity proof (proves closed account hash exists)
-</strong><strong>   ├─ Build instruction with proof and new data
-</strong><strong>   └─ Send transaction
-</strong>      │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Reconstruct existing closed account hash (input hash)
-      ├─ Initialize account with new data (output)
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify input hash exists
-         ├─ Nullify input hash
-         ├─ Create new account with new hash and default values at same address
-         └─ Complete atomic account reinitialization
-</code></pre>
-{% endtab %}
-
-{% tab title="Burn" %}
-<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
-</strong><strong>   ├─ Fetch current account data
-</strong><strong>   ├─ Fetch validity proof (proves that account exists)
-</strong><strong>   ├─ Build instruction with proof and current data
-</strong><strong>   └─ Send transaction
-</strong>      │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Reconstruct existing compressed account hash (input hash)
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify input hash
-         ├─ Nullify input hash (permanent)
-         └─ No output state created
-</code></pre>
-{% endtab %}
 {% endtabs %}
 
 {% stepper %}
@@ -128,7 +92,7 @@ Add `light-program-test`, `light-sdk`, and `borsh` to test and interact with com
 {% step %}
 ### Environment
 
-Set up test environment with `LightProgramTest` that provides prover, indexer, and auto-funded payer.
+Set up test environment with `LightProgramTest`:
 
 ```rust
 let config = ProgramTestConfig::new_v2(
@@ -143,13 +107,14 @@ let payer = rpc.get_payer().insecure_clone();
 {% step %}
 ### Tree Configuration
 
-Before creating a compressed account, the client must choose two Merkle trees:&#x20;
+Before creating a compressed account, the client must select two Merkle trees:&#x20;
 
 * an address tree to derive the account address and
 * a state tree to store the account hash.
 
 {% hint style="success" %}
-The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. See [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for available trees.
+The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. \
+See [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for available trees.
 {% endhint %}
 
 **Address tree's** store the account addresses of compressed accounts.
@@ -347,9 +312,9 @@ let packed_address_tree_accounts = rpc_result
 
 * `pack_tree_infos(&mut remaining_accounts)` extracts Merkle tree pubkeys from validity proof and adds them to `remaining_accounts`
 * `.address_trees` returns `Vec<PackedAddressTreeInfo>` that specifies where to create the address:
-  * `address_merkle_tree_pubkey_index` (u8) points to the address tree account in `remaining_accounts`
-  * `address_queue_pubkey_index` (u8) points to the address queue account in `remaining_accounts`
-  * `root_index` (u16) specifies which Merkle root to verify the non-inclusion proof against
+  * `address_merkle_tree_pubkey_index` points to the address tree account in `remaining_accounts`
+  * `address_queue_pubkey_index` points to the address queue account in `remaining_accounts`
+  * `root_index` specifies which Merkle root to verify the non-inclusion proof against
 {% endtab %}
 
 {% tab title="Update & Close" %}
@@ -362,9 +327,9 @@ let packed_state_tree_accounts = rpc_result
 
 * `pack_tree_infos(&mut remaining_accounts)` extracts Merkle tree pubkeys from validity proof and adds them to `remaining_accounts`
 * `.state_trees` returns `PackedStateTreeInfos` that points to the existing account hash so the Light System Program can mark it as nullified:
-  * `merkle_tree_pubkey_index` (u8) points to the state tree account in `remaining_accounts`
-  * `leaf_index` (u32) specifies which leaf position contains the account hash
-  * `root_index` (u16) specifies which historical Merkle root to verify the proof against
+  * `address_merkle_tree_pubkey_index` points to the address tree account in `remaining_accounts`
+  * `address_queue_pubkey_index` points to the address queue account in `remaining_accounts`
+  * `root_index` specifies which Merkle root to verify the inclusion proof against
 {% endtab %}
 {% endtabs %}
 
