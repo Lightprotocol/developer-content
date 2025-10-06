@@ -590,11 +590,6 @@ Account indices reduce transaction size. Instruction data references the `remain
 Build the instruction from the `remainingAccounts` (Step 6) and instruction data (Step 7).
 
 ```typescript
-import {
-  TransactionInstruction,
-  PublicKey
-} from '@solana/web3.js';
-
 const instruction = new TransactionInstruction({
   programId: PROGRAM_ID,
   keys: [
@@ -636,19 +631,12 @@ Your program receives account `[0]` via standard Anchor account deserialization 
 Submit the instruction to the network.
 
 ```typescript
-import {
-  Transaction,
-  sendAndConfirmTransaction
-} from '@solana/web3.js';
-
 const transaction = new Transaction().add(instruction);
 const signature = await sendAndConfirmTransaction(
   rpc,
   transaction,
   [payer]
 );
-
-console.log('Transaction signature:', signature);
 ```
 {% endstep %}
 {% endstepper %}
