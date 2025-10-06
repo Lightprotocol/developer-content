@@ -7,19 +7,19 @@ description: >-
 
 # Rust
 
-Learn how to build a Rust client to create and interact with compressed accounts with `LightClient` or `LightProgramTest`.
+The Rust Client SDK provides two abstractions to create or interact with compressed accounts:
 
-* **For local testing, use `light-program-test`.**
+* **For local testing, use** [**`light-program-test`**](https://docs.rs/light-program-test)**.**
   * `light-program-test` is a local test environment for Solana programs that use compressed accounts and tokens.
-  * It creates an in-process Solana VM via [LiteSVM](https://github.com/LiteSVM/LiteSVM) with built-in prover and in-memory indexer.
-* **For devnet and mainnet use `light-client`**
+  * It creates an in-process Solana VM via [LiteSVM](https://github.com/LiteSVM/LiteSVM) with auto-funded payer, local prover server and in-memory indexer. Requires Light CLI for program binaries.
+* **For test-validator, devnet and mainnet use** [**`light-client`**](https://docs.rs/light-client).
   * `light-client` provides the core RPC abstraction layer for Rust applications
   * It includes an RPC client with Photon indexer API support for Devnet and Mainnet to fetch compressed account data and validity proofs.
 
 {% hint style="success" %}
 Find [full code examples for a counter program](rust.md#full-code-example) at the end for create, update and close.
 
-Both `LightProgramTest` and `LightClient` implement the same Rpc and Indexer traits.
+`LightClient` (the RPC struct from `light-client` crate) implements the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits as `LightProgramTest`. Seamlessly switch between `light-program-test`, local test validator, and public Solana networks.
 {% endhint %}
 
 {% tabs %}
@@ -89,7 +89,7 @@ Both `LightProgramTest` and `LightClient` implement the same Rpc and Indexer tra
 </strong><strong>light-sdk = "0.13.0"
 </strong>tokio = { version = "1.0", features = ["full"] }
 solana-sdk = "2.0"
-anchor-lang = "0.30"  # if using Anchor programs
+anchor-lang = "0.31"  # if using Anchor programs
 </code></pre>
 {% endtab %}
 
@@ -100,13 +100,13 @@ anchor-lang = "0.30"  # if using Anchor programs
 <strong>light-sdk = "0.13.0"
 </strong>tokio = { version = "1.0", features = ["full"] }
 solana-sdk = "2.0"
-anchor-lang = "0.30"  # if using Anchor programs
+anchor-lang = "0.31"  # if using Anchor programs
 </code></pre>
 {% endtab %}
 {% endtabs %}
 
 {% hint style="info" %}
-The `light-sdk` provides abstractions similar to Anchor's `Account` type. It provides macros, wrappers and CPI interface to create and interact with compressed accounts on Solana.
+The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to Anchor's `Account` type. It provides macros, wrappers and CPI interface to create and interact with compressed accounts on Solana.
 {% endhint %}
 {% endstep %}
 
@@ -210,7 +210,7 @@ Before creating a compressed account, the client must select two Merkle trees:&#
 
 {% hint style="success" %}
 The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. \
-See [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for available trees.
+See Protocol [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for available trees.
 {% endhint %}
 
 **Address tree's** store the account addresses of compressed accounts.
@@ -585,7 +585,7 @@ The `Instruction` struct packages three components:
 For non-Anchor programs, create `Vec<AccountMeta>` directly instead of using `.to_account_metas()`.
 {% endhint %}
 
-3. **Merge into single array** - `.concat()` combines both vectors:
+3. **Merge into single vector with** `.concat()`:
 
 * `accounts.to_account_metas(Some(true))` converts your Anchor struct to `Vec<AccountMeta>` (Anchor auto-generates this method)
 * `remaining_accounts_metas` contains Light System accounts + tree accounts from Step 6
@@ -599,8 +599,6 @@ For non-Anchor programs, create `Vec<AccountMeta>` directly instead of using `.t
 [3-8]  Other Light System accounts
 [9+]   Merkle trees, queues (from validity proof)
 ```
-
-Your program receives account `[0]` via `ctx.accounts` and accounts `[1..]` via `ctx.remaining_accounts`.
 {% endstep %}
 
 {% step %}
