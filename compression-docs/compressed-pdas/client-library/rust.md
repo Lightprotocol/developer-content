@@ -1,8 +1,8 @@
 ---
 description: >-
   Build a Rust client to create, update, and close compressed accounts using
-  LightProgramTest` with the light-sdk crate. Includes a step-by-step guide and
-  full code examples.
+  LightProgramTest with the light-sdk crate. Includes a step-by-step
+  implementation guide and full code examples.
 ---
 
 # Rust
