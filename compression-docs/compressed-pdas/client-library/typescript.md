@@ -266,8 +266,6 @@ This step is only required for **create** operations. Update and close operation
 {% endhint %}
 
 ```typescript
-import { deriveAddress } from '@lightprotocol/stateless.js';
-
 const seed = Buffer.from('my-seed');
 const address = deriveAddress(
   [seed],
@@ -364,11 +362,6 @@ Compressed account instructions require packing accounts into the `remainingAcco
 #### 1. Initialize Account Arrays
 
 ```typescript
-import {
-  packCompressedAccounts,
-  buildRemainingAccounts
-} from '@lightprotocol/stateless.js';
-
 let remainingAccounts: AccountMeta[] = [];
 let accountsOffset = 0;
 ```
@@ -390,8 +383,6 @@ let accountsOffset = 0;
 The system accounts are added to `remainingAccounts`. These accounts are required for the Light System Program to verify proofs and execute CPI's.
 
 ```typescript
-import { getSystemAccounts } from '@lightprotocol/stateless.js';
-
 const systemAccounts = getSystemAccounts(programId);
 remainingAccounts.push(...systemAccounts);
 accountsOffset += systemAccounts.length;
