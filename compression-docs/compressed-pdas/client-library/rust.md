@@ -1,13 +1,13 @@
 ---
 description: >-
   Build a Rust client to create, update, and close compressed accounts using
-  `LightProgramTest` / `LightClient` with `light-sdk`. Includes a step-by-step
-  guide and full code examples.
+  LightProgramTest` with the light-sdk crate. Includes a step-by-step guide and
+  full code examples.
 ---
 
 # Rust
 
-Learn how to build a Rust client to create, update, and close compressed accounts.&#x20;
+Learn how to build a Rust client to test compressed accounts with `LightProgramTest`. For devnet and mainnet rust clients use `LightClient` .
 
 {% hint style="info" %}
 Find [full code examples for a counter program](rust.md#full-code-example) at the end for create, update and close.
@@ -126,10 +126,6 @@ Add `light-program-test`, `light-sdk`, and `borsh` to test and interact with com
 {% endstep %}
 
 {% step %}
-{% hint style="info" %}
-For devnet and mainnet rust clients use `LightClient` .
-{% endhint %}
-
 ### Environment
 
 Set up test environment with `LightProgramTest` that provides prover, indexer, and auto- funded payer.
@@ -471,125 +467,6 @@ Find the [source code here](https://github.com/Lightprotocol/program-examples/bl
 {% endhint %}
 
 ```rust
-#![cfg(feature = "test-sbf")]
-
-use anchor_lang::{AnchorDeserialize, InstructionData, ToAccountMetas};
-use counter::CounterAccount;
-use light_client::indexer::{CompressedAccount, TreeInfo};
-use light_program_test::{
-    program_test::
-        LightProgramTest, 
-        AddressWithTree, 
-        Indexer, 
-        ProgramTestConfig, 
-        Rpc, 
-        RpcError,
-};
-use light_sdk::{
-    address::v1::derive_address,
-    instruction::{account_meta::
-        CompressedAccountMeta, 
-        PackedAccounts, 
-        SystemAccountMetaConfig},
-};
-use solana_sdk::{
-    instruction::Instruction,
-    signature::{Keypair, Signature, Signer},
-};
-
-#[tokio::test]
-async fn test_counter() {
-    let config = 
-        ProgramTestConfig::new(true, 
-        Some(vec![("counter", counter::ID)]));
-    let mut rpc = LightProgramTest::new(config).await.unwrap();
-    let payer = rpc.get_payer().insecure_clone();
-
-    let address_tree_info = rpc.get_address_tree_v1();
-
-    let (address, _) = derive_address(
-        &[b"counter", payer.pubkey().as_ref()],
-        &address_tree_info.tree,
-        &counter::ID,
-    );
-
-    // Create the counter.
-    create_counter(&mut rpc, &payer, &address, address_tree_info)
-        .await
-        .unwrap();
-
-    // Check that it was created correctly.
-    let compressed_account = rpc
-        .get_compressed_account(address, None)
-        .await
-        .unwrap()
-        .value
-        .unwrap();
-    assert_eq!(compressed_account.leaf_index, 0);
-    let counter = &compressed_account.data.as_ref().unwrap().data;
-    let counter = CounterAccount::deserialize(&mut &counter[..]).unwrap();
-    assert_eq!(counter.value, 0);
-
-async fn create_counter<R>(
-    rpc: &mut R,
-    payer: &Keypair,
-    address: &[u8; 32],
-    address_tree_info: TreeInfo,
-) -> Result<Signature, RpcError>
-where
-    R: Rpc + Indexer,
-{
-    let mut remaining_accounts = PackedAccounts::default();
-    let config = SystemAccountMetaConfig::new(counter::ID);
-    remaining_accounts.add_system_accounts(config)?;
-
-    let rpc_result = rpc
-        .get_validity_proof(
-            vec![],
-            vec![AddressWithTree {
-                tree: address_tree_info.tree,
-                address: *address,
-            }],
-            None,
-        )
-        .await?
-        .value;
-    let output_state_tree_index = rpc
-        .get_random_state_tree_info()?
-        .pack_output_tree_index(&mut remaining_accounts)?;
-    let packed_address_tree_info = rpc_result
-        .pack_tree_infos(&mut remaining_accounts)
-        .address_trees[0];
-
-    let instruction_data = counter::instruction::CreateCounter {
-        proof: rpc_result.proof,
-        address_tree_info: packed_address_tree_info,
-        output_state_tree_index,
-    };
-
-    let accounts = counter::accounts::GenericAnchorAccounts {
-        signer: payer.pubkey(),
-    };
-
-    let (remaining_accounts_metas, _, _) = 
-        remaining_accounts.to_account_metas();
-
-    let instruction = Instruction {
-        program_id: counter::ID,
-        accounts: [
-            accounts.to_account_metas(Some(true)),
-            remaining_accounts_metas,
-        ]
-        .concat(),
-        data: instruction_data.data(),
-    };
-
-    rpc.create_and_send_transaction(
-        &[instruction], 
-        &payer.pubkey(), 
-        &[payer])
-        .await
-}
 ```
 {% endtab %}
 
