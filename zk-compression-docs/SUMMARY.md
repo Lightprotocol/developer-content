@@ -38,9 +38,6 @@
 * [Client Library](../compression-docs/compressed-pdas/client-library/README.md)
   * [Rust](../compression-docs/compressed-pdas/client-library/rust.md)
   * [Typescript](../compression-docs/compressed-pdas/client-library/typescript.md)
-* [Testing Libraries](../compression-docs/compressed-pdas/testing-libraries/README.md)
-  * [Light Program Test](../compression-docs/compressed-pdas/testing-libraries/light-program-test.md)
-  * [Light Client](../compression-docs/compressed-pdas/testing-libraries/light-client.md)
 
 ## Resources
 

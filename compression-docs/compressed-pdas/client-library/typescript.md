@@ -1,3 +1,10 @@
+---
+description: >-
+  Build a TypeScript client with Rpc or TestRpc to create, update, and close
+  compressed accounts. Includes a step-by-step implementation guide and full
+  code examples.
+---
+
 # Typescript
 
 Learn how to build a TypeScript client to test compressed accounts with `TestRpc`. For devnet and mainnet use `Rpc`.
@@ -6,11 +13,13 @@ Learn how to build a TypeScript client to test compressed accounts with `TestRpc
   * `TestRpc` is a mock RPC implementation that simulates the ZK Compression stack without external dependencies.
   * It parses events and builds Merkle trees on-demand without persisting state.
 * **For devnet and mainnet** use `Rpc`
-  * `Rpc` extends Solana's `Connection` class with ZK Compression support
+  * `Rpc` is a thin wrapper extending [Solana's web3.js `Connection` class](https://solana-labs.github.io/solana-web3.js/classes/Connection.html) with compression-related endpoints.  Find a [full list of JSON RPC methods here](../../resources/json-rpc-methods/).
   * It connects to Photon indexer for compressed account queries and the prover service for validity proofs.
 
-{% hint style="info" %}
-Find full code examples for a counter program at the end for create, update and close. Both `TestRpc` and `Rpc` implement the same `CompressionApiInterface`.
+{% hint style="success" %}
+Find [full code examples for a counter program](typescript.md#full-code-example) at the end for create, update and close.&#x20;
+
+Both `TestRpc` and `Rpc` implement the same `CompressionApiInterface`.
 {% endhint %}
 
 {% tabs %}
