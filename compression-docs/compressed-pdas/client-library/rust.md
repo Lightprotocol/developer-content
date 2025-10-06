@@ -180,7 +180,7 @@ let mut client = LightClient::new(payer, config).await?;
 
 * `url`: Solana RPC endpoint
 * `photon_url`: Photon indexer endpoint to query compressed accounts
-* `api_key`: API key for Photon indexer ([Get your API key](https://www.helius.dev/zk-compression), if you don't have one yet)
+* `api_key`: API key for Photon indexer ([Get your API key here](https://www.helius.dev/zk-compression), if you don't have one yet)
 * `commitment_config`: Transaction commitment level (defaults to `confirmed`)
 * `fetch_active_tree`: Fetches active state trees on initialization (default `true` for devnet/mainnet)
 {% endtab %}

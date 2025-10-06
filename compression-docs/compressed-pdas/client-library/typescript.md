@@ -9,10 +9,10 @@ description: >-
 
 Learn how to build a TypeScript client to test compressed accounts with `TestRpc`. For devnet and mainnet use `Rpc`.
 
-* **For local testing**, use `TestRpc` from `@lightprotocol/stateless.js`.
+* **For local testing**, use `TestRpc`.
   * `TestRpc` is a mock RPC implementation that simulates the ZK Compression stack without external dependencies.
   * It parses events and builds Merkle trees on-demand without persisting state.
-* **For devnet and mainnet** use `Rpc`
+* **For devnet and mainnet** use `Rpc`.
   * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints.  Find a [full list of JSON RPC methods here](../../resources/json-rpc-methods/).
   * It connects to Photon indexer for compressed account queries and the prover service for validity proofs.
 
@@ -152,6 +152,10 @@ Both `TestRpc` and `Rpc` implement the same `CompressionApiInterface`.
 {% step %}
 ### Environment
 
+{% hint style="info" %}
+[Get your API key here](https://www.helius.dev/zk-compression), if you don't have one yet.
+{% endhint %}
+
 {% tabs %}
 {% tab title="Rpc" %}
 Connect to local, devnet or mainnet with `Rpc`.
@@ -205,14 +209,6 @@ const rpc = new Rpc(
 * Requires running `light test-validator` locally
 {% endtab %}
 {% endtabs %}
-
-**Configuration parameters:**
-
-* First arg: Solana RPC endpoint
-* Second arg: Photon indexer endpoint to query compressed accounts
-* Third arg: Prover service endpoint for validity proofs
-* Fourth arg: Connection config (optional)
-* Fifth arg: Additional options including API key ([Get your API key](https://www.helius.dev/zk-compression), if you don't have one yet)
 {% endtab %}
 
 {% tab title="TestRpc" %}
