@@ -128,7 +128,7 @@ Add `light-program-test`, `light-sdk`, and `borsh` to test and interact with com
 {% step %}
 ### Environment
 
-Set up the test environment with `LightProgramTest`.
+Set up test environment with `LightProgramTest` that provides prover, indexer, and auto- funded payer.
 
 ```rust
 let config = ProgramTestConfig::new_v2(
@@ -143,19 +143,13 @@ let payer = rpc.get_payer().insecure_clone();
 {% step %}
 ### Tree Configuration
 
-Before creating a compressed account, the client must specify two Merkle trees:
+Before creating a compressed account, the client must choose two Merkle trees: - an address tree to derive the account address and
 
-* an address tree to derive the account address and
 * a state tree to store the account hash.
 
-{% hint style="success" %}
-The protocol maintains Merkle trees at fixed addresses. You don't need to initialize Merkle trees. \
-See [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for available trees.
-{% endhint %}
+**Address tree**: Stores the account addresses of compressed accounts.
 
-**Address tree's** store the account addresses of compressed accounts.
-
-* The tree pubkey serves as an input to derive addresses: `hash(address_tree_pubkey || address_seed)`.
+* The tree pubkey becomes an input to address derivation: `hash(address_tree_pubkey || address_seed)`.
 * Different address trees produce different addresses from identical seeds.
 * Address trees are NOT fungible. The client must use the same tree for `derive_address()` and `getValidityProof()` calls.
 
@@ -163,14 +157,18 @@ See [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for 
 
 * State trees are fungible. Tree choice does not affect the account hash.
 
+{% hint style="success" %}
+The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. See [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for available trees.
+{% endhint %}
+
 ```rust
 let address_tree_info = rpc.get_address_tree_v1();
 let state_tree_info = rpc.get_random_state_tree_info().unwrap();
 ```
 
-* `get_address_tree_v1()` returns the address tree pubkey, which is used
-  * to derive an address for a compressed account with `derive_address()`
-  * for `getValidityProof()` to prove the address does not exist yet in this tree with .
+* `get_address_tree_v1()` returns the address tree pubkey. It's used
+* to derive an address for a compressed account with `derive_address()`
+* for `getValidityProof()` to prove the address does not exist yet in this tree with .
 * `get_random_state_tree_info()` returns `TreeInfo` (pubkey, queue, cpi conetxt...) for a state tree to store the compressed account hash.
 {% endstep %}
 
@@ -193,21 +191,13 @@ let (address, _) = derive_address(
 );
 ```
 
-`derive_address()` returns 32-byte address from the inputs `address_seed` + `address_tree_pubkey`.
-
-{% hint style="info" %}
-Every address is unique, but the same seeds can be used to create different addresses in different address trees. To enforce that a compressed PDA can only be created once with the same seed, you must [check the address tree pubkey in your program](../compressed-pda-cookbook/how-to-create-compressed-accounts.md#address-tree-check).
-{% endhint %}
+**`derive_address()`**: Computes a deterministic 32-byte address from the inputs.
 
 **Parameters**:
 
 * `&[b"my-seed"]`: Arbitrary byte slices that uniquely identify the account
-* `&address_tree_info.tree` specifies the tree pubkey where this address will be registered. An address is unique to an address tree.
+* `&address_tree_info.tree` specifies the tree pubkey where this address will be registered. An address is unique to a n address tree.
 * `ProgramID`: The program that owns this account
-
-{% hint style="info" %}
-The program called by the client must use the same input as the client.
-{% endhint %}
 {% endstep %}
 
 {% step %}
@@ -303,7 +293,7 @@ Compressed account instructions require packing accounts into the `remaining_acc
 let mut remaining_accounts = PackedAccounts::default();
 ```
 
-* `PackedAccounts::default()` initializes a helper struct that collects and organizes Light System Program account metadata as shown in the graphic below. The struct tracks which index each pubkey receives.
+* `PackedAccounts::default()` initializes a helper struct that collects and organizes Light System Program account metadata. The struct tracks which index each pubkey receives.
 
 ```
 [pre_accounts] [system_accounts] [packed_accounts]
@@ -316,7 +306,7 @@ let mut remaining_accounts = PackedAccounts::default();
 
 #### 2. Add Light System Accounts
 
-The `system_accounts` are infrastructure accounts that remain constant across all compressed account interactions.
+The "system accounts" are infrastructure accounts are added to `remaining_accounts.system_accounts`. These accounts are required for the Light System Program to verify proofs and execute CPI's.
 
 ```rust
 let config = SystemAccountMetaConfig::new(create_and_update::ID);
@@ -324,15 +314,18 @@ remaining_accounts.add_system_accounts(config);
 ```
 
 * `SystemAccountMetaConfig::new(program_id)` stores your program's ID to derive the CPI signer PDA
-* `add_system_accounts(config)` extends the system\_accounts vector with 8 Light System Program accounts in this exact sequence listed below.
+* `add_system_accounts(config)` extends the system\_accounts vector with 8 Light System Program accounts in this exact sequence:
 
-<details>
-
-<summary><em>System Accounts List</em></summary>
-
-<table><thead><tr><th width="47.0760498046875">#</th><th width="158.3870849609375">Account</th><th width="224.7833251953125">Purpose</th><th>Derivation/Address</th></tr></thead><tbody><tr><td>1</td><td>Light System Program</td><td>Verifies proofs and creates compressed accounts</td><td><code>SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7</code></td></tr><tr><td>2</td><td>CPI Signer</td><td>Your program's authority to invoke Light System Program</td><td>PDA: <code>[b"authority", invoking_program_id]</code></td></tr><tr><td>3</td><td>Registered Program PDA</td><td>Proves your program is authorized</td><td>PDA: <code>[LIGHT_SYSTEM_PROGRAM_ID]</code> under Account Compression Program</td></tr><tr><td>4</td><td>Noop Program</td><td>Logs compressed account data for indexers</td><td>SPL Noop Program</td></tr><tr><td>5</td><td>Account Compression Authority</td><td>Authority for merkle tree write operations</td><td>PDA: <code>[CPI_AUTHORITY_PDA_SEED]</code> under Light System Program</td></tr><tr><td>6</td><td>Account Compression Program</td><td>Manages state trees and address trees</td><td>SPL Account Compression Program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID</td><td><code>config.self_program</code></td></tr><tr><td>8</td><td>System Program</td><td>Solana System Program</td><td><code>11111111111111111111111111111111</code></td></tr></tbody></table>
-
-</details>
+| # | Account                       | Purpose                                                 | Derivation/Address                                                             |
+| - | ----------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 1 | Light System Program          | Verifies proofs and creates compressed accounts         | `SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7`                                  |
+| 2 | CPI Signer                    | Your program's authority to invoke Light System Program | PDA: `[b"authority", invoking_program_id]`                                     |
+| 3 | Registered Program PDA        | Proves your program is authorized                       | PDA derived from `[LIGHT_SYSTEM_PROGRAM_ID]` under Account Compression Program |
+| 4 | Noop Program                  | Logs compressed account data for indexers               | SPL Noop Program                                                               |
+| 5 | Account Compression Authority | Authority for merkle tree writes                        | PDA derived from `[CPI_AUTHORITY_PDA_SEED]` under Light System Program         |
+| 6 | Account Compression Program   | Manages state trees and address trees                   | SPL Account Compression Program                                                |
+| 7 | Invoking Program              | Your program's ID                                       | `config.self_program`                                                          |
+| 8 | System Program                | Solana System Program                                   | `11111111111111111111111111111111`                                             |
 
 #### 3. Pack Tree Accounts from Validity Proof
 
@@ -380,58 +373,24 @@ let output_state_tree_index = rpc
 * `get_random_state_tree_info()` selects a state tree to write the account hash
 * `pack_output_tree_index(&mut remaining_accounts)` adds the output state tree pubkey to `remaining_accounts` and returns its u8 index for instruction data.
 
-#### 5. Add Your Program's Accounts
+#### Summary
 
-```rust
-let accounts = create_and_update::accounts::GenericAnchorAccounts {
-    signer: payer.pubkey(),
-};
-```
+You initialized the `PackedAccounts::default()` helper struct to merge the following accounts into the `remaining_accounts` array for the instruction data:
 
-* `GenericAnchorAccounts` is the client-side representation of the Anchor program's `#[derive(Accounts)]` struct
-* For non-Anchor programs, create `Vec<AccountMeta>` directly instead of using `.to_account_metas()`
-* This counter example uses only a signer. Your program's `#[derive(Accounts)]` struct may include PDAs for program state, token accounts, or other program-specific accounts
+* Light System accounts are required for the for the Light System Program to verify proofs and execute CPI's.
+* Tree accounts from validity proof prove address non-existence (create) or prove existence of the account hash (update/close).
+* The output state tree stores the new account hash.
 
-{% hint style="info" %}
-Your `#[derive(Accounts)]` struct only needs signers, PDAs, and program-specific accounts. You don't include accounts for compressed data - the Light System Program receives those via `ctx.remaining_accounts`.
-{% endhint %}
-
-#### 6. Combine Accounts
-
-Merge your program accounts with Light System accounts into a single `Vec<AccountMeta>` array that instructions require.
-
-```rust
-let accounts = [
-    accounts.to_account_metas(None),
-    remaining_accounts.to_account_metas().0,
-]
-.concat();
-```
-
-* `.to_account_metas(None)` converts your Anchor accounts to `Vec<AccountMeta>` (Anchor auto-generates this method)
-* `.to_account_metas()` returns a 3-tuple `(Vec<AccountMeta>, usize, usize)`. The `.0` extracts only the `Vec<AccountMeta>`, discarding the offset values
-* `.concat()` merges both vectors into a single array with your accounts first, followed by Light System accounts
-
-**Final account order**:
-
-```
-[0]    Your program accounts (signer, PDAs, etc.)
-[1]    Light System Program
-[2]    CPI Signer PDA
-[3-8]  Other Light System infrastructure accounts
-[9+]   Merkle trees, queues (from validity proof)
-```
-
-Your program receives account `[0]` via `ctx.accounts` and accounts `[1..]` via `ctx.remaining_accounts`.
+The accounts receive a sequential u8 index. Instruction data references accounts via these indices in this order.
 {% endstep %}
 
 {% step %}
 ### Instruction Data
 
-Build instruction data with the validity proof, tree location indices, and complete account data.&#x20;
+Build instruction data with the validity proof, tree account indices, complete account data and metadata.
 
 {% hint style="info" %}
-Compressed account data must be passed in the instruction, unlike regular Solana accounts where programs read data on-chain. The program hashes this data and the Light System Program verifies the hash against the on chain root.
+Unlike regular Solana accounts where programs read data on-chain, compressed account data must be passed in instruction data. The program hashes this data and the Light System Program verifies the hash against the root in a Merkle tree account.
 {% endhint %}
 
 {% tabs %}
@@ -524,25 +483,67 @@ Account indices reduce transaction size. Instruction data references the `remain
 {% endstep %}
 
 {% step %}
-### Send Transaction
+### Instruction
 
-Build the instruction with standard Solana patterns, then send the transaction.
+Build the instruction from the `PackedAccounts` (Step 6) and instruction data (Step 7).
 
 ```rust
-let instruction = Instruction {
-    program_id: your_program::ID,
-    accounts,
-    data: instruction_data.data(),
+let accounts = counter::accounts::GenericAnchorAccounts {
+    signer: payer.pubkey(),
 };
 
-rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
-    .await?;
+let (remaining_accounts_metas, _, _) = remaining_accounts.to_account_metas();
+let instruction = Instruction {
+    program_id: your_program::ID,
+    accounts: [
+        accounts.to_account_metas(Some(true)),
+        remaining_accounts_metas,
+    ].concat(),                        
+    data: instruction_data.data(),   
+};
 ```
 
-* `program_id` specifies your program's address
-* `accounts` is the combined account array from Step 6
-* `data` is the serialized instruction data from Step 7 (Anchor auto-generates `.data()` method)
-* `create_and_send_transaction()` submits the transaction to the network with the payer as signer.
+The `Instruction` struct packages three components:
+
+1. `program_id`: Your program's on-chain address
+2. The `accounts` array contains your program accounts with Light System accounts and tree accounts from the validity proof:
+
+* **Create your program's accounts struct** - `GenericAnchorAccounts` mirrors your on-chain `#[derive(Accounts)]` struct. Include only signers, PDAs, and program-specific accounts.
+* **Extract Light System accounts** - `remaining_accounts.to_account_metas()` returns `(Vec<AccountMeta>, usize, usize)`. The tuple contains the account vector and offset values for indexing.
+
+{% hint style="info" %}
+For non-Anchor programs, create `Vec<AccountMeta>` directly instead of using `.to_account_metas()`.
+{% endhint %}
+
+* **Merge into single array** - `.concat()` combines both vectors:
+  * `accounts.to_account_metas(Some(true))` converts your Anchor struct to `Vec<AccountMeta>` (Anchor auto-generates this method)
+  * `remaining_accounts_metas` contains Light System accounts + tree accounts from Step 6
+
+**Final account order:**
+
+```
+[0]    Your program accounts (from `GenericAnchorAccounts`)
+[1]    Light System Program
+[2]    CPI Signer PDA
+[3-8]  Other Light System accounts
+[9+]   Merkle trees, queues (from validity proof)
+```
+
+Your program receives account `[0]` via `ctx.accounts` and accounts `[1..]` via `ctx.remaining_accounts`.
+
+3. `data` must contain borsh-serialized instruction data with the validity proof, tree indices, and account data
+{% endstep %}
+
+{% step %}
+### Send Transaction
+
+Submit the instruction to the network.
+
+```rust
+rpc.create_and_send_transaction(&[instruction],
+  &payer.pubkey(), &[payer])
+      .await?;
+```
 {% endstep %}
 {% endstepper %}
 
