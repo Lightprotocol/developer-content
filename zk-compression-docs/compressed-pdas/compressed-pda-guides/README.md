@@ -21,17 +21,17 @@ hidden: true
 {% tabs %}
 {% tab title="Create" %}
 ```
-𝐂𝐋𝐈𝐄𝐍𝐓
+𝐂𝐥𝐢𝐞𝐧𝐭
 ├─ Derive unique compressed account address
 ├─ Fetch validity proof (proves that address doesn't exist)
 ├─ Pack accounts and build instruction
 └─ Send transaction
    │
- 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+ 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
    ├─ Derive and check address
    ├─ Initialize compressed account
    │
-   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
       ├─ Verify validity proof (non-inclusion)
       ├─ Create address (address tree)
       ├─ Create compressed account (state tree)
@@ -116,3 +116,10 @@ Client
 </code></pre>
 {% endtab %}
 {% endtabs %}
+
+```
+𝐂𝐥𝐢𝐞𝐧𝐭
+𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
+𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
+
+```
