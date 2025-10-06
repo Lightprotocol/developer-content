@@ -128,7 +128,7 @@ Add `light-program-test`, `light-sdk`, and `borsh` to test and interact with com
 {% step %}
 ### Environment
 
-Set up test environment with `LightProgramTest` that provides prover, indexer, and auto- funded payer.
+Set up test environment with `LightProgramTest` that provides prover, indexer, and auto-funded payer.
 
 ```rust
 let config = ProgramTestConfig::new_v2(
@@ -143,11 +143,16 @@ let payer = rpc.get_payer().insecure_clone();
 {% step %}
 ### Tree Configuration
 
-Before creating a compressed account, the client must choose two Merkle trees: - an address tree to derive the account address and
+Before creating a compressed account, the client must choose two Merkle trees:&#x20;
 
+* an address tree to derive the account address and
 * a state tree to store the account hash.
 
-**Address tree**: Stores the account addresses of compressed accounts.
+{% hint style="success" %}
+The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. See [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for available trees.
+{% endhint %}
+
+**Address tree's** store the account addresses of compressed accounts.
 
 * The tree pubkey becomes an input to address derivation: `hash(address_tree_pubkey || address_seed)`.
 * Different address trees produce different addresses from identical seeds.
@@ -156,10 +161,6 @@ Before creating a compressed account, the client must choose two Merkle trees: -
 **State tree's** store the compressed account hashes.
 
 * State trees are fungible. Tree choice does not affect the account hash.
-
-{% hint style="success" %}
-The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. See [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for available trees.
-{% endhint %}
 
 ```rust
 let address_tree_info = rpc.get_address_tree_v1();
@@ -178,7 +179,7 @@ let state_tree_info = rpc.get_random_state_tree_info().unwrap();
 Derive a persistent address from seeds, address tree, and program ID as unique identifier for your compressed account.
 
 {% hint style="warning" %}
-This step is only required for **create** operations. Update and close operations use the existing account's address.
+This step is **only required to create** a compressed account. Update and close use the existing account's address.
 {% endhint %}
 
 ```rust
@@ -191,7 +192,7 @@ let (address, _) = derive_address(
 );
 ```
 
-**`derive_address()`**: Computes a deterministic 32-byte address from the inputs.
+**`derive_address()`** computes a deterministic 32-byte address from the inputs.
 
 **Parameters**:
 
@@ -240,7 +241,7 @@ The RPC returns `ValidityProofWithContext` with
 * an empty `accounts` field for create operations
 {% endtab %}
 
-{% tab title="Update & Close:" %}
+{% tab title="Update & Close" %}
 {% hint style="info" %}
 **Update and Close** use identical proof mechanisms. The difference is in your program's instruction handler.
 {% endhint %}
@@ -296,11 +297,10 @@ let mut remaining_accounts = PackedAccounts::default();
 * `PackedAccounts::default()` initializes a helper struct that collects and organizes Light System Program account metadata. The struct tracks which index each pubkey receives.
 
 ```
-[pre_accounts] [system_accounts] [packed_accounts]
-       ↑                ↑                  ↑
-    Signers,       Light system      Merkle trees,
-    fee payer      program accts     address trees
-                                     (deduplicated)
+[pre_accounts]   [system_accounts]   [packed_accounts]
+       ↑                ↑                   ↑
+    Signers,       Light system       Merkle tree
+   fee payer     program accounts      accounts
 
 ```
 
