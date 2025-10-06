@@ -18,7 +18,7 @@ For example, this simplifies [token distribution](advanced-guides/create-an-aird
 
 <table data-view="cards"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Rent-free tokens</strong></td><td>Create token accounts without upfront rent exempt balance.</td></tr><tr><td><strong>SPL Compatibility</strong></td><td>Compatible with SPL tokens and Solana programs.</td></tr><tr><td><strong>Wallet Support</strong></td><td>Supported by leading wallets including Phantom and Backpack.</td></tr></tbody></table>
 
-### Start building
+## Start building
 
 Developing with compressed tokens works similar SPL tokens and involves minimal setup:
 
@@ -119,17 +119,17 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 3. Get started with our cookbook or advanced guides for implementations
 
-#### Cookbook
+### Guides
 
 <table><thead><tr><th width="359.98333740234375">Guide</th><th>Description</th></tr></thead><tbody><tr><td><a href="../../zk-compression-docs/compressed-tokens/compressed-token-guides/how-to-create-and-register-a-mint-account-for-compression.md">How to Create and Register a Mint Account for Compression</a></td><td>Create new SPL mint with token pool for compression</td></tr><tr><td><a href="../../zk-compression-docs/compressed-tokens/compressed-token-guides/how-to-create-compressed-token-accounts.md">How to Create Compressed Token Accounts</a></td><td>Create compressed and learn difference to regular token accounts</td></tr><tr><td><a href="../../zk-compression-docs/compressed-tokens/compressed-token-guides/how-to-mint-compressed-tokens.md">How to Mint Compressed Tokens</a></td><td>Create new compressed tokens to existing mint</td></tr><tr><td><a href="../../zk-compression-docs/compressed-tokens/compressed-token-guides/how-to-transfer-compressed-token.md">How to Transfer Compressed Tokens</a></td><td>Move compressed tokens between compressed accounts</td></tr><tr><td><a href="../../zk-compression-docs/compressed-tokens/compressed-token-guides/how-to-compress-and-decompress-spl-tokens.md">How to Decompress and Compress Tokens</a></td><td>Convert SPL tokens between regular and compressed format</td></tr><tr><td><a href="../../zk-compression-docs/compressed-tokens/compressed-token-guides/how-to-compress-complete-spl-token-accounts.md">How to Compress complete SPL Token Accounts</a></td><td>Compress complete SPL token accounts and reclaim rent afterwards</td></tr><tr><td><a href="../../zk-compression-docs/compressed-tokens/compressed-token-guides/how-to-merge-compressed-token-accounts.md">How to Merge Compressed Accounts</a></td><td>Consolidate multiple compressed accounts of the same mint into a single compressed account</td></tr><tr><td><a href="../../zk-compression-docs/compressed-tokens/compressed-token-guides/how-to-create-compressed-token-pools-for-mint-accounts.md">How to Create Token Pools for Mint Accounts</a></td><td>Create token pool for compression for existing SPL mints</td></tr><tr><td><a href="../../zk-compression-docs/compressed-tokens/compressed-token-guides/how-to-approve-and-revoke-delegate-authority.md">How to Approve and Revoke Delegate Authority</a></td><td>Approve or revoke delegates for compressed token accounts</td></tr></tbody></table>
 
-#### Advanced Guides
+### Advanced Guides
 
 <table><thead><tr><th width="360.35003662109375">Guide</th><th>Description</th></tr></thead><tbody><tr><td><a href="advanced-guides/create-an-airdrop.md">Create an Airdrop</a></td><td>Create an airdrop, with or without code</td></tr><tr><td><a href="advanced-guides/use-token-2022-with-compression.md">Use Token-2022 with compressed tokens</a></td><td>Create and transfer compressed tokens with Token-2022 extensions</td></tr><tr><td><a href="advanced-guides/add-wallet-support-for-compressed-tokens.md">Add Wallet Support for Compressed Tokens</a></td><td>Implement compressed token support in your wallet application</td></tr></tbody></table>
 
 ***
 
-### Next Steps
+## Next Steps
 
 Get started with the first cookbook guide.
 
