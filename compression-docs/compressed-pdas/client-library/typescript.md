@@ -7,7 +7,7 @@ description: >-
 
 # Typescript
 
-Learn how to build a TypeScript client to test compressed accounts with `TestRpc`. For devnet and mainnet use `Rpc`.
+Learn how to build a Rust client to create and interact with compressed accounts with `Rpc` or `TestRpc`.
 
 * **For local testing**, use `TestRpc`.
   * `TestRpc` is a mock RPC implementation that simulates the ZK Compression stack without external dependencies.
