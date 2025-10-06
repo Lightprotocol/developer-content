@@ -13,7 +13,7 @@ Learn how to build a TypeScript client to test compressed accounts with `TestRpc
   * `TestRpc` is a mock RPC implementation that simulates the ZK Compression stack without external dependencies.
   * It parses events and builds Merkle trees on-demand without persisting state.
 * **For devnet and mainnet** use `Rpc`
-  * `Rpc` is a thin wrapper extending [Solana's web3.js `Connection` class](https://solana-labs.github.io/solana-web3.js/classes/Connection.html) with compression-related endpoints.  Find a [full list of JSON RPC methods here](../../resources/json-rpc-methods/).
+  * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints.  Find a [full list of JSON RPC methods here](../../resources/json-rpc-methods/).
   * It connects to Photon indexer for compressed account queries and the prover service for validity proofs.
 
 {% hint style="success" %}
