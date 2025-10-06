@@ -654,7 +654,7 @@ Find the source Code here.
 
 ## Next Steps
 
-{% content-ref url="../create-a-program-with-compressed-pdas.md" %}
-[create-a-program-with-compressed-pdas.md](../create-a-program-with-compressed-pdas.md)
+{% content-ref url="../compressed-pda-cookbook/" %}
+[compressed-pda-cookbook](../compressed-pda-cookbook/)
 {% endcontent-ref %}
 
