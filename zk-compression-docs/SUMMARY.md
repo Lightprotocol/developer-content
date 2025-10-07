@@ -70,6 +70,7 @@
   * [Program Development](../compression-docs/resources/sdks/program-development.md)
 * [Error Cheatsheet](../compression-docs/resources/error-cheatsheet/README.md)
   * [Debug 0x179b / 6043 / ProofVerificationFailed](../compression-docs/resources/error-cheatsheet/debug-0x179b-6043-proofverificationfailed.md)
+  * [Debug  0x36D2 / 14034 / InvalidCpiAccountsOffset](resources/error-cheatsheet/debug-0x36d2-14034-invalidcpiaccountsoffset.md)
 
 ## Learn
 
