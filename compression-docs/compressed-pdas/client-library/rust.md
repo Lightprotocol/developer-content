@@ -469,8 +469,8 @@ let instruction_data = create_and_update::instruction::CreateCompressedAccount {
 
 2. **Specify Merkle trees to store address and account hash**
 
-* `PackedAddressTreeInfo` specifies the index to the address tree account used to derive the address. The index points to the address tree account in `PackedAccounts`.
-* `output_state_tree_index` points to the state tree account in `PackedAccounts` that will store the compressed account hash.
+* `PackedAddressTreeInfo` specifies the index to the address tree account used to derive the address. The index points to the address tree account in `remaining_accounts`.
+* `output_state_tree_index` points to the state tree account in `remaining_accounts` that will store the compressed account hash.
 
 3. **Custom account data**
 
