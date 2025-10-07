@@ -145,21 +145,15 @@ Both `TestRpc` and `Rpc` implement the same `CompressionApiInterface`.
 {% endtabs %}
 
 {% hint style="info" %}
-`@lightprotocol/stateless.js` provides the core SDK for ZK Compression operations, including `Rpc` and `TestRpc` classes.
+`@lightprotocol/stateless.js` provides the core SDK for to create and interact with compressed accounts, including `Rpc` and `TestRpc` classes.
 {% endhint %}
 {% endstep %}
 
 {% step %}
 ### Environment
 
-{% hint style="info" %}
-[Get your API key here](https://www.helius.dev/zk-compression), if you don't have one yet.
-{% endhint %}
-
 {% tabs %}
 {% tab title="Rpc" %}
-Connect to local, devnet or mainnet with `Rpc`.
-
 {% tabs %}
 {% tab title="Mainnet" %}
 ```typescript
@@ -173,9 +167,6 @@ const rpc = new Rpc(
   { apiKey: 'YOUR_API_KEY' }
 );
 ```
-
-* `Rpc` constructor accepts Solana RPC URL, Photon indexer URL, prover URL, and optional config
-* Photon indexer URL and API key are required to query compressed accounts
 {% endtab %}
 
 {% tab title="Devnet" %}
@@ -190,8 +181,6 @@ const rpc = new Rpc(
   { apiKey: 'YOUR_API_KEY' }
 );
 ```
-
-* Photon indexer URL and API key are required for compressed account queries
 {% endtab %}
 
 {% tab title="Localnet" %}
@@ -205,7 +194,6 @@ const rpc = new Rpc(
 );
 ```
 
-* Default local endpoints for Solana RPC, Photon indexer, and prover service
 * Requires running `light test-validator` locally
 {% endtab %}
 {% endtabs %}
@@ -228,23 +216,13 @@ const testRpc = await getTestRpc(lightWasm);
 {% step %}
 ### Tree Configuration
 
-Before creating a compressed account, the client must choose two Merkle trees:
+Before creating a compressed account, the client must select two Merkle trees:
 
-* an address tree to derive the account address and
+* an address tree to derive and store the the account address and
 * a state tree to store the account hash.
 
-**Address tree**: Stores the account addresses of compressed accounts.
-
-* The tree pubkey becomes an input to address derivation: `hash(address_tree_pubkey || address_seed)`.
-* Different address trees produce different addresses from identical seeds.
-* Address trees are NOT fungible. The client must use the same tree for `deriveAddress()` and `getValidityProof()` calls.
-
-**State tree's** store the compressed account hashes.
-
-* State trees are fungible. Tree choice does not affect the account hash.
-
 {% hint style="success" %}
-The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. See [Addresses](https://www.zkcompression.com/resources/addresses-and-urls) for available trees.
+The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. See the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
 ```typescript
@@ -252,18 +230,21 @@ const addressTree = await rpc.getAddressTreeV1();
 const stateTree = await rpc.getRandomStateTreeInfo();
 ```
 
-* `getAddressTreeV1()` returns the address tree pubkey used to derive an address for a compressed account with `deriveAddress()` and for `getValidityProof()` to prove the address does not exist yet in this tree.
+* `getAddressTreeV1()` returns the address tree pubkey
+  * used to derive an address for a compressed account with `deriveAddress()` and
+  * for `getValidityProof()` to prove the address does not exist yet in this tree.
 * `getRandomStateTreeInfo()` returns state tree metadata (pubkey, queue, etc.) to store the compressed account hash.
+
+{% hint style="info" %}
+- **State trees are fungible**: Account hashes can move to different state trees after each state transition. Best practice is to minimize different trees per transaction, but programs must support this since trees can fill up.
+- **Address trees are not fungible**: Different address trees produce different addresses from identical seeds. Use the same address tree for `deriveAddress()` and all operations on that account.
+{% endhint %}
 {% endstep %}
 
 {% step %}
-### Derive Address (Create only)
+### Derive Address
 
 Derive a persistent address from seeds, address tree, and program ID as unique identifier for your compressed account.
-
-{% hint style="warning" %}
-This step is only required for **create** operations. Update and close operations use the existing account's address.
-{% endhint %}
 
 ```typescript
 const seed = Buffer.from('my-seed');
@@ -281,6 +262,10 @@ const address = deriveAddress(
 * `[seed]`: Array of Buffers that uniquely identify the account
 * `addressTree`: The tree pubkey where this address will be registered. An address is unique to an address tree.
 * `programId`: The program that owns this account
+
+{% hint style="info" %}
+For create, pass the address to `getValidityProof()` to prove non-existence. For update/close, use the address to fetch the current account with `getCompressedAccount(address)`.
+{% endhint %}
 {% endstep %}
 
 {% step %}
@@ -313,7 +298,7 @@ The RPC returns validity proof context with
 
 * the non-inclusion `compressedProof`, passed to the program in the instruction data. The Light System Program verifies the proof against the current Merkle root.
 * `newAddressParams` contains the tree metadata for your address (tree, root, leaf index)
-* an empty `merkleTrees` field for account creation, since no account hash exists as input
+* an empty `merkleTrees` field for create operations
 {% endtab %}
 
 {% tab title="Update & Close:" %}
@@ -335,13 +320,13 @@ The `compressedAccount.hash` contains the hash that's currently in the state tre
 **Parameters**:
 
 * First arg contains the hash of the existing compressed account to prove its existence in the state tree.
-* Second arg (`[]`) is empty for update/close operations, since the address already exists from account creation.
+* Second arg (`[]`) is empty because the proof verifies the account hash exists in a state tree, not the address in an address tree.
 
 The RPC returns validity proof context with
 
 * the inclusion `compressedProof`, passed to the program in the instruction data. The Light System Program verifies the proof against the current Merkle root.
 * `merkleTrees` contains the tree metadata for the account hash (tree, root, leaf index) for the Light System program to nullify.
-* an empty `newAddressParams` field for update/close, since the address was already created. The instruction data references the address via `CompressedAccountMeta`
+* an empty `newAddressParams` field for update/close operations.
 {% endtab %}
 {% endtabs %}
 {% endstep %}
@@ -463,7 +448,7 @@ remainingAccounts.push({
 });
 ```
 
-* `getRandomStateTreeInfo()` selects a state tree to write the account hash
+* `getRandomStateTreeInfo()` selects a state tree to store the account hash in
 * Add the output state tree to `remainingAccounts` and track its index for instruction data.
 
 #### Summary
@@ -591,15 +576,9 @@ const instruction = new TransactionInstruction({
 });
 ```
 
-The `TransactionInstruction` packages three components:
-
-* `programId` contains your program's on-chain address.
-* The `keys` array includes your program accounts, Light System accounts and tree accounts from the validity proof.
-* `data` contains the instruction data with the validity proof, tree indices, and account data _from Step 7_.
-
 **What to include in the `keys`:**
 
-1. **Your program's accounts** - Include signers, PDAs, and program-specific accounts first.
+1. **Your program's accounts** - Include anything you need - it won't interfere with compression-related accounts.
 2. **Light System accounts** - The system accounts required for proof verification.
 3. **Remaining accounts** - Merkle trees and queues from the validity proof.
 
@@ -612,14 +591,10 @@ The `TransactionInstruction` packages three components:
 [3-8]  Other Light System accounts
 [9+]   Merkle trees, queues (from validity proof)
 ```
-
-Your program receives account `[0]` via standard Anchor account deserialization and accounts `[1..]` via `remaining_accounts`.
 {% endstep %}
 
 {% step %}
 ### Send Transaction
-
-Submit the instruction to the network.
 
 ```typescript
 const transaction = new Transaction().add(instruction);
@@ -634,7 +609,7 @@ const signature = await sendAndConfirmTransaction(
 
 ## Full Code Example
 
-The full code examples below walk you through the complete lifecycle of a counter program: create, increment, decrement, reset, close.
+
 
 {% hint style="warning" %}
 For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
