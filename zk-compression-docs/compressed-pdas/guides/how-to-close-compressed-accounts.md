@@ -15,7 +15,7 @@ Closing a compressed account
 * consumes the existing account hash (input), and
 * produces a new account hash with zero values to mark it as closed (output).
 
-&#x20;A closed compressed account [can be reinitialized](how-to-reinitialize-compressed-accounts.md) from the output account hash at the same address with `LighAccount::new_empty()`.
+A closed compressed account [can be reinitialized](how-to-reinitialize-compressed-accounts.md) from the output account hash with the same address with `LighAccount::new_empty()`.
 
 {% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
@@ -68,7 +68,7 @@ anchor_lang = "0.31.1"
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
-solana-sdk = "2.2"
+solana-program = "2.2"
 ```
 
 ```toml
@@ -150,7 +150,7 @@ pub struct InstructionData {
 * `CompressedAccountMeta` points to the input hash and output state tree:
   * `tree_info`: `PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index) so the Light System Program nullify it
   * `address` specifies the account's derived address
-  * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed (the `DEFAULT_DATA_HASH`).
+  * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed.
 
 3. **Current data for close**
 
@@ -189,7 +189,7 @@ let my_compressed_account = LightAccount::<'_, DataAccount>::new_close(
 `new_close` automatically creates output state to mark the account as closed with zero values:
 
 1. The Zero discriminator (`0u8; 8`) removes type identification of the account.
-2. The output contains a zero data hash that indicates no data content (`DEFAULT_DATA_HASH`)
+2. The output contains a zero data hash that indicates no data content
 3. The data field contains an empty vector, instead of serialized account fields.
 
 {% hint style="info" %}

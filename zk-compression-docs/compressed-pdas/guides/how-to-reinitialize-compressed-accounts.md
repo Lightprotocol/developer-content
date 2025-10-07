@@ -1,6 +1,6 @@
 ---
 description: >-
-  Complete guide to reinitialize closed compressed accounts in Solana programs
+  Complete guide to reinitialize empty compressed accounts in Solana programs
   with the light-sdk crate. Includes step-by-step guide and full code examples.
 ---
 
@@ -8,23 +8,23 @@ description: >-
 
 Compressed accounts are reinitialized via CPI to the Light System Program.
 
-A closed compressed account can be reinitialized
+An empty compressed account can be reinitialized
 
-* with an account hash marked as closed with zero values and zero discriminator (input account hash)
-* to create a new account hash at the same address with new values (output account hash).
+* with an account hash marked as empty with zero values and zero discriminator (input hash)
+* to create a new account hash at the same address with new values (output hash).
 
 {% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-reinitialize-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
 <pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-├─ Fetch closed account metadata
-├─ Fetch validity proof (proves closed account hash exists)
+├─ Fetch empty account metadata
+├─ Fetch validity proof (proves empty account with zeroed data exists)
 ├─ Build instruction with proof and new data
 └─ Send transaction
    │
 <strong>𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>   ├─ Reconstruct closed account hash with zero values (input hash)
+</strong><strong>   ├─ Reconstruct empty account hash with zero values (input hash)
 </strong><strong>   ├─ Initialize account with new data
 </strong><strong>   │
 </strong><strong>   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
@@ -133,29 +133,29 @@ pub struct InstructionData {
 
 1. **Inclusion Proof**
 
-* `ValidityProof` proves that the account with zero values exists in the state tree (inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* `ValidityProof` proves that the empty account exists in the state tree (inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify input hash and output state tree**
 
 * `CompressedAccountMeta` points to the input hash and output state tree:
-  * `tree_info: PackedStateTreeInfo` points to the existing account hash with zero values (merkle tree pubkey index, leaf index, root index) so the Light System Program nullify it
+  * `tree_info: PackedStateTreeInfo` points to the existing and empty account hash (merkle tree pubkey index, leaf index, root index) so the Light System Program nullify it
   * `address` specifies the account's derived address
   * `output_state_tree_index` points to the state tree that will store the new account hash
 
 {% hint style="info" %}
-Reinitialization does not require `current_value` parameters. `new_empty()` automatically uses `DEFAULT_DATA_HASH` as input state.
+Reinitialization does not require `current_value` parameters. `new_empty()` automatically uses the empty account as input state.
 {% endhint %}
 {% endstep %}
 
 {% step %}
-### Reinitialize Closed Account
+### Reinitialize Account
 
-Reinitialize the closed account with `LightAccount::new_empty()`.
+Reinitialize the empty account with `LightAccount::new_empty()`.
 
 {% hint style="info" %}
 `new_empty()`
 
-1. uses `DEFAULT_DATA_HASH` as input state (proves account is closed) and
+1. uses empty account as input state (proves account data is zeroed) and
 2. creates output state with provided initial values.
 {% endhint %}
 
@@ -170,22 +170,22 @@ let my_compressed_account = LightAccount::<'_, DataAccount>::new_empty(
 **Parameters for `LightAccount::new_empty()`:**
 
 * `crate::ID` specifies the program ID that owns the compressed account.
-* `account_meta` points to the closed account hash (with zero values) for the Light System Program to nullify - defined in the _Instruction Data (Step 2)_.
+* `account_meta` points to the account hash with zero values for the Light System Program to nullify - defined in the _Instruction Data (Step 2)_.
 * `DataAccount::default()` provides the initial account data.&#x20;
   * The `Default` trait creates a zero-initialized instance (`Pubkey` as all zeros, `u64` as `0`, `String` as empty).&#x20;
-  * Programs can provide custom initial values instead of using `.default()`.
+  * Programs can provide custom initial values instead of using `default()`.
 {% endstep %}
 
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI reinitializes the compressed account by nullifying the closed account hash and creating a new account hash.
+The Light System Program CPI reinitializes the compressed account.
 
 {% hint style="info" %}
 The Light System Program
 
-* validates the closed account hash exists in state tree with `proof`,
-* nullifies the closed account hash, and
+* validates the empty account hash exists in state tree with `proof`,
+* nullifies the empty account hash, and
 * appends the new account hash with provided values to the state tree.
 {% endhint %}
 
@@ -209,8 +209,8 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Build and invoke the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` to prove the closed account hash exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
-* `with_light_account` adds the `LightAccount` wrapper configured with the closed account hash as input and provided values as output _- defined in Step 3_.
+* `new_cpi()` initializes the CPI instruction with the `proof` to prove the empty account hash exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
+* `with_light_account` adds the `LightAccount` wrapper configured with the empty account hash as input and provided values as output _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 {% endstep %}
 {% endstepper %}
