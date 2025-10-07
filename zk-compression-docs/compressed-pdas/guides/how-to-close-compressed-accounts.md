@@ -11,7 +11,6 @@ Compressed accounts are closed via CPI to the Light System Program.&#x20;
 
 Closing a compressed account
 
-* preserves its address,
 * consumes the existing account hash (input hash), and
 * produces a new account hash with zero values to mark it as closed (output).
 
