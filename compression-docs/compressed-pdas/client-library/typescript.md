@@ -7,7 +7,7 @@ description: >-
 
 # Typescript
 
-Learn how to build a Rust client to create and interact with compressed accounts with `Rpc` or `TestRpc`.
+The Typescript Client SDK provides two abstractions to create or interact with compressed accounts:
 
 * **For local testing**, use `TestRpc`.
   * `TestRpc` is a mock RPC implementation that simulates the ZK Compression stack without external dependencies.
