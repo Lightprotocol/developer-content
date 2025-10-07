@@ -123,10 +123,7 @@ The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to An
 {% tab title="Mainnet" %}
 ```rust
 use light_client::{LightClient, LightClientConfig};
-use solana_sdk::signature::{Keypair, read_keypair_file};
-
-let payer = read_keypair_file("~/.config/solana/id.json")
-    .expect("Failed to load keypair");
+use solana_sdk::signature::read_keypair_file;
 
 let config = LightClientConfig::new(
     "https://api.mainnet-beta.solana.com".to_string(),
@@ -134,39 +131,39 @@ let config = LightClientConfig::new(
     Some("YOUR_API_KEY".to_string())
 );
 
-let mut client = LightClient::new(payer, config).await?;
+let mut client = LightClient::new(config).await?;
+
+client.payer = read_keypair_file("~/.config/solana/id.json")?;
 ```
 {% endtab %}
 
 {% tab title="Devnet" %}
 ```rust
 use light_client::{LightClient, LightClientConfig};
-use solana_sdk::signature::{Keypair, read_keypair_file};
+use solana_sdk::signature::read_keypair_file;
 
-let payer = read_keypair_file("~/.config/solana/id.json")
-    .expect("Failed to load keypair");
-
-// Helius RPC
 let config = LightClientConfig::new(
     "https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY".to_string(),
 );
 
-let mut client = LightClient::new(payer, config).await?;
+let mut client = LightClient::new(config).await?;
+
+client.payer = read_keypair_file("~/.config/solana/id.json")?;
 ```
 
 * For Helius devnet RPC: Use the standard RPC endpoint. The endpoint serves both standard RPC and Photon indexer API.
 {% endtab %}
 
-{% tab title="Local" %}
+{% tab title="Localnet" %}
 ```rust
 use light_client::{LightClient, LightClientConfig};
-use solana_sdk::signature::Keypair;
-
-let payer = Keypair::new();
+use solana_sdk::signature::read_keypair_file;
 
 let config = LightClientConfig::local();
 
-let mut client = LightClient::new(payer, config).await?;
+let mut client = LightClient::new(config).await?;
+
+client.payer = read_keypair_file("~/.config/solana/id.json")?;
 ```
 
 * Requires running `light test-validator` locally

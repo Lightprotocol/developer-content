@@ -6,7 +6,7 @@ description: >-
 hidden: true
 ---
 
-# Compressed PDA Guides
+# Guides
 
 
 
@@ -41,17 +41,17 @@ hidden: true
 
 {% tab title="Update" %}
 ```
-Client
+𝐂𝐥𝐢𝐞𝐧𝐭
 ├─ Fetch current account data 
 ├─ Fetch validity proof (proves that account exists)
 ├─ Build instruction with proof, current data, new data and metadata
 └─ Send transaction
    │
- 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+ 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
    ├─ Reconstruct existing compressed account hash (input hash)
    ├─ Modify compressed account data
    │
-   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
       ├─ Verify input hash 
       ├─ Nullify input hash 
       ├─ Create new account hash with updated data (output hash)
@@ -61,16 +61,16 @@ Client
 
 {% tab title="Close" %}
 ```
-𝐂𝐋𝐈𝐄𝐍𝐓
+𝐂𝐥𝐢𝐞𝐧𝐭
 ├─ Fetch current account data
 ├─ Fetch validity proof (proves that account exists)
 ├─ Build instruction with proof, current data and metadata
 └─ Send transaction
    │
- 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+ 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
    ├─ Reconstruct existing compressed account hash (input hash)
    │
-   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
        ├─ Verify input hash
        ├─ Nullify input hash
        ├─ Append new account hash to state tree 
@@ -81,17 +81,17 @@ Client
 
 {% tab title="Reinit" %}
 ```
-𝐂𝐋𝐈𝐄𝐍𝐓
+𝐂𝐥𝐢𝐞𝐧𝐭
 ├─ Fetch closed account metadata
 ├─ Fetch validity proof (proves closed account hash exists)
 ├─ Build instruction with proof and new data
 └─ Send transaction
    │
- 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+ 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
    ├─ Reconstruct closed account hash with zero values (input hash)
    ├─ Initialize account with new data
    │
-   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
       ├─ Verify input hash
       ├─ Nullify input hash
       └─ Append new account hash with new values (output hash)
@@ -99,20 +99,20 @@ Client
 {% endtab %}
 
 {% tab title="Burn" %}
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
+<pre><code>𝐂𝐥𝐢𝐞𝐧𝐭
 ├─ Fetch current account data
 ├─ Fetch validity proof (proves that account exists)
 ├─ Build instruction with proof and current data
 └─ Send transaction
    │
-<strong> 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+<strong> 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
 </strong><strong>   ├─ Reconstruct existing compressed account hash (input hash)
 </strong><strong>   │
-</strong><strong>   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+</strong><strong>   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
 </strong>      ├─ Verify input hash
-        ├─ Nullify input hash (permanent)
-        ├─ No output state created
-        └─ Complete atomic state transition
+      ├─ Nullify input hash (permanent)
+      ├─ No output state created
+      └─ Complete atomic state transition
 </code></pre>
 {% endtab %}
 {% endtabs %}
