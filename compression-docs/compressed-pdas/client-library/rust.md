@@ -283,8 +283,8 @@ let rpc_result = rpc
 
 **Parameters**:
 
-* (`vec![]`) is empty for compressed account creation, since no compressed account exists yet to reference.
-* (`vec![AddressWithTree]`) specifies the new address to create with its address tree.
+* `vec![]` is empty for compressed account creation, since no compressed account exists yet to reference.
+* `vec![AddressWithTree]` specifies the new address to create with its address tree.
 
 The RPC returns `ValidityProofWithContext` with
 
@@ -315,8 +315,8 @@ The `compressed_account.hash` contains the hash that's currently in the state tr
 
 **Parameters**:
 
-* (`vec![hash]`) contains the hash of the existing compressed account to prove its existence in the state tree.
-* (`vec![]`) is empty because the proof verifies the account hash exists in a state tree, not the address in an address tree.
+* `vec![hash]` contains the hash of the existing compressed account to prove its existence in the state tree.
+* `vec![]` is empty because the proof verifies the account hash exists in a state tree, not the address in an address tree.
 
 The RPC returns `ValidityProofWithContext` with
 
@@ -330,12 +330,12 @@ The RPC returns `ValidityProofWithContext` with
 {% step %}
 ### Pack Accounts
 
-Compressed account instructions require packing accounts into the <kbd>packed\_accounts</kbd> array.&#x20;
+Compressed account instructions require packing accounts into the `remaining_accounts` array.&#x20;
 
 {% hint style="info" %}
 **Understanding "Packed" terminology:**
 
-* **Packed structs** (e.g., `PackedAddressTreeInfo`) contain account **indices** (u8) instead of pubkeys to reduce transaction size. The indices point to the `packed_accounts` array.
+* **Packed structs** (e.g., `PackedAddressTreeInfo`) contain account **indices** (u8) instead of pubkeys to reduce transaction size. The indices point to the `remaining_accounts` array.
 * **Non-Packed structs** contain full pubkeys for client use. RPC methods return these.
 * **`PackedAccounts`** deduplicates accounts and assigns sequential indices to create Packed structs.
 {% endhint %}
@@ -343,13 +343,13 @@ Compressed account instructions require packing accounts into the <kbd>packed\_a
 #### 1. Initialize Account Packer
 
 ```rust
-let mut packed_accounts = PackedAccounts::default();
+let mut remaining_accounts = PackedAccounts::default();
 ```
 
 * `PackedAccounts::default()` initializes a helper struct that collects and organizes Light System Program account metadata. The struct tracks which index each pubkey receives.
 
 ```
-[pre_accounts] [system_accounts] [packed_accounts]
+[pre_accounts] [system_accounts] [remaining_accounts]
        ↑                ↑                  ↑
     Signers,       Light system      Merkle trees,
     fee payer      program accts     address trees
@@ -359,11 +359,11 @@ let mut packed_accounts = PackedAccounts::default();
 
 #### 2. Add Light System Accounts
 
-The "system accounts" are infrastructure accounts are added to `packed_accounts.system_accounts`. These accounts are required for the Light System Program to verify proofs and execute CPI's.
+The "system accounts" are infrastructure accounts are added to `remaining_accounts.system_accounts`. These accounts are required for the Light System Program to verify proofs and execute CPI's.
 
 ```rust
 let config = SystemAccountMetaConfig::new(create_and_update::ID);
-packed_accounts.add_system_accounts(config);
+remaining_accounts.add_system_accounts(config);
 ```
 
 * `SystemAccountMetaConfig::new(program_id)` stores your program's ID to derive the CPI signer PDA
@@ -394,30 +394,30 @@ The validity proof response from `getValidityProof()` contains different context
 {% tab title="Create" %}
 ```rust
 let packed_address_tree_accounts = rpc_result
-    .pack_tree_infos(&mut packed_accounts)
+    .pack_tree_infos(&mut remaining_accounts)
     .address_trees;
 ```
 
-* `pack_tree_infos(&mut packed_accounts)` extracts Merkle tree pubkeys from validity proof and adds them to `packed_accounts`
+* `pack_tree_infos(&mut remaining_accounts)` extracts Merkle tree pubkeys from validity proof and adds them to `remaining_accounts`
 * `.address_trees` returns `Vec<PackedAddressTreeInfo>` that specifies where to create the address:
-  * `address_merkle_tree_pubkey_index` (u8) points to the address tree account in `packed_accounts`
-  * `address_queue_pubkey_index` (u8) points to the address queue account in `packed_accounts`
-  * `root_index` (u16) specifies which Merkle root to verify the non-inclusion proof against
+  * `address_merkle_tree_pubkey_index` points to the address tree account in `remaining_accounts`
+  * `address_queue_pubkey_index` points to the address queue account in `remaining_accounts`
+  * `root_index` specifies which Merkle root to verify the non-inclusion proof against
 {% endtab %}
 
 {% tab title="Update & Close" %}
 ```rust
 let packed_state_tree_accounts = rpc_result
-    .pack_tree_infos(&mut packed_accounts)
+    .pack_tree_infos(&mut remaining_accounts)
     .state_trees
     .unwrap();
 ```
 
-* `pack_tree_infos(&mut packed_accounts)` extracts Merkle tree pubkeys from validity proof and adds them to `packed_accounts`
+* `pack_tree_infos(&mut remaining_accounts)` extracts Merkle tree pubkeys from validity proof and adds them to `remaining_accounts`
 * `.state_trees` returns `PackedStateTreeInfos` that points to the existing account hash so the Light System Program can mark it as nullified:
-  * `merkle_tree_pubkey_index` (u8) points to the state tree account in `packed_accounts`
-  * `leaf_index` (u32) specifies which leaf position contains the account hash
-  * `root_index` (u16) specifies which historical Merkle root to verify the proof against
+  * `merkle_tree_pubkey_index` points to the state tree account in `remaining_accounts`
+  * `leaf_index` specifies which leaf position contains the account hash
+  * `root_index` specifies which historical Merkle root to verify the proof against
 {% endtab %}
 {% endtabs %}
 
@@ -426,15 +426,15 @@ let packed_state_tree_accounts = rpc_result
 ```rust
 let output_state_tree_index = rpc
     .get_random_state_tree_info()?
-    .pack_output_tree_index(&mut packed_accounts)?;
+    .pack_output_tree_index(&mut remaining_accounts)?;
 ```
 
 * `get_random_state_tree_info()` selects a state tree to store the account hash in
-* `pack_output_tree_index(&mut packed_accounts)` adds the output state tree pubkey to `packed_accounts` and returns its u8 index for instruction data.
+* `pack_output_tree_index(&mut remaining_accounts)` adds the output state tree pubkey to `remaining_accounts` and returns its u8 index for instruction data.
 
 #### Summary
 
-You initialized the `PackedAccounts::default()` helper struct to merge the following accounts into the `packed_accounts` array for the instruction data:
+You initialized the `PackedAccounts::default()` helper struct to merge the following accounts into the `remaining_accounts` array for the instruction data:
 
 * Light System accounts are required for the for the Light System Program to verify proofs and execute CPI's.
 * Tree accounts from validity proof prove address non-existence (create) or prove existence of the account hash (update/close).
@@ -550,7 +550,7 @@ Build the instruction from the `PackedAccounts` (Step 6) and instruction data (S
     signer: payer.pubkey(),
 };
 
-let (remaining_accounts_metas, _, _) = packed_accounts.to_account_metas();
+let (remaining_accounts_metas, _, _) = remaining_accounts.to_account_metas();
 <strong>let instruction = Instruction {
 </strong><strong>    program_id: your_program::ID,
 </strong><strong>    accounts: [
@@ -564,7 +564,7 @@ let (remaining_accounts_metas, _, _) = packed_accounts.to_account_metas();
 **What to include in the `accounts`:**
 
 1. **Create your program's accounts struct** - `AnchorAccounts` mirrors your on-chain `#[derive(Accounts)]` struct. Include anything you need - it won't interfere with compression-related accounts.
-2. **Extract Light System accounts** - `packed_accounts.to_account_metas()` returns `(Vec<AccountMeta>, usize, usize)`. The tuple contains the account vector and offset values for indexing.
+2. **Extract Light System accounts** - `remaining_accounts.to_account_metas()` returns `(Vec<AccountMeta>, usize, usize)`. The tuple contains the account vector and offset values for indexing.
 3. **Merge into one vector** - `.concat()` combines both vectors:
 
 * `accounts.to_account_metas(Some(true))` converts your Anchor struct to `Vec<AccountMeta>` (Anchor auto-generates this method)

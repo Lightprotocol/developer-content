@@ -1,8 +1,8 @@
 ---
 description: >-
-  Overview and comparison of guides to create, update, and close compressed
-  accounts. Guides include step-by-step implementation and full code examples
-  for Anchor, native Rust, and Pinocchio.
+  Overview and comparison of guides to create, update, close, reinitialize, and
+  burn permanently compressed accounts. Guides include step-by-step
+  implementation and full code examples.
 hidden: true
 ---
 
@@ -118,8 +118,4 @@ hidden: true
 {% endtabs %}
 
 ```
-𝐂𝐥𝐢𝐞𝐧𝐭
-𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
-𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
-
 ```
