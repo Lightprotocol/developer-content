@@ -199,7 +199,7 @@ The output state with all zero values is hashed in the next step via CPI by the 
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI nullifies the account hash and appends the compressed account hash that includes the zero values at the same address. This empty account can be reinitialized with `LightAccount::new_empty()`.
+The Light System Program CPI nullifies the account hash and appends the compressed account hash that includes the zero values at the same address.
 
 {% hint style="info" %}
 The Light System Program
