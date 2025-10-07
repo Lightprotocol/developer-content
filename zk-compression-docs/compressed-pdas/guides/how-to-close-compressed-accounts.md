@@ -188,7 +188,7 @@ let my_compressed_account = LightAccount::<'_, DataAccount>::new_close(
 `new_close` automatically creates output state to mark the account as closed with zero values:
 
 1. The Zero discriminator (`0u8; 8`) removes type identification of the account.
-2. The output contains a zero data hash that indicates no data content
+2. The output contains a zeroed data hash that indicates no data content
 3. The data field contains an empty vector, instead of serialized account fields.
 
 {% hint style="info" %}
