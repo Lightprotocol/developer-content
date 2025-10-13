@@ -321,7 +321,7 @@ light init testprogram
 ```
 
 {% hint style="warning" %}
-For help with debugging, see the [Error Cheatsheet](../../../compression-docs/resources/error-cheatsheet/).
+For help with debugging, see the [Error Cheatsheet](../../resources/error-cheatsheet/).
 {% endhint %}
 
 {% tabs %}
@@ -734,8 +734,8 @@ pub fn create_counter(
 
 {% columns %}
 {% column %}
-{% content-ref url="../../../compression-docs/compressed-pdas/client-library/" %}
-[client-library](../../../compression-docs/compressed-pdas/client-library/)
+{% content-ref url="../client-library/" %}
+[client-library](../client-library/)
 {% endcontent-ref %}
 {% endcolumn %}
 
