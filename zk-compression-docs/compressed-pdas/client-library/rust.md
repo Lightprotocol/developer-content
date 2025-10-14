@@ -17,7 +17,7 @@ The Rust Client SDK provides two abstractions to create or interact with compres
   * It includes an RPC client with Photon indexer support for Devnet and Mainnet to fetch compressed account data and validity proofs.
 * `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits. Seamlessly switch between `light-program-test`, local test validator, and public Solana networks.
 
-{% hint style="info" %}
+{% hint style="success" %}
 Find full code examples for a counter program [at the end for Anchor, native Rust and Pinocchio](rust.md#full-code-example).
 {% endhint %}
 
