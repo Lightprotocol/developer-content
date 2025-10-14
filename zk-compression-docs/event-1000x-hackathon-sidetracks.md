@@ -58,6 +58,8 @@ We encourage you to build things that you're excited about. For inspiration, we 
 
 » [Introductory Blog Post](https://www.helius.dev/blog/zk-compression-keynote-breakpoint-2024)
 
+» [Introductory Workshop](https://x.com/tilo_cpn/status/1976671704979010003)
+
 » [Light Protocol Monorepo](https://github.com/Lightprotocol/light-protocol)
 
 » [Example programs](https://github.com/Lightprotocol/program-examples)
