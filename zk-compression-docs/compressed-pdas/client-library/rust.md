@@ -405,22 +405,13 @@ remaining_accounts.add_system_accounts(config);
 ```
 
 * Pass your program ID in `SystemAccountMetaConfig::new(counter::ID)` to derive the CPI signer PDA
-* Call `add_system_accounts(config)` - the SDK will populate the `system_accounts` vector with 8 Light System Program accounts in the sequence below.
+* Call `add_system_accounts(config)` - the SDK will populate the `system_accounts` vector with 8 Light System accounts in the sequence below.
 
 <details>
 
 <summary><em>System Accounts List</em></summary>
 
-| # | Account                           | Purpose                                                                                                                                                                                        |
-| - | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | Light System Program[^1]          | Verifies validity proofs and executes CPI calls to create or interact with compressed accounts                                                                                                 |
-| 2 | CPI Signer[^2]                    | <p>- Signs CPI calls from your program to Light System Program<br>- PDA verified by Light System Program during CPI<br>- Derived from your program ID</p>                                      |
-| 3 | Registered Program PDA            | <p>- Proves your program can interact with Account Compression Program<br>- Prevents unauthorized programs from modifying compressed account state</p>                                         |
-| 4 | Noop Program[^3]                  | <p>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</p>                                                           |
-| 5 | Account Compression Authority[^4] | Signs CPI calls from Light System Program to Account Compression Program                                                                                                                       |
-| 6 | Account Compression Program[^5]   | <p>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</p>                                                                          |
-| 7 | Invoking Program                  | <p>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</p> |
-| 8 | System Program[^6]                | Solana System Program to create accounts or transfer lamports                                                                                                                                  |
+<table><thead><tr><th width="40">#</th><th width="175.06756591796875">Account</th><th>Purpose</th></tr></thead><tbody><tr><td>1</td><td>Light System <a data-footnote-ref href="#user-content-fn-1">Program</a></td><td>Verifies validity proofs and executes CPI calls to create or interact with compressed accounts</td></tr><tr><td>2</td><td>CPI <a data-footnote-ref href="#user-content-fn-2">Signer</a></td><td>- Signs CPI calls from your program to Light System Program<br>- PDA verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Proves your program can interact with Account Compression Program<br>- Prevents unauthorized programs from modifying compressed account state</td></tr><tr><td>4</td><td>Noop <a data-footnote-ref href="#user-content-fn-3">Program</a></td><td>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td>Account Compression <a data-footnote-ref href="#user-content-fn-4">Authority</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td>Account Compression <a data-footnote-ref href="#user-content-fn-5">Program</a></td><td>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td>System <a data-footnote-ref href="#user-content-fn-6">Program</a></td><td>Solana System Program to create accounts or transfer lamports</td></tr></tbody></table>
 
 </details>
 
