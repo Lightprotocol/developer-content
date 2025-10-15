@@ -21,17 +21,17 @@ Find [full code examples at the end](how-to-update-compressed-accounts.md#full-c
 
 {% tabs %}
 {% tab title="Update Compressed Account Complete Flow" %}
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
+<pre><code>Client
 ├─ Fetch current account data 
 ├─ Fetch validity proof (proves that account exists)
 ├─ Build instruction with proof, current data, new data and metadata
 └─ Send transaction
    │
-<strong> 𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+<strong> Custom Program
 </strong><strong>   ├─ Reconstruct existing compressed account hash (input hash)
 </strong><strong>   ├─ Modify compressed account data
 </strong><strong>   │
-</strong><strong>   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+</strong><strong>   └─ Light System Program CPI
 </strong>      ├─ Verify input hash 
       ├─ Nullify input hash 
       ├─ Create new account hash with updated data (output hash)
@@ -40,12 +40,14 @@ Find [full code examples at the end](how-to-update-compressed-accounts.md#full-c
 {% endtab %}
 {% endtabs %}
 
+## Implementation Guide
+
 {% stepper %}
 {% step %}
 ### Program Setup
 
-{% hint style="success" %}
-Dependencies, constants, and account struct is defined once and reused for all operations (create, update, close).
+{% hint style="info" %}
+Dependencies, constants, and account struct are defined once and reused for all operations (create, update, close).
 {% endhint %}
 
 <details>
@@ -66,7 +68,7 @@ anchor_lang = "0.31.1"
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
-solana-program = "2.2"
+solana-sdk = "2.2"
 ```
 
 ```toml
@@ -92,7 +94,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.
 
-* CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
+* CPIs to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
 * `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 
 #### Compressed Account
@@ -108,19 +110,20 @@ Define your compressed account struct.
     BorshDeserialize, // AnchorDeserialize
     LightDiscriminator
 )]
-pub struct DataAccount {
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
 ```
 
-Besides the standard traits (`Clone`, `Debug`, `Default`), the following are required:
+You derive
 
-* `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
+* the standard traits (`Clone`, `Debug`, `Default`),
+* `borsh` or `AnchorSerialize` to serialize account data, and
+* `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_,, not the first 8 bytes of the data field\[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `DataAccount` in Step 7 to set the discriminator and create the compressed account's data.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 7 to set the discriminator and create the compressed account's data.
 {% endhint %}
 
 </details>
@@ -141,72 +144,84 @@ pub struct InstructionData {
 
 1. **Inclusion Proof**
 
-* `ValidityProof` proves that the account exists in the state tree (inclusion).  Clients fetch proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* Define `proof` to include the proof that the account exists in the state tree (inclusion).
+* Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
-2. **Specify input hash and output state tree**
+2. **Specify existing account hash and state tree for updated account hash**
 
-* `CompressedAccountMeta` points to the input hash and output state tree&#x20;
-  * `tree_info`: `PackedStateTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) so the Light System Program nullify it
-  * `address` specifies the account's derived address.
-  * `output_state_tree_index` points to the state tree that will store the updated compressed account hash.
+* Define `account_meta: CompressedAccountMeta` to reference the existing account and specify the state tree to store the updated hash:
+  * `tree_info: PackedStateTreeInfo`: Retrieves the existing account hash in the state tree.
+  * `address`: The account's derived address.
+  * `output_state_tree_index`: References the state tree account that will store the updated compressed account hash.
 
-3. **Update account data**
+{% hint style="info" %}
+Clients fetch the current account with `getCompressedAccount()` and populate `CompressedAccountMeta` with the account's metadata.
+{% endhint %}
 
-* `new_value` specifies updated data for the compressed account. This depends on your program logic.
+3. **New account data**
+
+* Define fields for your program logic. Clients pass the initial values.
+* This example includes the `new_value` field.
 {% endstep %}
 
 {% step %}
 ### Update Compressed Account
 
-Update the compressed account with `LightAccount::new_mut()`.&#x20;
+Load the compressed account with `LightAccount::new_mut()`.
 
-{% hint style="info" %}
-`new_mut()`
+{% hint style="success" %}
+`new_mut()`:
 
-1. hashes the current account data as input state and
-2. lets your program define the output state.
+* hashes the current account data as input state and
+* lets your program define the output state.
 {% endhint %}
 
 <pre class="language-rust"><code class="lang-rust">let mut my_compressed_account
-        = LightAccount::&#x3C;'_, DataAccount>::new_mut(
+        = LightAccount::&#x3C;'_, MyCompressedAccount>::new_mut(
 <strong>    &#x26;crate::ID,
 </strong><strong>    &#x26;account_meta,
-</strong><strong>    DataAccount {
+</strong><strong>    MyCompressedAccount {
 </strong><strong>        owner: *signer.key,
-</strong><strong>        message: current_message, 
+</strong><strong>        message: current_message,
 </strong><strong>    },
 </strong>)?;
 
 <strong>my_compressed_account.message = new_message;
 </strong></code></pre>
 
-**Parameters for `LightAccount::new_mut()`:**
+**Pass these parameters to `new_mut()`:**
 
-* `crate::ID` specifies the program's ID that owns the compressed account.
-* `account_meta` identifies the existing compressed account and specifies the output state tree from the instruction data (_Step 2_).
-* `DataAccount` contains the current account data. This input state is hashed by `new_mut()`.
+* `&crate::ID`: The program's ID that owns the compressed account.
+* `&account_meta`: The `CompressedAccountMeta` from instruction data (_Step 2_) that identifies the existing account and specifies the output state tree.
+* `MyCompressedAccount { ... }`: The current account data. The SDK hashes this input state for verification by the Light System Program.
 
-**Define the Output State:**
+**The SDK creates:**
 
-When `new_mut()` returns, modify the account fields to define the output state. The example shows `my_compressed_account.message = new_message`.
+* A `LightAccount` wrapper similar to Anchor's `Account`, ready for you to modify the data.
+* This example sets `message` to a new value
 
 {% hint style="info" %}
-`new_mut()` only hashes the input state. The output state is hashed in the next step when the `LightAccount` is added to the CPI instruction for the CPI to the Light System Program
+The Light System Program verifies the input hash and creates the output hash in _Step 3_. `new_mut()` only hashes the input state.
 {% endhint %}
 {% endstep %}
 
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI nullifies the existing and creates the updated compressed account hash.
+The Light System Program CPI nullifies the old and creates the updated compressed account hash.
 
 {% hint style="info" %}
 The Light System Program
 
 * validates the inclusion proof (account exists in state tree),
-* nullifies the existing account hash in the state tree (input), and
+* nullifies the old account hash in the state tree (input), and
 * appends the updated account hash to the state tree (output).
 {% endhint %}
+
+Build the CPI instruction with
+
+1. `proof` from _Step 4_ _Instruction Data_, and
+2. the updated data in `my_compressed_account` from _Step 5_ _Load Compressed Account_.
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
@@ -222,14 +237,14 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Set up `CpiAccounts::new()`:**
 
-* `ctx.accounts.fee_payer.as_ref()`: Fee payer and signer.
-* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System accounts](#user-content-fn-2)[^2].
-* `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants (_Step 1_).
+* `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer.
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System accounts.
+* `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**Build and invoke the CPI instruction**:
+**Build the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` to prove that the account exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
-* `with_light_account` adds the `LightAccount` wrapper with the modified compressed account data to the CPI instruction data _- defined in Step 3_.
+* `new_cpi()` initializes the CPI instruction with the `proof` to prove that an address does not exist yet in the specified address tree (non-inclusion) _- defined in the Instruction Data (Step 2)._
+* `with_light_account` adds the `LightAccount` wrapper with the modified compressed account data to the CPI instruction _- defined in Step 4_
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 {% endstep %}
 {% endstepper %}
@@ -250,10 +265,15 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/anchor/programs/counter/src/lib.rs#L71).
+`declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.
 {% endhint %}
 
+Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L71).
+
 ```rust
+#![allow(unexpected_cfgs)]
+#![allow(deprecated)]
+
 use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
 use light_sdk::{
     account::LightAccount,
@@ -335,12 +355,14 @@ pub struct CounterAccount {
 ```
 {% endtab %}
 
-{% tab title="Native" %}
+{% tab title="Native Rust" %}
 {% hint style="info" %}
-Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/native/src/lib.rs#L197).
+Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/native/src/lib.rs#L197).
 {% endhint %}
 
 ```rust
+#![allow(unexpected_cfgs)]
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey;
 use light_sdk::{
@@ -441,10 +463,12 @@ pub fn increment_counter(
 
 {% tab title="Pinocchio" %}
 {% hint style="info" %}
-Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/pinocchio/src/lib.rs#L199).
+Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/pinocchio/src/lib.rs#L202).
 {% endhint %}
 
 ```rust
+#![allow(unexpected_cfgs)]
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey_array;
 use light_sdk_pinocchio::{
@@ -559,14 +583,3 @@ pub fn increment_counter(
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
-
-[^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
-
-[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
-    2. CPI Authority - Program-derived authority PDA
-    3. Registered Program PDA - Registration account for your program
-    4. Noop Program - For transaction logging
-    5. Account Compression Authority - Authority for merkle tree operations
-    6. Account Compression Program - SPL Account Compression program
-    7. Invoking Program - Your program's address
-    8. System Program - Solana System program

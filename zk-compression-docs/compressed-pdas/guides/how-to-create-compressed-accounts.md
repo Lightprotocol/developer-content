@@ -39,7 +39,7 @@ Find [full code examples of a counter program at the end](how-to-create-compress
 {% endtab %}
 {% endtabs %}
 
-## Implementation Steps
+## Implementation Guide
 
 {% stepper %}
 {% step %}
