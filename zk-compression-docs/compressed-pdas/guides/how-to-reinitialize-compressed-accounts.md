@@ -246,72 +246,10 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor/programs/counter/src/lib.rs).
+Find the source code for this example here.
 {% endhint %}
 
 ```rust
-#![allow(unexpected_cfgs)]
-#![allow(deprecated)]
-
-use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
-use light_sdk::{
-    account::LightAccount,
-    cpi::{v1::CpiAccounts, CpiSigner},
-    derive_light_cpi_signer,
-    instruction::{account_meta::CompressedAccountMeta, ValidityProof},
-    LightDiscriminator,
-};
-
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-
-pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-
-#[program]
-pub mod counter {
-    use super::*;
-    use light_sdk::cpi::{
-        v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
-    };
-
-    pub fn reinit_counter<'info>(
-        ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
-        proof: ValidityProof,
-        account_meta: CompressedAccountMeta,
-    ) -> Result<()> {
-        let counter = LightAccount::<'_, CounterAccount>::new_empty(
-            &crate::ID,
-            &account_meta,
-            CounterAccount::default(),
-        )?;
-
-        let light_cpi_accounts = CpiAccounts::new(
-            ctx.accounts.signer.as_ref(),
-            ctx.remaining_accounts,
-            crate::LIGHT_CPI_SIGNER,
-        );
-
-        LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(counter)?
-            .invoke(light_cpi_accounts)?;
-
-        Ok(())
-    }
-}
-
-#[derive(Accounts)]
-pub struct GenericAnchorAccounts<'info> {
-    #[account(mut)]
-    pub signer: Signer<'info>,
-}
-
-#[event]
-#[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct CounterAccount {
-    #[hash]
-    pub owner: Pubkey,
-    pub value: u64,
-}
 ```
 {% endtab %}
 
@@ -325,3 +263,19 @@ pub struct CounterAccount {
 {% endtabs %}
 
 ## Next Steps
+
+Build a client for your program or learn how to burn compressed accounts.
+
+{% columns %}
+{% column %}
+{% content-ref url="../client-library/" %}
+[client-library](../client-library/)
+{% endcontent-ref %}
+{% endcolumn %}
+
+{% column %}
+{% content-ref url="how-to-burn-compressed-accounts.md" %}
+[how-to-burn-compressed-accounts.md](how-to-burn-compressed-accounts.md)
+{% endcontent-ref %}
+{% endcolumn %}
+{% endcolumns %}

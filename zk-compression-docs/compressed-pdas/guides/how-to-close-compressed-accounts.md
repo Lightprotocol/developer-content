@@ -551,6 +551,8 @@ pub fn close_counter(
 
 ## Next Steps
 
+Build a client for your program or learn how to reinitialize compressed accounts.
+
 {% columns %}
 {% column %}
 {% content-ref url="../client-library/" %}
