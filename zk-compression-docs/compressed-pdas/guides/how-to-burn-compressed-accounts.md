@@ -329,6 +329,8 @@ pub struct CounterAccount {
 
 ## Next Steps
 
+Build a client for your program or get an overview on all compressed account operations.
+
 {% columns %}
 {% column %}
 {% content-ref url="../client-library/" %}
@@ -337,6 +339,8 @@ pub struct CounterAccount {
 {% endcolumn %}
 
 {% column %}
-
+{% content-ref url="./" %}
+[.](./)
+{% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
