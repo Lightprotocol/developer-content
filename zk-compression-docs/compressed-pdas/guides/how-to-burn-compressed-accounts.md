@@ -33,13 +33,11 @@ Find [full code examples of a counter program at the end](how-to-burn-compressed
          └─ Complete atomic state transition
 </code></pre>
 
+## Implementation Guide
+
 {% stepper %}
 {% step %}
 ### Program Setup
-
-{% hint style="info" %}
-The compressed account struct is defined once and reused for all operations (create, update, close, reinitialize, burn).
-{% endhint %}
 
 <details>
 
@@ -59,7 +57,7 @@ anchor_lang = "0.31.1"
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
-solana-program = "2.2"
+solana-sdk = "2.2"
 ```
 
 ```toml
@@ -85,7 +83,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.
 
-* CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
+* CPIs to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
 * `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 
 #### Compressed Account
@@ -101,19 +99,20 @@ Define your compressed account struct.
     BorshDeserialize, // AnchorDeserialize
     LightDiscriminator
 )]
-pub struct DataAccount {
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
 ```
 
-These traits are derived besides the standard traits (`Clone`, `Debug`, `Default`):
+You derive
 
-* `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
+* the standard traits (`Clone`, `Debug`, `Default`),
+* `borsh` or `AnchorSerialize` to serialize account data, and
+* `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, not the first 8 bytes of the data field\[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `DataAccount` to set the discriminator and create the compressed account's data hash.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.
 {% endhint %}
 
 </details>
@@ -134,13 +133,14 @@ pub struct InstructionData {
 
 1. **Inclusion Proof**
 
-* `ValidityProof` proves that the account exists in the state tree (inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* Define `proof` to include the proof that the account exists in the state tree (inclusion).
+* Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify input hash**
 
-* `CompressedAccountMetaBurn` points to the existing account hash so the Light System Program can nullify it permanently:
-  * `tree_info: PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index)
-  * `address` specifies the account's derived address
+* `CompressedAccountMetaBurn` points to the existing account hash so the Light System Program nullify it permanently:
+  * `tree_info: PackedStateTreeInfo`: Retrieves the existing account hash in the state tree.
+  * `address`: The account's derived address.
 
 {% hint style="info" %}
 Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `output_state_tree_index` because no output state is created.
@@ -148,39 +148,46 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 
 3. **Current account data**
 
-* `current_value`: Current account data to verify the input state. This depends on your program logic.
+* Define fields to include the current account data passed by the client.
+* This depends on your program logic. This example includes the `current_value` field.
 {% endstep %}
 
 {% step %}
 ### Burn Compressed Account
 
-Burn the compressed account with `LightAccount::new_burn()`.
+Burn the compressed account permanently with `LightAccount::new_burn()`. No account can be reinitialized at this address in the future.
 
 {% hint style="info" %}
 `new_burn()`
 
 1. hashes the current account data as input state and
-2. creates no output state to burn the account permanently.&#x20;
-
-No account can be reinitialized at this address in the future.
+2. creates no output state to burn the account permanently.
 {% endhint %}
 
 ```rust
-let my_compressed_account = LightAccount::<'_, DataAccount>::new_burn(
+let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_burn(
     &crate::ID,
     &account_meta,
-    DataAccount {
+    MyCompressedAccount {
         owner: *signer.key,
         message: current_message,
     },
 )?;
 ```
 
-**Parameters for `LightAccount::new_burn()`:**
+**Pass these parameters to `new_burn()`:**
 
-* `crate::ID` specifies the program ID that owns the compressed account.
-* `account_meta` points to the existing account hash for the Light System Program to nullify permanently - defined in the _Instruction Data (Step 2)_.
-* `DataAccount` contains the current account data. This input state is hashed by `new_burn()` and verified during CPI.
+* `&crate::ID`: The program's ID that owns the compressed account.
+* `&account_meta`: The `CompressedAccountMetaBurn` from instruction data (_Step 2_) that identifies the existing account for the Light System Program to nullify permanently.
+* `MyCompressedAccount { ... }`: The current account data. `new_burn()` hashes this input state for verification by the Light System Program.
+
+**The SDK creates:**
+
+* A `LightAccount` wrapper that marks the account as burned permanent with no output state.
+
+{% hint style="info" %}
+The Light System Program verifies the input hash and nullifies it permanently in _Step 4_. `new_burn()` only hashes the input state - no output hash is created.
+{% endhint %}
 {% endstep %}
 
 {% step %}
@@ -211,7 +218,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-2)[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build and invoke the CPI instruction**:
@@ -333,14 +340,3 @@ pub struct CounterAccount {
 
 {% endcolumn %}
 {% endcolumns %}
-
-[^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
-
-[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
-    2. CPI Authority - Program-derived authority PDA
-    3. Registered Program PDA - Registration account for your program
-    4. Noop Program - For transaction logging
-    5. Account Compression Authority - Authority for merkle tree operations
-    6. Account Compression Program - SPL Account Compression program
-    7. Invoking Program - Your program's address
-    8. System Program - Solana System program
