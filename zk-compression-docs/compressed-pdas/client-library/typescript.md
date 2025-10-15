@@ -7,19 +7,18 @@ description: >-
 
 # Typescript
 
-The Typescript Client SDK provides two abstractions to create or interact with compressed accounts:
+The TypeScript Client SDK provides two abstractions to create or interact with compressed accounts:
 
-* **For local testing**, use `TestRpc`.
-  * `TestRpc` is a mock RPC implementation that simulates the ZK Compression stack without external dependencies.
+* **For local testing**, use [`TestRpc`](https://www.zkcompression.com/resources/sdks/typescript-client#testrpc).
+  * `TestRpc` is an RPC implementation with in-memory indexer and without external dependencies.
   * It parses events and builds Merkle trees on-demand without persisting state.
-* **For devnet and mainnet** use `Rpc`.
-  * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints.  Find a [full list of JSON RPC methods here](../../resources/json-rpc-methods/).
-  * It connects to Photon indexer for compressed account queries and the prover service for validity proofs.
+* **For test-validator, devnet and mainnet** use [`Rpc`](https://www.zkcompression.com/resources/sdks/typescript-client#rpc)
+  * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
+  * It connects to the Photon indexer that tracks compressed state to query compressed accounts and the prover service for validity proofs.
+* `Rpc` and `TestRpc` implement the same `CompressionApiInterface`. Seamlessly switch between `TestRpc`, local test validator with `Rpc`, and public Solana networks.
 
 {% hint style="success" %}
-Find [full code examples for a counter program](typescript.md#full-code-example) at the end for create, update and close.&#x20;
-
-Both `TestRpc` and `Rpc` implement the same `CompressionApiInterface`.
+Find [full code examples for a counter program](typescript.md#full-code-example) at the end for Anchor.&#x20;
 {% endhint %}
 
 {% tabs %}
@@ -114,6 +113,8 @@ Both `TestRpc` and `Rpc` implement the same `CompressionApiInterface`.
 {% endtab %}
 {% endtabs %}
 
+## Implementation Guide
+
 {% stepper %}
 {% step %}
 ### Dependencies
@@ -145,7 +146,7 @@ Both `TestRpc` and `Rpc` implement the same `CompressionApiInterface`.
 {% endtabs %}
 
 {% hint style="info" %}
-`@lightprotocol/stateless.js` provides the core SDK for to create and interact with compressed accounts, including `Rpc` and `TestRpc` classes.
+`@lightprotocol/stateless.js` provides the core SDK to create and interact with compressed accounts, including `Rpc` and `TestRpc` classes.
 {% endhint %}
 {% endstep %}
 
@@ -154,6 +155,8 @@ Both `TestRpc` and `Rpc` implement the same `CompressionApiInterface`.
 
 {% tabs %}
 {% tab title="Rpc" %}
+Connect to local, devnet or mainnet with `Rpc`.
+
 {% tabs %}
 {% tab title="Mainnet" %}
 ```typescript
@@ -216,9 +219,9 @@ const testRpc = await getTestRpc(lightWasm);
 {% step %}
 ### Tree Configuration
 
-Before creating a compressed account, the client must select two Merkle trees:
+Before creating a compressed account, your client must fetch metadata for two Merkle trees:
 
-* an address tree to derive and store the the account address and
+* an address tree to derive and store the account address and
 * a state tree to store the account hash.
 
 {% hint style="success" %}
@@ -230,21 +233,30 @@ const addressTree = await rpc.getAddressTreeV1();
 const stateTree = await rpc.getRandomStateTreeInfo();
 ```
 
-* `getAddressTreeV1()` returns the address tree pubkey
-  * used to derive an address for a compressed account with `deriveAddress()` and
-  * for `getValidityProof()` to prove the address does not exist yet in this tree.
-* `getRandomStateTreeInfo()` returns state tree metadata (pubkey, queue, etc.) to store the compressed account hash.
+Fetch metadata of trees with:
+
+* `getAddressTreeV1()` to return the `TreeInfo` interface with the public key and other metadata for the address tree.
+  * Used to derive addresses with `deriveAddress()` and
+  * for `get_validity_proof()` to prove the address does not exist yet to avoid duplicate addresses.
+* `getRandomStateTreeInfo()` to return the `TreeInfo` interface with the public key and other metadata for a random state tree to store the compressed account hash.
+  * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
+  * Account hashes can move to different state trees after each state transition.
+  * Best practice is to minimize different trees per transaction. Still, since trees may fill up over time, programs must handle accounts from different state trees within the same transaction.
 
 {% hint style="info" %}
-- **State trees are fungible**: Account hashes can move to different state trees after each state transition. Best practice is to minimize different trees per transaction, but programs must support this since trees can fill up.
-- **Address trees are not fungible**: Different address trees produce different addresses from identical seeds. Use the same address tree for `deriveAddress()` and all operations on that account.
+The `TreeInfo` interface contains metadata for a Merkle tree:
+
+* `tree`: Merkle tree account pubkey
+* `queue`: Queue account pubkey. Under the hood, hashes and addresses are inserted into a queue before being asynchronously inserted into a Merkle tree. The client and custom program do not interact with the queue.
+* `tree_type`: Identifies tree version (StateV1, AddressV1) and account for hash insertion.
+* `cpi_context` includes an optional CPI context account for shared proof verification of multiple programs.
 {% endhint %}
 {% endstep %}
 
 {% step %}
 ### Derive Address
 
-Derive a persistent address from seeds, address tree, and program ID as unique identifier for your compressed account.
+Derive a persistent address as a unique identifier for your compressed account with `deriveAddress()`.
 
 ```typescript
 const seed = Buffer.from('my-seed');
@@ -255,23 +267,21 @@ const address = deriveAddress(
 );
 ```
 
-**`deriveAddress()`**: Computes a deterministic 32-byte address from the inputs.
+**Pass these parameters**:
 
-**Parameters**:
-
-* `[seed]`: Array of Buffers that uniquely identify the account
-* `addressTree`: The tree pubkey where this address will be registered. An address is unique to an address tree.
-* `programId`: The program that owns this account
+* `[seed]`: Arbitrary byte slices that uniquely identify the account
+* `addressTree` to specify the tree pubkey. This parameter ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
+* `programId` to specify the program owner pubkey.
 
 {% hint style="info" %}
-For create, pass the address to `getValidityProof()` to prove non-existence. For update/close, use the address to fetch the current account with `getCompressedAccount(address)`.
+Use the same `addressTree` for both `deriveAddress()` and all subsequent operations on that account in your client and program.
 {% endhint %}
 {% endstep %}
 
 {% step %}
 ### Validity Proof
 
-Fetch a zero-knowledge proof (Validity proof) from your RPC provider that supports ZK Compression. The proof type depends on the operation:
+Fetch a zero-knowledge proof (Validity proof) from your RPC provider that supports ZK Compression (Helius, Triton, ...). What is proved depends on the operation:
 
 * To create a compressed account, you must prove the **address doesn't already exist** in the address tree (_non-inclusion proof_).
 * To update or close a compressed account, you must **prove the account hash exists** in a state tree (_inclusion proof_).
@@ -284,24 +294,24 @@ Fetch a zero-knowledge proof (Validity proof) from your RPC provider that suppor
 {% tab title="Create" %}
 ```typescript
 const proof = await rpc.getValidityProof(
-  [],  // No hashes for create
-  [{ address, tree: addressTree }]  // Address to create
+  [],
+  [{ address, tree: addressTree }]
 );
 ```
 
-**Parameters**:
+**Pass these parameters**:
 
-* First arg (`[]`) is empty for compressed account creation, since no compressed account exists yet to reference.
-* Second arg contains the new address to create with its address tree.
+* Leave (`[]`) empty to create compressed accounts, since no compressed account exists yet to reference.
+* Specify in (`[{ address, tree: addressTree }]`) the new address to create with its address tree.
 
 The RPC returns validity proof context with
 
-* the non-inclusion `compressedProof`, passed to the program in the instruction data. The Light System Program verifies the proof against the current Merkle root.
-* `newAddressParams` contains the tree metadata for your address (tree, root, leaf index)
-* an empty `merkleTrees` field for create operations
+* the non-inclusion `compressedProof`, passed to the program in the instruction data,
+* `newAddressParams` with the tree metadata for your address (tree, root, leaf index), and
+* an empty `merkleTrees` field when you create a compressed account, since you did not reference an existing account.
 {% endtab %}
 
-{% tab title="Update & Close:" %}
+{% tab title="Update & Close" %}
 {% hint style="info" %}
 **Update and Close** use identical proof mechanisms. The difference is in your program's instruction handler.
 {% endhint %}
@@ -310,23 +320,21 @@ The RPC returns validity proof context with
 const hash = compressedAccount.hash;
 
 const proof = await rpc.getValidityProof(
-  [hash],  // Hash to prove exists
-  []       // No new addresses
+  [hash],
+  []
 );
 ```
 
-The `compressedAccount.hash` contains the hash that's currently in the state tree. The indexer searches for this value to generate the proof.
+**Pass these parameters**:
 
-**Parameters**:
-
-* First arg contains the hash of the existing compressed account to prove its existence in the state tree.
-* Second arg (`[]`) is empty because the proof verifies the account hash exists in a state tree, not the address in an address tree.
+* Specify in (`[hash]`) the hash of the existing compressed account to prove its existence in the state tree.
+* Leave (`[]`) empty, since the proof verifies the account hash exists in a state tree, not the address in an address tree.
 
 The RPC returns validity proof context with
 
-* the inclusion `compressedProof`, passed to the program in the instruction data. The Light System Program verifies the proof against the current Merkle root.
-* `merkleTrees` contains the tree metadata for the account hash (tree, root, leaf index) for the Light System program to nullify.
-* an empty `newAddressParams` field for update/close operations.
+* the inclusion `compressedProof`, passed to the program in the instruction data,
+* `merkleTrees` with the tree metadata for the account hash (tree, root, leaf index), and
+* an empty `newAddressParams` field, since you don't create a new address.
 {% endtab %}
 {% endtabs %}
 {% endstep %}
@@ -334,14 +342,13 @@ The RPC returns validity proof context with
 {% step %}
 ### Pack Accounts
 
-Compressed account instructions require packing accounts into the `remainingAccounts` array. Packed structs contain indices instead of full 32-byte pubkeys to reduce transaction size.
+Compressed account instructions require packing accounts into the `remainingAccounts` array.
 
 {% hint style="info" %}
-**Understanding "Packed" terminology:**
+**"Packing" accounts optimizes instruction size:**
 
-* **Packed structs** (e.g., `PackedAddressTreeInfo`, `PackedMerkleTreeInfo`) contain account **indices** instead of pubkeys to reduce instruction size. The indices point to the `remainingAccounts` array.
-* **Non-Packed structs** contain full pubkeys for client use. RPC methods return these.
-* **Packing utilities** deduplicate accounts and assign sequential indices to create Packed structs.
+* **Packed structs** (e.g., `PackedAddressTreeInfo`, `PackedMerkleTreeInfo`) contain account **indices** (u8) instead of 32 byte pubkeys. The indices point to the `remainingAccounts` array.
+* **Non-Packed structs** contain full pubkeys. RPC methods return full pubkeys.
 {% endhint %}
 
 #### 1. Initialize Account Arrays
@@ -351,21 +358,27 @@ let remainingAccounts: AccountMeta[] = [];
 let accountsOffset = 0;
 ```
 
-* Initialize `remainingAccounts` array to collect all account metadata
-* `accountsOffset` tracks the current index position
+Initialize `remainingAccounts` to collect `AccountMeta` objects (containing `pubkey`, `isWritable`, `isSigner` properties). `accountsOffset` tracks the current index position and increments as accounts are added.
+
+The array organizes accounts into three logical sections:
+
+1. `pre_accounts` includes the signers, fee payer, and any program-specific accounts.
+2. `system_accounts` includes eight accounts the Light System program requires to create or interact with compressed accounts.
+3. `packed_accounts` includes Merkle tree and queue accounts returned from the `getValidityProof()` response in the previous step.
+
+You will populate the array in the next steps.
 
 ```
-[pre_accounts] [system_accounts] [packed_accounts]
+[preAccounts] [systemAccounts] [treeAccounts]
        ↑                ↑                  ↑
-    Signers,       Light system      Merkle trees,
-    fee payer      program accts     address trees
-                                     (deduplicated)
+    Signers,       Light system      state trees,
+   fee payer   program accounts    address trees
 
 ```
 
 #### 2. Add Light System Accounts
 
-The system accounts are added to `remainingAccounts`. These accounts are required for the Light System Program to verify proofs and execute CPI's.
+Add the Light System accounts your program needs to create and interact with compressed via CPI to the Light System Program.
 
 ```typescript
 const systemAccounts = getSystemAccounts(programId);
@@ -373,65 +386,65 @@ remainingAccounts.push(...systemAccounts);
 accountsOffset += systemAccounts.length;
 ```
 
-* `getSystemAccounts(programId)` returns 8 Light System Program accounts
-* Stores your program's ID to derive the CPI signer PDA
+* Pass your program ID in `getSystemAccounts(programId)` to derive the CPI signer PDA
+* `getSystemAccounts()` returns 8 Light System accounts in the sequence below - add them to `remainingAccounts` and increment `accountsOffset` to track the next available index.
 
 <details>
 
 <summary><em>System Accounts List</em></summary>
 
-| # | Account                       | Purpose                                                 | Derivation/Address                                                             |
-| - | ----------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| 1 | Light System Program          | Verifies proofs and creates compressed accounts         | `SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7`                                  |
-| 2 | CPI Signer                    | Your program's authority to invoke Light System Program | PDA derived from `['authority', invoking_program_id]`                          |
-| 3 | Registered Program PDA        | Proves your program is authorized                       | PDA derived from `[LIGHT_SYSTEM_PROGRAM_ID]` under Account Compression Program |
-| 4 | Noop Program                  | Logs compressed account data for indexers               | SPL Noop Program                                                               |
-| 5 | Account Compression Authority | Authority for merkle tree writes                        | PDA derived from `[CPI_AUTHORITY_PDA_SEED]` under Light System Program         |
-| 6 | Account Compression Program   | Manages state trees and address trees                   | SPL Account Compression Program                                                |
-| 7 | Invoking Program              | Your program's ID                                       | `programId`                                                                    |
-| 8 | System Program                | Solana System Program                                   | `11111111111111111111111111111111`                                             |
+| # | Account                            | Purpose                                                                                                                                                                                        |
+| - | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | Light System Program\[^1]          | Verifies validity proofs and executes CPI calls to create or interact with compressed accounts                                                                                                 |
+| 2 | CPI Signer\[^2]                    | <p>- Signs CPI calls from your program to Light System Program<br>- PDA verified by Light System Program during CPI<br>- Derived from your program ID</p>                                      |
+| 3 | Registered Program PDA             | <p>- Proves your program can interact with Account Compression Program<br>- Prevents unauthorized programs from modifying compressed account state</p>                                         |
+| 4 | Noop Program\[^3]                  | <p>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</p>                                                           |
+| 5 | Account Compression Authority\[^4] | Signs CPI calls from Light System Program to Account Compression Program                                                                                                                       |
+| 6 | Account Compression Program\[^5]   | <p>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</p>                                                                          |
+| 7 | Invoking Program                   | <p>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</p> |
+| 8 | System Program\[^6]                | Solana System Program to create accounts or transfer lamports                                                                                                                                  |
 
 </details>
 
 #### 3. Pack Tree Accounts from Validity Proof
 
-The validity proof response from `getValidityProof()` contains different context metadata based on the operation. Packing utilities extract and deduplicate the relevant tree pubkeys from this context and returns indices wrapped in Packed structs.
+`getValidityProof()` returns pubkeys and other metadata of Merkle trees. With `packTreeInfos()`, you convert the pubkeys to u8 indices that reference positions in `remainingAccounts` to optimize your instruction data.
 
 {% tabs %}
 {% tab title="Create" %}
 ```typescript
-const {
-  packedAddressTrees,
-  remainingAccounts: treeAccounts
-} = packCompressedAccounts(proof, remainingAccounts, accountsOffset);
+const packedTreeInfos = packTreeInfos(
+  remainingAccounts,
+  [],
+  proof.newAddressParams
+);
 
-remainingAccounts.push(...treeAccounts);
-accountsOffset += treeAccounts.length;
+const packedAddressTrees = packedTreeInfos.addressTrees;
 ```
 
-* `packCompressedAccounts()` extracts Merkle tree pubkeys from validity proof and creates account metas
-* `packedAddressTrees` returns `PackedAddressTreeInfo[]` that specifies where to create the address:
+* `packTreeInfos()` extracts Merkle tree pubkeys from validity proof and adds them to `remainingAccounts`
+* `.addressTrees` returns `PackedAddressTreeInfo[]` that specifies where to create the address:
   * `addressMerkleTreePubkeyIndex` points to the address tree account in `remainingAccounts`
   * `addressQueuePubkeyIndex` points to the address queue account in `remainingAccounts`
-  * `rootIndex` specifies which Merkle root to verify the non-inclusion proof against
+  * `rootIndex` specifies the Merkle root to verify the address does not exist in the address tree
 {% endtab %}
 
 {% tab title="Update & Close" %}
 ```typescript
-const {
-  packedMerkleTrees,
-  remainingAccounts: treeAccounts
-} = packCompressedAccounts(proof, remainingAccounts, accountsOffset);
+const packedTreeInfos = packTreeInfos(
+  remainingAccounts,
+  proof.merkleTrees,
+  []
+);
 
-remainingAccounts.push(...treeAccounts);
-accountsOffset += treeAccounts.length;
+const packedMerkleTrees = packedTreeInfos.stateTrees.packedTreeInfos;
 ```
 
-* `packCompressedAccounts()` extracts Merkle tree pubkeys from validity proof and creates account metas
-* `packedMerkleTrees` returns `PackedMerkleTreeInfo[]` that points to the existing account hash so the Light System Program can mark it as nullified:
+* `packTreeInfos()` extracts Merkle tree pubkeys from validity proof and adds them to `remainingAccounts`
+* `.stateTrees` returns `PackedStateTreeInfos` that points to the existing account hash:
   * `merkleTreePubkeyIndex` points to the state tree account in `remainingAccounts`
   * `leafIndex` specifies which leaf position contains the account hash
-  * `rootIndex` specifies which historical Merkle root to verify the proof against
+  * `rootIndex` specifies the Merkle root to verify the account hash exists in the state tree
 {% endtab %}
 {% endtabs %}
 
@@ -448,16 +461,20 @@ remainingAccounts.push({
 });
 ```
 
-* `getRandomStateTreeInfo()` selects a state tree to store the account hash in
-* Add the output state tree to `remainingAccounts` and track its index for instruction data.
+* `getRandomStateTreeInfo()` returns the `TreeInfo` interface with the pubkey and other metadata of a state tree to store the new account hash
+* Capture `accountsOffset` as `outputTreeIndex` before pushing - this will be the index position after the push
+* Push an `AccountMeta` object to `remainingAccounts` with:
+  * `pubkey`: The state tree's pubkey
+  * `isSigner: false`: The state tree account does not sign the transaction
+  * `isWritable: true`: The state tree will be modified to store the new account hash
 
-#### Summary
+#### 5. Summary
 
 You initialized the `remainingAccounts` array to merge the following accounts for the instruction:
 
-* Light System accounts are required for the Light System Program to verify proofs and execute CPI's.
-* Tree accounts from validity proof prove address non-existence (create) or prove existence of the account hash (update/close).
-* The output state tree stores the new account hash.
+* Light System accounts to create and interact with compressed accounts via the Light System Program.
+* Tree accounts from the validity proof to prove address non-existence (create), or existence of the account hash (update/close).
+* The output state tree to store the new account hash.
 
 The accounts receive a sequential index. Instruction data references accounts via these indices in this order.
 {% endstep %}
@@ -465,10 +482,12 @@ The accounts receive a sequential index. Instruction data references accounts vi
 {% step %}
 ### Instruction Data
 
-Build instruction data with the validity proof, tree account indices, complete account data and metadata.
+Build your instruction data with the validity proof, tree account indices, and complete account data.
 
 {% hint style="info" %}
-Unlike regular Solana accounts where programs read data on-chain, compressed account data must be passed in instruction data. The program hashes this data and the Light System Program verifies the hash against the root in a Merkle tree account.
+Compressed account data must be passed in instruction data, since only a hash is stored on-chain. This is unlike Solana accounts, where programs can read data directly from accounts.
+
+The program hashes this data and the Light System Program verifies the hash against the root in a Merkle tree account to ensure its correctness.
 {% endhint %}
 
 {% tabs %}
@@ -478,84 +497,88 @@ const instructionData = {
   proof: proof.compressedProof,
   addressTreeInfo: packedAddressTrees[0],
   outputStateTreeIndex: outputTreeIndex,
-  message: 'Hello, compressed account!'
 };
 ```
 
 1. **Non-inclusion Proof**
 
-* `compressedProof` proves that the address does not exist yet in the specified address tree (non-inclusion). Clients fetch proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* Add the `compressedProof` you fetched with `getValidityProof()` from your RPC provider to prove that the address does not exist yet in the specified address tree (non-inclusion).
 
 2. **Specify Merkle trees to store address and account hash**
+
+Include the Merkle tree metadata fetched in Step 3:
 
 * `PackedAddressTreeInfo` specifies the index to the address tree account used to derive the address. The index points to the address tree account in `remainingAccounts`.
 * `outputStateTreeIndex` points to the state tree account in `remainingAccounts` that will store the compressed account hash.
 
-3. **Custom account data**
+3. **Pass initial account data**
 
-* `message` defines data to include in the compressed account.
+* The counter program initializes the account to 0, wherefore no new value needs to be passed.
+* If your program requires initial data, add custom fields to your instruction struct.
 {% endtab %}
 
 {% tab title="Update" %}
 ```typescript
 const instructionData = {
   proof: proof.compressedProof,
+  counterValue: currentCounterValue,
   accountMeta: {
     treeInfo: packedMerkleTrees[0],
     address: compressedAccount.address,
     outputStateTreeIndex: outputTreeIndex
   },
-  message: 'Updated message'
 };
 ```
 
 1. **Inclusion Proof**
 
-* `compressedProof` proves that the account exists in the state tree (inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* Add the `compressedProof` you fetched with `getValidityProof()` from your RPC provider to prove the account exists in the state tree (inclusion).
 
 2. **Specify input hash and output state tree**
+
+Include the Merkle tree metadata fetched in Step 3:
 
 * `accountMeta` points to the input hash and specifies the output state tree with these fields:
   * `treeInfo: PackedMerkleTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) so the Light System Program can mark it as nullified
   * `address` specifies the account's derived address
   * `outputStateTreeIndex` points to the state tree that will store the updated compressed account hash
 
-3. **Custom data for update**
+3. **Pass current account data**
 
-* `message`: New data to update in the compressed account.
+* Pass the complete current account data. The program reconstructs the existing account hash from this data to verify it matches the hash in the state tree.
+* In this example, we pass the current `counterValue`, before incrementing.
 {% endtab %}
 
 {% tab title="Close" %}
 ```typescript
 const instructionData = {
   proof: proof.compressedProof,
+  counterValue: currentCounterValue,
   accountMeta: {
     treeInfo: packedMerkleTrees[0],
     address: compressedAccount.address,
     outputStateTreeIndex: outputTreeIndex
   },
-  currentValue: compressedAccount.data
 };
 ```
 
 1. **Inclusion Proof**
 
-* `compressedProof` proves that the account exists in the state tree (inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* Add the `compressedProof` you fetched with `getValidityProof()` from your RPC provider to prove the account exists in the state tree (inclusion).
 
 2. **Specify input hash and output state tree**
 
+Include the Merkle tree metadata fetched in Step 3:
+
 * `accountMeta` points to the input hash and specifies the output state tree:
-  * `treeInfo: PackedMerkleTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) for nullification
-  * `address` specifies the account's derived address
-  * `outputStateTreeIndex` points to the state tree that will store the output hash with zero values (`DEFAULT_DATA_HASH`)
+  * `treeInfo: PackedMerkleTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index).
+  * `address` specifies the account's derived address.
+  * `outputStateTreeIndex` points to the state tree that will store the output hash with zero values.
 
-{% hint style="info" %}
-Account indices reduce transaction size. Instruction data references the `remainingAccounts` array with indices instead of full 32-byte pubkeys. The client packs accounts in Step 6.
-{% endhint %}
+3. **Pass current account data**
 
-3. **Current data for close**
-
-* `currentValue` includes the current data to hash and verify the input state.
+* Pass the complete current account data. The program reconstructs the existing account hash from this data to verify it matches the hash in the state tree.
+* In this example, we pass the current `counterValue`, before closing.
 {% endtab %}
 {% endtabs %}
 {% endstep %}
@@ -563,29 +586,30 @@ Account indices reduce transaction size. Instruction data references the `remain
 {% step %}
 ### Instruction
 
-Build the instruction from the `remainingAccounts` (Step 6) and instruction data (Step 7).
+Build a `TransactionInstruction` with your `program_id`, `accounts`, and `data` from Step 7. Pass the `remainingAccounts` array you built in Step 6.
 
 ```typescript
-const instruction = new TransactionInstruction({
-  programId: PROGRAM_ID,
-  keys: [
-    { pubkey: payer.publicKey, isSigner: true, isWritable: true },
-    ...remainingAccounts
-  ],
-  data: encodeInstructionData(instructionData)
-});
+const instruction = await program.methods
+  .createCounter(instructionData.proof, instructionData.addressTreeInfo, instructionData.outputStateTreeIndex)
+  .accounts({
+    signer: payer.publicKey
+  })
+  .remainingAccounts(remainingAccounts)
+  .instruction();
 ```
 
-**What to include in the `keys`:**
+**What to include in `accounts`:**
 
-1. **Your program's accounts** - Include anything you need - it won't interfere with compression-related accounts.
-2. **Light System accounts** - The system accounts required for proof verification.
-3. **Remaining accounts** - Merkle trees and queues from the validity proof.
+1. **Define program-specific accounts** in `.accounts()` with any accounts your program requires - these won't interfere with compression-related accounts.
+2. **Add the Light System and Merkle tree accounts** with `.remainingAccounts(remainingAccounts)` to the instruction's account list.
+3. **Build the complete instruction with `.instruction()`**:
 
-**Final account order:**
+* Anchor converts `.accounts({ signer })` to `AccountMeta[]` with the program's IDL account metadata. These accounts have fixed indices defined by the IDL.
+* `.remainingAccounts()` appends the Light System and Merkle tree accounts after named accounts.
+* Returns `TransactionInstruction` with `programId`, merged `keys` (all accounts concatenated), and serialized instruction `data`.
 
 ```
-[0]    Your program accounts (payer, signers, etc.)
+[0]    Your program accounts (signer, etc.)
 [1]    Light System Program
 [2]    CPI Signer PDA
 [3-8]  Other Light System accounts
@@ -595,6 +619,8 @@ const instruction = new TransactionInstruction({
 
 {% step %}
 ### Send Transaction
+
+Submit the instruction to the network.
 
 ```typescript
 const transaction = new Transaction().add(instruction);
@@ -609,7 +635,7 @@ const signature = await sendAndConfirmTransaction(
 
 ## Full Code Example
 
-
+The full code example below shows you how to create a counter with Anchor.
 
 {% hint style="warning" %}
 For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
@@ -646,6 +672,8 @@ Find the Source Code here.
 
 ## Next Steps
 
-{% content-ref url="../../../zk-compression-docs/compressed-pdas/guides/" %}
-[guides](../../../zk-compression-docs/compressed-pdas/guides/)
+Start building programs to create, update, or close compressed accounts.
+
+{% content-ref url="../guides/" %}
+[guides](../guides/)
 {% endcontent-ref %}
