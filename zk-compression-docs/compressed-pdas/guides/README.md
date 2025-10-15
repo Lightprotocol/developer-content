@@ -17,7 +17,7 @@ hidden: true
 {% tabs %}
 {% tab title="Create" %}
 ```
-𝐂𝐥𝐢𝐞𝐧𝐭
+
 ├─ Derive unique compressed account address
 ├─ Fetch validity proof (proves that address doesn't exist)
 ├─ Pack accounts and build instruction
@@ -32,6 +32,26 @@ hidden: true
       ├─ Create address (address tree)
       ├─ Create compressed account (state tree)
       └─ Complete atomic account creation
+```
+{% endtab %}
+
+{% tab title="Untitled" %}
+```
+
+├─ 
+├─ 
+├─ 
+└─ 
+   │
+ 
+   ├─ 
+   ├─ 
+   │
+   └─ 
+      ├─ 
+      ├─ 
+      ├─ 
+      └─ 
 ```
 {% endtab %}
 
