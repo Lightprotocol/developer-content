@@ -1,11 +1,15 @@
 ---
 description: >-
   Complete guide to create compressed accounts in Solana programs with the
-  light-sdk crate. Includes a step-by-step guide and full code examples.
+  light-sdk crate.
 hidden: true
 ---
 
 # How to Create Compressed Accounts
+
+{% hint style="success" %}
+Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+{% endhint %}
 
 Compressed accounts and addresses are created via CPI to the Light System Program.
 
@@ -13,10 +17,6 @@ Compressed accounts are identified by its address (optional) and account hash. T
 
 * For Solana PDA like behavior your compressed account needs an address as persistent identifier.
 * For example compressed token accounts do not need addresses. Learn [how to create compressed token accounts here](../../compressed-tokens/guides/how-to-create-compressed-token-accounts.md).
-
-{% hint style="success" %}
-Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
-{% endhint %}
 
 {% tabs %}
 {% tab title="Create Compressed Account Complete Flow" %}
