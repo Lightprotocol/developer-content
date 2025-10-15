@@ -277,7 +277,7 @@ let mut my_compressed_account
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI creates the compressed account and its address.
+Invoke the Light System Program to create the compressed account and its address.
 
 {% hint style="info" %}
 The Light System Program

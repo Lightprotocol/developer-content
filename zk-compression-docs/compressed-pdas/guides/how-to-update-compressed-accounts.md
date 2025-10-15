@@ -162,16 +162,12 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 
 * Define fields to include the current account data passed by the client.
 * &#x20;This depends on your program logic. This example includes the `current_value` field.
-
-{% hint style="info" %}
-The current data is hashed in the next step and verified by the Light System Program during the CPI.
-{% endhint %}
 {% endstep %}
 
 {% step %}
 ### Update Compressed Account
 
-Load the compressed account with `LightAccount::new_mut()`.
+Load the compressed account and update it with `LightAccount::new_mut()`.
 
 {% hint style="success" %}
 `new_mut()`:
@@ -212,20 +208,15 @@ The Light System Program verifies the input hash and creates the output hash in 
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI nullifies the old and creates the updated compressed account hash.
+Invoke the Light System Program to update the compressed account.
 
-{% hint style="info" %}
+{% hint style="success" %}
 The Light System Program
 
-* validates the inclusion proof (account exists in state tree),
+* validates the account exists in state tree,
 * nullifies the old account hash in the state tree (input), and
 * appends the updated account hash to the state tree (output).
 {% endhint %}
-
-Build the CPI instruction with
-
-1. `proof` from _Step 4_ _Instruction Data_, and
-2. the updated data in `my_compressed_account` from _Step 5_ _Load Compressed Account_.
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
@@ -242,7 +233,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer.
-* `ctx.remaining_accounts`: `AccountInfo` slice with Light System accounts.
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build the CPI instruction**:

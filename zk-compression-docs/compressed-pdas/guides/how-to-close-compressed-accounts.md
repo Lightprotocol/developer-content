@@ -11,10 +11,9 @@ Compressed accounts are closed via CPI to the Light System Program.&#x20;
 
 Closing a compressed account
 
-* consumes the existing account hash (input hash), and
+* consumes the existing account hash (input), and
 * produces a new account hash with zero values to mark it as closed (output).
-
-A closed compressed account [can be reinitialized](how-to-reinitialize-compressed-accounts.md).
+* A closed compressed account [can be reinitialized](how-to-reinitialize-compressed-accounts.md).
 
 {% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
@@ -22,32 +21,30 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
 
 {% tabs %}
 {% tab title="Close Compressed Account Complete Flow" %}
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
+<pre><code>Client
 ├─ Fetch current account data
 ├─ Fetch validity proof (proves that account exists)
 ├─ Build instruction with proof, current data and metadata
 └─ Send transaction
     │
-<strong>  𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
+<strong>  Custom Program
 </strong><strong>    ├─ Reconstruct existing compressed account hash (input hash)
 </strong><strong>    │
-</strong><strong>    └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>       ├─ Verify input hash
-       ├─ Nullify input hash
-       ├─ Append new account hash to state tree 
-       │  (output hash is marked as closed via zero-bytes and discriminator)
-       └─ Complete atomic account closure
+</strong><strong>    └─ Light System Program CPI
+</strong>          ├─ Verify input hash
+          ├─ Nullify input hash
+          ├─ Append new account hash to state tree 
+          │  (output hash is marked as closed via zero-bytes &#x26; discriminator)
+          └─ Complete atomic account closure
 </code></pre>
 {% endtab %}
 {% endtabs %}
 
+## Implementation Guide
+
 {% stepper %}
 {% step %}
 ### Program Setup
-
-{% hint style="info" %}
-The compressed account struct is defined once and reused for all operations (create, update, close).
-{% endhint %}
 
 <details>
 
@@ -67,7 +64,7 @@ anchor_lang = "0.31.1"
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
-solana-program = "2.2"
+solana-sdk = "2.2"
 ```
 
 ```toml
@@ -109,19 +106,20 @@ Define your compressed account struct.
     BorshDeserialize, // AnchorDeserialize
     LightDiscriminator
 )]
-pub struct DataAccount {
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
 ```
 
-These traits are derived besides the standard traits (`Clone`, `Debug`, `Default`):
+You derive
 
-* `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, not the first 8 bytes of the data field\[^1].
+* the standard traits (`Clone`, `Debug`, `Default`),
+* `borsh` or `AnchorSerialize` to serialize account data, and
+* `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, not the first 8 bytes of the data field\[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `DataAccount` to set the discriminator and create the compressed account's data hash.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 7 to set the discriminator and create the compressed account's data.
 {% endhint %}
 
 </details>
@@ -142,71 +140,79 @@ pub struct InstructionData {
 
 1. **Inclusion Proof**
 
-* `ValidityProof` proves that the account exists in the state tree (inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* Define `proof` to include the proof that the account exists in the state tree (inclusion).
+* Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify input hash and output state tree**
 
-* `CompressedAccountMeta` points to the input hash and output state tree:
-  * `tree_info`: `PackedStateTreeInfo` points to the existing account hash (merkle tree pubkey index, leaf index, root index) so the Light System Program nullify it
-  * `address` specifies the account's derived address
-  * `output_state_tree_index` points to the state tree that will store the output hash with a zero-byte hash to mark the account as closed.
+* Define `account_meta: CompressedAccountMeta` to reference the existing account and specify the state tree to store the new hash with zero values:
+  * `tree_info: PackedStateTreeInfo`: Retrieves the existing account hash in the state tree.
+  * `address`: The account's derived address.
+  * `output_state_tree_index` points to the state tree that will store the updated hash with a zero-byte hash to mark the account as closed.
 
-3. **Current data for close**
+{% hint style="info" %}
+Clients fetch the current account with `getCompressedAccount()` and populate `CompressedAccountMeta` with the account's metadata.
+{% endhint %}
 
-* `current_value` includes the current data to hash and verify the input state. This depends on your program logic.
+3. **Current data**
+
+* Define fields to include the current account data passed by the client.
+* This depends on your program logic. This example includes the `current_value` field.
 {% endstep %}
 
 {% step %}
 ### Close Compressed Account
 
-Close the compressed account with `LightAccount::new_close()`.
+Load the compressed account and mark it as closed with `LightAccount::new_close()`.
 
-{% hint style="info" %}
+{% hint style="success" %}
 `new_close()`
 
 1. hashes the current account data as input state and
-2. creates output state with zero values to mark the account as closed.
+2. marks the account for closure for the Light System Program.
 {% endhint %}
 
 ```rust
-let my_compressed_account = LightAccount::<'_, DataAccount>::new_close(
+let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_close(
     &crate::ID,
     &account_meta,
-    DataAccount {
+    MyCompressedAccount {
         owner: *signer.key,
         message: current_message,
     },
 )?;
 ```
 
-**Parameters for `LightAccount::new_close()`:**
+**Pass these parameters for `LightAccount::new_close()`:**
 
-* `crate::ID` specifies the program ID that owns the compressed account.
-* `account_meta` points to the existing account hash for nullification - defined in the _Instruction Data (Step 2)_.
-* `DataAccount` contains the current account data. This input state is hashed by `new_close()` and verified during CPI.
+* `crate::ID`: The program's ID that owns the compressed account.
+* `account_meta`: The `CompressedAccountMeta` from instruction data (_Step 2_) that identifies the existing account and specifies the output state tree.
+* `MyCompressedAccount { ... }`: The current account data. `new_close()` hashes this input state for verification by the Light System Program.
 
-`new_close` automatically creates output state to mark the account as closed with zero values:
+**The SDK creates:**
 
-1. The Zero discriminator (`0u8; 8`) removes type identification of the account.
-2. The output contains a zeroed data hash that indicates no data content
-3. The data field contains an empty vector, instead of serialized account fields.
+* A `LightAccount` wrapper similar to Anchor's `Account` that marks the account for closure.
 
 {% hint style="info" %}
-The output state with all zero values is hashed in the next step via CPI by the Light System Program. `new_close()` only hashes the input state.
+`new_close()` only hashes the input state and marks the account for closure. The Light System Program creates output state with zero values:
+
+* a zero discriminator (`0u8; 8`) removes type identification of the account,
+* the output contains a data hash that indicates no data content, and
+* the data field contains an empty vector, instead of serialized account fields.
 {% endhint %}
 {% endstep %}
 
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI nullifies the account hash and appends the compressed account hash that includes the zero values at the same address.
+Invoke the Light System Program to close the compressed account. This empty account can be reinitialized with `LightAccount::new_empty()`.
 
-{% hint style="info" %}
+{% hint style="success" %}
 The Light System Program
 
-* validates the account exists in state tree with `proof`,
-* nullifies the input account hash, and
-* appends the output account hash with zero values to the state tree.
+* validates the account exists in state tree,
+* nullifies the existing account hash (input), and
+* appends the new account hash with zero values to the state tree to mark it as closed (output).
 {% endhint %}
 
 ```rust
@@ -224,10 +230,10 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice with [Light System and packed tree accounts](#user-content-fn-1)[^1].
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**Build and invoke the CPI instruction**:
+**Build the CPI instruction**:
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove the compressed account exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount` wrapper configured to close the account with the zero values _- defined in Step 3_.
@@ -247,18 +253,20 @@ light init testprogram
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/anchor/programs/counter/src/lib.rs#L167).
+Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L167).
 {% endhint %}
 
 ```rust
+#![allow(unexpected_cfgs)]
+#![allow(deprecated)]
+
 use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
 use light_sdk::{
     account::LightAccount,
-    address::v1::derive_address,
     cpi::{v1::CpiAccounts, CpiSigner},
     derive_light_cpi_signer,
-    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
-    LightDiscriminator,
+    instruction::{account_meta::CompressedAccountMeta, ValidityProof},
+    LightDiscriminator, LightHasher,
 };
 
 declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
@@ -280,9 +288,6 @@ pub mod counter {
         counter_value: u64,
         account_meta: CompressedAccountMeta,
     ) -> Result<()> {
-        // LightAccount::new_close() creates an account with only input state and no output state.
-        // By providing no output state, the account is closed after the instruction.
-        // A closed account can be reinitialized with LightAccount::new_empty().
         let counter = LightAccount::<'_, CounterAccount>::new_close(
             &crate::ID,
             &account_meta,
@@ -305,6 +310,16 @@ pub mod counter {
     }
 }
 
+#[error_code]
+pub enum CustomError {
+    #[msg("No authority to perform this action")]
+    Unauthorized,
+    #[msg("Counter overflow")]
+    Overflow,
+    #[msg("Counter underflow")]
+    Underflow,
+}
+
 #[derive(Accounts)]
 pub struct GenericAnchorAccounts<'info> {
     #[account(mut)]
@@ -313,52 +328,50 @@ pub struct GenericAnchorAccounts<'info> {
 
 // declared as event so that it is part of the idl.
 #[event]
-#[derive(Clone, Debug, Default, LightDiscriminator)]
+#[derive(Clone, Debug, Default, LightDiscriminator, LightHasher)]
 pub struct CounterAccount {
+    #[hash]
     pub owner: Pubkey,
     pub value: u64,
 }
 ```
 {% endtab %}
 
-{% tab title="Native" %}
+{% tab title="Native Rust" %}
 {% hint style="info" %}
-Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/native/src/lib.rs#L277).
+Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/native/src/lib.rs#L277).
 {% endhint %}
 
 ```rust
+#![allow(unexpected_cfgs)]
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey;
 use light_sdk::{
     account::LightAccount,
-    address::v1::derive_address,
     cpi::{
         v1::{CpiAccounts, LightSystemProgramCpi},
         CpiSigner, InvokeLightSystemProgram, LightCpiInstruction,
     },
     derive_light_cpi_signer,
-    error::LightSdkError,
-    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
-    LightDiscriminator,
+    instruction::{account_meta::CompressedAccountMeta, ValidityProof},
+    LightDiscriminator, LightHasher,
 };
 use solana_program::{
     account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
 };
+
 pub const ID: Pubkey = pubkey!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 pub const LIGHT_CPI_SIGNER: CpiSigner =
     derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 
 entrypoint!(process_instruction);
 
-#[repr(u8)]
-pub enum InstructionType {
-    CloseCounter = 0,
-}
-
 #[derive(
-    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
+    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher,
 )]
 pub struct CounterAccount {
+    #[hash]
     pub owner: Pubkey,
     pub value: u64,
 }
@@ -370,6 +383,23 @@ pub struct CloseCounterInstructionData {
     pub account_meta: CompressedAccountMeta,
 }
 
+#[derive(Debug, Clone)]
+pub enum CounterError {
+    Unauthorized,
+    Overflow,
+    Underflow,
+}
+
+impl From<CounterError> for ProgramError {
+    fn from(e: CounterError) -> Self {
+        match e {
+            CounterError::Unauthorized => ProgramError::Custom(1),
+            CounterError::Overflow => ProgramError::Custom(2),
+            CounterError::Underflow => ProgramError::Custom(3),
+        }
+    }
+}
+
 pub fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -378,41 +408,31 @@ pub fn process_instruction(
     if program_id != &crate::ID {
         return Err(ProgramError::IncorrectProgramId);
     }
-    if instruction_data.is_empty() {
-        return Err(ProgramError::InvalidInstructionData);
-    }
 
-    let discriminator = InstructionType::try_from(instruction_data[0])
+    let instruction_data = CloseCounterInstructionData::try_from_slice(instruction_data)
         .map_err(|_| ProgramError::InvalidInstructionData)?;
 
-    match discriminator {
-        InstructionType::CloseCounter => {
-            let instuction_data =
-                CloseCounterInstructionData::try_from_slice(&instruction_data[1..])
-                    .map_err(|_| ProgramError::InvalidInstructionData)?;
-            close_counter(accounts, instuction_data)
-        }
-    }
+    close_counter(accounts, instruction_data)
 }
 
 pub fn close_counter(
     accounts: &[AccountInfo],
-    instuction_data: CloseCounterInstructionData,
+    instruction_data: CloseCounterInstructionData,
 ) -> Result<(), ProgramError> {
     let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
     let counter = LightAccount::<'_, CounterAccount>::new_close(
         &ID,
-        &instuction_data.account_meta,
+        &instruction_data.account_meta,
         CounterAccount {
             owner: *signer.key,
-            value: instuction_data.counter_value,
+            value: instruction_data.counter_value,
         },
     )?;
 
     let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
 
-    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instuction_data.proof)
+    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
         .with_light_account(counter)?
         .invoke(light_cpi_accounts)?;
 
@@ -423,23 +443,20 @@ pub fn close_counter(
 
 {% tab title="Pinocchio" %}
 {% hint style="info" %}
-Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/pinocchio/src/lib.rs#L280).
+Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/pinocchio/src/lib.rs#L299).
 {% endhint %}
 
 ```rust
+#![allow(unexpected_cfgs)]
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey_array;
 use light_sdk_pinocchio::{
     account::LightAccount,
-    address::v1::derive_address,
-    cpi::{
-        v1::{CpiAccounts, LightSystemProgramCpi},
-        InvokeLightSystemProgram, LightCpiInstruction,
-    },
+    cpi::{CpiAccounts, CpiInputs, CpiSigner},
     derive_light_cpi_signer,
-    error::LightSdkError,
-    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo},
-    CpiSigner, LightDiscriminator, ValidityProof,
+    instruction::account_meta::CompressedAccountMetaClose,
+    LightDiscriminator, LightHasher, ValidityProof,
 };
 use pinocchio::{
     account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
@@ -451,26 +468,11 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 entrypoint!(process_instruction);
 
-#[repr(u8)]
-pub enum InstructionType {
-    CloseCounter = 0,
-}
-
-impl TryFrom<u8> for InstructionType {
-    type Error = LightSdkError;
-
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match value {
-            0 => Ok(InstructionType::CloseCounter),
-            _ => panic!("Invalid instruction discriminator."),
-        }
-    }
-}
-
 #[derive(
-    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
+    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher,
 )]
 pub struct CounterAccount {
+    #[hash]
     pub owner: Pubkey,
     pub value: u64,
 }
@@ -479,7 +481,24 @@ pub struct CounterAccount {
 pub struct CloseCounterInstructionData {
     pub proof: ValidityProof,
     pub counter_value: u64,
-    pub account_meta: CompressedAccountMeta,
+    pub account_meta: CompressedAccountMetaClose,
+}
+
+#[derive(Debug, Clone)]
+pub enum CounterError {
+    Unauthorized,
+    Overflow,
+    Underflow,
+}
+
+impl From<CounterError> for ProgramError {
+    fn from(e: CounterError) -> Self {
+        match e {
+            CounterError::Unauthorized => ProgramError::Custom(1),
+            CounterError::Overflow => ProgramError::Custom(2),
+            CounterError::Underflow => ProgramError::Custom(3),
+        }
+    }
 }
 
 pub fn process_instruction(
@@ -490,21 +509,11 @@ pub fn process_instruction(
     if program_id != &crate::ID {
         return Err(ProgramError::IncorrectProgramId);
     }
-    if instruction_data.is_empty() {
-        return Err(ProgramError::InvalidInstructionData);
-    }
 
-    let discriminator = InstructionType::try_from(instruction_data[0])
+    let instruction_data = CloseCounterInstructionData::try_from_slice(instruction_data)
         .map_err(|_| ProgramError::InvalidInstructionData)?;
 
-    match discriminator {
-        InstructionType::CloseCounter => {
-            let instruction_data =
-                CloseCounterInstructionData::try_from_slice(&instruction_data[1..])
-                    .map_err(|_| ProgramError::InvalidInstructionData)?;
-            close_counter(accounts, instruction_data)
-        }
-    }
+    close_counter(accounts, instruction_data)
 }
 
 pub fn close_counter(
@@ -520,13 +529,19 @@ pub fn close_counter(
             owner: *signer.key(),
             value: instruction_data.counter_value,
         },
-    )?;
+    )
+    .map_err(ProgramError::from)?;
 
     let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
 
-    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
-        .with_light_account(counter)?
-        .invoke(light_cpi_accounts)?;
+    let cpi_inputs = CpiInputs::new(
+        instruction_data.proof,
+        vec![counter.to_account_info().map_err(ProgramError::from)?],
+    );
+
+    cpi_inputs
+        .invoke_light_system_program(light_cpi_accounts)
+        .map_err(ProgramError::from)?;
 
     Ok(())
 }
@@ -549,19 +564,3 @@ pub fn close_counter(
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
-
-[^1]: * Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
-
-    - CPI Authority - Program-derived authority PDA
-
-    * Registered Program PDA - Registration account for your program
-
-    - Noop Program - For transaction logging
-
-    * Account Compression Authority - Authority for merkle tree operations
-
-    - Account Compression Program - SPL Account Compression program
-
-    * Invoking Program - Your program's address
-
-    - System Program - Solana System program
