@@ -38,6 +38,7 @@
 * [Client Library](compressed-pdas/client-library/README.md)
   * [Rust](compressed-pdas/client-library/rust.md)
   * [Typescript](compressed-pdas/client-library/typescript.md)
+* [Program Examples](compressed-pdas/program-examples.md)
 
 ## Resources
 
