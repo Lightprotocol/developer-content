@@ -333,7 +333,7 @@ For help with debugging, see the [Error Cheatsheet](../../resources/error-cheats
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-Find the [source code for this example ](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/native/src/lib.rs#L160)[here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/native/src/lib.rs#L160).
+Find the [source code for this example ](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/native/src/lib.rs#L160)[here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L27).
 {% endhint %}
 
 ```rust
@@ -424,7 +424,7 @@ pub struct CounterAccount {
 
 {% tab title="Native" %}
 {% hint style="info" %}
-Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/native/src/lib.rs#L160).
+Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/native/src/lib.rs#L160).
 {% endhint %}
 
 ```rust
