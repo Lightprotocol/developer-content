@@ -9,7 +9,7 @@ hidden: true
 
 Compressed accounts are updated via CPI to the Light System Program. &#x20;
 
-Compressed account updates follow a UTXO pattern, unlike regular Solana accounts that overwrite data in place:
+The update of a compressed account follows a UTXO pattern, unlike regular Solana accounts that overwrite data in place:
 
 * each update consumes the existing account hash (input) and
 * produces a new account hash with modified data (output).
