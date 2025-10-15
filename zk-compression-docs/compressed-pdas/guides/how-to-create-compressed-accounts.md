@@ -39,6 +39,8 @@ Find [full code examples of a counter program at the end](how-to-create-compress
 {% endtab %}
 {% endtabs %}
 
+## Implementation Steps
+
 {% stepper %}
 {% step %}
 ### Dependencies
@@ -59,7 +61,6 @@ anchor_lang = "0.31.1"
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
-solana-program   = "2.2"
 ```
 {% endtab %}
 
@@ -73,8 +74,8 @@ pinocchio = "0.9
 {% endtab %}
 {% endtabs %}
 
-* The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.&#x20;
-* Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).&#x20;
+* The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.
+* Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).
 {% endstep %}
 
 {% step %}
@@ -89,29 +90,29 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
     derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 ```
 
-**`CPISigner`** is the configuration struct for CPI's to the Light System Program.&#x20;
+**`CPISigner`** is the configuration struct for CPIs to the Light System Program.
 
-* CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`&#x20;
+* CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
 * `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 {% endstep %}
 
 {% step %}
 ### Compressed Account
 
-Define your compressed account struct.&#x20;
+Define your compressed account struct.
 
 {% tabs %}
 {% tab title="Anchor" %}
 ```rust
 #[derive(
-    Clone, 
-    Debug, 
-    Default, 
+    Clone,
+    Debug,
+    Default,
     AnchorSerialize,
     AnchorDeserialize,
     LightDiscriminator
 )]
-pub struct DataAccount {
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
@@ -121,14 +122,14 @@ pub struct DataAccount {
 {% tab title="Native Rust/ Pinocchio" %}
 ```rust
 #[derive(
-    Clone, 
-    Debug, 
-    Default, 
+    Clone,
+    Debug,
+    Default,
     BorshSerialize,
     BorshDeserialize,
     LightDiscriminator
 )]
-pub struct DataAccount {
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
@@ -136,13 +137,14 @@ pub struct DataAccount {
 {% endtab %}
 {% endtabs %}
 
-These traits are derived besides the standard traits (`Clone`, `Debug`, `Default`):
+You derive
 
-* `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
+* the standard traits (`Clone`, `Debug`, `Default`),
+* `borsh` or `AnchorSerialize` to serialize account data, and
+* `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, not the first 8 bytes of the data field\[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `DataAccount` in Step 7 to set the discriminator and create the compressed account's data.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `my-compressed-account` in Step 7 to set the discriminator and create the compressed account's data.
 {% endhint %}
 {% endstep %}
 
@@ -162,60 +164,65 @@ pub struct InstructionData {
 
 1. **Non-inclusion Proof**
 
-* `ValidityProof` proves that an address does not exist yet in the specified address tree (non-inclusion).  Clients fetch proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* Define `proof` to include the proof that the address does not exist yet in the specified address tree (non-inclusion).
+* Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify Merkle trees to store address and account hash**
 
-* `PackedAddressTreeInfo` specifies the index to the address tree account that is used to derive the address in _Step 5_. The index must point to the correct address tree `AccountInfo` in `CpiAccounts`.
-* `output_state_tree_index` points to the state tree `AccountInfo` that will store the compressed account hash.
+* Define `address_tree_info: PackedAddressTreeInfo` to reference the address tree account used to derive the address in the next step.
+* Define `output_state_tree_index: u8` to reference the state tree account that stores the compressed account hash.
+
+{% hint style="info" %}
+Clients pack accounts into the `remaining_accounts` array to reduce transaction size. Packed structs like `PackedAddressTreeInfo` contain account indices (u8) instead of 32 byte pubkeys. The indices point to the account in the `remaining_accounts` to retrieve the public key and other metadata.
+{% endhint %}
 
 3. **Initial account data**
 
-* `message` defines data to include in the compressed account. This depends on your program logic.
-
-{% hint style="info" %}
-Packed structs like `PackedAddressTreeInfo` use indices to point to `remaining_accounts` to reduce transaction size. The instruction data references these accounts with `u8` indices instead of full 32 byte pubkeys.
-{% endhint %}
+* Define fields for your program logic. Clients pass the initial values.
+* This example includes the `message` field.
 {% endstep %}
 
 {% step %}
 ### Derive Address
 
-Derive the address as persistent unique identifier for the compressed account.
+Derive the address as a persistent unique identifier for the compressed account.
 
 <pre class="language-rust"><code class="lang-rust">let address_merkle_tree_pubkey =
     address_tree_info.get_tree_pubkey(&#x26;light_cpi_accounts)?;
-    
+
 let custom_seeds = [SEED, ctx.accounts.signer.key().as_ref()];
 
-let program_id = crate::ID;
 <strong>let (address, address_seed) = derive_address(
 </strong><strong>    &#x26;custom_seeds,
 </strong><strong>    &#x26;address_tree_pubkey,
-</strong><strong>    &#x26;program_id, 
+</strong><strong>    &#x26;crate::ID,
 </strong><strong>);
 </strong></code></pre>
 
-**Parameters for `derive_address`:**
+**Unpack the tree pubkey:**
 
-* In this example, the `&custom_seeds` array contains `SEED` and signer pubkey.&#x20;
-* `&address_tree_pubkey` is the public key of the address Merkle tree account retrieved via `get_tree_pubkey()`.
-* `&program_id`: The program's on-chain address set in constants _(Step 2)._
+* Call `get_tree_pubkey()` to retrieve the address tree pubkey from `address_tree_info`. The packed struct contains the index of the address tree that points to the pubkey in the `remaining_accounts` array.
+
+**Pass these parameters to `derive_address()`:**
+
+* `&custom_seeds`: Arbitrary byte slices that uniquely identify the account. This example uses `SEED` and the signer's pubkey.
+* `&address_tree_pubkey`: The address tree pubkey. This parameter ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
+* `&crate::ID`: Your program's ID.
+
+**The SDK returns:**
+
+* `address`: The derived address for the compressed account
+* `address_seed`: Pass this to the Light System Program CPI in _Step 8_ to create the address in the address tree
 
 {% hint style="info" %}
 The address is created via CPI to the Light System Program in _Step 8_.
 {% endhint %}
-
-The parameters return:
-
-* The `address`, derived with `address_seed` + `address_tree_pubkey`.
-* The `address_seed`, which is passed to the Light System Program to create the address (_Step 8)_.
 {% endstep %}
 
 {% step %}
 ### Address Tree Check
 
-Verify that the address tree pubkey matches the program's tree constant to ensure global uniqueness of an address.
+Optionally, you can ensure global uniqueness of an address by verifying that the address tree pubkey matches the program's tree constant.
 
 {% hint style="info" %}
 Every address is unique, but the same seeds can be used to create different addresses in different address trees. To enforce that a compressed PDA can only be created once with the same seed, you must check the address tree pubkey.
@@ -238,13 +245,13 @@ if address_tree != ALLOWED_ADDRESS_TREE {
 
 Initialize the compressed account struct with `LightAccount::new_init()`.
 
-{% hint style="info" %}
+{% hint style="success" %}
 `new_init()` creates a `LightAccount` instance similar to anchor `Account` and lets your program define the initial account data.
 {% endhint %}
 
 <pre class="language-rust"><code class="lang-rust">let owner = crate::ID;
-let mut my_compressed_account 
-        = LightAccount::&#x3C;'_, DataAccount>::new_init(
+let mut my_compressed_account
+        = LightAccount::&#x3C;'_, MyCompressedAccount>::new_init(
 <strong>    &#x26;owner,
 </strong><strong>    Some(address),
 </strong><strong>    output_state_tree_index,
@@ -254,18 +261,17 @@ let mut my_compressed_account
 </strong><strong>my_compressed_account.data = data.to_string();
 </strong></code></pre>
 
-**Parameters for `LightAccount::new_init()`:** &#x20;
+**Pass these parameters to `new_init()`:**
 
-* `owner` specifies the program's ID that owns the compressed account.
-* The `address` assigned to the compressed account (derived in _Step 5_).
-* `output_state_tree_index` points to the state tree `AccountInfo` that will store the compressed account hash. We use the index passed in the instruction data (_Step 4)_.
+* `&owner`: The program's ID that owns the compressed account.
+* `Some(address)`: The derived address from _Step 5_. Pass `None` for accounts without addresses.
+* `output_state_tree_index`: The state tree index from instruction data (_Step 4_) to identify the state tree that will store the compressed account hash.
 
-**Add initial account data:**
+**The SDK creates:**
 
-After initialization, set custom account fields defined in your compressed account struct in `DataAccount` (_Step 3_). In this example:
-
-* `my_compressed_account.owner` is set to the signer's pubkey
-* `my_compressed_account.data` is set to custom string.
+* A `LightAccount` wrapper similar to Anchor's `Account`, ready for you to set initial data. This example sets:
+  * `owner` to the signer's pubkey
+  * `data` to a custom string
 {% endstep %}
 
 {% step %}
@@ -274,7 +280,7 @@ After initialization, set custom account fields defined in your compressed accou
 The Light System Program CPI creates the compressed account and its address.
 
 {% hint style="info" %}
-The Light System Program&#x20;
+The Light System Program
 
 * verifies the `proof` against the address tree's Merkle root,
 * adds the address to the address tree, and
@@ -299,12 +305,12 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-2)[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**Build and invoke the CPI instruction**:
+**Build the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` to prove  that an address does not exist yet in the specified address tree (non-inclusion) _- defined in the Instruction Data (Step 4)._
+* `new_cpi()` initializes the CPI instruction with the `proof` to prove that an address does not exist yet in the specified address tree (non-inclusion) _- defined in the Instruction Data (Step 4)._
 * `with_light_account` adds the `LightAccount` wrapper with the initial compressed account data to the CPI instruction _- defined in Step 7_.
 * `with_new_addresses` adds the `address_seed` and metadata to the CPI instruction data - returned by `derive_address` _in Step 5_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts.`
@@ -554,6 +560,8 @@ Find the [source code for this example here](https://github.com/Lightprotocol/pr
 {% endhint %}
 
 ```rust
+#![allow(unexpected_cfgs)]
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey_array;
 use light_sdk_pinocchio::{
@@ -581,10 +589,6 @@ entrypoint!(process_instruction);
 #[repr(u8)]
 pub enum InstructionType {
     CreateCounter = 0,
-    IncrementCounter = 1,
-    DecrementCounter = 2,
-    ResetCounter = 3,
-    CloseCounter = 4,
 }
 
 impl TryFrom<u8> for InstructionType {
@@ -593,10 +597,6 @@ impl TryFrom<u8> for InstructionType {
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
             0 => Ok(InstructionType::CreateCounter),
-            1 => Ok(InstructionType::IncrementCounter),
-            2 => Ok(InstructionType::DecrementCounter),
-            3 => Ok(InstructionType::ResetCounter),
-            4 => Ok(InstructionType::CloseCounter),
             _ => panic!("Invalid instruction discriminator."),
         }
     }
@@ -616,51 +616,6 @@ pub struct CreateCounterInstructionData {
     pub proof: ValidityProof,
     pub address_tree_info: PackedAddressTreeInfo,
     pub output_state_tree_index: u8,
-}
-
-#[derive(BorshSerialize, BorshDeserialize)]
-pub struct IncrementCounterInstructionData {
-    pub proof: ValidityProof,
-    pub counter_value: u64,
-    pub account_meta: CompressedAccountMeta,
-}
-
-#[derive(BorshSerialize, BorshDeserialize)]
-pub struct DecrementCounterInstructionData {
-    pub proof: ValidityProof,
-    pub counter_value: u64,
-    pub account_meta: CompressedAccountMeta,
-}
-
-#[derive(BorshSerialize, BorshDeserialize)]
-pub struct ResetCounterInstructionData {
-    pub proof: ValidityProof,
-    pub counter_value: u64,
-    pub account_meta: CompressedAccountMeta,
-}
-
-#[derive(BorshSerialize, BorshDeserialize)]
-pub struct CloseCounterInstructionData {
-    pub proof: ValidityProof,
-    pub counter_value: u64,
-    pub account_meta: CompressedAccountMeta,
-}
-
-#[derive(Debug, Clone)]
-pub enum CounterError {
-    Unauthorized,
-    Overflow,
-    Underflow,
-}
-
-impl From<CounterError> for ProgramError {
-    fn from(e: CounterError) -> Self {
-        match e {
-            CounterError::Unauthorized => ProgramError::Custom(1),
-            CounterError::Overflow => ProgramError::Custom(2),
-            CounterError::Underflow => ProgramError::Custom(3),
-        }
-    }
 }
 
 pub fn process_instruction(
@@ -725,7 +680,6 @@ pub fn create_counter(
 
     Ok(())
 }
-
 ```
 {% endtab %}
 {% endtabs %}
@@ -745,14 +699,3 @@ pub fn create_counter(
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
-
-[^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
-
-[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
-    2. CPI Authority - Program-derived authority PDA
-    3. Registered Program PDA - Registration account for your program
-    4. Noop Program - For transaction logging
-    5. Account Compression Authority - Authority for merkle tree operations
-    6. Account Compression Program - SPL Account Compression program
-    7. Invoking Program - Your program's address
-    8. System Program - Solana System program
