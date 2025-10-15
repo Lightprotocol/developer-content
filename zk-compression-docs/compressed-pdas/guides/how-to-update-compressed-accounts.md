@@ -46,10 +46,6 @@ Find [full code examples at the end](how-to-update-compressed-accounts.md#full-c
 {% step %}
 ### Program Setup
 
-{% hint style="info" %}
-Dependencies, constants, and account struct are defined once and reused for all operations (create, update, close).
-{% endhint %}
-
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
@@ -123,7 +119,7 @@ You derive
 * `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_,, not the first 8 bytes of the data field\[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 7 to set the discriminator and create the compressed account's data.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.
 {% endhint %}
 
 </details>
