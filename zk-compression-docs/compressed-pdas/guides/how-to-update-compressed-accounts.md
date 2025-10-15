@@ -158,10 +158,14 @@ pub struct InstructionData {
 Clients fetch the current account with `getCompressedAccount()` and populate `CompressedAccountMeta` with the account's metadata.
 {% endhint %}
 
-3. **New account data**
+3. **Current account data**
 
-* Define fields for your program logic. Clients pass the initial values.
-* This example includes the `new_value` field.
+* Define fields to include the current account data passed by the client.
+* &#x20;This depends on your program logic. This example includes the `current_value` field.
+
+{% hint style="info" %}
+The current data is hashed in the next step and verified by the Light System Program during the CPI.
+{% endhint %}
 {% endstep %}
 
 {% step %}
