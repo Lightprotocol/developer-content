@@ -269,7 +269,8 @@ let mut my_compressed_account
 
 **The SDK creates:**
 
-* A `LightAccount` wrapper similar to Anchor's `Account`, ready for you to set initial data. This example sets:
+* A `LightAccount` wrapper similar to Anchor's `Account.`
+* `new_init()` lets the program set the initial  data.  This example sets:
   * `owner` to the signer's pubkey
   * `data` to a custom string
 {% endstep %}
