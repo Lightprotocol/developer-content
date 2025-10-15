@@ -101,8 +101,6 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 {% step %}
 ### Compressed Account
 
-Define your compressed account struct.
-
 {% tabs %}
 {% tab title="Anchor" %}
 ```rust
@@ -139,7 +137,7 @@ pub struct MyCompressedAccount {
 {% endtab %}
 {% endtabs %}
 
-You derive
+Define your compressed account struct and derive
 
 * the standard traits (`Clone`, `Debug`, `Default`),
 * `borsh` or `AnchorSerialize` to serialize account data, and
