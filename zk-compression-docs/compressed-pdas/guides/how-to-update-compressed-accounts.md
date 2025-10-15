@@ -32,10 +32,10 @@ Find [full code examples at the end](how-to-update-compressed-accounts.md#full-c
 </strong><strong>   ├─ Modify compressed account data
 </strong><strong>   │
 </strong><strong>   └─ Light System Program CPI
-</strong>      ├─ Verify input hash 
-      ├─ Nullify input hash 
-      ├─ Create new account hash with updated data (output hash)
-      └─ Complete atomic account update
+</strong>         ├─ Verify input hash 
+         ├─ Nullify input hash 
+         ├─ Create new account hash with updated data (output hash)
+         └─ Complete atomic account update
 </code></pre>
 {% endtab %}
 {% endtabs %}
