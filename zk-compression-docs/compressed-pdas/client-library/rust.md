@@ -23,17 +23,17 @@ Find full code examples for a counter program [at the end for Anchor, native Rus
 
 {% tabs %}
 {% tab title="Create" %}
-<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
-</strong><strong>   ├─ Derive unique compressed account address
-</strong><strong>   ├─ Fetch validity proof (proves that address doesn't exist)
-</strong><strong>   ├─ Pack accounts and build instruction
-</strong><strong>   └─ Send transaction
-</strong>      │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Derive and check address
-      ├─ Initialize compressed account
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
+<pre><code><strong>
+</strong><strong>├─ Derive unique compressed account address
+</strong><strong>├─ Fetch validity proof (proves that address doesn't exist)
+</strong><strong>├─ Pack accounts and build instruction
+</strong><strong>└─ Send transaction
+</strong>   │
+   
+   ├─ Derive and check address
+   ├─ Initialize compressed account
+   │
+   └─ 
          ├─ Verify validity proof (non-inclusion)
          ├─ Create address (address tree)
          ├─ Create compressed account (state tree)
