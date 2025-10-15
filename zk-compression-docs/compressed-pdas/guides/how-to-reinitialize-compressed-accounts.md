@@ -43,10 +43,6 @@ Find [full code examples of a counter program at the end](how-to-reinitialize-co
 {% step %}
 ### Program Setup
 
-{% hint style="info" %}
-The compressed account struct is defined once and reused for all operations (create, update, close, reinitialize).
-{% endhint %}
-
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
