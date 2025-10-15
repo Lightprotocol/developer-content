@@ -1,7 +1,7 @@
 ---
 description: >-
-  Complete guide to create compressed accounts in Solana programs with the
-  light-sdk crate.
+  Complete guide to create compressed accounts in Solana programs with full code
+  examples.
 hidden: true
 ---
 

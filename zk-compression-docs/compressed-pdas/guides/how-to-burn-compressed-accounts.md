@@ -1,7 +1,7 @@
 ---
 description: >-
-  Complete guide to permanently burn compressed accounts in Solana programs with
-  the light-sdk crate. Includes step-by-step guide and full code examples.
+  Complete guide to burn compressed accounts in Solana programs with full code
+  examples.
 ---
 
 # How to Burn Compressed Accounts

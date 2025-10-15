@@ -1,7 +1,7 @@
 ---
 description: >-
-  Complete guide to reinitialize empty compressed accounts in Solana programs
-  with the light-sdk crate. Includes step-by-step guide and full code examples.
+  Complete guide to reinitialize compressed accounts in Solana programs with
+  full code examples.
 ---
 
 # How to Reinitialize Compressed Accounts

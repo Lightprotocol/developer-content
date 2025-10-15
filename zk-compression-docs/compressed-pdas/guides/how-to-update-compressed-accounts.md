@@ -1,7 +1,7 @@
 ---
 description: >-
-  Complete guide to update compressed accounts in Solana programs with the
-  light-sdk. Includes step-by-step guide and full code examples.
+  Complete guide to update compressed accounts in Solana programs with full code
+  examples.
 hidden: true
 ---
 

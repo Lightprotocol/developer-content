@@ -1,7 +1,7 @@
 ---
 description: >-
-  Complete guide to a Solana program that closes compressed accounts using Light
-  SDK and close_compressed_account()`instruction handler.
+  Complete guide to close compressed accounts in Solana programs with full code
+  examples.
 hidden: true
 ---
 
