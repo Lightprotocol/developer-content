@@ -183,7 +183,7 @@ let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_close(
 )?;
 ```
 
-**Pass these parameters for `LightAccount::new_close()`:**
+**Pass these parameters to `new_close()`:**
 
 * `crate::ID`: The program's ID that owns the compressed account.
 * `account_meta`: The `CompressedAccountMeta` from instruction data (_Step 2_) that identifies the existing account and specifies the output state tree.

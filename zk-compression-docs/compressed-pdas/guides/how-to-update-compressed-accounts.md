@@ -235,7 +235,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Build the CPI instruction**:
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove that an address does not exist yet in the specified address tree (non-inclusion) _- defined in the Instruction Data (Step 2)._
-* `with_light_account` adds the `LightAccount` wrapper with the modified compressed account data to the CPI instruction _- defined in Step 4_
+* `with_light_account` adds the `LightAccount` wrapper with the modified compressed account data _- defined in Step 4_
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 {% endstep %}
 {% endstepper %}

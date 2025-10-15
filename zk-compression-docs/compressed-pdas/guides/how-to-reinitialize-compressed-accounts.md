@@ -17,21 +17,27 @@ An empty compressed account can be reinitialized
 Find [full code examples of a counter program at the end](how-to-reinitialize-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-├─ Fetch empty account metadata
-├─ Fetch validity proof (proves empty account with zeroed data exists)
-├─ Build instruction with proof and new data
+{% tabs %}
+{% tab title="Reinitialize Compressed Account Complete Flow" %}
+<pre><code>Client
+├─ Fetch closed account metadata
+├─ Fetch validity proof (proves closed account hash exists)
+├─ Build instruction with proof and new data 
 └─ Send transaction
    │
-<strong>𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>   ├─ Reconstruct empty account hash with zero values (input hash)
-</strong><strong>   ├─ Initialize account with new data
+<strong>Custom Program
+</strong><strong>   ├─ Reconstruct closed account hash with zero values (input)
+</strong><strong>   ├─ Initialize account with new data (output)
 </strong><strong>   │
-</strong><strong>   └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>      ├─ Verify input hash
-      ├─ Nullify input hash
+</strong><strong>   └─ Light System Program CPI
+</strong>      ├─ Verify closed account hash
+      ├─ Nullify closed account hash
       └─ Append new account hash with new values (output hash)
 </code></pre>
+{% endtab %}
+{% endtabs %}
+
+## Implementation Guide
 
 {% stepper %}
 {% step %}
@@ -59,7 +65,7 @@ anchor_lang = "0.31.1"
 [dependencies]
 light-sdk = "0.13.0"
 borsh = "0.10.0"
-solana-program = "2.2"
+solana-sdk = "2.2"
 ```
 
 ```toml
@@ -85,7 +91,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.
 
-* CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
+* CPIs to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
 * `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 
 #### Compressed Account
@@ -101,19 +107,20 @@ Define your compressed account struct.
     BorshDeserialize, // AnchorDeserialize
     LightDiscriminator
 )]
-pub struct DataAccount {
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
 ```
 
-These traits are derived besides the standard traits (`Clone`, `Debug`, `Default`):
+You derive
 
-* `borsh` or `AnchorSerialize` to serialize account data.
-* `LightDiscriminator` implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
+* the standard traits (`Clone`, `Debug`, `Default`),
+* `borsh` or `AnchorSerialize` to serialize account data, and
+* `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, not the first 8 bytes of the data field\[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `DataAccount` to set the discriminator and create the compressed account's data hash.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.
 {% endhint %}
 
 </details>
@@ -133,59 +140,67 @@ pub struct InstructionData {
 
 1. **Inclusion Proof**
 
-* `ValidityProof` proves that the empty account exists in the state tree (inclusion). Clients fetch validity proofs with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
+* Define `proof` to include the proof that the account exists in the state tree (inclusion).
+* Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify input hash and output state tree**
 
-* `CompressedAccountMeta` points to the input hash and output state tree:
-  * `tree_info: PackedStateTreeInfo` points to the existing and empty account hash (merkle tree pubkey index, leaf index, root index) so the Light System Program nullify it
-  * `address` specifies the account's derived address
-  * `output_state_tree_index` points to the state tree that will store the new account hash
+* `CompressedAccountMeta` points to the closed account hash and output state tree to store the new account hash:
+  * `tree_info: PackedStateTreeInfo`: Retrieves the existing account hash in the state tree.
+  * `address`: The account's derived address.
+  * `output_state_tree_index`: References the state tree account that will store the new compressed account hash.
 
 {% hint style="info" %}
-Reinitialization does not require `current_value` parameters. `new_empty()` automatically uses the empty account as input state.
+Reinitialization does not require `current_value` parameters. `new_empty()` automatically uses the closed account as the input.
 {% endhint %}
 {% endstep %}
 
 {% step %}
-### Reinitialize Account
+### Reinitialize Closed Account
 
-Reinitialize the empty account with `LightAccount::new_empty()`.
+Reinitialize the closed account with `LightAccount::new_empty()`.
 
 {% hint style="info" %}
 `new_empty()`
 
-1. uses empty account as input state (proves account data is zeroed) and
+1. reconstructs the closed account hash with zero values as input, and
 2. creates output state with provided initial values.
 {% endhint %}
 
 ```rust
-let my_compressed_account = LightAccount::<'_, DataAccount>::new_empty(
+let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_empty(
     &crate::ID,
     &account_meta,
-    DataAccount::default(),
+    MyCompressedAccount::default(),
 )?;
 ```
 
-**Parameters for `LightAccount::new_empty()`:**
+**Pass these parameters to `new_empty()`:**
 
-* `crate::ID` specifies the program ID that owns the compressed account.
-* `account_meta` points to the account hash with zero values for the Light System Program to nullify - defined in the _Instruction Data (Step 2)_.
-* `DataAccount::default()` provides the initial account data.&#x20;
-  * The `Default` trait creates a zero-initialized instance (`Pubkey` as all zeros, `u64` as `0`, `String` as empty).&#x20;
-  * Programs can provide custom initial values instead of using `default()`.
+* `crate::ID`: The program's ID that owns the compressed account.
+* `account_meta`: The `CompressedAccountMeta` from instruction data (_Step 2_) that identifies the existing account and specifies the output state tree.
+
+**The SDK creates:**
+
+* A `LightAccount` wrapper with account data initialized via `MyCompressedAccount::default()`.
+* The `Default` trait creates a zero-initialized instance (`Pubkey` as all zeros, `u64` as `0`, `String` as empty).
+* Programs can modify these values after `new_empty()` returns, similar to `new_mut()` when updating compressed accounts.
+
+{% hint style="info" %}
+The Light System Program verifies the closed account hash and creates the output hash in _Step 4_. `new_empty()` only reconstructs the closed account hash with zero values.
+{% endhint %}
 {% endstep %}
 
 {% step %}
 ### Light System Program CPI
 
-The Light System Program CPI reinitializes the compressed account.
+Invoke the Light System Program to reinitialize the compressed account.
 
 {% hint style="info" %}
 The Light System Program
 
-* validates the empty account hash exists in state tree with `proof`,
-* nullifies the empty account hash, and
+* validates the closed account hash exists in state tree,
+* nullifies the closed account hash, and
 * appends the new account hash with provided values to the state tree.
 {% endhint %}
 
@@ -204,13 +219,13 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice [with Light System and packed tree accounts](#user-content-fn-2)[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build and invoke the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` to prove the empty account hash exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
-* `with_light_account` adds the `LightAccount` wrapper configured with the empty account hash as input and provided values as output _- defined in Step 3_.
+* `new_cpi()` initializes the CPI instruction with the `proof` to prove the closed account hash exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
+* `with_light_account` adds the `LightAccount` wrapper configured with the closed account hash as input and provided values as output _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 {% endstep %}
 {% endstepper %}
@@ -310,14 +325,3 @@ pub struct CounterAccount {
 {% endtabs %}
 
 ## Next Steps
-
-[^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
-
-[^2]: 1. Light System Program - SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
-    2. CPI Authority - Program-derived authority PDA
-    3. Registered Program PDA - Registration account for your program
-    4. Noop Program - For transaction logging
-    5. Account Compression Authority - Authority for merkle tree operations
-    6. Account Compression Program - SPL Account Compression program
-    7. Invoking Program - Your program's address
-    8. System Program - Solana System program
