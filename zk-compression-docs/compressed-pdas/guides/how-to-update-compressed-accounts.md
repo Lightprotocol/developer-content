@@ -122,7 +122,7 @@ pub struct InstructionData {
 * Define `proof` to include the proof that the account exists in the state tree.
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
-2. **Specify existing account hash and state tree for updated account hash**
+2. **Specify input state and output state tree (stores updated account hash)**
 
 * Define `account_meta: CompressedAccountMeta` to reference the existing account and specify the state tree to store the updated account hash:
   * `tree_info: PackedStateTreeInfo`: References the existing account hash in the state tree.

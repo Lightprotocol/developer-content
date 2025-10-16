@@ -10,11 +10,11 @@ Compressed accounts are permanently burned via CPI to the Light System Program. 
 
 Burning a compressed account
 
-* consumes the existing account hash (input), and
+* consumes the existing account hash, and
 * produces no output state.
 
 {% hint style="success" %}
-Find [full code examples of a counter program at the end](how-to-burn-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+Find [full code examples of a counter program at the end](how-to-burn-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
 ## Implementation Guide
@@ -118,7 +118,7 @@ pub struct InstructionData {
 * Define `proof` to include the proof that the account exists in the state tree.
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
-2. **Specify input hash**
+2. **Specify input state**
 
 * `CompressedAccountMetaBurn` points to the existing account hash so the Light System Program nullify it permanently:
   * `tree_info: PackedStateTreeInfo`: References the existing account hash in the state tree.
@@ -147,7 +147,8 @@ Burn the compressed account permanently with `LightAccount::new_burn()`. No acco
 {% endhint %}
 
 ```rust
-let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_burn(
+let my_compressed_account 
+        = LightAccount::<'_, MyCompressedAccount>::new_burn(
     &crate::ID,
     &account_meta,
     MyCompressedAccount {
@@ -161,14 +162,14 @@ let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_burn(
 
 * `&crate::ID`: The program's ID that owns the compressed account.
 * `&account_meta`: The `CompressedAccountMetaBurn` from instruction data (_Step 2_) that identifies the existing account for the Light System Program to nullify permanently.
-* `MyCompressedAccount { ... }`: The current account data. `new_burn()` hashes this input state for verification by the Light System Program.
+* `MyCompressedAccount { ... }`: The current account data. `new_burn()` hashes the input state for verification by the Light System Program.
 
 **The SDK creates:**
 
 * A `LightAccount` wrapper that marks the account as burned permanent with no output state.
 
 {% hint style="info" %}
-The Light System Program verifies the input hash and nullifies it permanently in _Step 4_. `new_burn()` only hashes the input state - no output hash is created.
+The Light System Program verifies the input hash and nullifies it permanently in _Step 4_. `new_burn()`  hashes the input state - no output hash is created.
 {% endhint %}
 {% endstep %}
 
@@ -231,80 +232,10 @@ Find the source code for this example [here](https://github.com/Lightprotocol/pr
 {% endhint %}
 
 ```rust
-#![allow(unexpected_cfgs)]
-#![allow(deprecated)]
-
-use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
-use light_sdk::{
-    account::LightAccount,
-    cpi::{v1::CpiAccounts, CpiSigner},
-    derive_light_cpi_signer,
-    instruction::{account_meta::CompressedAccountMetaBurn, ValidityProof},
-    LightDiscriminator,
-};
-
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-
-pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-
-#[program]
-pub mod counter {
-    use super::*;
-    use light_sdk::cpi::{
-        v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
-    };
-
-    pub fn burn_counter<'info>(
-        ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
-        proof: ValidityProof,
-        counter_value: u64,
-        account_meta: CompressedAccountMetaBurn,
-    ) -> Result<()> {
-        let counter = LightAccount::<'_, CounterAccount>::new_burn(
-            &crate::ID,
-            &account_meta,
-            CounterAccount {
-                owner: ctx.accounts.signer.key(),
-                value: counter_value,
-            },
-        )?;
-
-        let light_cpi_accounts = CpiAccounts::new(
-            ctx.accounts.signer.as_ref(),
-            ctx.remaining_accounts,
-            crate::LIGHT_CPI_SIGNER,
-        );
-
-        LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(counter)?
-            .invoke(light_cpi_accounts)?;
-
-        Ok(())
-    }
-}
-
-#[derive(Accounts)]
-pub struct GenericAnchorAccounts<'info> {
-    #[account(mut)]
-    pub signer: Signer<'info>,
-}
-
-#[event]
-#[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct CounterAccount {
-    #[hash]
-    pub owner: Pubkey,
-    pub value: u64,
-}
 ```
 {% endtab %}
 
 {% tab title="Native" %}
-
-{% endtab %}
-
-{% tab title="Pinocchio" %}
 
 {% endtab %}
 {% endtabs %}

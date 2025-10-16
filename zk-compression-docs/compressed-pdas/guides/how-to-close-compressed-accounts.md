@@ -16,7 +16,7 @@ Closing a compressed account
 * A closed compressed account [can be reinitialized](how-to-reinitialize-compressed-accounts.md).
 
 {% hint style="success" %}
-Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
 ## Implementation Guide
@@ -120,7 +120,7 @@ pub struct InstructionData {
 * Define `proof` to include the proof that the account exists in the state tree.
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
-2. **Specify input hash and output state tree**
+2. **Specify input state and output state tree (stores closed account hash)**
 
 * Define `account_meta: CompressedAccountMeta` to reference the existing account and specify the state tree to store the new hash with zero values:
   * `tree_info: PackedStateTreeInfo`: References the existing account hash in the state tree.

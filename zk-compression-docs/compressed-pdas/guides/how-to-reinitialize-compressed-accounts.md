@@ -10,11 +10,11 @@ Compressed accounts are reinitialized via CPI to the Light System Program.
 
 An empty compressed account can be reinitialized
 
-* with an account hash marked as empty with zero values and zero discriminator (input hash)
-* to create a new account hash at the same address with new values (output hash).
+* with an account hash marked as empty with zero values and zero discriminator
+* to create a new account hash at the same address with new values.
 
 {% hint style="success" %}
-Find [full code examples of a counter program at the end](how-to-reinitialize-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+Find [full code examples of a counter program at the end](how-to-reinitialize-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
 ## Implementation Guide
@@ -117,7 +117,7 @@ pub struct InstructionData {
 * Define `proof` to include the proof that the account exists in the state tree.
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
-2. **Specify input hash and output state tree**
+2. **Specify input state and output state tree (stores new account hash)**
 
 * `CompressedAccountMeta` points to the closed account hash and output state tree to store the new account hash:
   * `tree_info: PackedStateTreeInfo`: References the existing account hash in the state tree.
@@ -125,7 +125,7 @@ pub struct InstructionData {
   * `output_state_tree_index`: References the state tree account that will store the new compressed account hash.
 
 {% hint style="info" %}
-Reinitialization does not require `current_value` parameters. `new_empty()` automatically uses the closed account as the input.
+Reinitialization does not require `current_value` parameters. `new_empty()` automatically uses the closed account as input.
 {% endhint %}
 {% endstep %}
 
@@ -137,12 +137,13 @@ Reinitialize the closed account with `LightAccount::new_empty()`.
 {% hint style="info" %}
 `new_empty()`
 
-1. reconstructs the closed account hash with zero values as input, and
+1. reconstructs the closed account hash with zero values, and
 2. creates output state with provided initial values.
 {% endhint %}
 
 ```rust
-let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_empty(
+let my_compressed_account 
+        = LightAccount::<'_, MyCompressedAccount>::new_empty(
     &crate::ID,
     &account_meta,
     MyCompressedAccount::default(),
@@ -228,10 +229,6 @@ Find the source code for this example here.
 {% endtab %}
 
 {% tab title="Native" %}
-
-{% endtab %}
-
-{% tab title="Pinocchio" %}
 
 {% endtab %}
 {% endtabs %}
