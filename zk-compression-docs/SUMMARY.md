@@ -72,6 +72,8 @@
 * [Error Cheatsheet](resources/error-cheatsheet/README.md)
   * [Debug 0x179b / 6043 / ProofVerificationFailed](resources/error-cheatsheet/debug-0x179b-6043-proofverificationfailed.md)
   * [Debug 0x36D2 / 14034 / InvalidCpiAccountsOffset](resources/error-cheatsheet/debug-0x36d2-14034-invalidcpiaccountsoffset.md)
+* [Example Web Client](https://github.com/Lightprotocol/example-web-client)
+* [Example Node.js Client](https://github.com/Lightprotocol/example-nodejs-client)
 
 ## Learn
 
