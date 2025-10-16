@@ -1,6 +1,6 @@
 ---
 description: >-
-  Complete guide to create compressed accounts in Solana programs with full code
+  Guide to create compressed accounts in Solana programs with full code
   examples.
 hidden: true
 ---
@@ -9,14 +9,15 @@ hidden: true
 
 ## Overview
 
-Compressed accounts and addresses are created via CPI to the Light System Program. Solana programs can store data in compressed or regular accounts.&#x20;
+Compressed accounts and addresses are created via CPI to the Light System Program. Solana programs use compressed and regular accounts in the same program.&#x20;
 
-* Each compressed accounts can be identified by its account hash, or by its address (optional). Regular Solana accounts can only identified by its address.
+* A compressed accounts has two identifiers: the account hash and its address (optional). Regular Solana accounts can be identified by its address.
 * The account hash is not persistent and changes with every write to the account.
-* For Solana PDA like behavior your compressed account needs an address as persistent identifier. Any fungible state like [compressed token accounts](../../compressed-tokens/guides/how-to-create-compressed-token-accounts.md) do not need addresses.
+* For Solana PDA like behavior your compressed account needs an address as persistent identifier. \
+  Fungible state like [compressed token accounts](../../compressed-tokens/guides/how-to-create-compressed-token-accounts.md) do not need addresses.
 
 {% hint style="success" %}
-Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
 ## Implementation Guide
@@ -35,7 +36,7 @@ Add dependencies to your program.
 {% tab title="Anchor" %}
 ```toml
 [dependencies]
-light-sdk = "0.13.0"
+light-sdk = "0.15.0"
 anchor_lang = "0.31.1"
 ```
 {% endtab %}
@@ -43,17 +44,8 @@ anchor_lang = "0.31.1"
 {% tab title="Native Rust" %}
 ```toml
 [dependencies]
-light-sdk = "0.13.0"
+light-sdk = "0.15.0"
 borsh = "0.10.0"
-```
-{% endtab %}
-
-{% tab title="Pinocchio" %}
-```toml
-[dependencies]
-light-sdk-pinocchio = "0.13.0"
-borsh = "0.10.0"
-pinocchio = "0.9
 ```
 {% endtab %}
 {% endtabs %}
@@ -68,10 +60,10 @@ pinocchio = "0.9
 Set program address and derive the CPI authority PDA to call the Light System program.
 
 ```rust
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 ```
 
 **`CPISigner`** is the configuration struct for CPIs to the Light System Program.
@@ -101,7 +93,7 @@ pub struct MyCompressedAccount {
 ```
 {% endtab %}
 
-{% tab title="Native Rust/ Pinocchio" %}
+{% tab title="Native Rust" %}
 ```rust
 #[derive(
     Clone,
@@ -144,7 +136,7 @@ pub struct InstructionData {
 }
 ```
 
-1. **Non-inclusion Proof**
+1. **Validity Proof**
 
 * Define `proof` to include the proof that the address does not exist yet in the specified address tree (non-inclusion).
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
@@ -188,7 +180,7 @@ let custom_seeds = [SEED, ctx.accounts.signer.key().as_ref()];
 **Pass these parameters to `derive_address()`:**
 
 * `&custom_seeds`: Arbitrary byte slices that uniquely identify the account. This example uses `SEED` and the signer's pubkey.
-* `&address_tree_pubkey`: The address tree pubkey. This parameter ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
+* `&address_tree_pubkey`: The pubkey of the address tree where the address will be created. This parameter ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
 * `&crate::ID`: Your program's ID.
 
 **The SDK returns:**
@@ -204,7 +196,7 @@ The address is created via CPI to the Light System Program in _Step 8_.
 {% step %}
 ### Address Tree Check
 
-Optionally, you can ensure global uniqueness of an address by verifying that the address tree pubkey matches the program's tree constant.
+Ensure global uniqueness of an address by verifying that the address tree pubkey matches the program's tree constant.
 
 {% hint style="info" %}
 Every address is unique, but the same seeds can be used to create different addresses in different address trees. To enforce that a compressed PDA can only be created once with the same seed, you must check the address tree pubkey.
@@ -254,7 +246,7 @@ let mut my_compressed_account
 * A `LightAccount` wrapper similar to Anchor's `Account.`
 * `new_init()` lets the program set the initial  data.  This example sets:
   * `owner` to the signer's pubkey
-  * `data` to a custom string
+  * `data` to an arbitrary string
 {% endstep %}
 
 {% step %}
@@ -265,9 +257,9 @@ Invoke the Light System Program to create the compressed account and its address
 {% hint style="info" %}
 The Light System Program
 
-* verifies the `proof` against the address tree's Merkle root,
-* adds the address to the address tree, and
-* appends the compressed account hash to the state tree.
+* verifies the validity proof against the address tree's Merkle root,
+* inserts the address into the address tree, and
+* appends the new account hash to the state tree.
 {% endhint %}
 
 ```rust
@@ -288,13 +280,13 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build the CPI instruction**:
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove that an address does not exist yet in the specified address tree (non-inclusion) _- defined in the Instruction Data (Step 4)._
-* `with_light_account` adds the `LightAccount` wrapper with the initial compressed account data to the CPI instruction _- defined in Step 7_.
+* `with_light_account` adds the `LightAccount` with the initial compressed account data to the CPI instruction _- defined in Step 7_.
 * `with_new_addresses` adds the `address_seed` and metadata to the CPI instruction data - returned by `derive_address` _in Step 5_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts.`
 {% endstep %}
@@ -534,135 +526,6 @@ pub fn create_counter(
     Ok(())
 }
 
-```
-{% endtab %}
-
-{% tab title="Pinchocchio" %}
-{% hint style="info" %}
-Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/pinocchio/src/lib.rs#L161).
-{% endhint %}
-
-```rust
-#![allow(unexpected_cfgs)]
-
-use borsh::{BorshDeserialize, BorshSerialize};
-use light_macros::pubkey_array;
-use light_sdk_pinocchio::{
-    account::LightAccount,
-    address::v1::derive_address,
-    cpi::{
-        v1::{CpiAccounts, LightSystemProgramCpi},
-        InvokeLightSystemProgram, LightCpiInstruction,
-    },
-    derive_light_cpi_signer,
-    error::LightSdkError,
-    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo},
-    CpiSigner, LightDiscriminator, ValidityProof,
-};
-use pinocchio::{
-    account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
-};
-
-pub const ID: Pubkey = pubkey_array!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-
-entrypoint!(process_instruction);
-
-#[repr(u8)]
-pub enum InstructionType {
-    CreateCounter = 0,
-}
-
-impl TryFrom<u8> for InstructionType {
-    type Error = LightSdkError;
-
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match value {
-            0 => Ok(InstructionType::CreateCounter),
-            _ => panic!("Invalid instruction discriminator."),
-        }
-    }
-}
-
-#[derive(
-    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
-)]
-pub struct CounterAccount {
-    #[hash]
-    pub owner: Pubkey,
-    pub value: u64,
-}
-
-#[derive(BorshSerialize, BorshDeserialize)]
-pub struct CreateCounterInstructionData {
-    pub proof: ValidityProof,
-    pub address_tree_info: PackedAddressTreeInfo,
-    pub output_state_tree_index: u8,
-}
-
-pub fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> Result<(), ProgramError> {
-    if program_id != &crate::ID {
-        return Err(ProgramError::IncorrectProgramId);
-    }
-    if instruction_data.is_empty() {
-        return Err(ProgramError::InvalidInstructionData);
-    }
-
-    let discriminator = InstructionType::try_from(instruction_data[0])
-        .map_err(|_| ProgramError::InvalidInstructionData)?;
-
-    match discriminator {
-        InstructionType::CreateCounter => {
-            let instruction_data =
-                CreateCounterInstructionData::try_from_slice(&instruction_data[1..])
-                    .map_err(|_| ProgramError::InvalidInstructionData)?;
-            create_counter(accounts, instruction_data)
-        }
-    }
-}
-
-pub fn create_counter(
-    accounts: &[AccountInfo],
-    instruction_data: CreateCounterInstructionData,
-) -> Result<(), ProgramError> {
-    let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
-
-    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
-
-    let (address, address_seed) = derive_address(
-        &[b"counter", signer.key().as_ref()],
-        &instruction_data
-            .address_tree_info
-            .get_tree_pubkey(&light_cpi_accounts)
-            .map_err(|_| ProgramError::NotEnoughAccountKeys)?,
-        &ID,
-    );
-
-    let new_address_params = instruction_data
-        .address_tree_info
-        .into_new_address_params_packed(address_seed);
-
-    let mut counter = LightAccount::<'_, CounterAccount>::new_init(
-        &ID,
-        Some(address),
-        instruction_data.output_state_tree_index,
-    );
-
-    counter.owner = *signer.key();
-    counter.value = 0;
-
-    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
-        .with_light_account(counter)?
-        .with_new_addresses(&[new_address_params])
-        .invoke(light_cpi_accounts)?;
-
-    Ok(())
-}
 ```
 {% endtab %}
 {% endtabs %}
