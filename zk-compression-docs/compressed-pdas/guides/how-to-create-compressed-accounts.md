@@ -20,26 +20,7 @@ Compressed accounts are identified by its address (optional) and account hash. T
 Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
-{% tabs %}
-{% tab title="Create Compressed Account Complete Flow" %}
-<pre><code>Client
-├─ Derive unique compressed account address
-├─ Fetch validity proof (proves that address doesn't exist)
-├─ Pack accounts and build instruction
-└─ Send transaction
-   │
-<strong>Custom Program
-</strong><strong>   ├─ Derive and check address
-</strong><strong>   ├─ Initialize compressed account
-</strong><strong>   │
-</strong><strong>   └─ Light System Program CPI
-</strong>         ├─ Verify validity proof (non-inclusion)
-         ├─ Create address (address tree)
-         ├─ Create compressed account (state tree)
-         └─ Complete atomic account creation
-</code></pre>
-{% endtab %}
-{% endtabs %}
+<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 ## Implementation Guide
 
