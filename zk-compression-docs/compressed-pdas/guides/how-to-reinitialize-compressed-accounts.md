@@ -193,7 +193,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Set up `CpiAccounts::new()`:**
 
 * `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts\[^2].
+* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build and invoke the CPI instruction**:
