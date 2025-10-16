@@ -19,28 +19,12 @@ Closing a compressed account
 Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
-{% tabs %}
-{% tab title="Close Compressed Account Complete Flow" %}
-<pre><code>Client
-├─ Fetch current account data
-├─ Fetch validity proof (proves that account exists)
-├─ Build instruction with proof, current data and metadata
-└─ Send transaction
-    │
-<strong>  Custom Program
-</strong><strong>    ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>    │
-</strong><strong>    └─ Light System Program CPI
-</strong>          ├─ Verify input hash
-          ├─ Nullify input hash
-          ├─ Append new account hash to state tree 
-          │  (output hash is marked as closed via zero-bytes &#x26; discriminator)
-          └─ Complete atomic account closure
-</code></pre>
-{% endtab %}
-{% endtabs %}
-
 ## Implementation Guide
+
+This guide will cover the components of a Solana program that closes compressed accounts.\
+Here is the complete flow to update compressed accounts:&#x20;
+
+<figure><img src="../../.gitbook/assets/image (27).png" alt=""><figcaption><p>Close Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
 
 {% stepper %}
 {% step %}

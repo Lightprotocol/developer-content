@@ -17,23 +17,12 @@ Burning a compressed account
 Find [full code examples of a counter program at the end](how-to-burn-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
-<pre><code>𝐂𝐋𝐈𝐄𝐍𝐓
-   ├─ Fetch current account data
-   ├─ Fetch validity proof (proves that account exists)
-   ├─ Build instruction with proof and current data
-   └─ Send transaction
-      │
-<strong>      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-</strong><strong>      ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>      │
-</strong><strong>      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-</strong>         ├─ Verify input hash
-         ├─ Nullify input hash (permanent)
-         ├─ No output state created
-         └─ Complete atomic state transition
-</code></pre>
-
 ## Implementation Guide
+
+This guide will cover the components of a Solana program that burns compressed accounts.\
+Here is the complete flow to update compressed accounts:&#x20;
+
+<figure><img src="../../.gitbook/assets/image (26).png" alt=""><figcaption><p>Burn Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
 
 {% stepper %}
 {% step %}

@@ -16,7 +16,15 @@ hidden: true
 
 {% tabs %}
 {% tab title="Create" %}
-<figure><img src="../../.gitbook/assets/image (14).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (22).png" alt=""><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Update" %}
+<figure><img src="../../.gitbook/assets/image (20).png" alt=""><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Close" %}
+<figure><img src="../../.gitbook/assets/image (23).png" alt=""><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Untitled" %}
@@ -28,94 +36,23 @@ hidden: true
 └─ 
    │
  
-   ├─ 
-   ├─ 
+   ├─
+   │
    │
    └─ 
          ├─ 
          ├─ 
-         ├─ 
+         ├─
          └─ 
-```
-{% endtab %}
-
-{% tab title="Update" %}
-```
-𝐂𝐥𝐢𝐞𝐧𝐭
-├─ Fetch current account data 
-├─ Fetch validity proof (proves that account exists)
-├─ Build instruction with proof, current data, new data and metadata
-└─ Send transaction
-   │
- 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
-   ├─ Reconstruct existing compressed account hash (input hash)
-   ├─ Modify compressed account data
-   │
-   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
-      ├─ Verify input hash 
-      ├─ Nullify input hash 
-      ├─ Create new account hash with updated data (output hash)
-      └─ Complete atomic account update
-```
-{% endtab %}
-
-{% tab title="Close" %}
-```
-𝐂𝐥𝐢𝐞𝐧𝐭
-├─ Fetch current account data
-├─ Fetch validity proof (proves that account exists)
-├─ Build instruction with proof, current data and metadata
-└─ Send transaction
-   │
- 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
-   ├─ Reconstruct existing compressed account hash (input hash)
-   │
-   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
-       ├─ Verify input hash
-       ├─ Nullify input hash
-       ├─ Append new account hash to state tree 
-       │  (output hash is marked as closed via zero-bytes and discriminator)
-       └─ Complete atomic account closure
+         
 ```
 {% endtab %}
 
 {% tab title="Reinit" %}
-```
-𝐂𝐥𝐢𝐞𝐧𝐭
-├─ Fetch closed account metadata
-├─ Fetch validity proof (proves closed account hash exists)
-├─ Build instruction with proof and new data
-└─ Send transaction
-   │
- 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
-   ├─ Reconstruct closed account hash with zero values (input hash)
-   ├─ Initialize account with new data
-   │
-   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
-      ├─ Verify input hash
-      ├─ Nullify input hash
-      └─ Append new account hash with new values (output hash)
-```
+<figure><img src="../../.gitbook/assets/image (24).png" alt=""><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Burn" %}
-<pre><code>𝐂𝐥𝐢𝐞𝐧𝐭
-├─ Fetch current account data
-├─ Fetch validity proof (proves that account exists)
-├─ Build instruction with proof and current data
-└─ Send transaction
-   │
-<strong> 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
-</strong><strong>   ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>   │
-</strong><strong>   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
-</strong>      ├─ Verify input hash
-      ├─ Nullify input hash (permanent)
-      ├─ No output state created
-      └─ Complete atomic state transition
-</code></pre>
+<figure><img src="../../.gitbook/assets/image (25).png" alt=""><figcaption></figcaption></figure>
 {% endtab %}
 {% endtabs %}
-
-```
-```

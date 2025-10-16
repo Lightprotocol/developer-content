@@ -17,27 +17,12 @@ An empty compressed account can be reinitialized
 Find [full code examples of a counter program at the end](how-to-reinitialize-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
-{% tabs %}
-{% tab title="Reinitialize Compressed Account Complete Flow" %}
-<pre><code>Client
-├─ Fetch closed account metadata
-├─ Fetch validity proof (proves closed account hash exists)
-├─ Build instruction with proof and new data 
-└─ Send transaction
-   │
-<strong>Custom Program
-</strong><strong>   ├─ Reconstruct closed account hash with zero values (input)
-</strong><strong>   ├─ Initialize account with new data (output)
-</strong><strong>   │
-</strong><strong>   └─ Light System Program CPI
-</strong>      ├─ Verify closed account hash
-      ├─ Nullify closed account hash
-      └─ Append new account hash with new values (output hash)
-</code></pre>
-{% endtab %}
-{% endtabs %}
-
 ## Implementation Guide
+
+This guide will cover the components of a Solana program that reinitializes compressed accounts.\
+Here is the complete flow to update compressed accounts:&#x20;
+
+<figure><img src="../../.gitbook/assets/image (28).png" alt=""><figcaption><p>Reinitialize Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
 
 {% stepper %}
 {% step %}

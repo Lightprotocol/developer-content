@@ -19,28 +19,12 @@ The update of a compressed account follows a UTXO pattern, unlike regular Solana
 Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
-{% tabs %}
-{% tab title="Update Compressed Account Complete Flow" %}
-<pre><code>Client
-├─ Fetch current account data 
-├─ Fetch validity proof (proves that account exists)
-├─ Build instruction with proof, current data, new data and metadata
-└─ Send transaction
-   │
-<strong> Custom Program
-</strong><strong>   ├─ Reconstruct existing compressed account hash (input hash)
-</strong><strong>   ├─ Modify compressed account data
-</strong><strong>   │
-</strong><strong>   └─ Light System Program CPI
-</strong>         ├─ Verify input hash 
-         ├─ Nullify input hash 
-         ├─ Create new account hash with updated data (output hash)
-         └─ Complete atomic account update
-</code></pre>
-{% endtab %}
-{% endtabs %}
-
 ## Implementation Guide
+
+This guide will cover the components of a Solana program that updates compressed accounts.\
+Here is the complete flow to update compressed accounts:&#x20;
+
+<figure><img src="../../.gitbook/assets/image (29).png" alt=""><figcaption><p>Update Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
 
 {% stepper %}
 {% step %}
