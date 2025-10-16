@@ -7,6 +7,10 @@ description: >-
 
 # Core Concepts
 
+{% hint style="info" %}
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol) to query the Light Protocol repo in natural language.
+{% endhint %}
+
 ZK Compression is an account primitive on Solana that drastically reduces on-chain state costs while maintaining Solana's security, composability, and performance.
 
 #### High Level System Overview
