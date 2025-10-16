@@ -28,7 +28,7 @@ Full compressed account lifecycle (create, increment, decrement, reset, close):
 
 * [**account-comparison**](https://github.com/Lightprotocol/program-examples/tree/main/account-comparison) - Compare compressed vs regular Solana accounts.
 
-## Get Started
+## Build your own Program
 
 {% content-ref url="../create-a-program-with-compressed-pdas.md" %}
 [create-a-program-with-compressed-pdas.md](../create-a-program-with-compressed-pdas.md)
