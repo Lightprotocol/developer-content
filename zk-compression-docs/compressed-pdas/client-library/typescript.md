@@ -120,27 +120,33 @@ Find [full code examples for a counter program](typescript.md#full-code-example)
 ### Dependencies
 
 {% tabs %}
-{% tab title="Rpc" %}
-```json
-{
-  "dependencies": {
-    "@lightprotocol/stateless.js": "^0.22.0",
-    "@lightprotocol/compressed-token": "^0.22.0",
-    "@solana/web3.js": "^1.98.4"
-  }
-}
+{% tab title="npm" %}
+```sh
+npm install --save \
+    @lightprotocol/stateless.js \ 
+    @lightprotocol/compressed-token \ 
+    @solana/web3.js \
+    @lightprotocol/zk-compression-cli
 ```
 {% endtab %}
 
-{% tab title="TestRpc" %}
-```json
-{
-  "devDependencies": {
-    "@lightprotocol/stateless.js": "^0.22.0",
-    "@lightprotocol/compressed-token": "^0.22.0",
-    "@solana/web3.js": "^1.98.4"
-  }
-}
+{% tab title="Yarn" %}
+```sh
+yarn add \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @lightprotocol/zk-compression-cli
+```
+{% endtab %}
+
+{% tab title="pnpm" %}
+```bash
+pnpm add \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @lightprotocol/zk-compression-cli
 ```
 {% endtab %}
 {% endtabs %}

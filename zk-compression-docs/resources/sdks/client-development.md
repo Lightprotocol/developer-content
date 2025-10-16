@@ -6,9 +6,27 @@ description: Overview to Client side development. Quick access to TypeScript and
 
 Build client applications that interact with ZK Compression across web, Node.js, and native environments using our TypeScript and Rust SDKs.
 
-#### Core Client SDKs <a href="#client-side-sdks" id="client-side-sdks"></a>
+## Typescript Client <a href="#client-side-sdks" id="client-side-sdks"></a>
 
-<table><thead><tr><th width="200">SDK</th><th width="120">Language</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://www.npmjs.com/package/@lightprotocol/stateless.js"><strong>@lightprotocol/stateless.js</strong></a></td><td>TypeScript</td><td>Core compression SDK to create or interact with compressed accounts via RPC interface</td></tr><tr><td><a href="https://www.npmjs.com/package/@lightprotocol/compressed-token"><strong>@lightprotocol/compressed-token</strong></a></td><td>TypeScript</td><td>SDK to mint, transfer, compress/ decompress, or delegate compressed tokens</td></tr><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/sdk-libs/client"><strong>light-client</strong></a></td><td>Rust</td><td>RPC client with Photon indexer API, and local test validator support.</td></tr></tbody></table>
+* [**@lightprotocol/stateless.js**](https://www.npmjs.com/package/@lightprotocol/stateless.js) **-** Core compression SDK to create or interact with compressed accounts via RPC interface
+* [**@lightprotocol/compressed-token**](https://www.npmjs.com/package/@lightprotocol/compressed-token) **-** SDK to mint, transfer, compress/ decompress, or delegate compressed tokens
+
+{% content-ref url="../../compressed-pdas/client-library/typescript.md" %}
+[typescript.md](../../compressed-pdas/client-library/typescript.md)
+{% endcontent-ref %}
+
+## Rust Client&#x20;
+
+* For devnet and mainnet use [`light-client`](https://docs.rs/light-client)&#x20;
+  * An RPC client for compressed accounts and tokens. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
+  * It connects to the Photon indexer that tracks compressed state to query compressed accounts and the prover service for validity proofs.
+* For local testing use [`light-program-test`](https://docs.rs/light-program-test)&#x20;
+  * Initializes in-process Solana VM via [LiteSVM](https://github.com/LiteSVM/LiteSVM) with auto-funded payer, local prover server and in-memory indexer.&#x20;
+* `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits. Seamlessly switch between `light-program-test`, local test validator, and public Solana networks.
+
+{% content-ref url="../../compressed-pdas/client-library/rust.md" %}
+[rust.md](../../compressed-pdas/client-library/rust.md)
+{% endcontent-ref %}
 
 ### Installation
 
@@ -34,7 +52,7 @@ yarn add \
 {% endtab %}
 {% endtabs %}
 
-{% code title="rust-client-sdks.toml" %}
+{% code title="rust-client.toml" %}
 ```toml
 [dependencies]
 light-client = "0.13.1" 
@@ -96,8 +114,8 @@ Find all ZK Compression related RPC methods below.
 
 ### Next Steps
 
-Get an overview of compressed tokens and dive right into the cookbook.
+Learn about SDKs for program development.
 
-{% content-ref url="broken-reference" %}
-[Broken link](broken-reference)
+{% content-ref url="program-development.md" %}
+[program-development.md](program-development.md)
 {% endcontent-ref %}
