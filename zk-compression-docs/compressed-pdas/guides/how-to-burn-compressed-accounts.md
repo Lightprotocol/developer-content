@@ -171,7 +171,7 @@ let my_compressed_account
 * A `LightAccount` wrapper that marks the account as burned permanent with no output state.
 
 {% hint style="info" %}
-The Light System Program verifies the input hash and nullifies it permanently in _Step 4_. `new_burn()`  hashes the input state - no output hash is created.
+`new_burn()`  hashes the input state. The Light System Program verifies the input hash and nullifies it permanently in _Step 4_.&#x20;
 {% endhint %}
 {% endstep %}
 

@@ -164,7 +164,7 @@ let my_compressed_account
 * Programs can modify these values after `new_empty()` returns, similar to `new_mut()` when updating compressed accounts.
 
 {% hint style="info" %}
-The Light System Program verifies the closed account hash and creates the output hash in _Step 4_. `new_empty()` only reconstructs the closed account hash with zero values.
+`new_empty()` reconstructs the closed account hash with zero values. The Light System Program verifies the closed account hash and creates the output hash in _Step 4_.&#x20;
 {% endhint %}
 {% endstep %}
 
