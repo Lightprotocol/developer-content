@@ -115,9 +115,9 @@ pub struct InstructionData {
 }
 ```
 
-1. **Inclusion Proof**
+1. **Validity Proof**
 
-* Define `proof` to include the proof that the account exists in the state tree (inclusion).
+* Define `proof` to include the proof that the account exists in the state tree.
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify input hash and output state tree**
@@ -188,8 +188,8 @@ Invoke the Light System Program to close the compressed account. This empty acco
 The Light System Program
 
 * validates the account exists in state tree,
-* nullifies the existing account hash (input), and
-* appends the new account hash with zero values to the state tree to mark it as closed (output).
+* nullifies the existing account hash, and
+* appends the new account hash with zero values to the state tree to mark it as closed.
 {% endhint %}
 
 ```rust
@@ -212,7 +212,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Build the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` to prove the compressed account exists in the state tree (inclusion) _- defined in the Instruction Data (Step 2)._
+* `new_cpi()` initializes the CPI instruction with the `proof` to prove the compressed account exists in the state tree _- defined in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount` wrapper configured to close the account with the zero values _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 {% endstep %}
