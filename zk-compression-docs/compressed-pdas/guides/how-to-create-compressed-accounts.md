@@ -11,10 +11,11 @@ hidden: true
 
 Compressed accounts and addresses are created via CPI to the Light System Program.
 
-Compressed accounts are identified by its address (optional) and account hash. The account hash is not persistent and changes with every write to the account.
+Solana programs can store data in compressed or regular accounts.&#x20;
 
-* For Solana PDA like behavior your compressed account needs an address as persistent identifier.
-* For example compressed token accounts do not need addresses. Learn [how to create compressed token accounts here](../../compressed-tokens/guides/how-to-create-compressed-token-accounts.md).
+* Different from regular Solana accounts, compressed accounts are identified by its account hash, or optionally by its address.&#x20;
+* The account hash is not persistent and changes with every write to the account.
+* For Solana PDA like behavior your compressed account needs an address as persistent identifier. Any fungible state like [compressed token accounts](../../compressed-tokens/guides/how-to-create-compressed-token-accounts.md) do not need addresses.
 
 {% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
