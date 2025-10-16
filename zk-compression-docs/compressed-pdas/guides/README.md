@@ -16,23 +16,7 @@ hidden: true
 
 {% tabs %}
 {% tab title="Create" %}
-```
-
-├─ Derive unique compressed account address
-├─ Fetch validity proof (proves that address doesn't exist)
-├─ Pack accounts and build instruction
-└─ Send transaction
-   │
- 𝐂𝐮𝐬𝐭𝐨𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦
-   ├─ Derive and check address
-   ├─ Initialize compressed account
-   │
-   └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
-         ├─ Verify validity proof (non-inclusion)
-         ├─ Create address (address tree)
-         ├─ Create compressed account (state tree)
-         └─ Complete atomic account creation
-```
+<figure><img src="../../.gitbook/assets/image (14).png" alt=""><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Untitled" %}
