@@ -41,8 +41,8 @@ These are the required version for program development.
 
 ## Program Examples
 
-{% content-ref url="../../compressed-pdas/program-examples.md" %}
-[program-examples.md](../../compressed-pdas/program-examples.md)
+{% content-ref url="../../examples/program-examples.md" %}
+[program-examples.md](../../examples/program-examples.md)
 {% endcontent-ref %}
 
 ## Build your own program
