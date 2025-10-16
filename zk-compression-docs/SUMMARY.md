@@ -43,7 +43,7 @@
   * [Create and Update Program](compressed-pdas/program-examples/README.md#create-and-update-program)
   * [Create and Read Program](compressed-pdas/program-examples/README.md#create-and-read-program)
   * [Account Comparison Program](compressed-pdas/program-examples/README.md#compare-uncompressed-vs-compressed-accounts-program)
-  * [Get Started](compressed-pdas/program-examples/README.md#dependencies)
+  * [Get Started](compressed-pdas/program-examples/README.md#get-started)
 
 ## Resources
 

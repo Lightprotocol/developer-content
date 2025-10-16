@@ -10,38 +10,43 @@ Compressed PDAs provide full functionality of accounts at PDAs, without per-acco
 
 Compressed PDAs are derived using a specific program address and seed, like regular PDAs. Custom programs invoke the [Light System program](#user-content-fn-1)[^1] to create and update accounts, instead of the System program.
 
-#### Compressed PDAs at a Glance
+### Compressed PDAs at a Glance
 
 <table data-view="cards"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Rent free PDAs</strong></td><td>Create accounts at program-derived addresses without upfront rent exempt balance.</td></tr><tr><td><strong>Full PDA Functionality</strong></td><td>Persistent unique identification and program ownership.</td></tr><tr><td><strong>Composable</strong></td><td>CPI support between compressed and regular PDAs.</td></tr></tbody></table>
 
-### Start Building
+## Start Building
 
 Developing with compressed PDAs works similar to regular PDAs and involves minimal setup:
 
-<details>
+{% stepper %}
+{% step %}
+### Prerequisites
 
-<summary><em>required versions</em></summary>
-
-Make sure you have the required versions installed and available in PATH:
+{% hint style="info" %}
+Required versions:
 
 * **Rust**: 1.86.0 or later
 * **Solana CLI**: 2.2.15
 * **Anchor CLI**: 0.31.1
-
-- **Node.js**: 23.5.0 or later
-- **Zk compression CLI**: 0.27.0 or later
-
-</details>
-
-{% stepper %}
-{% step %}
-**Prerequisite Setup**
-
-{% hint style="info" %}
-Make sure you installed Rust, the Solana CLI, and Anchor. Refer to this [setup guide](https://solana.com/developers/guides/getstarted/setup-local-development) for more help.
+* **Zk compression CLI**: 0.27.0 or later
+* **Node.js**: 23.5.0 or later
 {% endhint %}
 
-Install the Light CLI:
+**Install Solana CLI:**
+
+```bash
+sh -c "$(curl -sSfL https://release.solana.com/v2.2.15/install)"
+```
+
+**Install Anchor CLI:**
+
+```bash
+cargo install --git https://github.com/coral-xyz/anchor avm --force
+avm install latest
+avm use latest
+```
+
+**Install the Light CLI:**
 
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
@@ -54,7 +59,9 @@ light --version
 {% endstep %}
 
 {% step %}
-**Initialize Your Program**
+### Initialize your Program
+
+Instantiate a template Solana program with compressed accounts with all required dependencies.
 
 ```bash
 light init testprogram
@@ -64,11 +71,27 @@ light init testprogram
 The `light init` command creates only Anchor-based projects . For Pinocchio programs, manually configure dependencies using `light-sdk-pinocchio`.
 {% endhint %}
 
-This initializes an anchor program with a basic counter program template using compressed accounts with all required dependencies.
+<details>
+
+<summary>Dependencies</summary>
+
+#### Rust Crates
+
+* `light-sdk` - Core SDK for compressed accounts in native and anchor programs
+* `light-sdk-pinocchio` Core SDK for compressed accounts in pinocchio programs
+* `light-client` - RPC client and indexer for interacting with compressed accounts
+* `light-program-test` - Testing utilities for compressed programs.
+
+#### TypeScript/JavaScript Packages
+
+* `@lightprotocol/stateless.js` - Client library for interacting with compressed accounts
+* `@lightprotocol/zk-compression-cli` - Command-line tools for ZK compression development
+
+</details>
 {% endstep %}
 
 {% step %}
-**Build and Test**
+### Build and Test
 
 Now `cd testprogram` and run:
 
@@ -86,26 +109,7 @@ cargo test-sbf
 {% endstep %}
 {% endstepper %}
 
-<details>
-
-<summary><em>Light Protocol Libraries Used</em></summary>
-
-**Rust Crates**
-
-* `light-sdk` - Core SDK for compressed accounts in native and anchor programs
-* `light-sdk-pinocchio` Core SDK for compressed accounts in pinocchio programs
-* `light-hasher` - Hashing utilities for ZK compression
-* `light-client` - RPC client and indexer for interacting with compressed accounts
-* `light-program-test` - Testing utilities for compressed programs.
-
-**TypeScript/JavaScript Packages**
-
-* `@lightprotocol/stateless.js` - Client library for interacting with compressed accounts
-* `@lightprotocol/zk-compression-cli` - Command-line tools for ZK compression development
-
-</details>
-
-**Common Errors**
+## **Common Errors**
 
 <details>
 
@@ -182,32 +186,22 @@ Caused by:
 
 </details>
 
-#### More Examples
+## Next Steps
 
-**Counter Program**
+Get an overview of the SDKs or Program Examples.
 
-The counter program implements a compressed account lifecycle (create, increment, decrement, reset, close):
-
-* [**counter/anchor**](https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor) - Anchor program with Rust and TypeScript tests
-* [**counter/native**](https://github.com/Lightprotocol/program-examples/blob/main/counter/native) - Native Solana program with light-sdk and Rust tests.
-* [**counter/pinocchio**](https://github.com/Lightprotocol/program-examples/blob/main/counter/pinocchio) - Pinocchio program with light-sdk-pinocchio and Rust tests.
-
-**Create and Update Program**
-
-* [**create-and-update**](https://github.com/Lightprotocol/program-examples/blob/main/create-and-update) - Create a new compressed account and update an existing compressed account with a single validity proof in one instruction.
-
-**Solana vs compressed accounts comparison Program**
-
-* [**account-comparison**](https://github.com/Lightprotocol/program-examples/blob/main/account-comparison) - Compare compressed vs regular Solana accounts.
-
-***
-
-### Next Steps
-
-Get an overview of the SDKs for program development with ZK Compression.
-
+{% columns %}
+{% column %}
 {% content-ref url="../resources/sdks/program-development.md" %}
 [program-development.md](../resources/sdks/program-development.md)
 {% endcontent-ref %}
+{% endcolumn %}
+
+{% column %}
+{% content-ref url="program-examples/" %}
+[program-examples](program-examples/)
+{% endcontent-ref %}
+{% endcolumn %}
+{% endcolumns %}
 
 [^1]: The program enforces compressed account layout with ownership and sum checks, and is invoked to create and write to compressed accounts and PDAs.
