@@ -9,14 +9,16 @@ hidden: true
 
 Compressed accounts are updated via CPI to the Light System Program. &#x20;
 
-The update of a compressed account follows a UTXO pattern, unlike regular Solana accounts that overwrite data in place:
+The update of a compressed account follows a UTXO pattern, unlike regular Solana accounts that overwrite data in place.&#x20;
 
-* each update consumes the existing account hash (input) and
-* produces a new account hash with modified data (output).
-* The existing account hash is nullified to remove state (prevents double spending).
+Each update of a compressed account&#x20;
+
+* consumes the existing account hash and
+* produces a new account hash with updated data.
+* The existing account hash is nullified to remove state to prevent double spending.
 
 {% hint style="success" %}
-Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
+Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
 ## Implementation Guide
@@ -40,22 +42,15 @@ Add dependencies to your program.
 
 ```toml
 [dependencies]
-light-sdk = "0.13.0"
+light-sdk = "0.15.0"
 anchor_lang = "0.31.1"
 ```
 
 ```toml
 [dependencies]
-light-sdk = "0.13.0"
+light-sdk = "0.15.0"
 borsh = "0.10.0"
-solana-sdk = "2.2"
-```
-
-```toml
-[dependencies]
-light-sdk-pinocchio = "0.13.0"
-borsh = "0.10.0"
-pinocchio = "0.9"
+solana-program = "2.2"
 ```
 
 * The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.
@@ -122,17 +117,17 @@ pub struct InstructionData {
 }
 ```
 
-1. **Inclusion Proof**
+1. **Valditiy Proof**
 
-* Define `proof` to include the proof that the account exists in the state tree (inclusion).
+* Define `proof` to include the proof that the account exists in the state tree.
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify existing account hash and state tree for updated account hash**
 
-* Define `account_meta: CompressedAccountMeta` to reference the existing account and specify the state tree to store the updated hash:
+* Define `account_meta: CompressedAccountMeta` to reference the existing account and specify the state tree to store the updated account hash:
   * `tree_info: PackedStateTreeInfo`: Retrieves the existing account hash in the state tree.
   * `address`: The account's derived address.
-  * `output_state_tree_index`: References the state tree account that will store the updated compressed account hash.
+  * `output_state_tree_index`: References the state tree account that will store the updated account hash.
 
 {% hint style="info" %}
 Clients fetch the current account with `getCompressedAccount()` and populate `CompressedAccountMeta` with the account's metadata.
@@ -177,11 +172,11 @@ Load the compressed account and update it with `LightAccount::new_mut()`.
 
 **The SDK creates:**
 
-* A `LightAccount` wrapper similar to Anchor's `Account`, ready for you to modify the data.
-* This example sets `message` to a new value
+* A `LightAccount` wrapper similar to Anchor's `Account`.
+* `new_mut()` lets the program modify the output state. This example sets `message` to a new value
 
 {% hint style="info" %}
-The Light System Program verifies the input hash and creates the output hash in _Step 3_. `new_mut()` only hashes the input state.
+`new_mut()` only hashes the input state. The Light System Program verifies that input hash exists in a state tree and creates the output hash in _Step 4._&#x20;
 {% endhint %}
 {% endstep %}
 
@@ -194,8 +189,8 @@ Invoke the Light System Program to update the compressed account.
 The Light System Program
 
 * validates the account exists in state tree,
-* nullifies the old account hash in the state tree (input), and
-* appends the updated account hash to the state tree (output).
+* nullifies the existing account hash in the state tree, and
+* appends the updated account hash to the state tree.
 {% endhint %}
 
 ```rust
@@ -218,8 +213,8 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Build the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` to prove that an address does not exist yet in the specified address tree (non-inclusion) _- defined in the Instruction Data (Step 2)._
-* `with_light_account` adds the `LightAccount` wrapper with the modified compressed account data _- defined in Step 4_
+* `new_cpi()` initializes the CPI instruction with the `proof` to prove that the account exists in the specified state tree - _in the Instruction Data (Step 2)._
+* `with_light_account` adds the `LightAccount`  with the modified compressed account data _- defined in Step 3_
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 {% endstep %}
 {% endstepper %}
@@ -428,112 +423,6 @@ pub fn increment_counter(
     let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
 
     LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instuction_data.proof)
-        .with_light_account(counter)?
-        .invoke(light_cpi_accounts)?;
-
-    Ok(())
-}
-```
-{% endtab %}
-
-{% tab title="Pinocchio" %}
-{% hint style="info" %}
-Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/pinocchio/src/lib.rs#L202).
-{% endhint %}
-
-```rust
-#![allow(unexpected_cfgs)]
-
-use borsh::{BorshDeserialize, BorshSerialize};
-use light_macros::pubkey_array;
-use light_sdk_pinocchio::{
-    account::LightAccount,
-     cpi::{
-        v1::{CpiAccounts, LightSystemProgramCpi},
-        InvokeLightSystemProgram, LightCpiInstruction,
-    },
-    derive_light_cpi_signer,
-    instruction::account_meta::CompressedAccountMeta,
-    CpiSigner, LightDiscriminator, ValidityProof,
-};
-use pinocchio::{
-    account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
-};
-
-pub const ID: Pubkey = pubkey_array!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-
-entrypoint!(process_instruction);
-
-#[derive(
-    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
-)]
-pub struct CounterAccount {
-    #[hash]
-    pub owner: Pubkey,
-    pub value: u64,
-}
-
-#[derive(BorshSerialize, BorshDeserialize)]
-pub struct IncrementCounterInstructionData {
-    pub proof: ValidityProof,
-    pub counter_value: u64,
-    pub account_meta: CompressedAccountMeta,
-}
-
-#[derive(Debug, Clone)]
-pub enum CounterError {
-    Unauthorized,
-    Overflow,
-    Underflow,
-}
-
-impl From<CounterError> for ProgramError {
-    fn from(e: CounterError) -> Self {
-        match e {
-            CounterError::Unauthorized => ProgramError::Custom(1),
-            CounterError::Overflow => ProgramError::Custom(2),
-            CounterError::Underflow => ProgramError::Custom(3),
-        }
-    }
-}
-
-pub fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> Result<(), ProgramError> {
-    if program_id != &crate::ID {
-        return Err(ProgramError::IncorrectProgramId);
-    }
-
-    let instruction_data = IncrementCounterInstructionData::try_from_slice(instruction_data)
-        .map_err(|_| ProgramError::InvalidInstructionData)?;
-
-    increment_counter(accounts, instruction_data)
-}
-
-pub fn increment_counter(
-    accounts: &[AccountInfo],
-    instruction_data: IncrementCounterInstructionData,
-) -> Result<(), ProgramError> {
-    let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
-
-    let mut counter = LightAccount::<'_, CounterAccount>::new_mut(
-        &ID,
-        &instruction_data.account_meta,
-        CounterAccount {
-            owner: *signer.key(),
-            value: instruction_data.counter_value,
-        },
-    )?;
-
-    counter.value = counter.value.checked_add(1).ok_or(CounterError::Overflow)?;
-
-    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
-
-    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
         .with_light_account(counter)?
         .invoke(light_cpi_accounts)?;
 

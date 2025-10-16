@@ -11,8 +11,8 @@ Compressed accounts are closed via CPI to the Light System Program.&#x20;
 
 Closing a compressed account
 
-* consumes the existing account hash (input), and
-* produces a new account hash with zero values to mark it as closed (output).
+* consumes the existing account hash, and
+* produces a new account hash with zero values to mark it as closed.
 * A closed compressed account [can be reinitialized](how-to-reinitialize-compressed-accounts.md).
 
 {% hint style="success" %}
@@ -40,22 +40,15 @@ Add dependencies to your program.
 
 ```toml
 [dependencies]
-light-sdk = "0.13.0"
+light-sdk = "0.15.0"
 anchor_lang = "0.31.1"
 ```
 
 ```toml
 [dependencies]
-light-sdk = "0.13.0"
+light-sdk = "0.15.0"
 borsh = "0.10.0"
-solana-sdk = "2.2"
-```
-
-```toml
-[dependencies]
-light-sdk-pinocchio = "0.13.0"
-borsh = "0.10.0"
-pinocchio = "0.9"
+solana-program = "2.2"
 ```
 
 * The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.
