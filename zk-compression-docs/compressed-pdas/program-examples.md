@@ -1,5 +1,5 @@
 ---
-description: The Program Examples repository includes
+description: Program example repository with tests.
 hidden: true
 ---
 
@@ -9,7 +9,7 @@ hidden: true
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/program-examples) to query the program examples in natural language.
 {% endhint %}
 
-#### Counter Program
+### Counter Program
 
 Full compressed account lifecycle (create, increment, decrement, reset, close):
 
@@ -17,33 +17,33 @@ Full compressed account lifecycle (create, increment, decrement, reset, close):
 * [**counter/native**](https://github.com/Lightprotocol/program-examples/tree/main/counter/native) - Native Solana program with `light-sdk` and Rust tests.
 * [**counter/pinocchio**](https://github.com/Lightprotocol/program-examples/tree/main/counter/pinocchio) - Pinocchio program with `light-sdk-pinocchio` and Rust tests.
 
-#### Create-and-update Program
+### Create-and-update Program
 
 * [**create-and-update**](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update) - Create a new compressed account and update an existing compressed account with a single validity proof in one instruction.
 
-#### Create-and-read Program
+### Create-and-read Program
 
 * [**read-only**](https://github.com/Lightprotocol/program-examples/tree/main/read-only) - Create a new compressed account and read it onchain.
 
-#### Compare uncompressed vs compressed accounts Program
+### Compare uncompressed vs compressed accounts Program
 
 * [**account-comparison**](https://github.com/Lightprotocol/program-examples/tree/main/account-comparison) - Compare compressed vs regular Solana accounts.
 
-### Dependencies
+## Dependencies
 
-#### Rust Crates
+### Rust Crates
 
 * `light-sdk` - Core SDK for compressed accounts in native and anchor programs
 * `light-sdk-pinocchio` Core SDK for compressed accounts in pinocchio programs
 * `light-client` - RPC client and indexer for interacting with compressed accounts
 * `light-program-test` - Testing utilities for compressed programs.
 
-#### TypeScript/JavaScript Packages
+### TypeScript/JavaScript Packages
 
 * `@lightprotocol/stateless.js` - Client library for interacting with compressed accounts
 * `@lightprotocol/zk-compression-cli` - Command-line tools for ZK compression development
 
-### Prerequisites
+## Prerequisites
 
 Required versions:
 
@@ -73,7 +73,7 @@ avm install latest
 avm use latest
 ```
 
-### Getting Started with your own Program
+## Getting Started with your own Program
 
 1. install the light cli
 
