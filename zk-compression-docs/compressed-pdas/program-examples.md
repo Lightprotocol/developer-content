@@ -35,7 +35,6 @@ Full compressed account lifecycle (create, increment, decrement, reset, close):
 
 * `light-sdk` - Core SDK for compressed accounts in native and anchor programs
 * `light-sdk-pinocchio` Core SDK for compressed accounts in pinocchio programs
-* `light-hasher` - Hashing utilities for ZK compression
 * `light-client` - RPC client and indexer for interacting with compressed accounts
 * `light-program-test` - Testing utilities for compressed programs.
 
