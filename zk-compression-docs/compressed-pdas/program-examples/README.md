@@ -1,5 +1,5 @@
 ---
-description: Program example repository with tests.
+description: Program example repository for compressed accounts with tests.
 ---
 
 # Program Examples
