@@ -27,28 +27,7 @@ hidden: true
 <figure><img src="../../.gitbook/assets/image (23).png" alt=""><figcaption></figcaption></figure>
 {% endtab %}
 
-{% tab title="Untitled" %}
-```
-
-├─ 
-├─ 
-├─ 
-└─ 
-   │
- 
-   ├─
-   │
-   │
-   └─ 
-         ├─ 
-         ├─ 
-         ├─
-         └─ 
-         
-```
-{% endtab %}
-
-{% tab title="Reinit" %}
+{% tab title="Reinitialize" %}
 <figure><img src="../../.gitbook/assets/image (24).png" alt=""><figcaption></figcaption></figure>
 {% endtab %}
 
