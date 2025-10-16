@@ -22,7 +22,7 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
 ## Implementation Guide
 
 This guide will cover the components of a Solana program that closes compressed accounts.\
-Here is the complete flow to update compressed accounts:&#x20;
+Here is the complete flow to close compressed accounts:&#x20;
 
 <figure><img src="../../.gitbook/assets/image (27).png" alt=""><figcaption><p>Close Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
 
