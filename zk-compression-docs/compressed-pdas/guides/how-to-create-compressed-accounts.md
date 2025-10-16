@@ -21,9 +21,11 @@ Solana programs can store data in compressed or regular accounts.&#x20;
 Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor, native Rust, and Pinocchio.
 {% endhint %}
 
-<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
-
 ## Implementation Guide
+
+The implementation guide will cover the components of a Solana program that creates compressed accounts. This is the complete flow to create compressed accounts.&#x20;
+
+<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 {% stepper %}
 {% step %}
