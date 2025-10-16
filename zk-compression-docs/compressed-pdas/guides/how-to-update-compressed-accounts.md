@@ -125,7 +125,7 @@ pub struct InstructionData {
 2. **Specify existing account hash and state tree for updated account hash**
 
 * Define `account_meta: CompressedAccountMeta` to reference the existing account and specify the state tree to store the updated account hash:
-  * `tree_info: PackedStateTreeInfo`: Retrieves the existing account hash in the state tree.
+  * `tree_info: PackedStateTreeInfo`: References the existing account hash in the state tree.
   * `address`: The account's derived address.
   * `output_state_tree_index`: References the state tree account that will store the updated account hash.
 

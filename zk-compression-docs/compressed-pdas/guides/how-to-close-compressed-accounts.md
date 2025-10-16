@@ -123,7 +123,7 @@ pub struct InstructionData {
 2. **Specify input hash and output state tree**
 
 * Define `account_meta: CompressedAccountMeta` to reference the existing account and specify the state tree to store the new hash with zero values:
-  * `tree_info: PackedStateTreeInfo`: Retrieves the existing account hash in the state tree.
+  * `tree_info: PackedStateTreeInfo`: References the existing account hash in the state tree.
   * `address`: The account's derived address.
   * `output_state_tree_index` points to the state tree that will store the updated hash with a zero-byte hash to mark the account as closed.
 
@@ -412,113 +412,6 @@ pub fn close_counter(
     LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
         .with_light_account(counter)?
         .invoke(light_cpi_accounts)?;
-
-    Ok(())
-}
-```
-{% endtab %}
-
-{% tab title="Pinocchio" %}
-{% hint style="info" %}
-Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/pinocchio/src/lib.rs#L299).
-{% endhint %}
-
-```rust
-#![allow(unexpected_cfgs)]
-
-use borsh::{BorshDeserialize, BorshSerialize};
-use light_macros::pubkey_array;
-use light_sdk_pinocchio::{
-    account::LightAccount,
-    cpi::{CpiAccounts, CpiInputs, CpiSigner},
-    derive_light_cpi_signer,
-    instruction::account_meta::CompressedAccountMetaClose,
-    LightDiscriminator, LightHasher, ValidityProof,
-};
-use pinocchio::{
-    account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
-};
-
-pub const ID: Pubkey = pubkey_array!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
-
-entrypoint!(process_instruction);
-
-#[derive(
-    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher,
-)]
-pub struct CounterAccount {
-    #[hash]
-    pub owner: Pubkey,
-    pub value: u64,
-}
-
-#[derive(BorshSerialize, BorshDeserialize)]
-pub struct CloseCounterInstructionData {
-    pub proof: ValidityProof,
-    pub counter_value: u64,
-    pub account_meta: CompressedAccountMetaClose,
-}
-
-#[derive(Debug, Clone)]
-pub enum CounterError {
-    Unauthorized,
-    Overflow,
-    Underflow,
-}
-
-impl From<CounterError> for ProgramError {
-    fn from(e: CounterError) -> Self {
-        match e {
-            CounterError::Unauthorized => ProgramError::Custom(1),
-            CounterError::Overflow => ProgramError::Custom(2),
-            CounterError::Underflow => ProgramError::Custom(3),
-        }
-    }
-}
-
-pub fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> Result<(), ProgramError> {
-    if program_id != &crate::ID {
-        return Err(ProgramError::IncorrectProgramId);
-    }
-
-    let instruction_data = CloseCounterInstructionData::try_from_slice(instruction_data)
-        .map_err(|_| ProgramError::InvalidInstructionData)?;
-
-    close_counter(accounts, instruction_data)
-}
-
-pub fn close_counter(
-    accounts: &[AccountInfo],
-    instruction_data: CloseCounterInstructionData,
-) -> Result<(), ProgramError> {
-    let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
-
-    let counter = LightAccount::<'_, CounterAccount>::new_close(
-        &ID,
-        &instruction_data.account_meta,
-        CounterAccount {
-            owner: *signer.key(),
-            value: instruction_data.counter_value,
-        },
-    )
-    .map_err(ProgramError::from)?;
-
-    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
-
-    let cpi_inputs = CpiInputs::new(
-        instruction_data.proof,
-        vec![counter.to_account_info().map_err(ProgramError::from)?],
-    );
-
-    cpi_inputs
-        .invoke_light_system_program(light_cpi_accounts)
-        .map_err(ProgramError::from)?;
 
     Ok(())
 }

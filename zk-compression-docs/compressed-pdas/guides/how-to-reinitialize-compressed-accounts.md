@@ -120,7 +120,7 @@ pub struct InstructionData {
 2. **Specify input hash and output state tree**
 
 * `CompressedAccountMeta` points to the closed account hash and output state tree to store the new account hash:
-  * `tree_info: PackedStateTreeInfo`: Retrieves the existing account hash in the state tree.
+  * `tree_info: PackedStateTreeInfo`: References the existing account hash in the state tree.
   * `address`: The account's derived address.
   * `output_state_tree_index`: References the state tree account that will store the new compressed account hash.
 

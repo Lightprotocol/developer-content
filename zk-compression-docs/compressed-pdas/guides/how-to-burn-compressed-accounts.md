@@ -121,7 +121,7 @@ pub struct InstructionData {
 2. **Specify input hash**
 
 * `CompressedAccountMetaBurn` points to the existing account hash so the Light System Program nullify it permanently:
-  * `tree_info: PackedStateTreeInfo`: Retrieves the existing account hash in the state tree.
+  * `tree_info: PackedStateTreeInfo`: References the existing account hash in the state tree.
   * `address`: The account's derived address.
 
 {% hint style="info" %}
