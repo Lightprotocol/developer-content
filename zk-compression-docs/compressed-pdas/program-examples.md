@@ -1,6 +1,5 @@
 ---
 description: Program example repository with tests.
-hidden: true
 ---
 
 # Program Examples
