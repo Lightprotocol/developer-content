@@ -198,8 +198,8 @@ Get an overview of the SDKs or Program Examples.
 {% endcolumn %}
 
 {% column %}
-{% content-ref url="program-examples/" %}
-[program-examples](program-examples/)
+{% content-ref url="program-examples.md" %}
+[program-examples.md](program-examples.md)
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}

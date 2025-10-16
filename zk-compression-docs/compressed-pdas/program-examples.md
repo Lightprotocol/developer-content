@@ -30,6 +30,6 @@ Full compressed account lifecycle (create, increment, decrement, reset, close):
 
 ## Build your own Program
 
-{% content-ref url="../create-a-program-with-compressed-pdas.md" %}
-[create-a-program-with-compressed-pdas.md](../create-a-program-with-compressed-pdas.md)
+{% content-ref url="create-a-program-with-compressed-pdas.md" %}
+[create-a-program-with-compressed-pdas.md](create-a-program-with-compressed-pdas.md)
 {% endcontent-ref %}
