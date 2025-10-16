@@ -28,22 +28,31 @@ Full compressed account lifecycle (create, increment, decrement, reset, close):
 
 * [**account-comparison**](https://github.com/Lightprotocol/program-examples/tree/main/account-comparison) - Compare compressed vs regular Solana accounts.
 
-## Dependencies
+## Get Started
 
-### Rust Crates
+{% stepper %}
+{% step %}
+### Dependencies
+
+#### Rust Crates
 
 * `light-sdk` - Core SDK for compressed accounts in native and anchor programs
 * `light-sdk-pinocchio` Core SDK for compressed accounts in pinocchio programs
 * `light-client` - RPC client and indexer for interacting with compressed accounts
 * `light-program-test` - Testing utilities for compressed programs.
 
-### TypeScript/JavaScript Packages
+#### TypeScript/JavaScript Packages
 
 * `@lightprotocol/stateless.js` - Client library for interacting with compressed accounts
 * `@lightprotocol/zk-compression-cli` - Command-line tools for ZK compression development
 
-## Prerequisites
 
+{% endstep %}
+
+{% step %}
+### Prerequisites
+
+{% hint style="info" %}
 Required versions:
 
 * **Rust**: 1.86.0 or later
@@ -51,6 +60,7 @@ Required versions:
 * **Anchor CLI**: 0.31.1
 * **Zk compression CLI**: 0.27.0 or later
 * **Node.js**: 23.5.0 or later
+{% endhint %}
 
 Install the Light CLI:
 
@@ -71,8 +81,10 @@ cargo install --git https://github.com/coral-xyz/anchor avm --force
 avm install latest
 avm use latest
 ```
+{% endstep %}
 
-## Getting Started with your own Program
+{% step %}
+### Build a Program
 
 1. install the light cli
 
@@ -85,3 +97,5 @@ $ npm -g i @lightprotocol/zk-compression-cli
 ```bash
 $ light init <project-name>
 ```
+{% endstep %}
+{% endstepper %}
