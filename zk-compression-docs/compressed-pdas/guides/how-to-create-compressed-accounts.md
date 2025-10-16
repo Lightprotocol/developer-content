@@ -24,7 +24,7 @@ Find [full code examples of a counter program at the end](how-to-create-compress
 
 This guide will cover the components of a Solana program that creates compressed accounts. Here is the complete flow to create compressed accounts:&#x20;
 
-<figure><img src="../../.gitbook/assets/image (30).png" alt=""><figcaption><p>Creation Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/Untitled.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/image (30).png" alt=""></picture><figcaption><p>Creation Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
 
 {% stepper %}
 {% step %}

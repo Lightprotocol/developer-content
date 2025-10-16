@@ -24,7 +24,7 @@ Find [full code examples of a counter program at the end](how-to-burn-compressed
 This guide will cover the components of a Solana program that burns compressed accounts.\
 Here is the complete flow to burn compressed accounts:&#x20;
 
-<figure><img src="../../.gitbook/assets/image (26).png" alt=""><figcaption><p>Burn Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/Untitled (6).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/image (26).png" alt=""></picture><figcaption><p>Burn Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
 
 {% stepper %}
 {% step %}
