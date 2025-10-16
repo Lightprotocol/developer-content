@@ -28,10 +28,10 @@ hidden: true
    ├─ Initialize compressed account
    │
    └─ 𝐋𝐢𝐠𝐡𝐭 𝐒𝐲𝐬𝐭𝐞𝐦 𝐏𝐫𝐨𝐠𝐫𝐚𝐦 𝐂𝐏𝐈
-      ├─ Verify validity proof (non-inclusion)
-      ├─ Create address (address tree)
-      ├─ Create compressed account (state tree)
-      └─ Complete atomic account creation
+         ├─ Verify validity proof (non-inclusion)
+         ├─ Create address (address tree)
+         ├─ Create compressed account (state tree)
+         └─ Complete atomic account creation
 ```
 {% endtab %}
 
@@ -48,10 +48,10 @@ hidden: true
    ├─ 
    │
    └─ 
-      ├─ 
-      ├─ 
-      ├─ 
-      └─ 
+         ├─ 
+         ├─ 
+         ├─ 
+         └─ 
 ```
 {% endtab %}
 

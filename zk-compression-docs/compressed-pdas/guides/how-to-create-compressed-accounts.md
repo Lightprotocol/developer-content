@@ -23,9 +23,9 @@ Find [full code examples of a counter program at the end](how-to-create-compress
 
 ## Implementation Guide
 
-The implementation guide will cover the components of a Solana program that creates compressed accounts. This is the complete flow to create compressed accounts.&#x20;
+The implementation guide will cover the components of a Solana program that creates compressed accounts. This is the complete flow to create compressed accounts:&#x20;
 
-<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (13).png" alt=""><figcaption></figcaption></figure>
 
 {% stepper %}
 {% step %}
@@ -154,7 +154,7 @@ pub struct InstructionData {
 2. **Specify Merkle trees to store address and account hash**
 
 * Define `address_tree_info: PackedAddressTreeInfo` to reference the address tree account used to derive the address in the next step.
-* Define `output_state_tree_index: u8` to reference the state tree account that stores the compressed account hash.
+* Define `output_state_tree_index` to reference the state tree account that stores the compressed account hash.
 
 {% hint style="info" %}
 Clients pack accounts into the `remaining_accounts` array to reduce transaction size. Packed structs like `PackedAddressTreeInfo` contain account indices (u8) instead of 32 byte pubkeys. The indices point to the account in the `remaining_accounts` to retrieve the public key and other metadata.
