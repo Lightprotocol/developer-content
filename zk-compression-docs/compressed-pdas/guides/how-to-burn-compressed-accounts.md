@@ -6,6 +6,8 @@ description: >-
 
 # How to Burn Compressed Accounts
 
+## Overview
+
 Compressed accounts are permanently burned via CPI to the Light System Program. A burned account cannot be reinitialized.&#x20;
 
 Burning a compressed account
@@ -204,7 +206,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**Build and invoke the CPI instruction**:
+**Build the CPI instruction**:
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove the account exists in the state tree _- defined in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount` wrapper configured to burn the account _- defined in Step 3_.

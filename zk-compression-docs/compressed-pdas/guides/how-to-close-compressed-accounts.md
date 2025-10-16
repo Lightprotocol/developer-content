@@ -7,6 +7,8 @@ hidden: true
 
 # How to Close Compressed Accounts
 
+## Overview
+
 Compressed accounts are closed via CPI to the Light System Program.&#x20;
 
 Closing a compressed account

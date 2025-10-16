@@ -6,6 +6,8 @@ description: >-
 
 # How to Reinitialize Compressed Accounts
 
+## Overview
+
 Compressed accounts are reinitialized via CPI to the Light System Program.
 
 An empty compressed account can be reinitialized
@@ -197,7 +199,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
-**Build and invoke the CPI instruction**:
+**Build the CPI instruction**:
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove the closed account hash exists in the state tree _- defined in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount` configured with the closed account hash as input and provided values as output _- defined in Step 3_.
