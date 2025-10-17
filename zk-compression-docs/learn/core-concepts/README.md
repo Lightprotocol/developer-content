@@ -91,12 +91,10 @@ In the following sections, we'll dive into the core concepts that make ZK Compre
     \
     See the program address here.
 
-[^4]: RPC nodes index the Light Protocol programs, enabling clients to read and build transactions interacting with compressed state.\\
+[^4]: RPC nodes index the Light Protocol programs. This allows clients to read and build transactions to interact with compressed state.
 
-    The canonical ZK Compression indexer is named Photon.\
+    The canonical ZK Compression indexer is named Photon, built by Helius Labs.\
     \
     See the Github [repo](https://github.com/helius-labs/photon) for more info.
 
-[^5]: Implements state and address trees. It is used by the Light System program.\
-    \
-    See the program addresses here.
+[^5]: Updates state and address trees. It is used by the Light System program.
