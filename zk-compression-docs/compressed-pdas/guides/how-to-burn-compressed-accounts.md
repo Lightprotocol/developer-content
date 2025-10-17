@@ -12,7 +12,7 @@ Burning a compressed account
 
 * consumes the existing account hash, and
 * produces no output state.
-* A burned account cannot be reinitialized and .&#x20;
+* A burned account cannot be reinitialized.&#x20;
 
 {% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-burn-compressed-accounts.md#full-code-example) for Anchor and native Rust.
