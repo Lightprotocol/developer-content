@@ -1,6 +1,6 @@
 ---
 description: >-
-  Complete guide to update compressed accounts in Solana programs with full code
+  Guide to update compressed accounts in Solana programs with full code
   examples.
 hidden: true
 ---
@@ -15,7 +15,7 @@ The update of a compressed account follows a UTXO pattern, unlike regular Solana
 
 * consumes the existing account hash and
 * produces a new account hash with updated data.
-* The existing account hash is nullified to remove state to prevent double spending.
+* The existing account hash is nullified to prevent double spending.
 
 {% hint style="success" %}
 Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor and native Rust.

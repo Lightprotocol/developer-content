@@ -1,7 +1,5 @@
 ---
-description: >-
-  Complete guide to close compressed accounts in Solana programs with full code
-  examples.
+description: Guide to close compressed accounts in Solana programs with full code examples.
 hidden: true
 ---
 

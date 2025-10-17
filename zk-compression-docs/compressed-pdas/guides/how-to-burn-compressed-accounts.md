@@ -1,19 +1,18 @@
 ---
-description: >-
-  Complete guide to burn compressed accounts in Solana programs with full code
-  examples.
+description: Guide to burn compressed accounts in Solana programs with full code examples.
 ---
 
 # How to Burn Compressed Accounts
 
 ## Overview
 
-Compressed accounts are permanently burned via CPI to the Light System Program. A burned account cannot be reinitialized.&#x20;
+Compressed accounts are permanently burned via CPI to the Light System Program.
 
 Burning a compressed account
 
 * consumes the existing account hash, and
 * produces no output state.
+* A burned account cannot be reinitialized and .&#x20;
 
 {% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-burn-compressed-accounts.md#full-code-example) for Anchor and native Rust.
