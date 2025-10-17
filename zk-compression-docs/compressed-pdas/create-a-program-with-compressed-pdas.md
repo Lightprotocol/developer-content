@@ -204,4 +204,4 @@ Get an overview of the SDKs or Program Examples.
 {% endcolumn %}
 {% endcolumns %}
 
-[^1]: The program enforces compressed account layout with ownership and sum checks, and is invoked to create and write to compressed accounts and PDAs.
+[^1]: The program enforces compressed account layout with ownership and sum checks. It is invoked to create and interact with compressed accounts and tokens.

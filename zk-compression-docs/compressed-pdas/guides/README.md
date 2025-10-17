@@ -16,22 +16,22 @@ hidden: true
 
 {% tabs %}
 {% tab title="Create" %}
-<figure><img src="../../.gitbook/assets/image (22).png" alt=""><figcaption></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/Untitled.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/image (22).png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Update" %}
-<figure><img src="../../.gitbook/assets/image (20).png" alt=""><figcaption></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/Untitled (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/image (20).png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Close" %}
-<figure><img src="../../.gitbook/assets/image (23).png" alt=""><figcaption></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/Untitled (4).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/image (23).png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Reinitialize" %}
-<figure><img src="../../.gitbook/assets/image (24).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Untitled (5).png" alt=""><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Burn" %}
-<figure><img src="../../.gitbook/assets/image (25).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/Untitled (6).png" alt=""><figcaption></figcaption></figure>
 {% endtab %}
 {% endtabs %}
