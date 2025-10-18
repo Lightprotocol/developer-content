@@ -58,12 +58,14 @@ solana-program = "2.2"
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
+{% code overflow="wrap" %}
 ```rust
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 ```
+{% endcode %}
 
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.
 

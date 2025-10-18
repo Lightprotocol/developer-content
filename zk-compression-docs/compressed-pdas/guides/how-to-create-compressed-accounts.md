@@ -7,7 +7,7 @@ hidden: true
 
 # How to Create Compressed Accounts
 
-## Overview
+## verview
 
 Compressed accounts and addresses are created via CPI to the Light System Program.&#x20;
 
@@ -61,15 +61,12 @@ solana-program = "2.2"
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
-<pre class="language-rust"><code class="lang-rust"># use light_sdk::cpi::CpiSigner;
-# use light_sdk::derive_light_cpi_signer;
-# use anchor_lang::declare_id;
-#
-<strong>declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
-</strong>
-<strong>pub const LIGHT_CPI_SIGNER: CpiSigner =
-</strong><strong>    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
-</strong></code></pre>
+```rust
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+
+pub const LIGHT_CPI_SIGNER: CpiSigner =
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+```
 
 **`CPISigner`** is the configuration struct for CPIs to the Light System Program.
 
@@ -82,10 +79,7 @@ Set program address and derive the CPI authority PDA to call the Light System pr
 
 {% tabs %}
 {% tab title="Anchor" %}
-<pre class="language-rust"><code class="lang-rust"># use anchor_lang::{AnchorSerialize, AnchorDeserialize, prelude::Pubkey};
-# use light_sdk::LightDiscriminator;
-#
-#[derive(
+<pre class="language-rust"><code class="lang-rust">#[derive(
     Clone,
     Debug,
     Default,
@@ -93,8 +87,8 @@ Set program address and derive the CPI authority PDA to call the Light System pr
     AnchorDeserialize,
 <strong>    LightDiscriminator
 </strong>)]
-<strong>pub struct MyCompressedAccount {
-</strong>    pub owner: Pubkey,
+pub struct MyCompressedAccount {
+    pub owner: Pubkey,
     pub message: String,
 }
 </code></pre>
@@ -102,10 +96,6 @@ Set program address and derive the CPI authority PDA to call the Light System pr
 
 {% tab title="Native Rust" %}
 ```rust
-# use borsh::{BorshSerialize, BorshDeserialize};
-# use light_sdk::LightDiscriminator;
-# use solana_program::pubkey::Pubkey;
-#
 #[derive(
     Clone,
     Debug,
@@ -139,8 +129,6 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `m
 Define the instruction data with the following parameters:
 
 ```rust
-# use light_sdk::instruction::{ValidityProof, PackedAddressTreeInfo};
-#
 pub struct InstructionData {
     proof: ValidityProof,
     address_tree_info: PackedAddressTreeInfo,
@@ -215,15 +203,10 @@ Ensure global uniqueness of an address by verifying that the address tree pubkey
 Every address is unique, but the same seeds can be used to create different addresses in different address trees. To enforce that a compressed PDA can only be created once with the same seed, you must check the address tree pubkey.
 {% endhint %}
 
-<pre class="language-rust"><code class="lang-rust"># use light_macros::pubkey;
-# use solana_program::{pubkey::Pubkey, program_error::ProgramError};
-# use light_sdk::cpi::v1::CpiAccounts;
-# use light_sdk::instruction::PackedAddressTreeInfo;
-#
-# fn check_address_tree(
-#     light_cpi_accounts: &#x26;CpiAccounts,
-#     address_tree_info: &#x26;PackedAddressTreeInfo,
-# ) -> Result&#x3C;(), ProgramError> {
+<pre class="language-rust"><code class="lang-rust">fn check_address_tree(
+    light_cpi_accounts: &#x26;CpiAccounts,
+    address_tree_info: &#x26;PackedAddressTreeInfo,
+) -> Result&#x3C;(), ProgramError> {
 
 <strong>pub const ALLOWED_ADDRESS_TREE: Pubkey 
 </strong><strong>    = pubkey!("amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2");
@@ -233,8 +216,8 @@ Every address is unique, but the same seeds can be used to create different addr
 if address_tree != ALLOWED_ADDRESS_TREE {
     return Err(ProgramError::InvalidAccountData.into());
 }
-#     Ok(())
-# }
+    Ok(())
+}
 </code></pre>
 {% endstep %}
 
@@ -286,47 +269,22 @@ The Light System Program
 * appends the new account hash to the state tree.
 {% endhint %}
 
-<pre class="language-rust"><code class="lang-rust"># use anchor_lang::prelude::*;
-# use anchor_lang::{AnchorSerialize, AnchorDeserialize};
-# use light_sdk::{
-#     account::LightAccount,
-#     address::AddressSeed,
-#     cpi::v1::{CpiAccounts, LightSystemProgramCpi},
-#     cpi::{CpiSigner, InvokeLightSystemProgram, LightCpiInstruction as _},
-#     instruction::{PackedAddressTreeInfo, ValidityProof},
-#     LightDiscriminator, derive_light_cpi_signer,
-# };
-#
-# const LIGHT_CPI_SIGNER: CpiSigner 
-    = derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
-#
-# #[derive(Clone, Debug, Default, AnchorSerialize, AnchorDeserialize, LightDiscriminator)]
-# struct MyCompressedAccount {}
-#
-# fn example&#x3C;'info>(
-#     fee_payer: &#x26;AccountInfo&#x3C;'info>,
-#     remaining_accounts: &#x26;[AccountInfo&#x3C;'info>],
-#     proof: ValidityProof,
-#     address_tree_info: PackedAddressTreeInfo,
-#     address_seed: [u8; 32],
-#     my_compressed_account: LightAccount&#x3C;'info, MyCompressedAccount>,
-# ) -> Result&#x3C;()> {
+{% code overflow="wrap" %}
+```rust
+let light_cpi_accounts = CpiAccounts::new(
+    fee_payer,
+    remaining_accounts,
+    LIGHT_CPI_SIGNER,
+);
 
-<strong>let light_cpi_accounts = CpiAccounts::new(
-</strong><strong>    fee_payer,
-</strong><strong>    remaining_accounts,
-</strong><strong>    LIGHT_CPI_SIGNER,
-</strong><strong>);
-</strong><strong>
-</strong><strong>LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-</strong><strong>    .with_light_account(my_compressed_account)?
-</strong><strong>    .with_new_addresses(&#x26;[
-</strong><strong>        address_tree_info.into_new_address_params_packed(AddressSeed(address_seed))
-</strong><strong>    ])
-</strong><strong>    .invoke(light_cpi_accounts)?;
-</strong>#     Ok(())
-# }
-</code></pre>
+LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
+    .with_light_account(my_compressed_account)?
+    .with_new_addresses(&[
+        address_tree_info.into_new_address_params_packed(AddressSeed(address_seed))
+    ])
+    .invoke(light_cpi_accounts)?;
+```
+{% endcode %}
 
 **Set up `CpiAccounts::new()`:**
 

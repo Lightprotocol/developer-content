@@ -61,10 +61,10 @@ solana-program = "2.2"
 Set program address and derive the CPI authority PDA to call the Light System program.
 
 ```rust
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 ```
 
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.
@@ -151,22 +151,25 @@ Load the compressed account and update it with `LightAccount::new_mut()`.
 * lets your program define the output state.
 {% endhint %}
 
-<pre class="language-rust"><code class="lang-rust">let mut my_compressed_account
-        = LightAccount::&#x3C;'_, MyCompressedAccount>::new_mut(
-<strong>    &#x26;crate::ID,
-</strong><strong>    &#x26;account_meta,
-</strong><strong>    MyCompressedAccount {
-</strong><strong>        owner: *signer.key,
-</strong><strong>        message: current_message,
-</strong><strong>    },
-</strong>)?;
+{% code overflow="wrap" %}
+```rust
+let mut my_compressed_account
+        = LightAccount::<'_, MyCompressedAccount>::new_mut(
+    &ID,
+    account_meta,
+    MyCompressedAccount {
+        owner: *signer_key,
+        message: current_message,
+    },
+)?;
 
-<strong>my_compressed_account.message = new_message;
-</strong></code></pre>
+my_compressed_account.message = new_message;
+```
+{% endcode %}
 
 **Pass these parameters to `new_mut()`:**
 
-* `&crate::ID`: The program's ID that owns the compressed account.
+* `&ID`: The program's ID that owns the compressed account.
 * `&account_meta`: The `CompressedAccountMeta` from instruction data (_Step 2_) that identifies the existing account and specifies the output state tree.
 * `MyCompressedAccount { ... }`: The current account data. The SDK hashes this input state for verification by the Light System Program.
 
@@ -193,17 +196,19 @@ The Light System Program
 * appends the updated account hash to the state tree.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
-    ctx.accounts.fee_payer.as_ref(),
-    ctx.remaining_accounts,
-    crate::LIGHT_CPI_SIGNER,
+    fee_payer,
+    remaining_accounts,
+    LIGHT_CPI_SIGNER,
 );
 
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .invoke(light_cpi_accounts)?;
 ```
+{% endcode %}
 
 **Set up `CpiAccounts::new()`:**
 
