@@ -183,9 +183,9 @@ The Light System Program
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
-    ctx.accounts.fee_payer.as_ref(),
-    ctx.remaining_accounts,
-    crate::LIGHT_CPI_SIGNER,
+    fee_payer,
+    remaining_accounts,
+    LIGHT_CPI_SIGNER,
 );
 
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
@@ -195,8 +195,8 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Set up `CpiAccounts::new()`:**
 
-* `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
+* `fee_payer`: Fee payer and transaction signer
+* `remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build the CPI instruction**:

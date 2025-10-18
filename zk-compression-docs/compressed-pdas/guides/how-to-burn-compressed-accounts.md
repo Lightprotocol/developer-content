@@ -58,10 +58,10 @@ solana-program = "2.2"
 Set program address and derive the CPI authority PDA to call the Light System program.
 
 ```rust
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 ```
 
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.
@@ -148,10 +148,9 @@ Burn the compressed account permanently with `LightAccount::new_burn()`. No acco
 {% endhint %}
 
 ```rust
-let my_compressed_account 
-        = LightAccount::<'_, MyCompressedAccount>::new_burn(
-    &crate::ID,
-    &account_meta,
+let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_burn(
+    &ID,
+    account_meta,
     MyCompressedAccount {
         owner: *signer.key,
         message: current_message,
@@ -161,7 +160,7 @@ let my_compressed_account
 
 **Pass these parameters to `new_burn()`:**
 
-* `&crate::ID`: The program's ID that owns the compressed account.
+* `&ID`: The program's ID that owns the compressed account.
 * `&account_meta`: The `CompressedAccountMetaBurn` from instruction data (_Step 2_) that identifies the existing account for the Light System Program to nullify permanently.
 * `MyCompressedAccount { ... }`: The current account data. `new_burn()` hashes the input state for verification by the Light System Program.
 
@@ -189,9 +188,9 @@ The Light System Program
 
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
-    ctx.accounts.fee_payer.as_ref(),
-    ctx.remaining_accounts,
-    crate::LIGHT_CPI_SIGNER,
+    fee_payer,
+    remaining_accounts,
+    LIGHT_CPI_SIGNER,
 );
 
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
@@ -201,8 +200,8 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 **Set up `CpiAccounts::new()`:**
 
-* `ctx.accounts.fee_payer.as_ref()`: Fee payer and transaction signer
-* `ctx.remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
+* `fee_payer`: Fee payer and transaction signer
+* `remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
 
 **Build the CPI instruction**:
