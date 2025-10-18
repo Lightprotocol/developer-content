@@ -310,7 +310,7 @@ For help with debugging, see the [Error Cheatsheet](../../resources/error-cheats
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-Find the [source code for this example ](https://github.com/Lightprotocol/program-examples/blob/4e4432ef01146a937a112ec3afe56d180b9f5316/counter/native/src/lib.rs#L160)[here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L27).
+Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L27).
 {% endhint %}
 
 ```rust
@@ -321,7 +321,7 @@ use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
 use light_sdk::{
     account::LightAccount,
     address::v1::derive_address,
-    cpi::{CpiAccounts, CpiSigner},
+    cpi::v1::{CpiAccounts, CpiSigner},
     derive_light_cpi_signer,
     instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
     LightDiscriminator,
@@ -336,7 +336,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 pub mod counter {
 
     use super::*;
-    use light_sdk::cpi::{
+    use light_sdk::cpi::v1::{
         LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
     };
 
@@ -404,17 +404,19 @@ pub struct CounterAccount {
 
 {% tab title="Native" %}
 {% hint style="info" %}
-Find the [source code for this example here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/native/src/lib.rs#L160).
+Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/9cdeea7e655463afbfc9a58fb403d5401052e2d2/counter/native/src/lib.rs#L160).
 {% endhint %}
 
 ```rust
+#![allow(unexpected_cfgs)]
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey;
 use light_sdk::{
     account::LightAccount,
     address::v1::derive_address,
-    cpi::{
-        v1::{CpiAccounts, LightSystemProgramCpi},
+    cpi::v1::{
+        CpiAccounts, LightSystemProgramCpi,
         CpiSigner, InvokeLightSystemProgram, LightCpiInstruction,
     },
     derive_light_cpi_signer,
@@ -425,9 +427,9 @@ use light_sdk::{
 use solana_program::{
     account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
 };
-pub const ID: Pubkey = pubkey!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+pub const ID: Pubkey = pubkey!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
 
 entrypoint!(process_instruction);
 
