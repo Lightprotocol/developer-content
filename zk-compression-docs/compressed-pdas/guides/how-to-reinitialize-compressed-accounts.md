@@ -139,29 +139,33 @@ Reinitialize the closed account with `LightAccount::new_empty()`.
 {% hint style="info" %}
 `new_empty()`
 
-1. reconstructs the closed account hash with zero values, and
-2. creates output state with provided initial values.
+1. reconstructs the closed account hash with zero values as input, and
+2. creates output state with default-initialized values.
+
+You can set custom values in the same transaction:
+
+1. Reinitialize with `new_empty()`, and
+2. Update with `new_mut()` to set custom values.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
-let my_compressed_account 
-        = LightAccount::<'_, MyCompressedAccount>::new_empty(
-    &crate::ID,
-    &account_meta,
-    MyCompressedAccount::default(),
+let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_empty(
+    &ID,
+    account_meta,
 )?;
 ```
+{% endcode %}
 
 **Pass these parameters to `new_empty()`:**
 
-* `crate::ID`: The program's ID that owns the compressed account.
+* `&ID`: The program's ID that owns the compressed account.
 * `account_meta`: The `CompressedAccountMeta` from instruction data (_Step 2_) that identifies the existing account and specifies the output state tree.
 
 **The SDK creates:**
 
-* A `LightAccount` wrapper with account data initialized via `MyCompressedAccount::default()`.
-* The `Default` trait creates a zero-initialized instance (`Pubkey` as all zeros, `u64` as `0`, `String` as empty).
-* Programs can modify these values after `new_empty()` returns, similar to `new_mut()` when updating compressed accounts.
+* A `LightAccount` wrapper with account data automatically initialized to default values using the `Default` trait.
+* This creates a zero-initialized instance: `Pubkey` as all zeros, `u64` as `0`, `String` as empty.
 
 {% hint style="info" %}
 `new_empty()` reconstructs the closed account hash with zero values. The Light System Program verifies the closed account hash and creates the output hash in _Step 4_.&#x20;
