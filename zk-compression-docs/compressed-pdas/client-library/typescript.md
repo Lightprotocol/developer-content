@@ -1,8 +1,7 @@
 ---
 description: >-
-  Build a TypeScript client with Rpc or TestRpc to create, update, and close
-  compressed accounts. Includes a step-by-step implementation guide and full
-  code examples.
+  Build a TypeScript client to create or interact with compressed accounts.
+  Includes a step-by-step implementation guide and full code examples.
 ---
 
 # Typescript

@@ -1,8 +1,7 @@
 ---
 description: >-
-  Build a Rust client with LightClient or LightProgramTest to create, update,
-  and close compressed accounts. Includes a step-by-step implementation guide
-  and full code examples.
+  Build a Rust client with to create or interact with compressed accounts.
+  Includes a step-by-step implementation guide and full code examples.
 ---
 
 # Rust
