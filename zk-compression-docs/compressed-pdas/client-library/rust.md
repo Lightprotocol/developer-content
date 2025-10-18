@@ -176,7 +176,7 @@ Fetch metadata of trees with:
 * `get_random_state_tree_info()` to return the `TreeInfo` struct with the public key and other metadata for a random state tree to store the compressed account hash.
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
   * Account hashes can move to different state trees after each state transition.
-  * Best practice is to minimize different trees per transaction. Still, since trees may fill up over time, programs must handle accounts from different state trees within the same transaction.
+  * Best practice is to minimize different trees per transaction. Still, since trees may fill up over time, programs must handle accounts from different state trees within the same transaction. The protocol creates new trees, once existing trees fill up.
 {% endstep %}
 
 {% step %}
@@ -415,7 +415,7 @@ The accounts receive a sequential u8 index. Instruction data references accounts
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
 {% hint style="info" %}
-Compressed account data must be passed in instruction data, since only a hash is stored on-chain. This is different from Solana accounts, where programs can read data directly from accounts.
+Compressed account data must be passed in instruction data, since only the Merkle root hash is stored on-chain. This is unlike Solana accounts, where programs can read data directly from accounts.
 
 The program hashes this data and the Light System Program verifies the hash against the root in a Merkle tree account to ensure its correctness.
 {% endhint %}
