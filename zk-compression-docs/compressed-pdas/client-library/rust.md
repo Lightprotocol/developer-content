@@ -177,6 +177,22 @@ Fetch metadata of trees with:
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
   * Account hashes can move to different state trees after each state transition.
   * Best practice is to minimize different trees per transaction. Still, since trees may fill up over time, programs must handle accounts from different state trees within the same transaction. The protocol creates new trees, once existing trees fill up.
+
+{% hint style="info" %}
+`TreeInfo` contains metadata for a Merkle tree:
+
+* `tree`: Merkle tree account pubkey
+* `queue`: Queue account pubkey
+  * Buffers insertions before they are added to the Merkle tree
+  * Client and program do not interact directly with the queue
+* `treeType`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
+* `cpiContext`: Optional CPI context account for batched operations across multiple programs (may be null)
+  * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
+  * First program caches its signer checks, second program reads them and combines instruction data
+  * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
+* `nextTreeInfo`: The tree to use for the next operation when the current tree is full (may be null)
+  * When set, switch to this tree instead of continuing with the current one
+{% endhint %}
 {% endstep %}
 
 {% step %}
@@ -215,6 +231,7 @@ Fetch a zero-knowledge proof (Validity proof) from your RPC provider that suppor
 
 * To create a compressed account, you must prove the **address doesn't already exist** in the address tree.
 * To update or close a compressed account, you must **prove its account hash exists** in a state tree.
+* You can combine multiple operations in one proof to optimize compute cost and instruction data.
 
 {% hint style="info" %}
 [Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `get_validity_proof()` method.
@@ -276,6 +293,43 @@ The RPC returns `ValidityProofWithContext` with
 * `proof` with the proof that the account hash exists in the state tree, passed to the program in your instruction data.
 * `accounts` with the public key and metadata of the state tree to pack accounts in the next step.
 * An empty `addresses` field, since you passed no metadata to create an address, when you update or close a compressed account.
+{% endtab %}
+
+{% tab title="Combined Proof" %}
+{% hint style="info" %}
+**Advantages of combined proofs**:
+
+* Single proof generation and verification reduces \~30,000-40,000 compute units per instruction
+* You only add one validity proof with 128 bytes in size instead of two in your instruction data&#x20;
+* The Light System Program computes one combined `public_input_hash` from both inclusion and non-inclusion parameters instead of verifying two separate hashes
+{% endhint %}
+
+```rust
+let hash = compressed_account.hash;
+
+let rpc_result = rpc
+    .get_validity_proof(
+        vec![hash],
+        vec![AddressWithTree {
+            address: *address,
+            tree: address_tree_info.tree,
+        }],
+        None,
+    )
+    .await?
+    .value;
+```
+
+**Pass these parameters**:
+
+* Specify in (`vec![hash]`) the hash of the existing compressed account to prove its existence in the state tree.
+* Specify in (`vec![AddressWithTree]`) the new address to create with its address tree.
+
+The RPC returns `ValidityProofWithContext` with
+
+* `proof` with a single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
+* `addresses` with the public key and metadata of the address tree to pack accounts in the next step.
+* `accounts` with the public key and metadata of the state tree to pack accounts in the next step.
 {% endtab %}
 {% endtabs %}
 {% endstep %}
