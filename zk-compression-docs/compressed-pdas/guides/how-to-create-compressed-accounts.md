@@ -314,11 +314,14 @@ Find the [source code for this example ](https://github.com/Lightprotocol/progra
 {% endhint %}
 
 ```rust
+#![allow(unexpected_cfgs)]
+#![allow(deprecated)]
+
 use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
 use light_sdk::{
     account::LightAccount,
     address::v1::derive_address,
-    cpi::{v1::CpiAccounts, CpiSigner},
+    cpi::{CpiAccounts, CpiSigner},
     derive_light_cpi_signer,
     instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
     LightDiscriminator,
@@ -334,7 +337,7 @@ pub mod counter {
 
     use super::*;
     use light_sdk::cpi::{
-        v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
+        LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
     };
 
     pub fn create_counter<'info>(
