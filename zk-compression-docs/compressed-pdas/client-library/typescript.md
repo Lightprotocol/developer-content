@@ -232,7 +232,7 @@ Fetch a validity proof from your RPC provider that supports ZK Compression (Heli
 
 * To create a compressed account, you must prove the **address doesn't already exist** in the address tree.
 * To update or close a compressed account, you must **prove its account hash exists** in a state tree.
-* You can combine multiple operations in one proof to optimize compute cost and instruction data.
+* You can **combine multiple operations in one proof** to optimize compute cost and instruction data.
 
 {% hint style="info" %}
 [Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProofV0()` method.
@@ -292,7 +292,7 @@ The RPC returns `ValidityProofWithContext` with
 **Advantages of combined proofs**:
 
 * Single proof generation and verification reduces \~30,000-40,000 compute units per instruction
-* You only add one validity proof with 128 bytes in size instead of two in your instruction data
+* You only add one validity proof with 128 bytes in size instead of two to your instruction data
 * The Light System Program computes one combined hash instead of verifying two separate hashes from both parameters
 {% endhint %}
 
