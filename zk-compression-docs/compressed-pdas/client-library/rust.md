@@ -23,6 +23,28 @@ Find full code examples for a counter program [at the end for Anchor and native 
 
 ## Implementation Guide
 
+{% tabs %}
+{% tab title="Create" %}
+<figure><picture><source srcset="../../.gitbook/assets/create.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/create-dark.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Update" %}
+<figure><picture><source srcset="../../.gitbook/assets/update-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/update.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Close" %}
+<figure><picture><source srcset="../../.gitbook/assets/close-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/close.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Reinitialize" %}
+<figure><picture><source srcset="../../.gitbook/assets/reinit-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/reinit.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Burn" %}
+<figure><picture><source srcset="../../.gitbook/assets/burn-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/burn.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+{% endtabs %}
+
 {% stepper %}
 {% step %}
 ### Dependencies

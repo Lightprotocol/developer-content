@@ -21,99 +21,29 @@ The TypeScript Client SDK provides two abstractions to create or interact with c
 Find [full code examples for a counter program](typescript.md#full-code-example) at the end for Anchor.&#x20;
 {% endhint %}
 
+## Implementation Guide
+
 {% tabs %}
 {% tab title="Create" %}
-<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
-</strong><strong>   ├─ Derive unique compressed account address
-</strong><strong>   ├─ Fetch validity proof (proves that address doesn't exist)
-</strong><strong>   ├─ Pack accounts and build instruction
-</strong><strong>   └─ Send transaction
-</strong>      │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Derive and check address
-      ├─ Initialize compressed account
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify validity proof (non-inclusion)
-         ├─ Create address (address tree)
-         ├─ Create compressed account (state tree)
-         └─ Complete atomic account creation
-</code></pre>
+<figure><picture><source srcset="../../.gitbook/assets/create.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/create-dark.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Update" %}
-<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
-</strong><strong>   ├─ Fetch current account data
-</strong><strong>   ├─ Fetch validity proof (proves that account exists)
-</strong><strong>   ├─ Build instruction with proof, current data, new data and metadata
-</strong><strong>   └─ Send transaction
-</strong>      │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Reconstruct existing compressed account hash (input hash)
-      ├─ Modify compressed account data (output)
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify and nullify input hash
-         ├─ Create new compressed account hash with updated data (output hash)
-         └─ Complete atomic account update
-</code></pre>
+<figure><picture><source srcset="../../.gitbook/assets/update-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/update.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Close" %}
-<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
-</strong><strong>   ├─ Fetch current account data
-</strong><strong>   ├─ Fetch validity proof (proves that account exists)
-</strong><strong>   ├─ Build instruction with proof, current data and metadata
-</strong><strong>   └─ Send transaction
-</strong>      │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Reconstruct existing compressed account hash (input hash)
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify input hash
-         ├─ Nullify input hash
-         └─ Create DEFAULT_DATA_HASH with zero discriminator (output)
-</code></pre>
+<figure><picture><source srcset="../../.gitbook/assets/close-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/close.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Reinitialize" %}
-<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
-</strong><strong>   ├─ Fetch closed account metadata
-</strong><strong>   ├─ Fetch validity proof (proves closed account hash exists)
-</strong><strong>   ├─ Build instruction with proof and new data
-</strong><strong>   └─ Send transaction
-</strong>      │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Reconstruct existing closed account hash (input hash)
-      ├─ Initialize account with new data (output)
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify input hash exists
-         ├─ Nullify input hash
-         ├─ Create new account with new hash and default values at same address
-         └─ Complete atomic account reinitialization
-</code></pre>
+<figure><picture><source srcset="../../.gitbook/assets/reinit-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/reinit.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Burn" %}
-<pre><code><strong>𝐂𝐋𝐈𝐄𝐍𝐓
-</strong><strong>   ├─ Fetch current account data
-</strong><strong>   ├─ Fetch validity proof (proves that account exists)
-</strong><strong>   ├─ Build instruction with proof and current data
-</strong><strong>   └─ Send transaction
-</strong>      │
-      𝐂𝐔𝐒𝐓𝐎𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌
-      ├─ Reconstruct existing compressed account hash (input hash)
-      │
-      └─ 𝐋𝐈𝐆𝐇𝐓 𝐒𝐘𝐒𝐓𝐄𝐌 𝐏𝐑𝐎𝐆𝐑𝐀𝐌 𝐂𝐏𝐈
-         ├─ Verify input hash
-         ├─ Nullify input hash (permanent)
-         └─ No output state created
-</code></pre>
+<figure><picture><source srcset="../../.gitbook/assets/burn-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/burn.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 {% endtabs %}
-
-## Implementation Guide
 
 {% stepper %}
 {% step %}
