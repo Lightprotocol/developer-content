@@ -301,7 +301,7 @@ The RPC returns `ValidityProofWithContext` with
 
 * Single proof generation and verification reduces \~30,000-40,000 compute units per instruction
 * You only add one validity proof with 128 bytes in size instead of two in your instruction data&#x20;
-* The Light System Program computes one combined `public_input_hash` from both inclusion and non-inclusion parameters instead of verifying two separate hashes
+* The Light System Program computes one combined hash instead of verifying two separate hashes from both parameters
 {% endhint %}
 
 ```rust
