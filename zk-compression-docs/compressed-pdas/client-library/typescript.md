@@ -121,7 +121,7 @@ Find [full code examples for a counter program](typescript.md#full-code-example)
 
 {% tabs %}
 {% tab title="npm" %}
-```sh
+```bash
 npm install --save \
     @lightprotocol/stateless.js \ 
     @lightprotocol/compressed-token \ 
@@ -130,8 +130,8 @@ npm install --save \
 ```
 {% endtab %}
 
-{% tab title="Yarn" %}
-```sh
+{% tab title="yarn" %}
+```bash
 yarn add \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
@@ -225,7 +225,7 @@ const testRpc = await getTestRpc(lightWasm);
 {% step %}
 ### Tree Configuration
 
-Before creating a compressed account, your client must fetch metadata for two Merkle trees:
+Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
 * an address tree to derive and store the account address and
 * a state tree to store the account hash.
@@ -235,49 +235,61 @@ The protocol maintains Merkle trees at fixed addresses. You don't need to initia
 {% endhint %}
 
 ```typescript
-const addressTree = await rpc.getAddressTreeV1();
-const stateTree = await rpc.getRandomStateTreeInfo();
+const addressTree = await rpc.getAddressTreeInfoV2();
+const stateTreeInfos = await rpc.getStateTreeInfos();
+const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 ```
 
 Fetch metadata of trees with:
 
-* `getAddressTreeV1()` to return the `TreeInfo` interface with the public key and other metadata for the address tree.
+* `getAddressTreeInfoV2()` returns `TreeInfo` with the public key and other metadata for the address tree.
   * Used to derive addresses with `deriveAddress()` and
-  * for `get_validity_proof()` to prove the address does not exist yet to avoid duplicate addresses.
-* `getRandomStateTreeInfo()` to return the `TreeInfo` interface with the public key and other metadata for a random state tree to store the compressed account hash.
+  * for `getValidityProof()` to prove the address does not exist yet in the state tree to avoid duplicate addresses.
+* `getStateTreeInfos()` returns metadata for all active state trees.
+* `selectStateTreeInfo()` selects a random state tree to store the compressed account hash.
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
   * Account hashes can move to different state trees after each state transition.
   * Best practice is to minimize different trees per transaction. Still, since trees may fill up over time, programs must handle accounts from different state trees within the same transaction.
 
 {% hint style="info" %}
-The `TreeInfo` interface contains metadata for a Merkle tree:
+`TreeInfo` contains metadata for a Merkle tree:
 
 * `tree`: Merkle tree account pubkey
-* `queue`: Queue account pubkey. Under the hood, hashes and addresses are inserted into a queue before being asynchronously inserted into a Merkle tree. The client and custom program do not interact with the queue.
-* `tree_type`: Identifies tree version (StateV1, AddressV1) and account for hash insertion.
-* `cpi_context` includes an optional CPI context account for shared proof verification of multiple programs.
+* `queue`: Queue account pubkey
+  * Buffers insertions before they are added to the Merkle tree
+  * Client and program do not interact directly with the queue
+* `treeType`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
+* `cpiContext`: Optional CPI context account for batched operations across multiple programs (may be null)
+  * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
+  * First program caches its signer checks, second program reads them and combines instruction data
+  * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
+* `nextTreeInfo`: The tree to use for the next operation when the current tree is full (may be null)
+  * When set, switch to this tree instead of continuing with the current one
 {% endhint %}
 {% endstep %}
 
 {% step %}
 ### Derive Address
 
-Derive a persistent address as a unique identifier for your compressed account with `deriveAddress()`.
+Derive a persistent address as a unique identifier for your compressed account.
 
 ```typescript
-const seed = Buffer.from('my-seed');
-const address = deriveAddress(
-  [seed],
-  addressTree,
+const seed = deriveAddressSeed(
+  [Buffer.from('my-seed')],
   programId
 );
+const address = deriveAddress(seed, addressTree.tree);
 ```
 
-**Pass these parameters**:
+**First, derive the seed**:
 
-* `[seed]`: Arbitrary byte slices that uniquely identify the account
-* `addressTree` to specify the tree pubkey. This parameter ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
-* `programId` to specify the program owner pubkey.
+* Pass arbitrary byte slices in the array to uniquely identify the account
+* Specify `programId` to combine with your seeds
+
+**Then, derive the address**:
+
+* Pass the derived 32-byte `seed` from the first step.
+* Specify `addressTree.tree` pubkey you fetched in the previous step, to ensure the address is unique to that tree. Different trees produce different addresses from identical seeds.
 
 {% hint style="info" %}
 Use the same `addressTree` for both `deriveAddress()` and all subsequent operations on that account in your client and program.
@@ -287,34 +299,34 @@ Use the same `addressTree` for both `deriveAddress()` and all subsequent operati
 {% step %}
 ### Validity Proof
 
-Fetch a zero-knowledge proof (Validity proof) from your RPC provider that supports ZK Compression (Helius, Triton, ...). What is proved depends on the operation:
+Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
-* To create a compressed account, you must prove the **address doesn't already exist** in the address tree (_non-inclusion proof_).
-* To update or close a compressed account, you must **prove the account hash exists** in a state tree (_inclusion proof_).
+* To create a compressed account, you must prove the **address doesn't already exist** in the address tree.
+* To update or close a compressed account, you must **prove its account hash exists** in a state tree.
 
 {% hint style="info" %}
-[Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProof()` method.
+[Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProofV0()` method.
 {% endhint %}
 
 {% tabs %}
 {% tab title="Create" %}
 ```typescript
-const proof = await rpc.getValidityProof(
+const proof = await rpc.getValidityProofV0(
   [],
-  [{ address, tree: addressTree }]
+  [{ address, tree: addressTree.tree, queue: addressTree.queue }]
 );
 ```
 
 **Pass these parameters**:
 
-* Leave (`[]`) empty to create compressed accounts, since no compressed account exists yet to reference.
-* Specify in (`[{ address, tree: addressTree }]`) the new address to create with its address tree.
+* Leave (`[]`) empty since no compressed account exists yet.
+* Specify the new address with its tree and queue pubkeys in `[{ address, tree, queue }]`.
 
-The RPC returns validity proof context with
+The RPC returns `ValidityProofWithContext` with
 
-* the non-inclusion `compressedProof`, passed to the program in the instruction data,
-* `newAddressParams` with the tree metadata for your address (tree, root, leaf index), and
-* an empty `merkleTrees` field when you create a compressed account, since you did not reference an existing account.
+* `compressedProof` with the proof that the address does not exist in the address tree, passed to the program in your instruction data.
+* `newAddressParams` array with address tree public key and metadata to build `PackedAddressTreeInfo` in the next step.
+* Empty `rootIndices` and `leafIndices` arrays, since you do not reference an existing account hash when you create a compressed account.
 {% endtab %}
 
 {% tab title="Update & Close" %}
@@ -324,76 +336,62 @@ The RPC returns validity proof context with
 
 ```typescript
 const hash = compressedAccount.hash;
+const tree = compressedAccount.merkleContext.tree;
+const queue = compressedAccount.merkleContext.queue;
 
-const proof = await rpc.getValidityProof(
-  [hash],
+const proof = await rpc.getValidityProofV0(
+  [{ hash, tree, queue }],
   []
 );
 ```
 
 **Pass these parameters**:
 
-* Specify in (`[hash]`) the hash of the existing compressed account to prove its existence in the state tree.
+* Specify the account hash with its tree and queue pubkeys in `[{ hash, tree, queue }]`.
 * Leave (`[]`) empty, since the proof verifies the account hash exists in a state tree, not the address in an address tree.
 
-The RPC returns validity proof context with
+The RPC returns `ValidityProofWithContext` with
 
-* the inclusion `compressedProof`, passed to the program in the instruction data,
-* `merkleTrees` with the tree metadata for the account hash (tree, root, leaf index), and
-* an empty `newAddressParams` field, since you don't create a new address.
+* `compressedProof` with the proof that the account hash exists in the state tree, passed to the program in your instruction data.
+* `rootIndices`, `leafIndices`, and `proveByIndices` arrays with proof metadata to build packed structs in the next step.
+* An empty `newAddressParams` array, since you pass no address to the proof when you update or close a compressed account.
 {% endtab %}
 {% endtabs %}
-{% endstep %}
 
-{% step %}
 ### Pack Accounts
 
-Compressed account instructions require packing accounts into the `remainingAccounts` array.
+Compressed account instructions require packing accounts into the `remainingAccounts` array. Follow the steps below to build the `PackedAccounts` helper.
 
 {% hint style="info" %}
 **"Packing" accounts optimizes instruction size:**
 
-* **Packed structs** (e.g., `PackedAddressTreeInfo`, `PackedMerkleTreeInfo`) contain account **indices** (u8) instead of 32 byte pubkeys. The indices point to the `remainingAccounts` array.
+* **Packed structs** contain account **indices** (u8) instead of 32 byte pubkeys. The indices point to the `remainingAccounts` array.
 * **Non-Packed structs** contain full pubkeys. RPC methods return full pubkeys.
+
+You will pass this array in the instruction data.
 {% endhint %}
 
-#### 1. Initialize Account Arrays
+#### 1. Build PackedAccounts Helper
 
-```typescript
-let remainingAccounts: AccountMeta[] = [];
-let accountsOffset = 0;
-```
+Build a `PackedAccounts` helper class to construct the `remainingAccounts` array with correct indices.
 
-Initialize `remainingAccounts` to collect `AccountMeta` objects (containing `pubkey`, `isWritable`, `isSigner` properties). `accountsOffset` tracks the current index position and increments as accounts are added.
+The helper
 
-The array organizes accounts into three logical sections:
-
-1. `pre_accounts` includes the signers, fee payer, and any program-specific accounts.
-2. `system_accounts` includes eight accounts the Light System program requires to create or interact with compressed accounts.
-3. `packed_accounts` includes Merkle tree and queue accounts returned from the `getValidityProof()` response in the previous step.
-
-You will populate the array in the next steps.
+* derives CPI signer PDA and builds all 8 Light System accounts with correct permission flags
+* deduplicates pubkeys to make sure each unique pubkey appears only once in `remainingAccounts`
+* converts pubkeys to sequential u8 indices (0-7 for system accounts, 8+ for trees)
 
 ```
-[preAccounts] [systemAccounts] [treeAccounts]
-       ↑                ↑                  ↑
-    Signers,       Light system      state trees,
-   fee payer   program accounts    address trees
-
+[0]    Your program accounts 
+[1]    Light System Program
+[2]    CPI Signer PDA
+[3-8]  Other Light System accounts
+[9+]   Merkle trees, queues
 ```
 
-#### 2. Add Light System Accounts
-
-Add the Light System accounts your program needs to create and interact with compressed via CPI to the Light System Program.
-
-```typescript
-const systemAccounts = getSystemAccounts(programId);
-remainingAccounts.push(...systemAccounts);
-accountsOffset += systemAccounts.length;
-```
-
-* Pass your program ID in `getSystemAccounts(programId)` to derive the CPI signer PDA
-* `getSystemAccounts()` returns 8 Light System accounts in the sequence below - add them to `remainingAccounts` and increment `accountsOffset` to track the next available index.
+{% hint style="info" %}
+A complete copy-paste implementation is available at the bottom of this section.
+{% endhint %}
 
 <details>
 
@@ -412,77 +410,304 @@ accountsOffset += systemAccounts.length;
 
 </details>
 
+**Initialize `PackedAccounts`**
+
+```typescript
+class PackedAccounts {
+  private systemAccounts: AccountMeta[] = [];
+  private nextIndex: number = 0;
+  private map: Map<string, [number, AccountMeta]> = new Map();
+}
+```
+
+Initialize `PackedAccounts` with three empty fields:
+
+1. `systemAccounts` stores the 8 Light System accounts at indices 0-7 with read-only flags.
+   * These accounts log/verify state changes but don't modify their own state.
+2. `nextIndex` tracks the next available index for tree/queue accounts, starts at 0.
+   * Tree and queue accounts start after systemAccounts at index 8 with writable flag.
+   * The value starts at 0, because it's relative to the `map` below, not the final array.
+3. `map` deduplicates pubkeys to make sure each unique pubkey appears only once in `remainingAccounts`.
+   * For example, if the input state tree is the same as the output state tree, both reference the same pubkey and return the same index (`insertOrGet()`).
+
+You will populate these fields in the following steps.
+
+**Add Light System Accounts**
+
+```typescript
+  addSystemAccounts(programId: PublicKey): void {
+    const cpiSigner = PublicKey.findProgramAddressSync(
+      [Buffer.from('cpi_authority')],
+      programId
+    )[0];
+```
+
+* Pass `programId` to derive the CPI signer PDA with `findProgramAddressSync()`.
+* The Light System Program verifies this PDA during CPI calls.
+
+Now, populate the `systemAccounts`:
+
+```typescript
+    const defaults = defaultStaticAccountsStruct();
+    const lightSystemProgram = new PublicKey('SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7');
+    const systemProgram = new PublicKey('11111111111111111111111111111111');
+    this.systemAccounts = [
+      { pubkey: lightSystemProgram, isSigner: false, isWritable: false },
+      { pubkey: cpiSigner, isSigner: false, isWritable: false },
+      { pubkey: defaults.registeredProgramPda, isSigner: false, isWritable: false },
+      { pubkey: defaults.noopProgram, isSigner: false, isWritable: false },
+      { pubkey: defaults.accountCompressionAuthority, isSigner: false, isWritable: false },
+      { pubkey: defaults.accountCompressionProgram, isSigner: false, isWritable: false },
+      { pubkey: programId, isSigner: false, isWritable: false },
+      { pubkey: systemProgram, isSigner: false, isWritable: false },
+    ];
+  }
+```
+
+1. **Fetch 4 accounts from SDK** with `defaultStaticAccountsStruct()`:
+   * `registeredProgramPda` proves your program can interact with Account Compression Program.
+   * `noopProgram` logs compressed account state to Solana ledger.
+   * `accountCompressionAuthority` signs CPI calls from Light System Program to Account Compression Program.
+   * `accountCompressionProgram` writes to state and address tree accounts. The client and program do not interact with this program, only the Light System. This is all done under the hood.
+2. **Use hardcoded program addresses** for Light System Program and Solana System Program.
+3. **Build the 8-account array in this sequence** with all accounts marked as `isWritable: false`:
+   * The order matters, since the Light System Program expects accounts at these exact indices
+   * These accounts log/verify state changes but don't modify their own state.
+
+**Add Tree and Queue Accounts**
+
+```typescript
+  insertOrGet(pubkey: PublicKey, isWritable: boolean = true): number {
+    const key = pubkey.toBase58();
+    const entry = this.map.get(key);
+    if (entry) return entry[0];
+
+    const index = this.nextIndex++;
+    this.map.set(key, [index, { pubkey, isSigner: false, isWritable }]);
+    return index;
+  }
+```
+
+Call `insertOrGet(pubkey)` to add a tree or queue account to the accounts array and return its index for packed structs:
+
+1. Returns existing index if the pubkey was already added:
+   * Prevents duplicate accounts in `remainingAccounts`.
+   * For example, if input and output state trees are the same, both use index 8.
+2. If pubkey is not added yet, the method assigns the next sequential index for new accounts starting at index 8:
+   * Use the returned index to set index fields in `PackedAddressTreeInfo` or `PackedStateTreeInfo`.
+   * For example, `addressMerkleTreePubkeyIndex: 8` points to the address tree at position 8 in `remainingAccounts`.
+   * Marks tree and queue accounts as writable by default.
+   * The Light System Program writes new hashes and addresses to these accounts.
+
+**Build Final Account Array**
+
+```typescript
+  toAccountMetas(): AccountMeta[] {
+    const entries = Array.from(this.map.entries());
+    entries.sort((a, b) => a[1][0] - b[1][0]);
+    const packedAccounts = entries.map(([, [, meta]]) => meta);
+    return [...this.systemAccounts, ...packedAccounts];
+  }
+}
+```
+
+Call `toAccountMetas()` to build the complete `AccountMeta[]` array for `.remainingAccounts()`.
+
+**The method returns accounts in two sections:**
+
+```
+ [systemAccounts] [packedAccounts]
+       ↑               ↑
+  Light System     Merkle tree &
+    accounts      queue accounts
+
+```
+
+1. **System accounts first** (indices 0-7):
+   * All 8 Light System accounts with read-only flags.
+   * Light System Program expects these accounts at these exact positions.
+2. **Tree and queue accounts after** (indices 8+):
+   * All tree and queue accounts with writable flags in sequential order.
+   * Packed struct indices reference accounts by their position in this array.
+   * Light System Program writes new hashes and addresses to these accounts.
+
+<details>
+
+<summary>Complete Implementation to copy-paste</summary>
+
+```typescript
+import { PublicKey, AccountMeta } from '@solana/web3.js';
+import { defaultStaticAccountsStruct } from '@lightprotocol/stateless.js';
+
+class PackedAccounts {
+  private systemAccounts: AccountMeta[] = [];
+  private nextIndex: number = 0;
+  private map: Map<string, [number, AccountMeta]> = new Map();
+
+  addSystemAccounts(programId: PublicKey): void {
+    const cpiSigner = PublicKey.findProgramAddressSync(
+      [Buffer.from('cpi_authority')],
+      programId
+    )[0];
+
+    const defaults = defaultStaticAccountsStruct();
+    const lightSystemProgram = new PublicKey('SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7');
+    const systemProgram = new PublicKey('11111111111111111111111111111111');
+
+    this.systemAccounts = [
+      { pubkey: lightSystemProgram, isSigner: false, isWritable: false },
+      { pubkey: cpiSigner, isSigner: false, isWritable: false },
+      { pubkey: defaults.registeredProgramPda, isSigner: false, isWritable: false },
+      { pubkey: defaults.noopProgram, isSigner: false, isWritable: false },
+      { pubkey: defaults.accountCompressionAuthority, isSigner: false, isWritable: false },
+      { pubkey: defaults.accountCompressionProgram, isSigner: false, isWritable: false },
+      { pubkey: programId, isSigner: false, isWritable: false },
+      { pubkey: systemProgram, isSigner: false, isWritable: false },
+    ];
+  }
+
+  insertOrGet(pubkey: PublicKey, isWritable: boolean = true): number {
+    const key = pubkey.toBase58();
+    const entry = this.map.get(key);
+    if (entry) return entry[0];
+
+    const index = this.nextIndex++;
+    this.map.set(key, [index, { pubkey, isSigner: false, isWritable }]);
+    return index;
+  }
+
+  toAccountMetas(): AccountMeta[] {
+    const entries = Array.from(this.map.entries());
+    entries.sort((a, b) => a[1][0] - b[1][0]);
+    const packedAccounts = entries.map(([, [, meta]]) => meta);
+    return [...this.systemAccounts, ...packedAccounts];
+  }
+}
+```
+
+</details>
+
+#### 2. Initialize Helper
+
+```typescript
+const packedAccounts = new PackedAccounts();
+packedAccounts.addSystemAccounts(programId);
+```
+
+Initialize the helper and populate the 8 Light System accounts:
+
+1. **Create helper instance** with `new PackedAccounts()`.
+2. **Add system accounts** with `addSystemAccounts(programId)` to populate indices 0-7.
+
+In the next steps, you will add tree and queue accounts from the validity proof, then convert to `AccountMeta[]`.
+
+{% hint style="info" %}
+Program-specific accounts (signers, fee payer) are passed to `.accounts()`, not added to `remainingAccounts`.
+{% endhint %}
+
 #### 3. Pack Tree Accounts from Validity Proof
 
-`getValidityProof()` returns pubkeys and other metadata of Merkle trees. With `packTreeInfos()`, you convert the pubkeys to u8 indices that reference positions in `remainingAccounts` to optimize your instruction data.
+Add tree and queue pubkeys from the validity proof to the helper. The helper returns u8 indices for your instruction data.
 
 {% tabs %}
 {% tab title="Create" %}
 ```typescript
-const packedTreeInfos = packTreeInfos(
-  remainingAccounts,
-  [],
-  proof.newAddressParams
-);
+const addressTreeIndex = packedAccounts.insertOrGet(addressTree.tree);
+const addressQueueIndex = packedAccounts.insertOrGet(addressTree.queue);
 
-const packedAddressTrees = packedTreeInfos.addressTrees;
+const packedAddressTreeInfo = {
+  addressMerkleTreePubkeyIndex: addressTreeIndex,
+  addressQueuePubkeyIndex: addressQueueIndex,
+  rootIndex: proof.newAddressParams[0].rootIndex
+};
 ```
 
-* `packTreeInfos()` extracts Merkle tree pubkeys from validity proof and adds them to `remainingAccounts`
-* `.addressTrees` returns `PackedAddressTreeInfo[]` that specifies where to create the address:
-  * `addressMerkleTreePubkeyIndex` points to the address tree account in `remainingAccounts`
-  * `addressQueuePubkeyIndex` points to the address queue account in `remainingAccounts`
-  * `rootIndex` specifies the Merkle root to verify the address does not exist in the address tree
+* Call `insertOrGet()` with each tree and queue pubkey from the validity proof
+* Create `PackedAddressTreeInfo` with three fields:
+
+1. `addressMerkleTreePubkeyIndex` - points to the address tree account in `remainingAccounts`
+   * The address tree is used to derive addresses and verify the address does not already exist
+2. `addressQueuePubkeyIndex` - points to the address queue account in `remainingAccounts`
+   * The queue buffers new addresses before they are inserted into the address tree
+3. `rootIndex` - the Merkle root index from `proof.newAddressParams[0].rootIndex` (Validity Proof step)
+   * Specifies which historical root to verify the address does not exist in the tree
 {% endtab %}
 
 {% tab title="Update & Close" %}
 ```typescript
-const packedTreeInfos = packTreeInfos(
-  remainingAccounts,
-  proof.merkleTrees,
-  []
-);
+const merkleTreeIndex = packedAccounts.insertOrGet(compressedAccount.merkleContext.tree);
+const queueIndex = packedAccounts.insertOrGet(compressedAccount.merkleContext.queue);
 
-const packedMerkleTrees = packedTreeInfos.stateTrees.packedTreeInfos;
+const packedStateTreeInfo = {
+  merkleTreePubkeyIndex: merkleTreeIndex,
+  queuePubkeyIndex: queueIndex,
+  leafIndex: proof.leafIndices[0],
+  rootIndex: proof.rootIndices[0],
+  proveByIndex: false
+};
 ```
 
-* `packTreeInfos()` extracts Merkle tree pubkeys from validity proof and adds them to `remainingAccounts`
-* `.stateTrees` returns `PackedStateTreeInfos` that points to the existing account hash:
-  * `merkleTreePubkeyIndex` points to the state tree account in `remainingAccounts`
-  * `leafIndex` specifies which leaf position contains the account hash
-  * `rootIndex` specifies the Merkle root to verify the account hash exists in the state tree
+* Call `insertOrGet()` with the state tree and queue pubkeys from `compressedAccount.merkleContext`
+* Create `PackedStateTreeInfo` with five fields:
+
+1. `merkleTreePubkeyIndex` - points to the state tree account in `remainingAccounts`
+   * The state tree stores the existing account hash that Light System Program verifies
+2. `queuePubkeyIndex` - points to the nullifier queue account in `remainingAccounts`
+   * The queue tracks nullified (spent) account hashes to prevent double-spending
+3. `leafIndex` - the leaf position in the Merkle tree from `proof.leafIndices[0]` (Validity Proof step)
+   * Specifies which leaf contains your account hash to verify it exists in the tree
+4. `rootIndex` - the Merkle root index from `proof.rootIndices[0]`
+   * Specifies which historical root to verify the account hash against
+5. `proveByIndex` - the proof verification mode, set to `false`
+   * `false` verifies the account hash directly by reconstructing the Merkle path
+   * `true` uses index-based batched verification for multiple accounts (advanced usage)
+   * For single account operations, use `false`
 {% endtab %}
 {% endtabs %}
 
 #### 4. Add Output State Tree
 
-```typescript
-const outputStateTree = await rpc.getRandomStateTreeInfo();
-const outputTreeIndex = accountsOffset;
+Specify the state tree to store the new account hash.
 
-remainingAccounts.push({
-  pubkey: outputStateTree.pubkey,
-  isSigner: false,
-  isWritable: true
-});
+```typescript
+const outputTreeIndex = packedAccounts.insertOrGet(outputStateTree.tree);
 ```
 
-* `getRandomStateTreeInfo()` returns the `TreeInfo` interface with the pubkey and other metadata of a state tree to store the new account hash
-* Capture `accountsOffset` as `outputTreeIndex` before pushing - this will be the index position after the push
-* Push an `AccountMeta` object to `remainingAccounts` with:
-  * `pubkey`: The state tree's pubkey
-  * `isSigner: false`: The state tree account does not sign the transaction
-  * `isWritable: true`: The state tree will be modified to store the new account hash
+* Use `outputStateTree` variable from Step 3 - it contains the `TreeInfo` with pubkey and metadata for the randomly selected state tree
+* Call `insertOrGet(outputStateTree.tree)` to add the tree and get its index for instruction data
 
-#### 5. Summary
+{% hint style="info" %}
+The output tree is separate from the trees in your validity proof. The validity proof references trees that verify existing state (or prove an address doesn't exist), while the output tree specifies where to write the new account hash.
+{% endhint %}
 
-You initialized the `remainingAccounts` array to merge the following accounts for the instruction:
+#### 5. Finalize Accounts
+
+Call `toAccountMetas()` to get the final `AccountMeta[]` array.
+
+```typescript
+const accountMetas = packedAccounts.toAccountMetas();
+```
+
+**The helper returns:**
+
+* System accounts (indices 0-7) as `read-only`
+  * System accounts like the noop program log state changes but don't modify their own state
+* Tree and queue accounts (indices 8+) as `writable`
+  * The Light System Program writes to tree and queue accounts to insert new hashes or addresses
+
+#### 6. Summary
+
+You built the `remainingAccounts` array with all accounts the Light System Program needs to execute your instruction:
 
 * Light System accounts to create and interact with compressed accounts via the Light System Program.
 * Tree accounts from the validity proof to prove address non-existence (create), or existence of the account hash (update/close).
 * The output state tree to store the new account hash.
 
-The accounts receive a sequential index. Instruction data references accounts via these indices in this order.
+The accounts receive a sequential u8 index. Instruction data references accounts in this order.
+
+{% hint style="success" %}
+`PackedAddressTreeInfo` and `PackedStateTreeInfo` structs contain indices instead of 32-byte pubkeys, to reduce instruction data size to 1 byte per index.
+{% endhint %}
 {% endstep %}
 
 {% step %}
@@ -501,18 +726,18 @@ The program hashes this data and the Light System Program verifies the hash agai
 ```typescript
 const instructionData = {
   proof: proof.compressedProof,
-  addressTreeInfo: packedAddressTrees[0],
+  addressTreeInfo: packedAddressTreeInfo,
   outputStateTreeIndex: outputTreeIndex,
 };
 ```
 
-1. **Non-inclusion Proof**
+1. **Validity Proof**
 
-* Add the `compressedProof` you fetched with `getValidityProof()` from your RPC provider to prove that the address does not exist yet in the specified address tree (non-inclusion).
+* Add the `compressedProof` you fetched to prove that the address does not exist yet in the specified address tree.
 
 2. **Specify Merkle trees to store address and account hash**
 
-Include the Merkle tree metadata fetched in Step 3:
+Include the Merkle tree metadata from the Pack Accounts section:
 
 * `PackedAddressTreeInfo` specifies the index to the address tree account used to derive the address. The index points to the address tree account in `remainingAccounts`.
 * `outputStateTreeIndex` points to the state tree account in `remainingAccounts` that will store the compressed account hash.
@@ -523,68 +748,39 @@ Include the Merkle tree metadata fetched in Step 3:
 * If your program requires initial data, add custom fields to your instruction struct.
 {% endtab %}
 
-{% tab title="Update" %}
+{% tab title="Update & Close" %}
+{% hint style="info" %}
+The client includes the current account data for both Update and Close. The difference is in your programs instruction handler.
+{% endhint %}
+
 ```typescript
 const instructionData = {
   proof: proof.compressedProof,
   counterValue: currentCounterValue,
   accountMeta: {
-    treeInfo: packedMerkleTrees[0],
+    treeInfo: packedStateTreeInfo,
     address: compressedAccount.address,
     outputStateTreeIndex: outputTreeIndex
   },
 };
 ```
 
-1. **Inclusion Proof**
+1. **Validity Proof**
 
-* Add the `compressedProof` you fetched with `getValidityProof()` from your RPC provider to prove the account exists in the state tree (inclusion).
+* Add the `compressedProof` you fetched to prove the account hash exists in the state tree.
 
-2. **Specify input hash and output state tree**
+2. **Specify input state and output state tree**
 
 Include the Merkle tree metadata fetched in Step 3:
 
 * `accountMeta` points to the input hash and specifies the output state tree with these fields:
-  * `treeInfo: PackedMerkleTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) so the Light System Program can mark it as nullified
+  * `treeInfo: PackedStateTreeInfo` points to the existing account hash that will be nullified by the Light System Program
   * `address` specifies the account's derived address
-  * `outputStateTreeIndex` points to the state tree that will store the updated compressed account hash
+  * `outputStateTreeIndex` points to the state tree that will store the updated or closed account hash
 
 3. **Pass current account data**
 
 * Pass the complete current account data. The program reconstructs the existing account hash from this data to verify it matches the hash in the state tree.
-* In this example, we pass the current `counterValue`, before incrementing.
-{% endtab %}
-
-{% tab title="Close" %}
-```typescript
-const instructionData = {
-  proof: proof.compressedProof,
-  counterValue: currentCounterValue,
-  accountMeta: {
-    treeInfo: packedMerkleTrees[0],
-    address: compressedAccount.address,
-    outputStateTreeIndex: outputTreeIndex
-  },
-};
-```
-
-1. **Inclusion Proof**
-
-* Add the `compressedProof` you fetched with `getValidityProof()` from your RPC provider to prove the account exists in the state tree (inclusion).
-
-2. **Specify input hash and output state tree**
-
-Include the Merkle tree metadata fetched in Step 3:
-
-* `accountMeta` points to the input hash and specifies the output state tree:
-  * `treeInfo: PackedMerkleTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index).
-  * `address` specifies the account's derived address.
-  * `outputStateTreeIndex` points to the state tree that will store the output hash with zero values.
-
-3. **Pass current account data**
-
-* Pass the complete current account data. The program reconstructs the existing account hash from this data to verify it matches the hash in the state tree.
-* In this example, we pass the current `counterValue`, before closing.
 {% endtab %}
 {% endtabs %}
 {% endstep %}
@@ -596,18 +792,21 @@ Build a `TransactionInstruction` with your `program_id`, `accounts`, and `data` 
 
 ```typescript
 const instruction = await program.methods
-  .createCounter(instructionData.proof, instructionData.addressTreeInfo, instructionData.outputStateTreeIndex)
+  .createCounter(
+    instructionData.proof, 
+    instructionData.addressTreeInfo, 
+    instructionData.outputStateTreeIndex)
   .accounts({
     signer: payer.publicKey
   })
-  .remainingAccounts(remainingAccounts)
+  .remainingAccounts(accountMetas)
   .instruction();
 ```
 
 **What to include in `accounts`:**
 
 1. **Define program-specific accounts** in `.accounts()` with any accounts your program requires - these won't interfere with compression-related accounts.
-2. **Add the Light System and Merkle tree accounts** with `.remainingAccounts(remainingAccounts)` to the instruction's account list.
+2. **Add the Light System and Merkle tree accounts** with `.remainingAccounts(accountMetas)` to the instruction's account list.
 3. **Build the complete instruction with `.instruction()`**:
 
 * Anchor converts `.accounts({ signer })` to `AccountMeta[]` with the program's IDL account metadata. These accounts have fixed indices defined by the IDL.

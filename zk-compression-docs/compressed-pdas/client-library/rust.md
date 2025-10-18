@@ -144,7 +144,7 @@ The protocol maintains Merkle trees at fixed addresses. You don't need to initia
 
 ```rust
 let address_tree_info = rpc.get_address_tree_v1();
-let state_tree_info = rpc.get_random_state_tree_info().unwrap();
+let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 ```
 
 Fetch metadata of trees with:
@@ -156,15 +156,6 @@ Fetch metadata of trees with:
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
   * Account hashes can move to different state trees after each state transition.
   * Best practice is to minimize different trees per transaction. Still, since trees may fill up over time, programs must handle accounts from different state trees within the same transaction.
-
-{% hint style="info" %}
-The `TreeInfo` struct contains metadata for a Merkle tree:
-
-* `tree`: Merkle tree account pubkey
-* `queue`: Queue account pubkey. Under the hood, hashes and addresses are inserted into a queue before being asynchronously inserted into a Merkle tree. The client and custom program do not interact with the queue.
-* `tree_type`: Identifies tree version (StateV1, AddressV1) and account for hash insertion.
-* `cpi_context` includes an optional CPI context account for shared proof verification of multiple programs.
-{% endhint %}
 {% endstep %}
 
 {% step %}
@@ -345,11 +336,13 @@ let packed_address_tree_accounts = rpc_result
 
 Call `pack_tree_infos(&mut remaining_accounts)` to extract tree pubkeys and add them to the accounts array.
 
-The returned `PackedTreeInfos` contains `.address_trees` as `Vec<PackedAddressTreeInfo>` with
+The returned `PackedTreeInfos` contains `.address_trees` as `Vec<PackedAddressTreeInfo>`:
 
-* `address_merkle_tree_pubkey_index` to point to the address tree account
-* `address_queue_pubkey_index` to point to the queue account
-* `root_index` to specify the Merkle root to verify the address does not exist in the address tree
+* `address_merkle_tree_pubkey_index`: Points to the address tree account in `remaining_accounts`
+* `address_queue_pubkey_index`: Points to the address queue account in `remaining_accounts`
+  * The queue buffers new addresses before they are inserted into the address tree
+* `root_index`: The Merkle root index from the validity proof
+  * Specifies which historical root to verify the address does not exist in the tree
 {% endtab %}
 
 {% tab title="Update & Close" %}
@@ -362,24 +355,27 @@ let packed_state_tree_accounts = rpc_result
 
 Call `pack_tree_infos(&mut remaining_accounts)` to extract tree pubkeys and add them to the accounts array.
 
-The returned `PackedTreeInfos` contains `.state_trees` as `Option<PackedStateTreeInfos>` with
+The returned `PackedTreeInfos` contains `.state_trees` as `Option<PackedStateTreeInfos>`:
 
-* `merkle_tree_pubkey_index` to point to the state tree account
-* `leaf_index` to specify the leaf position that contains the account hash
-* `root_index` to specify the Merkle root to verify the account hash exists in the state tree
+* `merkle_tree_pubkey_index`: Points to the state tree account in `remaining_accounts`
+* `queue_pubkey_index`: Points to the nullifier queue account in `remaining_accounts`
+  * The queue tracks nullified (spent) account hashes to prevent double-spending
+* `leaf_index`: The leaf position in the Merkle tree from the validity proof
+  * Specifies which leaf contains your account hash to verify it exists in the tree
+* `root_index`: The Merkle root index from the validity proof
+  * Specifies which historical root to verify the account hash against
 {% endtab %}
 {% endtabs %}
 
 #### 4. Add Output State Tree
 
 ```rust
-let output_state_tree_index = rpc
-    .get_random_state_tree_info()?
+let output_state_tree_index = output_state_tree_info
     .pack_output_tree_index(&mut remaining_accounts)?;
 ```
 
-* Call `get_random_state_tree_info()` to get the pubkey of a random state tree to the new account hash.
-* Call `pack_output_tree_index(&mut remaining_accounts)` to convert the tree pubkey to a u8 index in `remaining_accounts`.
+* Use `output_state_tree_info` variable from Step 3 - it contains the `TreeInfo` with pubkey and metadata for the randomly selected state tree
+* Call `pack_output_tree_index(&mut remaining_accounts)` to convert the tree pubkey to a u8 index in `remaining_accounts`
 
 #### 5. Summary
 
@@ -452,7 +448,7 @@ let instruction_data = counter::instruction::IncrementCounter {
 Include the Merkle tree metadata fetched in Step 3:
 
 * `CompressedAccountMeta` points to the input hash and specifies the output state tree with these fields:
-  * `tree_info: PackedStateTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index) so the Light System Program can mark it as nullified
+  * `tree_info: PackedStateTreeInfo` points to the existing account hash that will be nullified by the Light System Program
   * `address` specifies the account's derived address
   * `output_state_tree_index` points to the state tree that will store the updated compressed account hash
 
@@ -484,9 +480,9 @@ let instruction_data = counter::instruction::CloseCounter {
 Include the Merkle tree metadata fetched in Step 3:
 
 * `CompressedAccountMeta` points to the input hash and specifies the output state tree:
-  * `tree_info: PackedStateTreeInfo` points to the existing account hash (Merkle tree pubkey index, leaf index, root index).
-  * `address` specifies the account's derived address.
-  * `output_state_tree_index` points to the state tree that will store the output hash with zero values.
+  * `tree_info: PackedStateTreeInfo` points to the existing account hash that will be nullified by the Light System Program
+  * `address` specifies the account's derived address
+  * `output_state_tree_index` points to the state tree that will store the output hash with zero values
 
 3. **Pass current account data**
 
