@@ -160,7 +160,7 @@ Before creating a compressed account, your client must fetch metadata of two Mer
 * a state tree to store the account hash.
 
 {% hint style="success" %}
-The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. See the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
+The protocol maintains Merkle trees. You don't need to initialize custom trees. See the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
 ```rust
