@@ -10,9 +10,11 @@ hidden: true
 
 ### Guides Overview <a href="#subsection-jvtgde75u" id="subsection-jvtgde75u"></a>
 
-<table><thead><tr><th width="332.7890625">Guide</th><th>Description</th></tr></thead><tbody><tr><td><a href="how-to-create-compressed-accounts.md">How to Create Compressed Accounts</a></td><td>Create compressed accounts with addresses</td></tr><tr><td><a href="how-to-update-compressed-accounts.md">How to Update Compressed Accounts</a></td><td>Update compressed accounts</td></tr><tr><td><a href="how-to-close-compressed-accounts.md">How to Close Compressed Accounts</a></td><td>Close compressed accounts, retain the address</td></tr><tr><td><a href="how-to-reinitialize-compressed-accounts.md">How to Reinitialize Compressed Accounts</a></td><td>Reinitialize closed compressed accounts with the same address and new values</td></tr><tr><td><a href="how-to-burn-compressed-accounts.md">How to Burn Compressed Accounts</a></td><td>Burn compressed accounts and their address permanently</td></tr></tbody></table>
+<table><thead><tr><th width="332.7890625">Guide</th><th width="312.19140625">Description</th><th>function</th></tr></thead><tbody><tr><td><a href="how-to-create-compressed-accounts.md">How to Create Compressed Accounts</a></td><td>Create compressed accounts with addresses</td><td></td></tr><tr><td><a href="how-to-update-compressed-accounts.md">How to Update Compressed Accounts</a></td><td>Update compressed accounts</td><td></td></tr><tr><td><a href="how-to-close-compressed-accounts.md">How to Close Compressed Accounts</a></td><td>Close compressed accounts, retain the address</td><td></td></tr><tr><td><a href="how-to-reinitialize-compressed-accounts.md">How to Reinitialize Compressed Accounts</a></td><td>Reinitialize closed compressed accounts with the same address and new values</td><td></td></tr><tr><td><a href="how-to-burn-compressed-accounts.md">How to Burn Compressed Accounts</a></td><td>Burn compressed accounts and their address permanently</td><td></td></tr></tbody></table>
 
 ### Complete Flow Overview
+
+The five core functions to interact with compressed accounts.
 
 {% tabs %}
 {% tab title="Create" %}

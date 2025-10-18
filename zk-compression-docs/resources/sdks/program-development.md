@@ -21,7 +21,7 @@ ZK Compression's Rust crates are published to [crates.io](https://docs.rs/releas
 Your custom program invokes the _Light system program_ via Cross-Program Invocation (CPI) to leverage ZK Compression.
 {% endhint %}
 
-<table><thead><tr><th width="202">Program</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/system">light-system-program</a></td><td>Enforces compressed account layout, ownership checks, and validity proof verification. Used to create/write compressed accounts and PDAs</td></tr><tr><td><a href="https://crates.io/crates/light-compressed-token">light-compressed-token</a></td><td>SPL-compatible compressed token implementation with arbitrary compression/decompression support</td></tr><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/account-compression">account-compression</a></td><td>State and address tree implementation used by the Light System program</td></tr></tbody></table>
+<table><thead><tr><th width="202">Program</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/system">light-system-program</a></td><td>Enforces compressed account layout, ownership checks, and validity proof verification. Used to create/write compressed accounts and PDAs</td></tr><tr><td><a href="https://crates.io/crates/light-compressed-token">light-compressed-token</a></td><td>SPL-compatible compressed token implementation with arbitrary compression/decompression support</td></tr><tr><td><a href="https://github.com/Lightprotocol/light-protocol/tree/main/programs/account-compression">account-compression</a></td><td><p>State and address tree implementation used by the Light System program. Clients and custom programs do not interact with the Account Compression Program. This is all done under the hood.</p><h3 id="next-steps"><br></h3></td></tr></tbody></table>
 
 ## Version Requirements
 
@@ -41,8 +41,8 @@ These are the required version for program development.
 
 ## Program Examples
 
-{% content-ref url="../../examples/program-examples.md" %}
-[program-examples.md](../../examples/program-examples.md)
+{% content-ref url="../../compressed-pdas/program-examples.md" %}
+[program-examples.md](../../compressed-pdas/program-examples.md)
 {% endcontent-ref %}
 
 ## Build your own program

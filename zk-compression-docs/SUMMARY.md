@@ -23,6 +23,9 @@
   * [Create an Airdrop](compressed-tokens/advanced-guides/create-an-airdrop.md)
   * [Use Token 2022 with Compression](compressed-tokens/advanced-guides/use-token-2022-with-compression.md)
   * [Add Wallet Support for Compressed Tokens](compressed-tokens/advanced-guides/add-wallet-support-for-compressed-tokens.md)
+* [Example Clients](compressed-tokens/example-clients/README.md)
+  * [Example Web Client](https://github.com/Lightprotocol/example-web-client)
+  * [Example Node.js Client](https://github.com/Lightprotocol/example-nodejs-client)
 
 ## Compressed PDAs
 
@@ -36,6 +39,7 @@
 * [Client Library](compressed-pdas/client-library/README.md)
   * [Rust](compressed-pdas/client-library/rust.md)
   * [Typescript](compressed-pdas/client-library/typescript.md)
+* [Program Examples](compressed-pdas/program-examples.md)
 
 ## Resources
 
@@ -69,12 +73,6 @@
 * [Error Cheatsheet](resources/error-cheatsheet/README.md)
   * [Debug 0x179b / 6043 / ProofVerificationFailed](resources/error-cheatsheet/debug-0x179b-6043-proofverificationfailed.md)
   * [Debug 0x36D2 / 14034 / InvalidCpiAccountsOffset](resources/error-cheatsheet/debug-0x36d2-14034-invalidcpiaccountsoffset.md)
-
-## Examples
-
-* [Program Examples](examples/program-examples.md)
-* [Example Web Client](https://github.com/Lightprotocol/example-web-client)
-* [Example Node.js Client](https://github.com/Lightprotocol/example-nodejs-client)
 
 ## Learn
 
