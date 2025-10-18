@@ -160,7 +160,7 @@ Before creating a compressed account, your client must fetch metadata of two Mer
 * a state tree to store the account hash.
 
 {% hint style="success" %}
-The protocol maintains Merkle trees at fixed addresses. You don't need to initialize custom trees. See the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
+The protocol maintains Merkle trees. You don't need to initialize custom trees. See the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
 ```typescript
@@ -178,7 +178,7 @@ Fetch metadata of trees with:
 * `selectStateTreeInfo()` selects a random state tree to store the compressed account hash.
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
   * Account hashes can move to different state trees after each state transition.
-  * Best practice is to minimize different trees per transaction. Still, since trees may fill up over time, programs must handle accounts from different state trees within the same transaction.
+  * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction. The protocol creates new trees, once existing trees fill up.
 
 {% hint style="info" %}
 `TreeInfo` contains metadata for a Merkle tree:
@@ -232,6 +232,7 @@ Fetch a validity proof from your RPC provider that supports ZK Compression (Heli
 
 * To create a compressed account, you must prove the **address doesn't already exist** in the address tree.
 * To update or close a compressed account, you must **prove its account hash exists** in a state tree.
+* You can combine multiple operations in one proof to optimize compute cost and instruction data.
 
 {% hint style="info" %}
 [Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProofV0()` method.
@@ -285,6 +286,38 @@ The RPC returns `ValidityProofWithContext` with
 * `rootIndices`, `leafIndices`, and `proveByIndices` arrays with proof metadata to build packed structs in the next step.
 * An empty `newAddressParams` array, since you pass no address to the proof when you update or close a compressed account.
 {% endtab %}
+
+{% tab title="Combined Proof" %}
+{% hint style="info" %}
+**Advantages of combined proofs**:
+
+* Single proof generation and verification reduces \~30,000-40,000 compute units per instruction
+* You only add one validity proof with 128 bytes in size instead of two in your instruction data
+* The Light System Program computes one combined hash instead of verifying two separate hashes from both parameters
+{% endhint %}
+
+```typescript
+const hash = compressedAccount.hash;
+const tree = compressedAccount.merkleContext.tree;
+const queue = compressedAccount.merkleContext.queue;
+
+const proof = await rpc.getValidityProofV0(
+  [{ hash, tree, queue }],
+  [{ address, tree: addressTree.tree, queue: addressTree.queue }]
+);
+```
+
+**Pass these parameters**:
+
+* Specify the existing account hash with its tree and queue pubkeys in `[{ hash, tree, queue }]`.
+* Specify the new address with its tree and queue pubkeys in `[{ address, tree, queue }]`.
+
+The RPC returns `ValidityProofWithContext` with
+
+* `compressedProof` with a single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
+* `newAddressParams` array with address tree public key and metadata to build `PackedAddressTreeInfo` in the next step.
+* `rootIndices`, `leafIndices`, and `proveByIndices` arrays with proof metadata to build `PackedStateTreeInfo` in the next step.
+{% endtab %}
 {% endtabs %}
 
 ### Pack Accounts
@@ -306,9 +339,15 @@ Build a `PackedAccounts` helper class to construct the `remainingAccounts` array
 
 The helper
 
-* derives CPI signer PDA and builds all 8 Light System accounts with correct permission flags
-* deduplicates pubkeys to make sure each unique pubkey appears only once in `remainingAccounts`
-* converts pubkeys to sequential u8 indices (0-7 for system accounts, 8+ for trees)
+1. derives CPI signer PDA and builds all 8 Light System accounts with `read-only` permission flags.
+
+* These accounts log/verify state changes but don't modify their own state.
+
+2. deduplicates pubkeys to make sure each unique pubkey appears only once in `remainingAccounts`.
+
+* For example, if the input state tree is the same as the output state tree, both reference the same pubkey and return the same index.
+
+3. converts pubkeys to sequential u8 indices in the sequential order below.
 
 ```
 [0]    Your program accounts 
@@ -318,151 +357,11 @@ The helper
 [9+]   Merkle trees, queues
 ```
 
-{% hint style="info" %}
-A complete copy-paste implementation is available at the bottom of this section.
-{% endhint %}
-
-<details>
-
-<summary><em>System Accounts List</em></summary>
-
-| # | Account                            | Purpose                                                                                                                                                                                        |
-| - | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | Light System Program\[^1]          | Verifies validity proofs and executes CPI calls to create or interact with compressed accounts                                                                                                 |
-| 2 | CPI Signer\[^2]                    | <p>- Signs CPI calls from your program to Light System Program<br>- PDA verified by Light System Program during CPI<br>- Derived from your program ID</p>                                      |
-| 3 | Registered Program PDA             | <p>- Proves your program can interact with Account Compression Program<br>- Prevents unauthorized programs from modifying compressed account state</p>                                         |
-| 4 | Noop Program\[^3]                  | <p>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</p>                                                           |
-| 5 | Account Compression Authority\[^4] | Signs CPI calls from Light System Program to Account Compression Program                                                                                                                       |
-| 6 | Account Compression Program\[^5]   | <p>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</p>                                                                          |
-| 7 | Invoking Program                   | <p>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</p> |
-| 8 | System Program\[^6]                | Solana System Program to create accounts or transfer lamports                                                                                                                                  |
-
-</details>
-
-**Initialize `PackedAccounts`**
-
-```typescript
-class PackedAccounts {
-  private systemAccounts: AccountMeta[] = [];
-  private nextIndex: number = 0;
-  private map: Map<string, [number, AccountMeta]> = new Map();
-}
-```
-
-Initialize `PackedAccounts` with three empty fields:
-
-1. `systemAccounts` stores the 8 Light System accounts at indices 0-7 with read-only flags.
-   * These accounts log/verify state changes but don't modify their own state.
-2. `nextIndex` tracks the next available index for tree/queue accounts, starts at 0.
-   * Tree and queue accounts start after systemAccounts at index 8 with writable flag.
-   * The value starts at 0, because it's relative to the `map` below, not the final array.
-3. `map` deduplicates pubkeys to make sure each unique pubkey appears only once in `remainingAccounts`.
-   * For example, if the input state tree is the same as the output state tree, both reference the same pubkey and return the same index (`insertOrGet()`).
-
 You will populate these fields in the following steps.
 
-**Add Light System Accounts**
-
-```typescript
-  addSystemAccounts(programId: PublicKey): void {
-    const cpiSigner = PublicKey.findProgramAddressSync(
-      [Buffer.from('cpi_authority')],
-      programId
-    )[0];
-```
-
-* Pass `programId` to derive the CPI signer PDA with `findProgramAddressSync()`.
-* The Light System Program verifies this PDA during CPI calls.
-
-Now, populate the `systemAccounts`:
-
-```typescript
-    const defaults = defaultStaticAccountsStruct();
-    const lightSystemProgram = new PublicKey('SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7');
-    const systemProgram = new PublicKey('11111111111111111111111111111111');
-    this.systemAccounts = [
-      { pubkey: lightSystemProgram, isSigner: false, isWritable: false },
-      { pubkey: cpiSigner, isSigner: false, isWritable: false },
-      { pubkey: defaults.registeredProgramPda, isSigner: false, isWritable: false },
-      { pubkey: defaults.noopProgram, isSigner: false, isWritable: false },
-      { pubkey: defaults.accountCompressionAuthority, isSigner: false, isWritable: false },
-      { pubkey: defaults.accountCompressionProgram, isSigner: false, isWritable: false },
-      { pubkey: programId, isSigner: false, isWritable: false },
-      { pubkey: systemProgram, isSigner: false, isWritable: false },
-    ];
-  }
-```
-
-1. **Fetch 4 accounts from SDK** with `defaultStaticAccountsStruct()`:
-   * `registeredProgramPda` proves your program can interact with Account Compression Program.
-   * `noopProgram` logs compressed account state to Solana ledger.
-   * `accountCompressionAuthority` signs CPI calls from Light System Program to Account Compression Program.
-   * `accountCompressionProgram` writes to state and address tree accounts. The client and program do not interact with this program, only the Light System. This is all done under the hood.
-2. **Use hardcoded program addresses** for Light System Program and Solana System Program.
-3. **Build the 8-account array in this sequence** with all accounts marked as `isWritable: false`:
-   * The order matters, since the Light System Program expects accounts at these exact indices
-   * These accounts log/verify state changes but don't modify their own state.
-
-**Add Tree and Queue Accounts**
-
-```typescript
-  insertOrGet(pubkey: PublicKey, isWritable: boolean = true): number {
-    const key = pubkey.toBase58();
-    const entry = this.map.get(key);
-    if (entry) return entry[0];
-
-    const index = this.nextIndex++;
-    this.map.set(key, [index, { pubkey, isSigner: false, isWritable }]);
-    return index;
-  }
-```
-
-Call `insertOrGet(pubkey)` to add a tree or queue account to the accounts array and return its index for packed structs:
-
-1. Returns existing index if the pubkey was already added:
-   * Prevents duplicate accounts in `remainingAccounts`.
-   * For example, if input and output state trees are the same, both use index 8.
-2. If pubkey is not added yet, the method assigns the next sequential index for new accounts starting at index 8:
-   * Use the returned index to set index fields in `PackedAddressTreeInfo` or `PackedStateTreeInfo`.
-   * For example, `addressMerkleTreePubkeyIndex: 8` points to the address tree at position 8 in `remainingAccounts`.
-   * Marks tree and queue accounts as writable by default.
-   * The Light System Program writes new hashes and addresses to these accounts.
-
-**Build Final Account Array**
-
-```typescript
-  toAccountMetas(): AccountMeta[] {
-    const entries = Array.from(this.map.entries());
-    entries.sort((a, b) => a[1][0] - b[1][0]);
-    const packedAccounts = entries.map(([, [, meta]]) => meta);
-    return [...this.systemAccounts, ...packedAccounts];
-  }
-}
-```
-
-Call `toAccountMetas()` to build the complete `AccountMeta[]` array for `.remainingAccounts()`.
-
-**The method returns accounts in two sections:**
-
-```
- [systemAccounts] [packedAccounts]
-       ↑               ↑
-  Light System     Merkle tree &
-    accounts      queue accounts
-
-```
-
-1. **System accounts first** (indices 0-7):
-   * All 8 Light System accounts with read-only flags.
-   * Light System Program expects these accounts at these exact positions.
-2. **Tree and queue accounts after** (indices 8+):
-   * All tree and queue accounts with writable flags in sequential order.
-   * Packed struct indices reference accounts by their position in this array.
-   * Light System Program writes new hashes and addresses to these accounts.
-
 <details>
 
-<summary>Complete Implementation to copy-paste</summary>
+<summary>Copy-paste this helper</summary>
 
 ```typescript
 import { PublicKey, AccountMeta } from '@solana/web3.js';
@@ -534,6 +433,23 @@ In the next steps, you will add tree and queue accounts from the validity proof,
 Program-specific accounts (signers, fee payer) are passed to `.accounts()`, not added to `remainingAccounts`.
 {% endhint %}
 
+<details>
+
+<summary><em>System Accounts List</em></summary>
+
+| # | Account                            | Purpose                                                                                                                                                                                        |
+| - | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | Light System Program\[^1]          | Verifies validity proofs and executes CPI calls to create or interact with compressed accounts                                                                                                 |
+| 2 | CPI Signer\[^2]                    | <p>- Signs CPI calls from your program to Light System Program<br>- PDA verified by Light System Program during CPI<br>- Derived from your program ID</p>                                      |
+| 3 | Registered Program PDA             | <p>- Proves your program can interact with Account Compression Program<br>- Prevents unauthorized programs from modifying compressed account state</p>                                         |
+| 4 | Noop Program\[^3]                  | <p>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</p>                                                           |
+| 5 | Account Compression Authority\[^4] | Signs CPI calls from Light System Program to Account Compression Program                                                                                                                       |
+| 6 | Account Compression Program\[^5]   | <p>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</p>                                                                          |
+| 7 | Invoking Program                   | <p>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</p> |
+| 8 | System Program\[^6]                | Solana System Program to create accounts or transfer lamports                                                                                                                                  |
+
+</details>
+
 #### 3. Pack Tree Accounts from Validity Proof
 
 Add tree and queue pubkeys from the validity proof to the helper. The helper returns u8 indices for your instruction data.
@@ -583,7 +499,7 @@ const packedStateTreeInfo = {
    * The state tree stores the existing account hash that Light System Program verifies
 2. `queuePubkeyIndex` - points to the nullifier queue account in `remainingAccounts`
    * The queue tracks nullified (spent) account hashes to prevent double-spending
-3. `leafIndex` - the leaf position in the Merkle tree from `proof.leafIndices[0]` (Validity Proof step)
+3. `leafIndex` - the leaf position in the Merkle tree from `proof.leafIndices[0]`
    * Specifies which leaf contains your account hash to verify it exists in the tree
 4. `rootIndex` - the Merkle root index from `proof.rootIndices[0]`
    * Specifies which historical root to verify the account hash against
@@ -611,18 +527,28 @@ The output tree is separate from the trees in your validity proof. The validity 
 
 #### 5. Finalize Accounts
 
-Call `toAccountMetas()` to get the final `AccountMeta[]` array.
-
 ```typescript
 const accountMetas = packedAccounts.toAccountMetas();
 ```
 
-**The helper returns:**
+Call `toAccountMetas()` to build the complete `AccountMeta[]` array for `.remainingAccounts()`. Packed struct indices reference accounts by their position in this array.
 
-* System accounts (indices 0-7) as `read-only`
-  * System accounts like the noop program log state changes but don't modify their own state
-* Tree and queue accounts (indices 8+) as `writable`
-  * The Light System Program writes to tree and queue accounts to insert new hashes or addresses
+**The method returns accounts in two sections:**
+
+```
+ [systemAccounts] [packedAccounts]
+       ↑               ↑
+  Light System     Merkle tree &
+    accounts      queue accounts
+
+```
+
+1. **System accounts as `read-only`** (indices 0-7):
+   * System accounts like the noop program log state changes but don't modify their own state.
+   * Light System Program expects these accounts at these exact positions.
+2. **Tree and queue accounts as `writable`** (indices 8+):
+   * All tree and queue accounts with writable flags in sequential order.
+   * Light System Program writes new hashes and addresses to these accounts.
 
 #### 6. Summary
 
@@ -645,7 +571,7 @@ The accounts receive a sequential u8 index. Instruction data references accounts
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
 {% hint style="info" %}
-Compressed account data must be passed in instruction data, since only a hash is stored on-chain. This is unlike Solana accounts, where programs can read data directly from accounts.
+Compressed account data must be passed in instruction data, since only the Merkle root hash is stored on-chain. This is unlike Solana accounts, where programs can read data directly from accounts.
 
 The program hashes this data and the Light System Program verifies the hash against the root in a Merkle tree account to ensure its correctness.
 {% endhint %}
