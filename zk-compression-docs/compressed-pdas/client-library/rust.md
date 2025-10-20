@@ -190,7 +190,7 @@ Only needed to create new addresses. Other interactions with compressed accounts
   * Buffers insertions before they are added to the Merkle tree
   * Only the Light System Program interacts with the queue.
 * `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
-* `cpi_context`: Optional CPI context account for batched operations across multiple programs (may be null)
+* `cpi_context`_(currently on devnet)_: Optional CPI context account for batched operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
   * First program caches its signer checks, second program reads them and combines instruction data
   * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
