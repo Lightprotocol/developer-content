@@ -320,7 +320,7 @@ For help with debugging, see the [Error Cheatsheet](../../resources/error-cheats
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L27).
+Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L27).
 {% endhint %}
 
 {% code overflow="wrap" %}
@@ -426,27 +426,28 @@ use light_macros::pubkey;
 use light_sdk::{
     account::LightAccount,
     address::v1::derive_address,
-    cpi::v1::{
-        CpiAccounts, LightSystemProgramCpi,
+    cpi::{
+        v1::{CpiAccounts, LightSystemProgramCpi},
         CpiSigner, InvokeLightSystemProgram, LightCpiInstruction,
     },
     derive_light_cpi_signer,
     error::LightSdkError,
-    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
-    LightDiscriminator,
+    instruction::{PackedAddressTreeInfo, ValidityProof},
+    LightDiscriminator, LightHasher,
 };
 use solana_program::{
     account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
 };
-pub const ID: Pubkey = pubkey!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+
+pub const ID: Pubkey = pubkey!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 entrypoint!(process_instruction);
 
 #[repr(u8)]
 pub enum InstructionType {
-    CreateCounter = 0,
+    Create = 0,
 }
 
 impl TryFrom<u8> for InstructionType {
@@ -454,32 +455,27 @@ impl TryFrom<u8> for InstructionType {
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            0 => Ok(InstructionType::CreateCounter),
+            0 => Ok(InstructionType::Create),
+            _ => panic!("Invalid instruction discriminator."),
         }
     }
 }
 
 #[derive(
-    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
+    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher,
 )]
-pub struct CounterAccount {
+pub struct MyCompressedAccount {
     #[hash]
     pub owner: Pubkey,
-    pub value: u64,
+    pub message: String,
 }
 
 #[derive(BorshSerialize, BorshDeserialize)]
-pub struct CreateCounterInstructionData {
+pub struct CreateInstructionData {
     pub proof: ValidityProof,
     pub address_tree_info: PackedAddressTreeInfo,
     pub output_state_tree_index: u8,
-}
-
-#[derive(Debug, Clone)]
-pub enum CounterError {
-    Unauthorized,
-    Overflow,
-    Underflow,
+    pub message: String,
 }
 
 pub fn process_instruction(
@@ -487,7 +483,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> Result<(), ProgramError> {
-    if program_id != &crate::ID {
+    if program_id != &ID {
         return Err(ProgramError::IncorrectProgramId);
     }
     if instruction_data.is_empty() {
@@ -498,46 +494,46 @@ pub fn process_instruction(
         .map_err(|_| ProgramError::InvalidInstructionData)?;
 
     match discriminator {
-        InstructionType::CreateCounter => {
-            let instuction_data =
-                CreateCounterInstructionData::try_from_slice(&instruction_data[1..])
+        InstructionType::Create => {
+            let instruction_data =
+                CreateInstructionData::try_from_slice(&instruction_data[1..])
                     .map_err(|_| ProgramError::InvalidInstructionData)?;
-            create_counter(accounts, instuction_data)
+            create(accounts, instruction_data)
         }
     }
 }
 
-pub fn create_counter(
+pub fn create(
     accounts: &[AccountInfo],
-    instuction_data: CreateCounterInstructionData,
+    instruction_data: CreateInstructionData,
 ) -> Result<(), ProgramError> {
     let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
     let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
 
     let (address, address_seed) = derive_address(
-        &[b"counter", signer.key.as_ref()],
-        &instuction_data
+        &[b"message", signer.key.as_ref()],
+        &instruction_data
             .address_tree_info
             .get_tree_pubkey(&light_cpi_accounts)
             .map_err(|_| ProgramError::NotEnoughAccountKeys)?,
         &ID,
     );
 
-    let new_address_params = instuction_data
+    let new_address_params = instruction_data
         .address_tree_info
         .into_new_address_params_packed(address_seed);
 
-    let mut counter = LightAccount::<'_, CounterAccount>::new_init(
+    let mut my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_init(
         &ID,
         Some(address),
-        instuction_data.output_state_tree_index,
+        instruction_data.output_state_tree_index,
     );
-    counter.owner = *signer.key;
-    counter.value = 0;
+    my_compressed_account.owner = *signer.key;
+    my_compressed_account.message = instruction_data.message;
 
-    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instuction_data.proof)
-        .with_light_account(counter)?
+    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+        .with_light_account(my_compressed_account)?
         .with_new_addresses(&[new_address_params])
         .invoke(light_cpi_accounts)?;
 

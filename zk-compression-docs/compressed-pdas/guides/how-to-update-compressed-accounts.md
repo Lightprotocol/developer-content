@@ -244,11 +244,10 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-`declare_id!` and `#[program]` follow [standard anchor](https://www.anchor-lang.com/docs/basics/program-structure) patterns.
+Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L71).
 {% endhint %}
 
-Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L71).
-
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
@@ -331,10 +330,9 @@ pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
-```
 
-```rust
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Native Rust" %}
@@ -342,6 +340,7 @@ pub struct MyCompressedAccount {
 Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/native/src/lib.rs#L197).
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 
@@ -354,50 +353,51 @@ use light_sdk::{
         CpiSigner, InvokeLightSystemProgram, LightCpiInstruction,
     },
     derive_light_cpi_signer,
+    error::LightSdkError,
     instruction::{account_meta::CompressedAccountMeta, ValidityProof},
-    LightDiscriminator,
+    LightDiscriminator, LightHasher,
 };
 use solana_program::{
     account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
 };
 
-pub const ID: Pubkey = pubkey!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+pub const ID: Pubkey = pubkey!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 entrypoint!(process_instruction);
 
+#[repr(u8)]
+pub enum InstructionType {
+    Update = 0,
+}
+
+impl TryFrom<u8> for InstructionType {
+    type Error = LightSdkError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(InstructionType::Update),
+            _ => panic!("Invalid instruction discriminator."),
+        }
+    }
+}
+
 #[derive(
-    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
+    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher,
 )]
-pub struct CounterAccount {
+pub struct MyCompressedAccount {
     #[hash]
     pub owner: Pubkey,
-    pub value: u64,
+    pub message: String,
 }
 
 #[derive(BorshSerialize, BorshDeserialize)]
-pub struct IncrementCounterInstructionData {
+pub struct UpdateInstructionData {
     pub proof: ValidityProof,
-    pub counter_value: u64,
     pub account_meta: CompressedAccountMeta,
-}
-
-#[derive(Debug, Clone)]
-pub enum CounterError {
-    Unauthorized,
-    Overflow,
-    Underflow,
-}
-
-impl From<CounterError> for ProgramError {
-    fn from(e: CounterError) -> Self {
-        match e {
-            CounterError::Unauthorized => ProgramError::Custom(1),
-            CounterError::Overflow => ProgramError::Custom(2),
-            CounterError::Underflow => ProgramError::Custom(3),
-        }
-    }
+    pub current_message: String,
+    pub new_message: String,
 }
 
 pub fn process_instruction(
@@ -405,44 +405,59 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> Result<(), ProgramError> {
-    if program_id != &crate::ID {
+    if program_id != &ID {
         return Err(ProgramError::IncorrectProgramId);
     }
+    if instruction_data.is_empty() {
+        return Err(ProgramError::InvalidInstructionData);
+    }
 
-    let instruction_data = IncrementCounterInstructionData::try_from_slice(instruction_data)
+    let discriminator = InstructionType::try_from(instruction_data[0])
         .map_err(|_| ProgramError::InvalidInstructionData)?;
 
-    increment_counter(accounts, instruction_data)
+    match discriminator {
+        InstructionType::Update => {
+            let instruction_data =
+                UpdateInstructionData::try_from_slice(&instruction_data[1..])
+                    .map_err(|_| ProgramError::InvalidInstructionData)?;
+            update(accounts, instruction_data)
+        }
+    }
 }
 
-pub fn increment_counter(
+pub fn update(
     accounts: &[AccountInfo],
-    instuction_data: IncrementCounterInstructionData,
+    instruction_data: UpdateInstructionData,
 ) -> Result<(), ProgramError> {
     let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
-    let mut counter = LightAccount::<'_, CounterAccount>::new_mut(
+    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+
+    let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_mut(
         &ID,
-        &instuction_data.account_meta,
-        CounterAccount {
+        &instruction_data.account_meta,
+        MyCompressedAccount {
             owner: *signer.key,
-            value: instuction_data.counter_value,
+            message: instruction_data.current_message,
+        },
+        MyCompressedAccount {
+            owner: *signer.key,
+            message: instruction_data.new_message,
         },
     )?;
 
-    counter.value = counter.value.checked_add(1).ok_or(CounterError::Overflow)?;
-
-    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
-
-    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instuction_data.proof)
-        .with_light_account(counter)?
+    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+        .with_light_account(my_compressed_account)?
         .invoke(light_cpi_accounts)?;
 
     Ok(())
 }
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
+
+
 
 ## Next steps
 
