@@ -24,7 +24,7 @@ Find [full code examples of a counter program at the end](how-to-reinitialize-co
 This guide will cover the components of a Solana program that reinitializes compressed accounts.\
 Here is the complete flow to reinitialize compressed accounts:&#x20;
 
-<figure><picture><source srcset="../../.gitbook/assets/Untitled (5).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/image (28).png" alt=""></picture><figcaption><p>Reinitialize Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/program-reinit (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-reinit.png" alt=""></picture><figcaption></figcaption></figure>
 
 {% stepper %}
 {% step %}

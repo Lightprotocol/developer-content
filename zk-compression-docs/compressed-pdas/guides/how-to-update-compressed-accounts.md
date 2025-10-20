@@ -26,7 +26,7 @@ Find [full code examples at the end](how-to-update-compressed-accounts.md#full-c
 This guide will cover the components of a Solana program that updates compressed accounts.\
 Here is the complete flow:&#x20;
 
-<figure><picture><source srcset="../../.gitbook/assets/Untitled (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/image (29).png" alt=""></picture><figcaption><p>Update Compressed Account Complete Flow. Program-side highlighted.</p></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/program-update (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-update.png" alt=""></picture><figcaption></figcaption></figure>
 
 {% stepper %}
 {% step %}

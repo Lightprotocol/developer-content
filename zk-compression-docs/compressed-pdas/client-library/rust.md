@@ -24,23 +24,23 @@ Find full code examples [at the end for Anchor and native Rust](rust.md#full-cod
 
 {% tabs %}
 {% tab title="Create" %}
-<figure><picture><source srcset="../../.gitbook/assets/create.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/create-dark.png" alt=""></picture><figcaption></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/client-create (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-create.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Update" %}
-<figure><picture><source srcset="../../.gitbook/assets/update-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/update.png" alt=""></picture><figcaption></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/client-update (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-update.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Close" %}
-<figure><picture><source srcset="../../.gitbook/assets/close-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/close.png" alt=""></picture><figcaption></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/client-close (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-close.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Reinitialize" %}
-<figure><picture><source srcset="../../.gitbook/assets/reinit-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/reinit.png" alt=""></picture><figcaption></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/client-reinit (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-reinit.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 
 {% tab title="Burn" %}
-<figure><picture><source srcset="../../.gitbook/assets/burn-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/burn.png" alt=""></picture><figcaption></figcaption></figure>
+<figure><picture><source srcset="../../.gitbook/assets/client-burn (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-burn.png" alt=""></picture><figcaption></figcaption></figure>
 {% endtab %}
 {% endtabs %}
 
@@ -161,7 +161,8 @@ Before creating a compressed account, your client must fetch metadata of two Mer
 * a state tree to store the compressed account hash.
 
 {% hint style="success" %}
-The protocol maintains Merkle trees. You don't need to initialize custom trees. Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
+The protocol maintains Merkle trees. You don't need to initialize custom trees. \
+Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
 ```rust
@@ -192,7 +193,6 @@ Only needed to create new addresses. Other interactions with compressed accounts
 * `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
 * `cpi_context`_(currently on devnet)_: Optional CPI context account for batched operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
-  * First program caches its signer checks, second program reads them and combines instruction data
   * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
 * `next_tree_info`: The tree to use for the next operation when the current tree is full (may be null)
   * When set, use this tree as output tree.
@@ -225,7 +225,7 @@ let (address, _) = derive_address(
 Use the same `address_tree_info.tree` for both `derive_address()` and all subsequent operations on that account in your client and program.
 
 * To create a compressed account, pass the address to `get_validity_proof()` to prove the address does not exist yet, or
-* To update/close, use the address to fetch the current account with `get_compressed_account(address)`.
+* to update/close, use the address to fetch the current account with `get_compressed_account(address)`.
 {% endhint %}
 {% endstep %}
 
@@ -521,7 +521,7 @@ let output_state_tree_index = output_state_tree_info
 ```
 
 * Use `output_state_tree_info` variable from Step 3 with the `TreeInfo` metadata for the randomly selected state tree
-* Call `pack_output_tree_index(&mut remaining_accounts)` to convert the tree pubkey to a u8 index
+* Call `pack_output_tree_index(&mut remaining_accounts)` to convert the tree pubkey to a u8 index.
 
 #### 5. Summary
 
