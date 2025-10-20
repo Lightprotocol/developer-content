@@ -1,6 +1,6 @@
 ---
 description: >-
-  Build a Rust client with to create or interact with compressed accounts.
+  Build a Rust client to create or interact with compressed accounts and tokens.
   Includes a step-by-step implementation guide and full code examples.
 ---
 
@@ -9,7 +9,6 @@ description: >-
 The Rust Client SDK provides two test environments:
 
 * **For local testing, use** [**`light-program-test`**](https://docs.rs/light-program-test)**.**
-  * `light-program-test` is a local test environment.
   * Initializes a [LiteSVM](https://github.com/LiteSVM/LiteSVM) optimized for ZK Compression with auto-funded payer, local prover server and TestIndexer to generate proofs instantly. Requires Light CLI for program binaries.
   * Use for unit and integration tests of your program or client code.
 * **For devnet and mainnet use** [**`light-client`**](https://docs.rs/light-client)
