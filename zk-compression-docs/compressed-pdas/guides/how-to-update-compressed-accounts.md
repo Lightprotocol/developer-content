@@ -274,7 +274,7 @@ pub mod anchor_program_update {
     };
 
     /// Updates an existing compressed account's message
-    pub fn update_account<'info>(
+    pub fn update<'info>(
         ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
         proof: ValidityProof,
         account_meta: CompressedAccountMeta,
@@ -287,24 +287,24 @@ pub mod anchor_program_update {
             crate::LIGHT_CPI_SIGNER,
         );
 
-        let mut message_account = LightAccount::<'_, MessageAccount>::new_mut(
+        let mut my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_mut(
             &crate::ID,
             &account_meta,
-            MessageAccount {
+            MyCompressedAccount {
                 owner: ctx.accounts.signer.key(),
                 message: current_message,
             },
         )?;
 
-        message_account.message = new_message.clone();
+        my_compressed_account.message = new_message.clone();
 
         msg!(
             "Updated compressed account message to: {}",
-            message_account.message
+            my_compressed_account.message
         );
 
         LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(message_account)?
+            .with_light_account(my_compressed_account)?
             .invoke(light_cpi_accounts)?;
 
         Ok(())
@@ -317,13 +317,21 @@ pub struct GenericAnchorAccounts<'info> {
     pub signer: Signer<'info>,
 }
 
-#[event]
-#[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct MessageAccount {
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    AnchorSerialize,
+    AnchorDeserialize,
+    LightDiscriminator
+)]
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
+```
 
+```rust
 ```
 {% endtab %}
 

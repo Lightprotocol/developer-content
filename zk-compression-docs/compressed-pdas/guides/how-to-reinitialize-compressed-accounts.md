@@ -232,6 +232,7 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 Find the source code for this example here.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
@@ -259,7 +260,7 @@ pub mod anchor_program_reinit {
     };
 
     /// Reinitializes a closed compressed account
-    pub fn reinit_account<'info>(
+    pub fn reinit<'info>(
         ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
         proof: ValidityProof,
         account_meta: CompressedAccountMeta,
@@ -270,7 +271,7 @@ pub mod anchor_program_reinit {
             crate::LIGHT_CPI_SIGNER,
         );
 
-        let message_account = LightAccount::<'_, MessageAccount>::new_empty(
+        let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_empty(
             &crate::ID,
             &account_meta,
         )?;
@@ -278,7 +279,7 @@ pub mod anchor_program_reinit {
         msg!("Reinitializing closed compressed account");
 
         LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(message_account)?
+            .with_light_account(my_compressed_account)?
             .invoke(light_cpi_accounts)?;
 
         Ok(())
@@ -291,13 +292,21 @@ pub struct GenericAnchorAccounts<'info> {
     pub signer: Signer<'info>,
 }
 
-#[event]
-#[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct MessageAccount {
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    AnchorSerialize,
+    AnchorDeserialize,
+    LightDiscriminator
+)]
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
+
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Native" %}

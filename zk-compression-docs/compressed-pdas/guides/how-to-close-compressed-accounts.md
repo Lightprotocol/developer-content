@@ -235,6 +235,7 @@ light init testprogram
 Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L167).
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
@@ -262,7 +263,7 @@ pub mod anchor_program_close {
     };
 
     /// Closes an existing compressed account
-    pub fn close_account<'info>(
+    pub fn close<'info>(
         ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
         proof: ValidityProof,
         account_meta: CompressedAccountMeta,
@@ -274,10 +275,10 @@ pub mod anchor_program_close {
             crate::LIGHT_CPI_SIGNER,
         );
 
-        let message_account = LightAccount::<'_, MessageAccount>::new_close(
+        let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_close(
             &crate::ID,
             &account_meta,
-            MessageAccount {
+            MyCompressedAccount {
                 owner: ctx.accounts.signer.key(),
                 message: current_message,
             },
@@ -286,7 +287,7 @@ pub mod anchor_program_close {
         msg!("Closing compressed account");
 
         LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(message_account)?
+            .with_light_account(my_compressed_account)?
             .invoke(light_cpi_accounts)?;
 
         Ok(())
@@ -299,13 +300,21 @@ pub struct GenericAnchorAccounts<'info> {
     pub signer: Signer<'info>,
 }
 
-#[event]
-#[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct MessageAccount {
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    AnchorSerialize,
+    AnchorDeserialize,
+    LightDiscriminator
+)]
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
+
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Native Rust" %}
