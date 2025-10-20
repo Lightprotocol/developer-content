@@ -178,7 +178,7 @@ let (address, address_seed) = derive_address(
 
 **Unpack the tree pubkey:**
 
-* Call `get_tree_pubkey()` to retrieve the address tree pubkey from `address_tree_info`. The packed struct contains the index of the address tree for the pubkey in the `remaining_accounts` array.
+* Call `get_tree_pubkey()` to retrieve the address tree pubkey from `address_tree_info`. The packed struct contains the index of the address tree in the `remaining_accounts` array.
 
 **Pass these parameters to `derive_address()`:**
 
@@ -189,11 +189,7 @@ let (address, address_seed) = derive_address(
 **The SDK returns:**
 
 * `address`: The derived address for the compressed account
-* `address_seed`: Pass this to the Light System Program CPI in _Step 8_ to create the address in the address tree
-
-{% hint style="info" %}
-The address is created via CPI to the Light System Program in _Step 8_.
-{% endhint %}
+* `address_seed`: Pass this to the Light System Program CPI in _Step 8_ to create the address.
 {% endstep %}
 
 {% step %}
@@ -263,7 +259,7 @@ let mut my_compressed_account
 
 Invoke the Light System Program to create the compressed account and its address.
 
-{% hint style="info" %}
+{% hint style="success" %}
 The Light System Program
 
 * verifies the validity proof against the address tree's Merkle root,
@@ -293,6 +289,14 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `fee_payer`: Fee payer and transaction signer
 * `remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
+
+<details>
+
+<summary><em>System Accounts List</em></summary>
+
+<table><thead><tr><th width="40">#</th><th width="256.43182373046875">Account</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-2">Light System Program</a></td><td>Verifies validity proofs and executes CPI calls to create or interact with compressed accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Proves your program can interact with Account Compression Program<br>- Prevents unauthorized programs from modifying compressed account state</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-3">Noop Program</a></td><td>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-4">Account Compression Authority</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-5">Account Compression Program</a></td><td>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-6">System Program</a></td><td>Solana System Program to create accounts or transfer lamports</td></tr></tbody></table>
+
+</details>
 
 **Build the CPI instruction**:
 
@@ -567,3 +571,17 @@ Build a client for your program or learn how to update compressed accounts.
 {% endcolumns %}
 
 [^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
+
+[^2]: [Program ID:](https://solscan.io/account/SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7) SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+
+[^3]: [Program ID:](https://solscan.io/account/noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV) noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV
+
+[^4]: PDA derived from Light System Program ID with seed `b"cpi_authority"`.&#x20;
+
+
+
+    [Pubkey](https://solscan.io/account/HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru): HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru
+
+[^5]: [Program ID](https://solscan.io/account/compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq): compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq
+
+[^6]: [Program ID](https://solscan.io/account/11111111111111111111111111111111): 11111111111111111111111111111111
