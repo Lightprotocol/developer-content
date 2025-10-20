@@ -185,7 +185,7 @@ Fetch metadata of trees with:
 * `queue`: Queue account pubkey
   * Buffers insertions before they are added to the Merkle tree
   * Client and program do not interact directly with the queue
-* `treeType`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
+* `treeType`: Identifies tree version and account&#x20;
 * `cpiContext`: Optional CPI context account for batched operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
   * First program caches its signer checks, second program reads them and combines instruction data
