@@ -69,7 +69,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.
 
-* CPI to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
+* CPIs to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
 * `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 
 #### Compressed Account
@@ -95,10 +95,10 @@ You derive
 
 * the standard traits (`Clone`, `Debug`, `Default`),
 * `borsh` or `AnchorSerialize` to serialize account data, and
-* `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, not the first 8 bytes of the data field\[^1].
+* `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.&#x20;
 {% endhint %}
 
 </details>
@@ -430,3 +430,5 @@ Build a client for your program or learn how to reinitialize compressed accounts
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
+
+[^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.

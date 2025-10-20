@@ -244,7 +244,7 @@ let mut my_compressed_account
 
 * `&owner`: The program's ID that owns the compressed account.
 * `Some(address)`: The derived address from _Step 5_. Pass `None` for accounts without addresses.
-* `output_state_tree_index`: The state tree index from instruction data (_Step 4_) to identify the state tree that will store the compressed account hash.
+* `output_state_tree_index`: References the state tree account that will store the updated account hash, defined in instruction data (_Step 4_)
 
 **The SDK creates:**
 
