@@ -232,11 +232,11 @@ Use the same `address_tree_info.tree` for both `derive_address()` and all subseq
 {% step %}
 ### Validity Proof
 
-Fetch a zero-knowledge proof (Validity proof) from your RPC provider that supports ZK Compression (Helius, Triton, ...). What is proved depends on the operation:
+Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
 * To create a compressed account, you must prove the **address doesn't already exist** in the address tree.
 * To update or close a compressed account, you must **prove its account hash exists** in a state tree.
-* You can combine multiple operations in one proof to optimize compute cost and instruction data.
+* You can **combine multiple operations in one proof** to optimize compute cost and instruction data.
 
 {% hint style="info" %}
 [Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `get_validity_proof()` method.
