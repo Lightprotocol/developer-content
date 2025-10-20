@@ -6,18 +6,19 @@ description: >-
 
 # Rust
 
-The Rust Client SDK provides two abstractions to create or interact with compressed accounts and tokens:
+The Rust Client SDK provides two test environments:
 
-* **For local testing, use `light-program-test`.**
-  * [`light-program-test`](https://docs.rs/light-program-test) is a local test environment.
-  * It creates an in-process Solana VM via [LiteSVM](https://github.com/LiteSVM/LiteSVM) with auto-funded payer, local prover server and in-memory indexer. Requires Light CLI for program binaries.
-* **For devnet and mainnet use `light-client`**
-  * [`light-client`](https://docs.rs/light-client) is an RPC client for compressed accounts and tokens. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
-  * It connects to the Photon indexer that tracks compressed state to query compressed accounts and the prover service for validity proofs.
+* **For local testing, use** [**`light-program-test`**](https://docs.rs/light-program-test)**.**
+  * `light-program-test` is a local test environment.
+  * Initializes a [LiteSVM](https://github.com/LiteSVM/LiteSVM) optimized for ZK Compression with auto-funded payer, local prover server and TestIndexer to generate proofs instantly. Requires Light CLI for program binaries.
+  * Use for unit and integration tests of your program or client code.
+* **For devnet and mainnet use** [**`light-client`**](https://docs.rs/light-client)
+  * `light-client` is an RPC client for compressed accounts and tokens. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
+  * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
 * `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits. Seamlessly switch between `light-program-test`, local test validator, and public Solana networks.
 
 {% hint style="success" %}
-Find full code examples for a counter program [at the end for Anchor and native Rust](rust.md#full-code-example).
+Find full code examples [at the end for Anchor and native Rust](rust.md#full-code-example).
 {% endhint %}
 
 ## Implementation Guide
