@@ -634,11 +634,25 @@ rpc.create_and_send_transaction(&[instruction],
 {% endstep %}
 {% endstepper %}
 
-## Full Code Example
+## Full Code Examples
 
 Full Rust test examples using `light-program-test`.
 
+1. Install the Light CLI first to download the program binaries:
 
+```bash
+npm i -g @lightprotocol/zk-compression-cli
+```
+
+2. Then build and run tests:
+
+```bash
+cargo test-sbf
+```
+
+{% hint style="warning" %}
+For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
+{% endhint %}
 
 
 
