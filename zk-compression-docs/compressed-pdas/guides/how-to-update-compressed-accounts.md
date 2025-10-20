@@ -115,7 +115,8 @@ Define the instruction data with the following parameters:
 pub struct InstructionData {
     proof: ValidityProof,
     account_meta: CompressedAccountMeta,
-    new_value: u64,
+    current_message: String,
+    new_message: String,
 }
 ```
 
@@ -138,7 +139,8 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 3. **Current account data**
 
 * Define fields to include the current account data passed by the client.
-* &#x20;This depends on your program logic. This example includes the `current_value` field.
+* This depends on your program logic. This example includes `current_message` and `new_message` fields.&#x20;
+  * `new_message` contains the the new data that will replace the `data` field of the compressed account after the update. &#x20;
 {% endstep %}
 
 {% step %}
@@ -178,7 +180,7 @@ my_compressed_account.message = new_message;
 **The SDK creates:**
 
 * A `LightAccount` wrapper similar to Anchor's `Account`.
-* `new_mut()` lets the program modify the output state. This example sets `message` to a new value
+* `new_mut()` lets the program modify the output state. This example sets `message` to `new_message`.
 
 {% hint style="info" %}
 `new_mut()` only hashes the input state. The Light System Program verifies that input hash exists in a state tree and creates the output hash in _Step 4._&#x20;

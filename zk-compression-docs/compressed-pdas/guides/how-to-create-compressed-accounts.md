@@ -155,7 +155,7 @@ Clients pack accounts into the `remaining_accounts` array to reduce transaction 
 3. **Initial account data**
 
 * Define fields for your program logic. Clients pass the initial values.
-* This example includes the `message` field.
+* This example includes the `message` field to define the initial state of the account.
 {% endstep %}
 
 {% step %}
@@ -201,22 +201,18 @@ Ensure global uniqueness of an address by verifying that the address tree pubkey
 Every address is unique, but the same seeds can be used to create different addresses in different address trees. To enforce that a compressed PDA can only be created once with the same seed, you must check the address tree pubkey.
 {% endhint %}
 
-<pre class="language-rust"><code class="lang-rust">fn check_address_tree(
-    light_cpi_accounts: &#x26;CpiAccounts,
-    address_tree_info: &#x26;PackedAddressTreeInfo,
-) -> Result&#x3C;(), ProgramError> {
+```rust
+pub const ALLOWED_ADDRESS_TREE: Pubkey 
+    = pubkey!("amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2");
+let address_tree = light_cpi_accounts.tree_pubkeys().unwrap()
+    [address_tree_info.address_merkle_tree_pubkey_index as usize];
 
-<strong>pub const ALLOWED_ADDRESS_TREE: Pubkey 
-</strong><strong>    = pubkey!("amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2");
-</strong><strong>let address_tree = light_cpi_accounts.tree_pubkeys().unwrap()
-</strong><strong>    [address_tree_info.address_merkle_tree_pubkey_index as usize];
-</strong>
 if address_tree != ALLOWED_ADDRESS_TREE {
     return Err(ProgramError::InvalidAccountData.into());
 }
     Ok(())
 }
-</code></pre>
+```
 {% endstep %}
 
 {% step %}
@@ -228,17 +224,18 @@ Initialize the compressed account struct with `LightAccount::new_init()`.
 `new_init()` creates a `LightAccount` instance similar to anchor `Account` and lets your program define the initial account data.
 {% endhint %}
 
-<pre class="language-rust"><code class="lang-rust">let owner = crate::ID;
+```rust
+let owner = crate::ID;
 let mut my_compressed_account
-        = LightAccount::&#x3C;'_, MyCompressedAccount>::new_init(
-<strong>    &#x26;owner,
-</strong><strong>    Some(address),
-</strong><strong>    output_state_tree_index,
-</strong>)?;
+        = LightAccount::<'_, MyCompressedAccount>::new_init(
+    &owner,
+    Some(address),
+    output_state_tree_index,
+)?;
 
-<strong>my_compressed_account.owner = ctx.accounts.signer.key();
-</strong><strong>my_compressed_account.data = data.to_string();
-</strong></code></pre>
+my_compressed_account.owner = ctx.accounts.signer.key();
+my_compressed_account.data = data.to_string();
+```
 
 **Pass these parameters to `new_init()`:**
 

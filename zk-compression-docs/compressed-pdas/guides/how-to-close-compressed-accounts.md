@@ -113,7 +113,7 @@ Define the instruction data with the following parameters:
 pub struct InstructionData {
     proof: ValidityProof,
     account_meta: CompressedAccountMeta,
-    current_value: u64,
+    current_message: String,
 }
 ```
 
@@ -136,7 +136,7 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 3. **Current data**
 
 * Define fields to include the current account data passed by the client.
-* This depends on your program logic. This example includes the `current_value` field.
+* This depends on your program logic. This example includes the `current_message` field.
 {% endstep %}
 
 {% step %}
@@ -151,6 +151,7 @@ Load the compressed account and mark it as closed with `LightAccount::new_close(
 2. marks the account for closure for the Light System Program.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_close(
     &ID,
@@ -161,6 +162,7 @@ let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_close(
     },
 )?;
 ```
+{% endcode %}
 
 **Pass these parameters to `new_close()`:**
 

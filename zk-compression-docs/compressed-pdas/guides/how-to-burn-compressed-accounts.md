@@ -112,7 +112,7 @@ Define the instruction data with the following parameters:
 pub struct InstructionData {
     proof: ValidityProof,
     account_meta: CompressedAccountMetaBurn,
-    current_value: u64,
+    current_message: string,
 }
 ```
 
@@ -134,7 +134,7 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 3. **Current account data**
 
 * Define fields to include the current account data passed by the client.
-* This depends on your program logic. This example includes the `current_value` field.
+* This depends on your program logic. This example includes the `current_message` field.
 {% endstep %}
 
 {% step %}

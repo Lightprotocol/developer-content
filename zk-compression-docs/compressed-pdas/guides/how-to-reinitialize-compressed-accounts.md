@@ -118,7 +118,7 @@ pub struct InstructionData {
 
 1. **Validity Proof**
 
-* Define `proof` to include the proof that the account exists in the state tree.
+* Define `proof` to include the proof that the closed account with zero values exists in the state tree.
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify input state and output state tree (stores new account hash)**
