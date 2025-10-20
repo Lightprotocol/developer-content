@@ -324,40 +324,37 @@ Find the source code for this example [here](https://github.com/Lightprotocol/pr
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
 
-use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
+use anchor_lang::{prelude::*, AnchorDeserialize, AnchorSerialize};
 use light_sdk::{
     account::LightAccount,
     address::v1::derive_address,
-    cpi::v1::{CpiAccounts, CpiSigner},
+    cpi::{v1::CpiAccounts, CpiSigner},
     derive_light_cpi_signer,
-    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
+    instruction::{PackedAddressTreeInfo, ValidityProof},
     LightDiscriminator,
 };
 
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 #[program]
-pub mod counter {
+pub mod program_create {
 
     use super::*;
-    use light_sdk::cpi::v1::{
-        LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
+    use light_sdk::cpi::{
+        v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
     };
 
-    pub fn create_counter<'info>(
+    /// Creates a new compressed account with a message
+    pub fn create_account<'info>(
         ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
         proof: ValidityProof,
         address_tree_info: PackedAddressTreeInfo,
         output_state_tree_index: u8,
+        message: String,
     ) -> Result<()> {
-        // LightAccount::new_init will create an account with empty output state (no input state).
-        // Modifying the account will modify the output state that when converted to_account_info()
-        // is hashed with SHA256, serialized with borsh
-        // and created with invoke_light_system_program by invoking the light-system-program.
-        // The hashing scheme is the account structure derived with LightHasher.
         let light_cpi_accounts = CpiAccounts::new(
             ctx.accounts.signer.as_ref(),
             ctx.remaining_accounts,
@@ -365,27 +362,30 @@ pub mod counter {
         );
 
         let (address, address_seed) = derive_address(
-            &[b"counter", ctx.accounts.signer.key().as_ref()],
+            &[b"message", ctx.accounts.signer.key().as_ref()],
             &address_tree_info
                 .get_tree_pubkey(&light_cpi_accounts)
                 .map_err(|_| ErrorCode::AccountNotEnoughKeys)?,
             &crate::ID,
         );
 
-        let new_address_params = address_tree_info.into_new_address_params_packed(address_seed);
-
-        let mut counter = LightAccount::<'_, CounterAccount>::new_init(
+        let mut message_account = LightAccount::<'_, MessageAccount>::new_init(
             &crate::ID,
             Some(address),
             output_state_tree_index,
         );
 
-        counter.owner = ctx.accounts.signer.key();
-        counter.value = 0;
+        message_account.owner = ctx.accounts.signer.key();
+        message_account.message = message;
+
+        msg!(
+            "Created compressed account with message: {}",
+            message_account.message
+        );
 
         LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(counter)?
-            .with_new_addresses(&[new_address_params])
+            .with_light_account(message_account)?
+            .with_new_addresses(&[address_tree_info.into_new_address_params_packed(address_seed)])
             .invoke(light_cpi_accounts)?;
 
         Ok(())
@@ -398,13 +398,11 @@ pub struct GenericAnchorAccounts<'info> {
     pub signer: Signer<'info>,
 }
 
-// declared as event so that it is part of the idl.
 #[event]
 #[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct CounterAccount {
-    #[hash]
+pub struct MessageAccount {
     pub owner: Pubkey,
-    pub value: u64,
+    pub message: String,
 }
 ```
 {% endtab %}

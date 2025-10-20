@@ -231,6 +231,70 @@ Find the source code for this example here.
 {% endhint %}
 
 ```rust
+#![allow(unexpected_cfgs)]
+#![allow(deprecated)]
+
+use anchor_lang::{prelude::*, AnchorDeserialize, AnchorSerialize};
+use light_sdk::{
+    account::LightAccount,
+    cpi::{v1::CpiAccounts, CpiSigner},
+    derive_light_cpi_signer,
+    instruction::{account_meta::CompressedAccountMeta, ValidityProof},
+    LightDiscriminator,
+};
+
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+
+pub const LIGHT_CPI_SIGNER: CpiSigner =
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+
+#[program]
+pub mod anchor_program_reinit {
+
+    use super::*;
+    use light_sdk::cpi::{
+        v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
+    };
+
+    /// Reinitializes a closed compressed account
+    pub fn reinit_account<'info>(
+        ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
+        proof: ValidityProof,
+        account_meta: CompressedAccountMeta,
+    ) -> Result<()> {
+        let light_cpi_accounts = CpiAccounts::new(
+            ctx.accounts.signer.as_ref(),
+            ctx.remaining_accounts,
+            crate::LIGHT_CPI_SIGNER,
+        );
+
+        let message_account = LightAccount::<'_, MessageAccount>::new_empty(
+            &crate::ID,
+            &account_meta,
+        )?;
+
+        msg!("Reinitializing closed compressed account");
+
+        LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
+            .with_light_account(message_account)?
+            .invoke(light_cpi_accounts)?;
+
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct GenericAnchorAccounts<'info> {
+    #[account(mut)]
+    pub signer: Signer<'info>,
+}
+
+#[event]
+#[derive(Clone, Debug, Default, LightDiscriminator)]
+pub struct MessageAccount {
+    pub owner: Pubkey,
+    pub message: String,
+}
 ```
 {% endtab %}
 

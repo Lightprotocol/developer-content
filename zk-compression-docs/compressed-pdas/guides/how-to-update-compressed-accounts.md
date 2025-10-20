@@ -249,7 +249,7 @@ Find the source code for this example [here](https://github.com/Lightprotocol/pr
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
 
-use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
+use anchor_lang::{prelude::*, AnchorDeserialize, AnchorSerialize};
 use light_sdk::{
     account::LightAccount,
     cpi::{v1::CpiAccounts, CpiSigner},
@@ -258,59 +258,55 @@ use light_sdk::{
     LightDiscriminator,
 };
 
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 #[program]
-pub mod counter {
+pub mod anchor_program_update {
 
     use super::*;
     use light_sdk::cpi::{
         v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
     };
 
-    pub fn increment_counter<'info>(
+    /// Updates an existing compressed account's message
+    pub fn update_account<'info>(
         ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
         proof: ValidityProof,
-        counter_value: u64,
         account_meta: CompressedAccountMeta,
+        current_message: String,
+        new_message: String,
     ) -> Result<()> {
-        let mut counter = LightAccount::<'_, CounterAccount>::new_mut(
-            &crate::ID,
-            &account_meta,
-            CounterAccount {
-                owner: ctx.accounts.signer.key(),
-                value: counter_value,
-            },
-        )?;
-
-        msg!("counter {}", counter.value);
-
-        counter.value = counter.value.checked_add(1).ok_or(CustomError::Overflow)?;
-
         let light_cpi_accounts = CpiAccounts::new(
             ctx.accounts.signer.as_ref(),
             ctx.remaining_accounts,
             crate::LIGHT_CPI_SIGNER,
         );
 
+        let mut message_account = LightAccount::<'_, MessageAccount>::new_mut(
+            &crate::ID,
+            &account_meta,
+            MessageAccount {
+                owner: ctx.accounts.signer.key(),
+                message: current_message,
+            },
+        )?;
+
+        message_account.message = new_message.clone();
+
+        msg!(
+            "Updated compressed account message to: {}",
+            message_account.message
+        );
+
         LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(counter)?
+            .with_light_account(message_account)?
             .invoke(light_cpi_accounts)?;
+
         Ok(())
     }
-}
-
-#[error_code]
-pub enum CustomError {
-    #[msg("No authority to perform this action")]
-    Unauthorized,
-    #[msg("Counter overflow")]
-    Overflow,
-    #[msg("Counter underflow")]
-    Underflow,
 }
 
 #[derive(Accounts)]
@@ -319,14 +315,13 @@ pub struct GenericAnchorAccounts<'info> {
     pub signer: Signer<'info>,
 }
 
-// declared as event so that it is part of the idl.
 #[event]
 #[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct CounterAccount {
-    #[hash]
+pub struct MessageAccount {
     pub owner: Pubkey,
-    pub value: u64,
+    pub message: String,
 }
+
 ```
 {% endtab %}
 

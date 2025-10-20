@@ -239,64 +239,58 @@ Find the source code for this example [here](https://github.com/Lightprotocol/pr
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
 
-use anchor_lang::{prelude::*, AnchorDeserialize, Discriminator};
+use anchor_lang::{prelude::*, AnchorDeserialize, AnchorSerialize};
 use light_sdk::{
     account::LightAccount,
     cpi::{v1::CpiAccounts, CpiSigner},
     derive_light_cpi_signer,
     instruction::{account_meta::CompressedAccountMeta, ValidityProof},
-    LightDiscriminator, LightHasher,
+    LightDiscriminator,
 };
 
-declare_id!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("GRLu2hKaAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPqX");
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 #[program]
-pub mod counter {
+pub mod anchor_program_close {
 
     use super::*;
     use light_sdk::cpi::{
         v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
     };
 
-    pub fn close_counter<'info>(
+    /// Closes an existing compressed account
+    pub fn close_account<'info>(
         ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
         proof: ValidityProof,
-        counter_value: u64,
         account_meta: CompressedAccountMeta,
+        current_message: String,
     ) -> Result<()> {
-        let counter = LightAccount::<'_, CounterAccount>::new_close(
-            &crate::ID,
-            &account_meta,
-            CounterAccount {
-                owner: ctx.accounts.signer.key(),
-                value: counter_value,
-            },
-        )?;
-
         let light_cpi_accounts = CpiAccounts::new(
             ctx.accounts.signer.as_ref(),
             ctx.remaining_accounts,
             crate::LIGHT_CPI_SIGNER,
         );
 
+        let message_account = LightAccount::<'_, MessageAccount>::new_close(
+            &crate::ID,
+            &account_meta,
+            MessageAccount {
+                owner: ctx.accounts.signer.key(),
+                message: current_message,
+            },
+        )?;
+
+        msg!("Closing compressed account");
+
         LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(counter)?
+            .with_light_account(message_account)?
             .invoke(light_cpi_accounts)?;
+
         Ok(())
     }
-}
-
-#[error_code]
-pub enum CustomError {
-    #[msg("No authority to perform this action")]
-    Unauthorized,
-    #[msg("Counter overflow")]
-    Overflow,
-    #[msg("Counter underflow")]
-    Underflow,
 }
 
 #[derive(Accounts)]
@@ -305,13 +299,11 @@ pub struct GenericAnchorAccounts<'info> {
     pub signer: Signer<'info>,
 }
 
-// declared as event so that it is part of the idl.
 #[event]
-#[derive(Clone, Debug, Default, LightDiscriminator, LightHasher)]
-pub struct CounterAccount {
-    #[hash]
+#[derive(Clone, Debug, Default, LightDiscriminator)]
+pub struct MessageAccount {
     pub owner: Pubkey,
-    pub value: u64,
+    pub message: String,
 }
 ```
 {% endtab %}
