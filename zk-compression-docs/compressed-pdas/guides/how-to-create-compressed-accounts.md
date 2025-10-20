@@ -79,19 +79,20 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 {% tabs %}
 {% tab title="Anchor" %}
-<pre class="language-rust"><code class="lang-rust">#[derive(
+```rust
+#[derive(
     Clone,
     Debug,
     Default,
     AnchorSerialize,
     AnchorDeserialize,
-<strong>    LightDiscriminator
-</strong>)]
+    LightDiscriminator
+)]
 pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
-</code></pre>
+```
 {% endtab %}
 
 {% tab title="Native Rust" %}
@@ -116,7 +117,7 @@ Define your compressed account struct and derive
 
 * the standard traits (`Clone`, `Debug`, `Default`),
 * `borsh` or `AnchorSerialize` to serialize account data, and
-* `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, not the first 8 bytes of the data field\[^1].
+* `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
 
 {% hint style="info" %}
 The traits listed above are required for `LightAccount`. `LightAccount` wraps `my-compressed-account` in Step 7 to set the discriminator and create the compressed account's data.
@@ -139,7 +140,7 @@ pub struct InstructionData {
 
 1. **Validity Proof**
 
-* Define `proof` to include the proof that the address does not exist yet in the specified address tree (non-inclusion).
+* Define `proof` to include the proof that the address does not exist yet in the specified address tree.
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).
 
 2. **Specify Merkle trees to store address and account hash**
@@ -162,21 +163,22 @@ Clients pack accounts into the `remaining_accounts` array to reduce transaction 
 
 Derive the address as a persistent unique identifier for the compressed account.
 
-<pre class="language-rust"><code class="lang-rust">let address_merkle_tree_pubkey =
-    address_tree_info.get_tree_pubkey(&#x26;light_cpi_accounts)?;
+```rust
+let address_merkle_tree_pubkey =
+    address_tree_info.get_tree_pubkey(&light_cpi_accounts)?;
 
 let custom_seeds = [SEED, ctx.accounts.signer.key().as_ref()];
 
-<strong>let (address, address_seed) = derive_address(
-</strong><strong>    &#x26;custom_seeds,
-</strong><strong>    &#x26;address_tree_pubkey,
-</strong><strong>    &#x26;crate::ID,
-</strong><strong>);
-</strong></code></pre>
+let (address, address_seed) = derive_address(
+    &custom_seeds,
+    &address_tree_pubkey,
+    &crate::ID,
+);
+```
 
 **Unpack the tree pubkey:**
 
-* Call `get_tree_pubkey()` to retrieve the address tree pubkey from `address_tree_info`. The packed struct contains the index of the address tree that points to the pubkey in the `remaining_accounts` array.
+* Call `get_tree_pubkey()` to retrieve the address tree pubkey from `address_tree_info`. The packed struct contains the index of the address tree for the pubkey in the `remaining_accounts` array.
 
 **Pass these parameters to `derive_address()`:**
 
@@ -320,6 +322,7 @@ For help with debugging, see the [Error Cheatsheet](../../resources/error-cheats
 Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L27).
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
@@ -405,6 +408,7 @@ pub struct MessageAccount {
     pub message: String,
 }
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Native" %}
@@ -412,6 +416,7 @@ pub struct MessageAccount {
 Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/9cdeea7e655463afbfc9a58fb403d5401052e2d2/counter/native/src/lib.rs#L160).
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 
@@ -539,6 +544,7 @@ pub fn create_counter(
 }
 
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 
@@ -559,3 +565,5 @@ Build a client for your program or learn how to update compressed accounts.
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
+
+[^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
