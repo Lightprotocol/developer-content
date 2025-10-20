@@ -22,6 +22,8 @@ Find full code examples [at the end for Anchor and native Rust](rust.md#full-cod
 
 ## Implementation Guide
 
+This guide covers the components of a Rust client. Here is the complete flow:
+
 {% tabs %}
 {% tab title="Create" %}
 <figure><picture><source srcset="../../.gitbook/assets/client-create (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-create.png" alt=""></picture><figcaption></figcaption></figure>

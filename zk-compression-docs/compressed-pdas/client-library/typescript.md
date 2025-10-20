@@ -1,6 +1,6 @@
 ---
 description: >-
-  Build a TypeScript client to create or interact with compressed accounts.
+  Build a Typescript client to create or interact with compressed accounts.
   Includes a step-by-step implementation guide and full code examples.
 ---
 
@@ -16,7 +16,35 @@ The TypeScript Client SDK provides two test environments:
   * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
 * `Rpc` and `TestRpc` implement the same `CompressionApiInterface`. Seamlessly switch between `TestRpc`, local test validator, and public Solana networks.
 
+{% hint style="success" %}
+Find [full code examples at the end](typescript.md#full-code-example) for Anchor.
+{% endhint %}
+
 ## Implementation Guide
+
+This guide covers the components of a Typescript client. Here is the complete flow:
+
+{% tabs %}
+{% tab title="Create" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-create (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-create.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Update" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-update (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-update.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Close" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-close (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-close.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Reinitialize" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-reinit (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-reinit.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Burn" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-burn (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-burn.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+{% endtabs %}
 
 {% stepper %}
 {% step %}
@@ -126,7 +154,8 @@ Before creating a compressed account, your client must fetch metadata of two Mer
 * a state tree to store the compressed account hash.
 
 {% hint style="success" %}
-The protocol maintains Merkle trees. You don't need to initialize custom trees. Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
+The protocol maintains Merkle trees. You don't need to initialize custom trees. \
+Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
 ```typescript

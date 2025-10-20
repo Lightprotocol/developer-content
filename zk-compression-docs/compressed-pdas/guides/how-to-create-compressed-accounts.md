@@ -18,7 +18,7 @@ Compressed accounts and addresses are created via CPI to the Light System Progra
   Fungible state like [compressed token accounts](../../compressed-tokens/guides/how-to-create-compressed-token-accounts.md) do not need addresses.
 
 {% hint style="success" %}
-Find [full code examples of a counter program at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor and native Rust.
+Find [full code examples at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
 ## Implementation Guide
