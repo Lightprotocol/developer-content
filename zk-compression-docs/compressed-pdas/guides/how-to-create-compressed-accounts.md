@@ -7,7 +7,7 @@ hidden: true
 
 # How to Create Compressed Accounts
 
-## verview
+## Overview
 
 Compressed accounts and addresses are created via CPI to the Light System Program.&#x20;
 
