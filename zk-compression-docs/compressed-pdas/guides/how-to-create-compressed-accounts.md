@@ -11,7 +11,7 @@ hidden: true
 
 Compressed accounts and addresses are created via CPI to the Light System Program.&#x20;
 
-* Compressed and regular Solana accounts have the same functionality and are fully composable.
+* Compressed and regular Solana accounts share the same functionality and are fully composable.
 * A compressed account has two identifiers: the account hash and its address (optional). In comparison, regular Solana accounts are identified by their address.
 * The account hash is not persistent and changes with every write to the account.
 * For Solana PDA like behavior your compressed account needs an address as persistent identifier. \
