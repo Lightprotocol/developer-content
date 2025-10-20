@@ -119,7 +119,7 @@ pub struct InstructionData {
 }
 ```
 
-1. **Valditiy Proof**
+1. **Validity Proof**
 
 * Define `proof` to include the proof that the account exists in the state tree.
 * Clients fetch a validity proof with `getValidityProof()` from an RPC provider that supports ZK Compression (Helius, Triton, ...).

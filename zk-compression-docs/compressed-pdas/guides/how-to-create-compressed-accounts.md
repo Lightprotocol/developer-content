@@ -355,7 +355,7 @@ pub mod program_create {
     };
 
     /// Creates a new compressed account with a message
-    pub fn create_account<'info>(
+    pub fn create<'info>(
         ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
         proof: ValidityProof,
         address_tree_info: PackedAddressTreeInfo,
@@ -376,22 +376,22 @@ pub mod program_create {
             &crate::ID,
         );
 
-        let mut message_account = LightAccount::<'_, MessageAccount>::new_init(
+        let mut my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_init(
             &crate::ID,
             Some(address),
             output_state_tree_index,
         );
 
-        message_account.owner = ctx.accounts.signer.key();
-        message_account.message = message;
+        my_compressed_account.owner = ctx.accounts.signer.key();
+        my_compressed_account.message = message;
 
         msg!(
             "Created compressed account with message: {}",
-            message_account.message
+            my_compressed_account.message
         );
 
         LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(message_account)?
+            .with_light_account(my_compressed_account)?
             .with_new_addresses(&[address_tree_info.into_new_address_params_packed(address_seed)])
             .invoke(light_cpi_accounts)?;
 
@@ -405,9 +405,15 @@ pub struct GenericAnchorAccounts<'info> {
     pub signer: Signer<'info>,
 }
 
-#[event]
-#[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct MessageAccount {
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    AnchorSerialize,
+    AnchorDeserialize,
+    LightDiscriminator
+)]
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
