@@ -6,52 +6,13 @@ description: >-
 
 # Typescript
 
-The TypeScript Client SDK provides two abstractions to create or interact with compressed accounts:
-
-* **For local testing**, use [`TestRpc`](https://www.zkcompression.com/resources/sdks/typescript-client#testrpc).
-  * `TestRpc` is an RPC implementation with in-memory indexer and without external dependencies.
-  * It parses events and builds Merkle trees on-demand without persisting state.
-* **For test-validator, devnet and mainnet** use [`Rpc`](https://www.zkcompression.com/resources/sdks/typescript-client#rpc)
-  * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
-  * It connects to the Photon indexer that tracks compressed state to query compressed accounts and the prover service for validity proofs.
-* `Rpc` and `TestRpc` implement the same `CompressionApiInterface`. Seamlessly switch between `TestRpc`, local test validator with `Rpc`, and public Solana networks.
-
-{% hint style="success" %}
-Find [full code examples for a counter program](typescript.md#full-code-example) at the end for Anchor.&#x20;
-{% endhint %}
-
-## Implementation Guide
-
-{% tabs %}
-{% tab title="Create" %}
-<figure><picture><source srcset="../../.gitbook/assets/create.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/create-dark.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Update" %}
-<figure><picture><source srcset="../../.gitbook/assets/update-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/update.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Close" %}
-<figure><picture><source srcset="../../.gitbook/assets/close-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/close.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Reinitialize" %}
-<figure><picture><source srcset="../../.gitbook/assets/reinit-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/reinit.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Burn" %}
-<figure><picture><source srcset="../../.gitbook/assets/burn-dark.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/burn.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-{% endtabs %}
-
 The TypeScript Client SDK provides two test environments:
 
 * **For local testing, use** [**`TestRpc`**](https://www.zkcompression.com/resources/sdks/typescript-client#testrpc)**.**
-  * [`TestRpc`](https://www.zkcompression.com/resources/sdks/typescript-client#testrpc) is a local test environment with in-memory indexer and without external dependencies.
+  * `TestRpc` is a local test environment with in-memory indexer and without external dependencies.
   * Parses events and builds Merkle trees on-demand to generate proofs instantly without persisting state.
-  * Use for unit and integration tests of your program or client code.
-* **For test-validator, devnet and mainnet use** [**`Rpc`**](https://www.zkcompression.com/resources/sdks/typescript-client#rpc)
-  * [`Rpc`](https://www.zkcompression.com/resources/sdks/typescript-client#rpc) is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
+* **For test-validator, devnet and mainnet use** [**`Rpc`**](https://www.zkcompression.com/resources/sdks/typescript-client#rpc)**`.`**
+  * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
   * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
 * `Rpc` and `TestRpc` implement the same `CompressionApiInterface`. Seamlessly switch between `TestRpc`, local test validator, and public Solana networks.
 
@@ -240,7 +201,7 @@ Fetch a validity proof from your RPC provider that supports ZK Compression (Heli
 * You can combine multiple operations in one proof to optimize compute cost and instruction data.
 
 {% hint style="info" %}
-[Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProofV0()` method.
+[Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProof)` method.
 {% endhint %}
 
 {% tabs %}
@@ -324,7 +285,9 @@ The RPC returns `ValidityProofWithContext` with
 * `rootIndices`, `leafIndices`, and `proveByIndices` arrays with proof metadata to build `PackedStateTreeInfo` in the next step.
 {% endtab %}
 {% endtabs %}
+{% endstep %}
 
+{% step %}
 ### Pack Accounts
 
 Compressed account instructions require packing accounts into the `remainingAccounts` array. Follow the steps below to build the `PackedAccounts` helper.
