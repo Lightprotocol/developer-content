@@ -233,6 +233,7 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor/programs/counter/src/lib.rs).
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
@@ -311,6 +312,7 @@ pub struct MyCompressedAccount {
 }
 
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Native" %}
