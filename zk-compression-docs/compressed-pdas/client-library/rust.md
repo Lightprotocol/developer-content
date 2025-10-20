@@ -299,7 +299,7 @@ The RPC returns `ValidityProofWithContext` with
 {% hint style="info" %}
 **Advantages of combined proofs**:
 
-* Single proof generation and verification reduces \~30,000-40,000 compute units per instruction
+* Combining proof generation and verification reduces \~30,000-40,000 compute units per instruction
 * You only add one validity proof with 128 bytes in size instead of two to your instruction data.
 * The Light System Program computes one combined hash instead of verifying two separate hashes from both parameters
 {% endhint %}

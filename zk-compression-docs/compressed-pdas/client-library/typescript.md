@@ -291,7 +291,7 @@ The RPC returns `ValidityProofWithContext` with
 {% hint style="info" %}
 **Advantages of combined proofs**:
 
-* Single proof generation and verification reduces \~30,000-40,000 compute units per instruction
+* Combining proof generation and verification reduces \~30,000-40,000 compute units per instruction
 * You only add one validity proof with 128 bytes in size instead of two to your instruction data
 * The Light System Program computes one combined hash instead of verifying two separate hashes from both parameters
 {% endhint %}
@@ -316,7 +316,7 @@ The RPC returns `ValidityProofWithContext` with
 
 * `compressedProof` with a single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
 * `newAddressParams` array with address tree public key and metadata to build `PackedAddressTreeInfo` in the next step.
-* `rootIndices`, `leafIndices`, and `proveByIndices` arrays with proof metadata to build `PackedStateTreeInfo` in the next step.
+* `Co`
 {% endtab %}
 {% endtabs %}
 
