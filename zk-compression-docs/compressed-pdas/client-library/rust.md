@@ -54,7 +54,7 @@ Find full code examples for a counter program [at the end for Anchor and native 
 [dependencies]
 light-client = "0.15.0"
 light-sdk = "0.15.0"
-tokio = { version = "1.0", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
 solana-program = "2.2"
 anchor-lang = "0.31.1"  # if using Anchor programs
 ```
@@ -65,7 +65,7 @@ anchor-lang = "0.31.1"  # if using Anchor programs
 [dependencies]
 light-program-test = "0.15.0"
 light-sdk = "0.15.0"
-tokio = { version = "1.0", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
 solana-program = "2.2"
 anchor-lang = "0.31.1"  # if using Anchor programs
 ```
@@ -73,7 +73,7 @@ anchor-lang = "0.31.1"  # if using Anchor programs
 {% endtabs %}
 
 {% hint style="info" %}
-The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to Anchor's `Account`: macros, wrappers and CPI interface to create and interact with compressed accounts on Solana.
+The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to Anchor's `Account`: macros, wrappers and CPI interface to create and interact with compressed accounts in Solana programs.
 {% endhint %}
 {% endstep %}
 
@@ -107,8 +107,9 @@ client.payer = read_keypair_file("~/.config/solana/id.json")?;
 use light_client::{LightClient, LightClientConfig};
 use solana_sdk::signature::read_keypair_file;
 
-let config = LightClientConfig::new(
-    "https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY".to_string(),
+let config = LightClientConfig::devnet(
+    Some("https://devnet.helius-rpc.com".to_string()),
+    Some("YOUR_API_KEY".to_string())
 );
 
 let mut client = LightClient::new(config).await?;
@@ -116,7 +117,7 @@ let mut client = LightClient::new(config).await?;
 client.payer = read_keypair_file("~/.config/solana/id.json")?;
 ```
 
-* For Helius devnet RPC: Use the standard RPC endpoint. The endpoint serves both standard RPC and Photon indexer API.
+* For Helius devnet: The endpoint serves both standard RPC and Photon indexer API.
 {% endtab %}
 
 {% tab title="Localnet" %}
@@ -142,7 +143,7 @@ For testing, `LightProgramTest` provides a validator with auto-funded keypair an
 ```rust
 let config = ProgramTestConfig::new_v2(
     true,
-    Some(vec![("counter", counter::ID)])
+    Some(vec![("program_create", program_create::ID)])
 );
 let mut rpc = LightProgramTest::new(config).await.unwrap();
 let payer = rpc.get_payer().insecure_clone();
@@ -157,10 +158,10 @@ let payer = rpc.get_payer().insecure_clone();
 Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
 * an address tree to derive and store the account address and
-* a state tree to store the account hash.
+* a state tree to store the compressed account hash.
 
 {% hint style="success" %}
-The protocol maintains Merkle trees. You don't need to initialize custom trees. See the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
+The protocol maintains Merkle trees. You don't need to initialize custom trees. Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
 ```rust
@@ -172,26 +173,30 @@ Fetch metadata of trees with:
 
 * `get_address_tree_v1()` to return the `TreeInfo` struct with the public key and other metadata for the address tree.
   * Used to derive addresses with `derive_address()` and
-  * for `get_validity_proof()` to prove the address does not exist yet to avoid duplicate addresses.
-* `get_random_state_tree_info()` to return the `TreeInfo` struct with the public key and other metadata for a random state tree to store the compressed account hash.
-  * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
-  * Account hashes can move to different state trees after each state transition.
-  * Best practice is to minimize different trees per transaction. Still, since trees may fill up over time, programs must handle accounts from different state trees within the same transaction. The protocol creates new trees, once existing trees fill up.
+  * for `get_validity_proof()` to prove the address does not exist yet.
 
 {% hint style="info" %}
-`TreeInfo` contains metadata for a Merkle tree:
+Only needed to create new addresses. Other interactions with compressed accounts use the existing address.
+{% endhint %}
+
+* `get_random_state_tree_info()` to return the `TreeInfo` struct with the public key and other metadata for a random state tree to store the compressed account hash.
+  * Use this pubkey of the state tree for all outputs of a transaction.
+
+{% hint style="info" %}
+`TreeInfo` contains pubkeys and other metadata of a Merkle tree:
 
 * `tree`: Merkle tree account pubkey
 * `queue`: Queue account pubkey
   * Buffers insertions before they are added to the Merkle tree
-  * Client and program do not interact directly with the queue
-* `treeType`: Identifies tree version and account&#x20;
-* `cpiContext`: Optional CPI context account for batched operations across multiple programs (may be null)
+  * Only the Light System Program interacts with the queue.
+* `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
+* `cpi_context`: Optional CPI context account for batched operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
   * First program caches its signer checks, second program reads them and combines instruction data
   * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
-* `nextTreeInfo`: The tree to use for the next operation when the current tree is full (may be null)
-  * When set, switch to this tree instead of continuing with the current one
+* `next_tree_info`: The tree to use for the next operation when the current tree is full (may be null)
+  * When set, use this tree as output tree.
+  * The protocol creates new trees, once existing trees fill up.
 {% endhint %}
 {% endstep %}
 
@@ -231,7 +236,7 @@ Fetch a zero-knowledge proof (Validity proof) from your RPC provider that suppor
 
 * To create a compressed account, you must prove the **address doesn't already exist** in the address tree.
 * To update or close a compressed account, you must **prove its account hash exists** in a state tree.
-* You can **combine multiple operations in one proof** to optimize compute cost and instruction data.
+* You can combine multiple operations in one proof to optimize compute cost and instruction data.
 
 {% hint style="info" %}
 [Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `get_validity_proof()` method.
@@ -296,13 +301,10 @@ The RPC returns `ValidityProofWithContext` with
 {% endtab %}
 
 {% tab title="Combined Proof" %}
-{% hint style="info" %}
 **Advantages of combined proofs**:
 
-* Combining proof generation and verification reduces \~30,000-40,000 compute units per instruction
 * You only add one validity proof with 128 bytes in size instead of two to your instruction data.
-* The Light System Program computes one combined hash instead of verifying two separate hashes from both parameters
-{% endhint %}
+* Reduction of compute unit consumption by at least 100k, since combined proofs are verified in a single CPI by the Light System Program.
 
 ```rust
 let hash = compressed_account.hash;
@@ -337,7 +339,7 @@ The RPC returns `ValidityProofWithContext` with
 {% step %}
 ### Pack Accounts
 
-Compressed account instructions require packing accounts into the `remaining_accounts` array.
+Compressed account instructions require packing accounts into an array.
 
 {% hint style="info" %}
 **"Packing" accounts optimizes instruction size:**
@@ -348,17 +350,27 @@ Compressed account instructions require packing accounts into the `remaining_acc
 You will pass this array in the instruction data.
 {% endhint %}
 
+#### 1. Initialize PackedAccounts
+
+{% tabs %}
+{% tab title="Anchor" %}
 ```rust
 let mut remaining_accounts = PackedAccounts::default();
 ```
+{% endtab %}
 
-`PackedAccounts::default()` creates a helper struct with three empty vectors:
+{% tab title="Native" %}
+```rust
+let mut accounts = PackedAccounts::default();
+```
+{% endtab %}
+{% endtabs %}
 
-1. `pre_accounts` includes the signers, fee payer, and any program-specific accounts.
-2. `system_accounts` includes eight accounts the Light System program requires to create or interact with compressed accounts.
-3. `packed_accounts` includes Merkle tree and queue accounts returned from the `getValidityProof()` response in the previous step.
+`PackedAccounts::default()` creates a helper struct with three empty vectors that you'll populate in the next steps:
 
-You will populate the vectors in the next steps.
+1. `pre_accounts`: program-specific accounts (optional and not typically used with Anchor)
+2. `system_accounts`: eight Light System accounts required to create or interact with compressed accounts
+3. `packed_accounts`: Merkle tree and queue accounts from the validity proof
 
 ```
 [pre_accounts] [system_accounts] [packed_accounts]
@@ -370,50 +382,75 @@ You will populate the vectors in the next steps.
 
 #### 2. Add Light System Accounts
 
-Add the Light System accounts your program needs to create and interact with compressed via CPI to the Light System Program.
+Add the Light System accounts your program needs to create and interact with compressed accounts.
 
+{% tabs %}
+{% tab title="Anchor" %}
 ```rust
-let config = SystemAccountMetaConfig::new(counter::ID);
+let config = SystemAccountMetaConfig::new(program_create::ID);
 remaining_accounts.add_system_accounts(config);
 ```
 
-* Pass your program ID in `SystemAccountMetaConfig::new(counter::ID)` to derive the CPI signer PDA
+* Pass your program ID in `SystemAccountMetaConfig::new(program_create::ID)` to derive the CPI signer PDA
 * Call `add_system_accounts(config)` - the SDK will populate the `system_accounts` vector with 8 Light System accounts in the sequence below.
+{% endtab %}
+
+{% tab title="Native" %}
+```rust
+let config = SystemAccountMetaConfig::new(native_program::ID);
+accounts.add_pre_accounts_signer(payer.pubkey());
+accounts.add_system_accounts(config)?;
+```
+
+* Add the signer to `pre_accounts` with `add_pre_accounts_signer(payer.pubkey())`
+* Pass your program ID in `SystemAccountMetaConfig::new()` to derive the CPI signer PDA
+* Call `add_system_accounts(config)?`, the SDK will populate the `system_accounts` vector with 8 Light System accounts in the sequence below.
+{% endtab %}
+{% endtabs %}
 
 <details>
 
 <summary><em>System Accounts List</em></summary>
 
-<table><thead><tr><th width="40">#</th><th width="256.43182373046875">Account</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">Light System Program</a></td><td>Verifies validity proofs and executes CPI calls to create or interact with compressed accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Proves your program can interact with Account Compression Program<br>- Prevents unauthorized programs from modifying compressed account state</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">Noop Program</a></td><td>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">Account Compression Authority</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">Account Compression Program</a></td><td>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">System Program</a></td><td>Solana System Program to create accounts or transfer lamports</td></tr></tbody></table>
+| # | Account                            | Purpose                                                                                                                                                                                        |
+| - | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | Light System Program\[^1]          | Verifies validity proofs and executes CPI calls to create or interact with compressed accounts                                                                                                 |
+| 2 | CPI Signer\[^2]                    | <p>- Signs CPI calls from your program to Light System Program<br>- PDA verified by Light System Program during CPI<br>- Derived from your program ID</p>                                      |
+| 3 | Registered Program PDA             | <p>- Proves your program can interact with Account Compression Program<br>- Prevents unauthorized programs from modifying compressed account state</p>                                         |
+| 4 | Noop Program\[^3]                  | <p>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</p>                                                           |
+| 5 | Account Compression Authority\[^4] | Signs CPI calls from Light System Program to Account Compression Program                                                                                                                       |
+| 6 | Account Compression Program\[^5]   | <p>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</p>                                                                          |
+| 7 | Invoking Program                   | <p>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</p> |
+| 8 | System Program\[^6]                | Solana System Program to create accounts or transfer lamports                                                                                                                                  |
 
 </details>
 
 #### 3. Pack Tree Accounts from Validity Proof
 
-`getValidityProof()` returns pubkeys and other metadata of Merkle trees. With `pack_tree_infos`, you will convert the pubkeys to u8 indices that reference indices in `remaining_accounts` to optimize your instruction data.
+`getValidityProof()` returns pubkeys and other metadata of Merkle trees. With `pack_tree_infos`, you will convert the pubkeys to u8 indices that reference accounts in the accounts array to optimize your instruction data.
 
+{% tabs %}
+{% tab title="Anchor" %}
 {% tabs %}
 {% tab title="Create" %}
 ```rust
-let packed_address_tree_accounts = rpc_result
-    .pack_tree_infos(&mut remaining_accounts)
-    .address_trees;
+let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
 ```
 
 Call `pack_tree_infos(&mut remaining_accounts)` to extract tree pubkeys and add them to the accounts array.
 
 The returned `PackedTreeInfos` contains `.address_trees` as `Vec<PackedAddressTreeInfo>`:
 
-* `address_merkle_tree_pubkey_index`: Points to the address tree account in `remaining_accounts`
-* `address_queue_pubkey_index`: Points to the address queue account in `remaining_accounts`
+* `address_merkle_tree_pubkey_index`: Points to the address tree account
+* `address_queue_pubkey_index`: Points to the address queue account
   * The queue buffers new addresses before they are inserted into the address tree
 * `root_index`: The Merkle root index from the validity proof
   * Specifies which historical root to verify the address does not exist in the tree
 {% endtab %}
 
-{% tab title="Update & Close" %}
+{% tab title="Update, Close" %}
 ```rust
-let packed_state_tree_accounts = rpc_result
+let packed_tree_accounts = rpc_result
     .pack_tree_infos(&mut remaining_accounts)
     .state_trees
     .unwrap();
@@ -423,8 +460,8 @@ Call `pack_tree_infos(&mut remaining_accounts)` to extract tree pubkeys and add 
 
 The returned `PackedTreeInfos` contains `.state_trees` as `Option<PackedStateTreeInfos>`:
 
-* `merkle_tree_pubkey_index`: Points to the state tree account in `remaining_accounts`
-* `queue_pubkey_index`: Points to the nullifier queue account in `remaining_accounts`
+* `merkle_tree_pubkey_index`: Points to the state tree account
+* `queue_pubkey_index`: Points to the nullifier queue account
   * The queue tracks nullified (spent) account hashes to prevent double-spending
 * `leaf_index`: The leaf position in the Merkle tree from the validity proof
   * Specifies which leaf contains your account hash to verify it exists in the tree
@@ -432,24 +469,76 @@ The returned `PackedTreeInfos` contains `.state_trees` as `Option<PackedStateTre
   * Specifies which historical root to verify the account hash against
 {% endtab %}
 {% endtabs %}
+{% endtab %}
 
-#### 4. Add Output State Tree
+{% tab title="Native" %}
+{% tabs %}
+{% tab title="Create" %}
+```rust
+let output_state_tree_index = accounts.insert_or_get(*merkle_tree_pubkey);
+let packed_address_tree_info = rpc_result.pack_tree_infos(&mut accounts).address_trees[0];
+```
+
+* Use `insert_or_get()` to add the output state tree pubkey and get its index
+* Call `pack_tree_infos(&mut accounts)` to extract address tree info
+
+The returned `PackedAddressTreeInfo` contains:
+
+* `address_merkle_tree_pubkey_index`: Points to the address tree account
+* `address_queue_pubkey_index`: Points to the address queue account
+  * The queue buffers new addresses before they are inserted into the address tree
+* `root_index`: The Merkle root index from the validity proof
+  * Specifies which historical root to verify the address does not exist in the tree
+{% endtab %}
+
+{% tab title="Close, Reinit, Burn" %}
+```rust
+let packed_accounts = rpc_result
+    .pack_tree_infos(&mut accounts)
+    .state_trees
+    .unwrap();
+```
+
+Call `pack_tree_infos(&mut accounts)` to extract tree pubkeys and add them to the accounts array.
+
+The returned `PackedStateTreeInfos` contains:
+
+* `merkle_tree_pubkey_index`: Points to the state tree account
+* `queue_pubkey_index`: Points to the nullifier queue account
+  * The queue tracks nullified (spent) account hashes to prevent double-spending
+* `leaf_index`: The leaf position in the Merkle tree from the validity proof
+  * Specifies which leaf contains your account hash to verify it exists in the tree
+* `root_index`: The Merkle root index from the validity proof
+  * Specifies which historical root to verify the account hash against
+{% endtab %}
+{% endtabs %}
+{% endtab %}
+{% endtabs %}
+
+#### 4. Add Output State Tree (Create Only)
+
+{% hint style="info" %}
+This step only applies when you create accounts and use **Anchor**.
+
+* With native Rust, the output tree index is added using `insert_or_get()` in Step 3.
+* For other interactions with compressed accounts (using both Anchor and Native), the output tree is included in the packed tree accounts from Step 3.
+{% endhint %}
 
 ```rust
 let output_state_tree_index = output_state_tree_info
     .pack_output_tree_index(&mut remaining_accounts)?;
 ```
 
-* Use `output_state_tree_info` variable from Step 3 - it contains the `TreeInfo` with pubkey and metadata for the randomly selected state tree
-* Call `pack_output_tree_index(&mut remaining_accounts)` to convert the tree pubkey to a u8 index in `remaining_accounts`
+* Use `output_state_tree_info` variable from Step 3 with the `TreeInfo` metadata for the randomly selected state tree
+* Call `pack_output_tree_index(&mut remaining_accounts)` to convert the tree pubkey to a u8 index
 
 #### 5. Summary
 
-You initialized the `PackedAccounts::default()` helper struct to merge the following accounts into the `remaining_accounts` array for the instruction data:
+You initialized `PackedAccounts::default()` to merge accounts into an array to optimize instruction data:
 
-* Light System accounts to create and interact with compressed accounts via the Light System Program.
-* Tree accounts from the validity proof to prove address non-existence (create), or existence of the account hash (update/close).
-* The output state tree to store the new account hash.
+* Light System accounts to create and interact with compressed accounts via the Light System Program
+* Tree accounts from the validity proof to prove an address does not exist (create) or existence of the account hash (update/close)
+* The output state tree to store the new compressed account hash
 
 The accounts receive a sequential u8 index. Instruction data references accounts via these indices in this order.
 {% endstep %}
@@ -460,7 +549,7 @@ The accounts receive a sequential u8 index. Instruction data references accounts
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
 {% hint style="info" %}
-Compressed account data must be passed in instruction data, since only the Merkle root hash is stored on-chain. This is unlike Solana accounts, where programs can read data directly from accounts.
+Compressed account data must be passed in instruction data because only the Merkle root hash is stored on-chain. Regular accounts store full data on-chain for programs to read data directly.
 
 The program hashes this data and the Light System Program verifies the hash against the root in a Merkle tree account to ensure its correctness.
 {% endhint %}
@@ -468,10 +557,11 @@ The program hashes this data and the Light System Program verifies the hash agai
 {% tabs %}
 {% tab title="Create" %}
 ```rust
-let instruction_data = counter::instruction::CreateCounter {
+let instruction_data = program_create::instruction::Create {
     proof: rpc_result.proof,
-    address_tree_info: packed_address_tree_accounts[0],
+    address_tree_info: packed_accounts.address_trees[0],
     output_state_tree_index,
+    message,
 };
 ```
 
@@ -481,27 +571,28 @@ let instruction_data = counter::instruction::CreateCounter {
 
 2. **Specify Merkle trees to store address and account hash**
 
-Include the Merkle tree metadata fetched in Step 3:
+Include the Merkle tree metadata packed in Step 6:
 
 * `PackedAddressTreeInfo` specifies the index to the address tree account used to derive the address. The index points to the address tree account in `remaining_accounts`.
 * `output_state_tree_index` points to the state tree account in `remaining_accounts` that will store the compressed account hash.
 
 3. **Pass initial account data**
 
-* The counter program intializes the account to 0, wherefore no new value needs to be passed.
-* If your program requires initial data, add custom fields to your instruction struct.
+* This example passes `message` as the initial data for the compressed account.
+* Add custom fields to your instruction struct for any initial data your program requires.
 {% endtab %}
 
 {% tab title="Update" %}
 ```rust
-let instruction_data = counter::instruction::IncrementCounter {
+let instruction_data = anchor_program_update::instruction::Update {
     proof: rpc_result.proof,
-    counter_value: current_counter_value,
     account_meta: CompressedAccountMeta {
-        tree_info: packed_state_tree_accounts.packed_tree_infos[0],
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
         address: compressed_account.address.unwrap(),
-        output_state_tree_index: packed_state_tree_accounts.output_tree_index,
+        output_state_tree_index: packed_tree_accounts.output_tree_index,
     },
+    current_message: current_account.message,
+    new_message,
 };
 ```
 
@@ -511,7 +602,7 @@ let instruction_data = counter::instruction::IncrementCounter {
 
 2. **Specify input hash and output state tree**
 
-Include the Merkle tree metadata fetched in Step 3:
+Include the Merkle tree metadata packed in Step 6:
 
 * `CompressedAccountMeta` points to the input hash and specifies the output state tree with these fields:
   * `tree_info: PackedStateTreeInfo` points to the existing account hash that will be nullified by the Light System Program
@@ -521,19 +612,19 @@ Include the Merkle tree metadata fetched in Step 3:
 3. **Pass current account data**
 
 * Pass the complete current account data. The program reconstructs the existing account hash from this data to verify it matches the hash in the state tree.
-* In this example, we pass the current `counterValue`, before incrementing.
+* In this example, we pass `current_message` from the fetched account and `new_message` for the update.
 {% endtab %}
 
 {% tab title="Close" %}
 ```rust
-let instruction_data = counter::instruction::CloseCounter {
+let instruction_data = anchor_program_close::instruction::Close {
     proof: rpc_result.proof,
-    counter_value: current_counter_value,
     account_meta: CompressedAccountMeta {
-        tree_info: packed_state_tree_accounts.packed_tree_infos[0],
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
         address: compressed_account.address.unwrap(),
-        output_state_tree_index: packed_state_tree_accounts.output_tree_index,
+        output_state_tree_index: packed_tree_accounts.output_tree_index,
     },
+    current_message: current_account.message,
 };
 ```
 
@@ -543,7 +634,7 @@ let instruction_data = counter::instruction::CloseCounter {
 
 2. **Specify input hash and output state tree**
 
-Include the Merkle tree metadata fetched in Step 3:
+Include the Merkle tree metadata packed in Step 6:
 
 * `CompressedAccountMeta` points to the input hash and specifies the output state tree:
   * `tree_info: PackedStateTreeInfo` points to the existing account hash that will be nullified by the Light System Program
@@ -553,7 +644,7 @@ Include the Merkle tree metadata fetched in Step 3:
 3. **Pass current account data**
 
 * Pass the complete current account data. The program reconstructs the existing account hash from this data to verify it matches the hash in the state tree.
-* In this example, we pass the current `counterValue`, before closing.
+* In this example, we pass `current_message` from the fetched account before closing.
 {% endtab %}
 {% endtabs %}
 {% endstep %}
@@ -563,18 +654,18 @@ Include the Merkle tree metadata fetched in Step 3:
 
 Build a standard Solana `Instruction` struct with your `program_id`, `accounts`, and `data` from Step 7. Pass the `remaining_accounts` array you built in Step 6.
 
-<pre class="language-rust"><code class="lang-rust">let accounts = counter::accounts::AnchorAccounts { // for non-Anchor build Vec
+<pre class="language-rust"><code class="lang-rust">let accounts = program_create::accounts::Create { // for non-Anchor build Vec
 
-    signer: payer.pubkey(), 
-};                                                                            
+    signer: payer.pubkey(),
+};
 
-let (remaining_accounts_metas, 
-    _system_accounts_offset, 
-    _tree_accounts_offset) 
-        = remaining_accounts.to_account_metas(); 
+let (remaining_accounts_metas,
+    _system_accounts_offset,
+    _tree_accounts_offset)
+        = remaining_accounts.to_account_metas();
 
 <strong>let instruction = Instruction {
-</strong><strong>    program_id: counter::ID,
+</strong><strong>    program_id: program_create::ID,
 </strong><strong>    accounts: [
 </strong>        accounts.to_account_metas(Some(true)),
         remaining_accounts_metas,
@@ -587,22 +678,28 @@ let (remaining_accounts_metas,
 **What to include in `accounts`:**
 
 1. **Create your program-specific accounts struct** with any accounts required by your program. Use `AnchorAccounts`, or manually build `Vec<AccountMeta>` - it won't interfere with compression-related accounts.
+2. **Client-program coordination:** The client builds accounts in the order defined by `PackedAccounts` (program accounts, system accounts, tree accounts).
 
-* You can safely ignore `_system_accounts_offset` and `_tree_accounts_offset`. The values are passed by the SDK under the hood for your program.
-* The client only requires `Vec<AccountMeta>`
+* The SDK automatically passes offset indices in instruction data to your program, which uses them to parse the `AccountInfo` array.
+* You can safely ignore `_system_accounts_offset` and `_tree_accounts_offset` on the client side.
+
+{% hint style="success" %}
+**Debugging:** Log offset values to verify account ordering when troubleshooting `InvalidCpiAccountsOffset` errors. Compare the offset indices with your actual account structure to identify mismatches.
+{% endhint %}
 
 <details>
 
-<summary>Here is what happens under the hood</summary>
+<summary>How account offsets are used by programs</summary>
 
-The values are offset indices returned by `to_account_metas()`:
+`to_account_metas()` returns offset indices that mark where account groups start in the flattened array:
 
-* `system_accounts_start_offset`: Index in vector where Light System accounts start
-* `packed_accounts_start_offset`: Index in vector pointing to the first Merkle tree or queue account
-* Your program extracts `system_accounts_start_offset` from the instruction data to slice the accounts array before passing it to `CpiAccounts::new()`.
-* `CpiAccounts::new()` requires the accounts slice to start at the Light System Program.
-  * If you pass the full array without offsets, `CpiAccounts` expects the Light System accounts to start at position 0, while it's actually at 1.
-  * This would lead to the `InvalidCpiAccountsOffset` error. See this page for help with debugging.
+* `system_accounts_offset`: Index where Light System accounts start
+* `tree_accounts_offset`: Index where Merkle tree and queue accounts start
+
+Your program extracts `system_accounts_offset` from instruction data and uses it to slice the `AccountInfo` array before passing to `CpiAccounts::new()`.
+
+* `CpiAccounts::new()` requires the slice to start at the Light System Program account.
+* If you pass the full array without offsetting, `CpiAccounts` expects the Light System Program at position 0, but it's actually at position 1, which leads to the `InvalidCpiAccountsOffset` error.
 
 </details>
 
@@ -654,26 +751,951 @@ cargo test-sbf
 For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
 {% endhint %}
 
+{% tabs %}
+{% tab title="Anchor" %}
+{% tabs %}
+{% tab title="Create" %}
+```rust
+#![cfg(feature = "test-sbf")]
 
+use anchor_lang::AnchorDeserialize;
+use light_program_test::{
+    program_test::LightProgramTest, AddressWithTree, Indexer, ProgramTestConfig, Rpc, RpcError,
+};
+use light_sdk::{
+    address::v1::derive_address,
+    instruction::{PackedAccounts, SystemAccountMetaConfig},
+};
+use program_create::MyCompressedAccount;
+use solana_sdk::{
+    instruction::{AccountMeta, Instruction},
+    signature::{Keypair, Signature, Signer},
+};
+
+#[tokio::test]
+async fn test_create() {
+    let config = ProgramTestConfig::new(true, Some(vec![("program_create", program_create::ID)]));
+    let mut rpc = LightProgramTest::new(config).await.unwrap();
+    let payer = rpc.get_payer().insecure_clone();
+
+    let address_tree_info = rpc.get_address_tree_v1();
+
+    let (address, _) = derive_address(
+        &[b"message", payer.pubkey().as_ref()],
+        &address_tree_info.tree,
+        &program_create::ID,
+    );
+
+    create_message_account(&mut rpc, &payer, &address, "Hello, compressed world!".to_string())
+        .await
+        .unwrap();
+
+    let account = get_message_account(&mut rpc, address).await;
+    assert_eq!(account.owner, payer.pubkey());
+    assert_eq!(account.message, "Hello, compressed world!");
+}
+
+async fn create_message_account(
+    rpc: &mut LightProgramTest,
+    payer: &Keypair,
+    address: &[u8; 32],
+    message: String,
+) -> Result<Signature, RpcError> {
+    let config = SystemAccountMetaConfig::new(program_create::ID);
+    let mut remaining_accounts = PackedAccounts::default();
+    remaining_accounts.add_system_accounts(config);
+
+    let address_tree_info = rpc.get_address_tree_v1();
+
+    let rpc_result = rpc
+        .get_validity_proof(
+            vec![],
+            vec![AddressWithTree {
+                address: *address,
+                tree: address_tree_info.tree,
+            }],
+            None,
+        )
+        .await?
+        .value;
+    let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
+
+    let output_state_tree_index = rpc
+        .get_random_state_tree_info()
+        .unwrap()
+        .pack_output_tree_index(&mut remaining_accounts)
+        .unwrap();
+
+    let (remaining_accounts, _, _) = remaining_accounts.to_account_metas();
+
+    let instruction = Instruction {
+        program_id: program_create::ID,
+        accounts: [
+            vec![AccountMeta::new(payer.pubkey(), true)],
+            remaining_accounts,
+        ]
+        .concat(),
+        data: {
+            use anchor_lang::InstructionData;
+            program_create::instruction::Create {
+                proof: rpc_result.proof,
+                address_tree_info: packed_accounts.address_trees[0],
+                output_state_tree_index: output_state_tree_index,
+                message,
+            }
+            .data()
+        },
+    };
+
+    rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+        .await
+}
+
+async fn get_message_account(
+    rpc: &mut LightProgramTest,
+    address: [u8; 32],
+) -> MyCompressedAccount {
+    let account = rpc
+        .get_compressed_account(address, None)
+        .await
+        .unwrap()
+        .value;
+    let data = &account.data.as_ref().unwrap().data;
+    MyCompressedAccount::deserialize(&mut &data[..]).unwrap()
+}
+```
+{% endtab %}
+
+{% tab title="Update" %}
+```rust
+#![cfg(feature = "test-sbf")]
+
+use anchor_lang::AnchorDeserialize;
+use light_client::indexer::CompressedAccount;
+use light_program_test::{
+    program_test::LightProgramTest, Indexer, ProgramTestConfig, Rpc, RpcError,
+};
+use light_sdk::instruction::{
+    account_meta::CompressedAccountMeta, PackedAccounts, SystemAccountMetaConfig,
+};
+use anchor_program_update::MyCompressedAccount;
+use solana_sdk::{
+    instruction::{AccountMeta, Instruction},
+    signature::{Keypair, Signature, Signer},
+};
+
+#[tokio::test]
+async fn test_update() {
+    let config = ProgramTestConfig::new(true, Some(vec![
+        ("program_create", program_create::ID),
+        ("anchor_program_update", anchor_program_update::ID),
+    ]));
+    let mut rpc = LightProgramTest::new(config).await.unwrap();
+    let payer = rpc.get_payer().insecure_clone();
+
+    // Create account first
+    let address_tree_info = rpc.get_address_tree_v1();
+    let (address, _) = light_sdk::address::v1::derive_address(
+        &[b"message", payer.pubkey().as_ref()],
+        &address_tree_info.tree,
+        &anchor_program_update::ID,
+    );
+
+    program_create::tests::create_message_account(
+        &mut rpc,
+        &payer,
+        &address,
+        "Hello, compressed world!".to_string(),
+    )
+    .await
+    .unwrap();
+
+    let account = get_compressed_account(&mut rpc, address).await;
+    update_message_account(&mut rpc, &payer, account, "Updated message!".to_string())
+        .await
+        .unwrap();
+
+    let updated = get_message_account(&mut rpc, address).await;
+    assert_eq!(updated.message, "Updated message!");
+}
+
+async fn update_message_account(
+    rpc: &mut LightProgramTest,
+    payer: &Keypair,
+    compressed_account: CompressedAccount,
+    new_message: String,
+) -> Result<Signature, RpcError> {
+    let mut remaining_accounts = PackedAccounts::default();
+
+    let config = SystemAccountMetaConfig::new(anchor_program_update::ID);
+    remaining_accounts.add_system_accounts(config);
+    let hash = compressed_account.hash;
+
+    let rpc_result = rpc
+        .get_validity_proof(vec![hash], vec![], None)
+        .await?
+        .value;
+
+    let packed_tree_accounts = rpc_result
+        .pack_tree_infos(&mut remaining_accounts)
+        .state_trees
+        .unwrap();
+
+    let (remaining_accounts, _, _) = remaining_accounts.to_account_metas();
+
+    let current_account = MyCompressedAccount::deserialize(
+        &mut compressed_account.data.as_ref().unwrap().data.as_slice(),
+    )
+    .unwrap();
+
+    let instruction = Instruction {
+        program_id: anchor_program_update::ID,
+        accounts: [
+            vec![AccountMeta::new(payer.pubkey(), true)],
+            remaining_accounts,
+        ]
+        .concat(),
+        data: {
+            use anchor_lang::InstructionData;
+            anchor_program_update::instruction::Update {
+                proof: rpc_result.proof,
+                account_meta: CompressedAccountMeta {
+                    tree_info: packed_tree_accounts.packed_tree_infos[0],
+                    address: compressed_account.address.unwrap(),
+                    output_state_tree_index: packed_tree_accounts.output_tree_index,
+                },
+                current_message: current_account.message,
+                new_message,
+            }
+            .data()
+        },
+    };
+
+    rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+        .await
+}
+
+async fn get_compressed_account(
+    rpc: &mut LightProgramTest,
+    address: [u8; 32],
+) -> CompressedAccount {
+    rpc.get_compressed_account(address, None)
+        .await
+        .unwrap()
+        .value
+}
+
+async fn get_message_account(
+    rpc: &mut LightProgramTest,
+    address: [u8; 32],
+) -> MyCompressedAccount {
+    let account = get_compressed_account(rpc, address).await;
+    let data = &account.data.as_ref().unwrap().data;
+    MyCompressedAccount::deserialize(&mut &data[..]).unwrap()
+}
+```
+{% endtab %}
+
+{% tab title="Close" %}
+```rust
+#![cfg(feature = "test-sbf")]
+
+use anchor_lang::AnchorDeserialize;
+use light_client::indexer::CompressedAccount;
+use light_program_test::{
+    program_test::LightProgramTest, Indexer, ProgramTestConfig, Rpc, RpcError,
+};
+use light_sdk::instruction::{
+    account_meta::CompressedAccountMeta, PackedAccounts, SystemAccountMetaConfig,
+};
+use anchor_program_close::MyCompressedAccount;
+use solana_sdk::{
+    instruction::{AccountMeta, Instruction},
+    signature::{Keypair, Signature, Signer},
+};
+
+#[tokio::test]
+async fn test_close() {
+    let config = ProgramTestConfig::new(true, Some(vec![
+        ("program_create", program_create::ID),
+        ("anchor_program_close", anchor_program_close::ID),
+    ]));
+    let mut rpc = LightProgramTest::new(config).await.unwrap();
+    let payer = rpc.get_payer().insecure_clone();
+
+    // Create account first
+    let address_tree_info = rpc.get_address_tree_v1();
+    let (address, _) = light_sdk::address::v1::derive_address(
+        &[b"message", payer.pubkey().as_ref()],
+        &address_tree_info.tree,
+        &anchor_program_close::ID,
+    );
+
+    program_create::tests::create_message_account(
+        &mut rpc,
+        &payer,
+        &address,
+        "Hello, compressed world!".to_string(),
+    )
+    .await
+    .unwrap();
+
+    let account = get_compressed_account(&mut rpc, address).await;
+    close_message_account(&mut rpc, &payer, account)
+        .await
+        .unwrap();
+
+    let result = rpc.get_compressed_account(address, None).await;
+    assert!(result.is_err() || result.unwrap().value.data.is_none());
+}
+
+async fn close_message_account(
+    rpc: &mut LightProgramTest,
+    payer: &Keypair,
+    compressed_account: CompressedAccount,
+) -> Result<Signature, RpcError> {
+    let mut remaining_accounts = PackedAccounts::default();
+
+    let config = SystemAccountMetaConfig::new(anchor_program_close::ID);
+    remaining_accounts.add_system_accounts(config);
+    let hash = compressed_account.hash;
+
+    let rpc_result = rpc
+        .get_validity_proof(vec![hash], vec![], None)
+        .await?
+        .value;
+
+    let packed_tree_accounts = rpc_result
+        .pack_tree_infos(&mut remaining_accounts)
+        .state_trees
+        .unwrap();
+
+    let (remaining_accounts, _, _) = remaining_accounts.to_account_metas();
+
+    let current_account = MyCompressedAccount::deserialize(
+        &mut compressed_account.data.as_ref().unwrap().data.as_slice(),
+    )
+    .unwrap();
+
+    let instruction = Instruction {
+        program_id: anchor_program_close::ID,
+        accounts: [
+            vec![AccountMeta::new(payer.pubkey(), true)],
+            remaining_accounts,
+        ]
+        .concat(),
+        data: {
+            use anchor_lang::InstructionData;
+            anchor_program_close::instruction::Close {
+                proof: rpc_result.proof,
+                account_meta: CompressedAccountMeta {
+                    tree_info: packed_tree_accounts.packed_tree_infos[0],
+                    address: compressed_account.address.unwrap(),
+                    output_state_tree_index: packed_tree_accounts.output_tree_index,
+                },
+                current_message: current_account.message,
+            }
+            .data()
+        },
+    };
+
+    rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+        .await
+}
+
+async fn get_compressed_account(
+    rpc: &mut LightProgramTest,
+    address: [u8; 32],
+) -> CompressedAccount {
+    rpc.get_compressed_account(address, None)
+        .await
+        .unwrap()
+        .value
+}
+```
+{% endtab %}
+
+{% tab title="Reinit" %}
+```rust
+#![cfg(feature = "test-sbf")]
+
+use light_client::indexer::CompressedAccount;
+use light_program_test::{
+    program_test::LightProgramTest, Indexer, ProgramTestConfig, Rpc, RpcError,
+};
+use light_sdk::instruction::{
+    account_meta::CompressedAccountMeta, PackedAccounts, SystemAccountMetaConfig,
+};
+use solana_sdk::{
+    instruction::{AccountMeta, Instruction},
+    signature::{Keypair, Signature, Signer},
+};
+
+#[tokio::test]
+async fn test_reinit() {
+    let config = ProgramTestConfig::new(true, Some(vec![
+        ("program_create", program_create::ID),
+        ("anchor_program_close", anchor_program_close::ID),
+        ("anchor_program_reinit", anchor_program_reinit::ID),
+    ]));
+    let mut rpc = LightProgramTest::new(config).await.unwrap();
+    let payer = rpc.get_payer().insecure_clone();
+
+    // Create and close account
+    let address_tree_info = rpc.get_address_tree_v1();
+    let (address, _) = light_sdk::address::v1::derive_address(
+        &[b"message", payer.pubkey().as_ref()],
+        &address_tree_info.tree,
+        &anchor_program_reinit::ID,
+    );
+
+    program_create::tests::create_message_account(
+        &mut rpc,
+        &payer,
+        &address,
+        "Hello, compressed world!".to_string(),
+    )
+    .await
+    .unwrap();
+
+    let account = get_compressed_account(&mut rpc, address).await;
+    anchor_program_close::tests::close_message_account(&mut rpc, &payer, account)
+        .await
+        .unwrap();
+
+    let closed_account = get_compressed_account(&mut rpc, address).await;
+
+    // Reinitialize the account
+    reinit_message_account(&mut rpc, &payer, closed_account)
+        .await
+        .unwrap();
+
+    let reinit_account = rpc.get_compressed_account(address, None).await.unwrap().value.unwrap();
+    assert_eq!(reinit_account.data, Some(Default::default()));
+}
+
+async fn reinit_message_account(
+    rpc: &mut LightProgramTest,
+    payer: &Keypair,
+    compressed_account: CompressedAccount,
+) -> Result<Signature, RpcError> {
+    let mut remaining_accounts = PackedAccounts::default();
+
+    let config = SystemAccountMetaConfig::new(anchor_program_reinit::ID);
+    remaining_accounts.add_system_accounts(config);
+    let hash = compressed_account.hash;
+
+    let rpc_result = rpc
+        .get_validity_proof(vec![hash], vec![], None)
+        .await?
+        .value;
+
+    let packed_tree_accounts = rpc_result
+        .pack_tree_infos(&mut remaining_accounts)
+        .state_trees
+        .unwrap();
+
+    let (remaining_accounts, _, _) = remaining_accounts.to_account_metas();
+
+    let instruction = Instruction {
+        program_id: anchor_program_reinit::ID,
+        accounts: [
+            vec![AccountMeta::new(payer.pubkey(), true)],
+            remaining_accounts,
+        ]
+        .concat(),
+        data: {
+            use anchor_lang::InstructionData;
+            anchor_program_reinit::instruction::Reinit {
+                proof: rpc_result.proof,
+                account_meta: CompressedAccountMeta {
+                    tree_info: packed_tree_accounts.packed_tree_infos[0],
+                    address: compressed_account.address.unwrap(),
+                    output_state_tree_index: packed_tree_accounts.output_tree_index,
+                },
+            }
+            .data()
+        },
+    };
+
+    rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+        .await
+}
+
+async fn get_compressed_account(
+    rpc: &mut LightProgramTest,
+    address: [u8; 32],
+) -> CompressedAccount {
+    rpc.get_compressed_account(address, None)
+        .await
+        .unwrap()
+        .value
+}
+```
+{% endtab %}
+
+{% tab title="Burn" %}
+```rust
+#![cfg(feature = "test-sbf")]
+
+use anchor_lang::AnchorDeserialize;
+use light_client::indexer::CompressedAccount;
+use light_program_test::{
+    program_test::LightProgramTest, Indexer, ProgramTestConfig, Rpc, RpcError,
+};
+use light_sdk::instruction::{
+    account_meta::CompressedAccountMetaBurn, PackedAccounts, SystemAccountMetaConfig,
+};
+use anchor_program_burn::MyCompressedAccount;
+use solana_sdk::{
+    instruction::{AccountMeta, Instruction},
+    signature::{Keypair, Signature, Signer},
+};
+
+#[tokio::test]
+async fn test_burn() {
+    let config = ProgramTestConfig::new(true, Some(vec![
+        ("program_create", program_create::ID),
+        ("anchor_program_burn", anchor_program_burn::ID),
+    ]));
+    let mut rpc = LightProgramTest::new(config).await.unwrap();
+    let payer = rpc.get_payer().insecure_clone();
+
+    // Create account first
+    let address_tree_info = rpc.get_address_tree_v1();
+    let (address, _) = light_sdk::address::v1::derive_address(
+        &[b"message", payer.pubkey().as_ref()],
+        &address_tree_info.tree,
+        &anchor_program_burn::ID,
+    );
+
+    program_create::tests::create_message_account(
+        &mut rpc,
+        &payer,
+        &address,
+        "Hello, compressed world!".to_string(),
+    )
+    .await
+    .unwrap();
+
+    let account = get_compressed_account(&mut rpc, address).await;
+    burn_message_account(&mut rpc, &payer, account)
+        .await
+        .unwrap();
+
+    let result = rpc.get_compressed_account(address, None).await.unwrap().value;
+    assert!(result.is_none());
+}
+
+async fn burn_message_account(
+    rpc: &mut LightProgramTest,
+    payer: &Keypair,
+    compressed_account: CompressedAccount,
+) -> Result<Signature, RpcError> {
+    let mut remaining_accounts = PackedAccounts::default();
+
+    let config = SystemAccountMetaConfig::new(anchor_program_burn::ID);
+    remaining_accounts.add_system_accounts(config);
+    let hash = compressed_account.hash;
+
+    let rpc_result = rpc
+        .get_validity_proof(vec![hash], vec![], None)
+        .await?
+        .value;
+
+    let packed_tree_accounts = rpc_result
+        .pack_tree_infos(&mut remaining_accounts)
+        .state_trees
+        .unwrap();
+
+    let (remaining_accounts, _, _) = remaining_accounts.to_account_metas();
+
+    let current_account = MyCompressedAccount::deserialize(
+        &mut compressed_account.data.as_ref().unwrap().data.as_slice(),
+    )
+    .unwrap();
+
+    let instruction = Instruction {
+        program_id: anchor_program_burn::ID,
+        accounts: [
+            vec![AccountMeta::new(payer.pubkey(), true)],
+            remaining_accounts,
+        ]
+        .concat(),
+        data: {
+            use anchor_lang::InstructionData;
+            anchor_program_burn::instruction::Burn {
+                proof: rpc_result.proof,
+                account_meta: CompressedAccountMetaBurn {
+                    tree_info: packed_tree_accounts.packed_tree_infos[0],
+                    address: compressed_account.address.unwrap(),
+                },
+                current_message: current_account.message,
+            }
+            .data()
+        },
+    };
+
+    rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+        .await
+}
+
+async fn get_compressed_account(
+    rpc: &mut LightProgramTest,
+    address: [u8; 32],
+) -> CompressedAccount {
+    rpc.get_compressed_account(address, None)
+        .await
+        .unwrap()
+        .value
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endtab %}
+
+{% tab title="Native" %}
+{% tabs %}
+{% tab title="Create" %}
+```rust
+#![cfg(feature = "test-sbf")]
+
+use borsh::{BorshDeserialize, BorshSerialize};
+use light_client::indexer::CompressedAccount;
+use light_program_test::{
+    program_test::LightProgramTest, AddressWithTree, Indexer, ProgramTestConfig, Rpc, RpcError,
+};
+use light_sdk::address::v1::derive_address;
+use light_sdk::instruction::{PackedAccounts, SystemAccountMetaConfig};
+use native_program_create::{CreateInstructionData, MyCompressedAccount};
+use solana_sdk::{
+    instruction::Instruction,
+    pubkey::Pubkey,
+    signature::{Keypair, Signer},
+};
+
+#[tokio::test]
+async fn test_create() {
+    let config = ProgramTestConfig::new(true, Some(vec![("native_program_create", native_program_create::ID)]));
+    let mut rpc = LightProgramTest::new(config).await.unwrap();
+    let payer = rpc.get_payer().insecure_clone();
+
+    let address_tree_info = rpc.get_address_tree_v1();
+    let address_tree_pubkey = address_tree_info.tree;
+
+    let (address, _) = derive_address(
+        &[b"message", payer.pubkey().as_ref()],
+        &address_tree_pubkey,
+        &native_program_create::ID,
+    );
+    let merkle_tree_pubkey = rpc.get_random_state_tree_info().unwrap().tree;
+
+    create_compressed_account(
+        &payer,
+        &mut rpc,
+        &merkle_tree_pubkey,
+        address_tree_pubkey,
+        address,
+        "Hello, compressed world!".to_string(),
+    )
+    .await
+    .unwrap();
+
+    let compressed_account = rpc
+        .get_compressed_account(address, None)
+        .await
+        .unwrap()
+        .value
+        .unwrap();
+    assert_eq!(compressed_account.address.unwrap(), address);
+
+    let my_account =
+        MyCompressedAccount::deserialize(&mut compressed_account.data.as_ref().unwrap().data.as_slice())
+            .unwrap();
+    assert_eq!(my_account.owner, payer.pubkey());
+    assert_eq!(my_account.message, "Hello, compressed world!");
+}
+
+pub async fn create_compressed_account(
+    payer: &Keypair,
+    rpc: &mut LightProgramTest,
+    merkle_tree_pubkey: &Pubkey,
+    address_tree_pubkey: Pubkey,
+    address: [u8; 32],
+    message: String,
+) -> Result<(), RpcError> {
+    let system_account_meta_config = SystemAccountMetaConfig::new(native_program_create::ID);
+    let mut accounts = PackedAccounts::default();
+    accounts.add_pre_accounts_signer(payer.pubkey());
+    accounts.add_system_accounts(system_account_meta_config)?;
+
+    let rpc_result = rpc
+        .get_validity_proof(
+            vec![],
+            vec![AddressWithTree {
+                address,
+                tree: address_tree_pubkey,
+            }],
+            None,
+        )
+        .await?
+        .value;
+
+    let output_state_tree_index = accounts.insert_or_get(*merkle_tree_pubkey);
+    let packed_address_tree_info = rpc_result.pack_tree_infos(&mut accounts).address_trees[0];
+    let (account_metas, _, _) = accounts.to_account_metas();
+
+    let instruction_data = CreateInstructionData {
+        proof: rpc_result.proof,
+        address_tree_info: packed_address_tree_info,
+        output_state_tree_index: output_state_tree_index,
+        message,
+    };
+    let inputs = instruction_data.try_to_vec().unwrap();
+
+    let instruction = Instruction {
+        program_id: native_program_create::ID,
+        accounts: account_metas,
+        data: [
+            &[native_program_create::InstructionType::Create as u8][..],
+            &inputs[..],
+        ]
+        .concat(),
+    };
+
+    rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+        .await?;
+    Ok(())
+}
+```
+{% endtab %}
+
+{% tab title="Close" %}
+```rust
+#![cfg(feature = "test-sbf")]
+
+use borsh::{BorshDeserialize, BorshSerialize};
+use light_client::indexer::CompressedAccount;
+use light_program_test::{
+    program_test::LightProgramTest, Indexer, ProgramTestConfig, Rpc, RpcError,
+};
+use light_sdk::instruction::{
+    account_meta::CompressedAccountMeta, PackedAccounts, SystemAccountMetaConfig,
+};
+use native_program_close::{CloseInstructionData, MyCompressedAccount};
+use solana_sdk::{
+    instruction::Instruction,
+    pubkey::Pubkey,
+    signature::{Keypair, Signer},
+};
+
+pub async fn close_compressed_account(
+    payer: &Keypair,
+    rpc: &mut LightProgramTest,
+    compressed_account: &CompressedAccount,
+) -> Result<(), RpcError> {
+    let system_account_meta_config = SystemAccountMetaConfig::new(native_program_close::ID);
+    let mut accounts = PackedAccounts::default();
+    accounts.add_pre_accounts_signer(payer.pubkey());
+    accounts.add_system_accounts(system_account_meta_config)?;
+
+    let hash = compressed_account.hash;
+
+    let rpc_result = rpc
+        .get_validity_proof(vec![hash], vec![], None)
+        .await?
+        .value;
+
+    let packed_accounts = rpc_result
+        .pack_tree_infos(&mut accounts)
+        .state_trees
+        .unwrap();
+
+    let current_account =
+        MyCompressedAccount::deserialize(&mut compressed_account.data.as_ref().unwrap().data.as_slice())
+            .unwrap();
+
+    let meta = CompressedAccountMeta {
+        tree_info: packed_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+        output_state_tree_index: packed_accounts.output_tree_index,
+    };
+
+    let (account_metas, _, _) = accounts.to_account_metas();
+    let instruction_data = CloseInstructionData {
+        proof: rpc_result.proof,
+        account_meta: meta,
+        current_message: current_account.message,
+    };
+    let inputs = instruction_data.try_to_vec().unwrap();
+
+    let instruction = Instruction {
+        program_id: native_program_close::ID,
+        accounts: account_metas,
+        data: [
+            &[native_program_close::InstructionType::Close as u8][..],
+            &inputs[..],
+        ]
+        .concat(),
+    };
+
+    rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+        .await?;
+    Ok(())
+}
+```
+{% endtab %}
+
+{% tab title="Reinit" %}
+```rust
+#![cfg(feature = "test-sbf")]
+
+use light_client::indexer::CompressedAccount;
+use light_program_test::{
+    program_test::LightProgramTest, Rpc, RpcError,
+};
+use light_sdk::instruction::{
+    account_meta::CompressedAccountMeta, PackedAccounts, SystemAccountMetaConfig,
+};
+use native_program_reinit::ReinitInstructionData;
+use solana_sdk::{
+    instruction::Instruction,
+    signature::{Keypair, Signer},
+};
+
+pub async fn reinit_compressed_account(
+    payer: &Keypair,
+    rpc: &mut LightProgramTest,
+    compressed_account: &CompressedAccount,
+) -> Result<(), RpcError> {
+    let system_account_meta_config = SystemAccountMetaConfig::new(native_program_reinit::ID);
+    let mut accounts = PackedAccounts::default();
+    accounts.add_pre_accounts_signer(payer.pubkey());
+    accounts.add_system_accounts(system_account_meta_config)?;
+
+    let hash = compressed_account.hash;
+
+    let rpc_result = rpc
+        .get_validity_proof(vec![hash], vec![], None)
+        .await?
+        .value;
+
+    let packed_accounts = rpc_result
+        .pack_tree_infos(&mut accounts)
+        .state_trees
+        .unwrap();
+
+    let meta = CompressedAccountMeta {
+        tree_info: packed_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+        output_state_tree_index: packed_accounts.output_tree_index,
+    };
+
+    let (account_metas, _, _) = accounts.to_account_metas();
+    let instruction_data = ReinitInstructionData {
+        proof: rpc_result.proof,
+        account_meta: meta,
+    };
+    let inputs = instruction_data.try_to_vec().unwrap();
+
+    let instruction = Instruction {
+        program_id: native_program_reinit::ID,
+        accounts: account_metas,
+        data: [
+            &[native_program_reinit::InstructionType::Reinit as u8][..],
+            &inputs[..],
+        ]
+        .concat(),
+    };
+
+    rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+        .await?;
+    Ok(())
+}
+```
+{% endtab %}
+
+{% tab title="Burn" %}
+```rust
+#![cfg(feature = "test-sbf")]
+
+use borsh::BorshDeserialize;
+use light_client::indexer::CompressedAccount;
+use light_program_test::{
+    program_test::LightProgramTest, Rpc, RpcError,
+};
+use light_sdk::instruction::{
+    account_meta::CompressedAccountMetaBurn, PackedAccounts, SystemAccountMetaConfig,
+};
+use native_program_burn::{BurnInstructionData, MyCompressedAccount};
+use solana_sdk::{
+    instruction::Instruction,
+    signature::{Keypair, Signer},
+};
+
+pub async fn burn_compressed_account(
+    payer: &Keypair,
+    rpc: &mut LightProgramTest,
+    compressed_account: &CompressedAccount,
+) -> Result<(), RpcError> {
+    let system_account_meta_config = SystemAccountMetaConfig::new(native_program_burn::ID);
+    let mut accounts = PackedAccounts::default();
+    accounts.add_pre_accounts_signer(payer.pubkey());
+    accounts.add_system_accounts(system_account_meta_config)?;
+
+    let hash = compressed_account.hash;
+
+    let rpc_result = rpc
+        .get_validity_proof(vec![hash], vec![], None)
+        .await?
+        .value;
+
+    let packed_accounts = rpc_result
+        .pack_tree_infos(&mut accounts)
+        .state_trees
+        .unwrap();
+
+    let current_account =
+        MyCompressedAccount::deserialize(&mut compressed_account.data.as_ref().unwrap().data.as_slice())
+            .unwrap();
+
+    let meta = CompressedAccountMetaBurn {
+        tree_info: packed_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+    };
+
+    let (account_metas, _, _) = accounts.to_account_metas();
+    let instruction_data = BurnInstructionData {
+        proof: rpc_result.proof,
+        account_meta: meta,
+        current_message: current_account.message,
+    };
+    let inputs = instruction_data.try_to_vec().unwrap();
+
+    let instruction = Instruction {
+        program_id: native_program_burn::ID,
+        accounts: account_metas,
+        data: [
+            &[native_program_burn::InstructionType::Burn as u8][..],
+            &inputs[..],
+        ]
+        .concat(),
+    };
+
+    rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+        .await?;
+    Ok(())
+}
+```
+{% endtab %}
+{% endtabs %}
+{% endtab %}
+{% endtabs %}
 
 ## Next Steps
 
-Start building programs to create, update, or close compressed accounts.
+Start building programs to create, or interact with compressed accounts.
 
 {% content-ref url="../guides/" %}
 [guides](../guides/)
 {% endcontent-ref %}
-
-[^1]: [Program ID:](https://solscan.io/account/SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7) SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
-
-[^2]: [Program ID:](https://solscan.io/account/noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV) noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV
-
-[^3]: PDA derived from Light System Program ID with seed `b"cpi_authority"`.&#x20;
-
-
-
-    [Pubkey](https://solscan.io/account/HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru): HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru
-
-[^4]: [Program ID](https://solscan.io/account/compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq): compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq
-
-[^5]: [Program ID](https://solscan.io/account/11111111111111111111111111111111): 11111111111111111111111111111111
