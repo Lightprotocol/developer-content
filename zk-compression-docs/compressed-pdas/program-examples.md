@@ -22,15 +22,15 @@ Full compressed account lifecycle (create, increment, decrement, reset, close):
 
 ### Create-and-read Program
 
-* [**read-only**](https://github.com/Lightprotocol/program-examples/tree/main/read-only) - Create a new compressed account and read it onchain.
+* [**read-only**](https://github.com/Lightprotocol/program-examples/tree/main/read-only) - Create a new compressed account and read it on-chain.
 
-### Compare uncompressed vs compressed accounts Program
+### Compare compressed vs uncompressed Program
 
 * [**account-comparison**](https://github.com/Lightprotocol/program-examples/tree/main/account-comparison) - Compare compressed vs regular Solana accounts.
 
 ### ZK-ID Program
 
-* [**zk-id**](https://github.com/Lightprotocol/program-examples/tree/main/zk-id) - A minimal zk id Solana program that uses zero-knowledge proofs for identity verification with compressed accounts.
+* [**zk-id**](https://github.com/Lightprotocol/program-examples/tree/main/zk-id) - A minimal Solana program that uses zero-knowledge proofs for identity verification with compressed accounts.
 
 ## Build your own Program
 
