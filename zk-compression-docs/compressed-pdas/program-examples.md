@@ -28,8 +28,12 @@ Full compressed account lifecycle (create, increment, decrement, reset, close):
 
 * [**account-comparison**](https://github.com/Lightprotocol/program-examples/tree/main/account-comparison) - Compare compressed vs regular Solana accounts.
 
+### ZK-ID Program
+
+* [**zk-id**](https://github.com/Lightprotocol/program-examples/tree/main/zk-id) - A minimal zk id Solana program that uses zero-knowledge proofs for identity verification with compressed accounts.
+
 ## Build your own Program
 
-{% content-ref url="../compressed-pdas/create-a-program-with-compressed-pdas.md" %}
-[create-a-program-with-compressed-pdas.md](../compressed-pdas/create-a-program-with-compressed-pdas.md)
+{% content-ref url="create-a-program-with-compressed-pdas.md" %}
+[create-a-program-with-compressed-pdas.md](create-a-program-with-compressed-pdas.md)
 {% endcontent-ref %}
