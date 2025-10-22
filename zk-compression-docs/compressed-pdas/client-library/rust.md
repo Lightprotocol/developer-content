@@ -221,14 +221,14 @@ let (address, _) = derive_address(
 **Pass these parameters**:
 
 * `&[b"my-seed"]`: Arbitrary byte slices that uniquely identify the account
-* `&address_tree_info.tree` to specify the tree pubkey. This parameter ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
-* `ProgramID` to specify the program owner pubkey.
+* `&address_tree_info.tree`: Specify the tree pubkey to ensure an address is unique to this address tree. Different trees produce different addresses from identical seeds.
+* `ProgramID`: Specify the program owner pubkey.
 
 {% hint style="info" %}
 Use the same `address_tree_info.tree` for both `derive_address()` and all subsequent operations on that account in your client and program.
 
-* To create a compressed account, pass the address to `get_validity_proof()` to prove the address does not exist yet, or
-* to update/close, use the address to fetch the current account with `get_compressed_account(address)`.
+* To create a compressed account, pass the address to `get_validity_proof()` to prove the address does not exist yet.
+* To update/close, use the address to fetch the current account with `get_compressed_account(address)`.
 {% endhint %}
 {% endstep %}
 
