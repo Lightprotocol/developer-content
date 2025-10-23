@@ -182,7 +182,7 @@ Fetch metadata of trees with:
 Only needed to create new addresses. Other interactions with compressed accounts use the existing address.
 {% endhint %}
 
-* `get_random_state_tree_info()` to return the `TreeInfo` struct with the public key and other metadata for a random state tree to store the compressed account hash.
+* `get_random_state_tree_info()` returns `TreeInfo[]` with pubkeys and metadata for a random state tree to store the compressed account hash.
   * Use this pubkey of the state tree for all outputs of a transaction.
 
 {% hint style="info" %}
@@ -191,12 +191,12 @@ Only needed to create new addresses. Other interactions with compressed accounts
 * `tree`: Merkle tree account pubkey
 * `queue`: Queue account pubkey
   * Buffers updates of compressed accounts before they are added to the Merkle tree.
-  * Only the Light System Program interacts with the queue.
+  * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
 * `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion.
-* `cpi_context`: Optional CPI context account for to batch operations across multiple programs (may be null)
+* `cpi_context` (currently on devnet): Optional CPI context account for batch operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
-  * First program caches its signer checks, second program reads them and combines instruction data
-  * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
+  * First program caches its signer checks, second program reads them and combines instruction data.
+  * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts.
 * `next_tree_info`: The tree to use for the next operation when the current tree is full (may be null)
   * When set, use this tree as output tree.
   * The protocol creates new trees, once existing trees fill up.
@@ -206,7 +206,7 @@ Only needed to create new addresses. Other interactions with compressed accounts
 {% step %}
 ### Derive Address
 
-Derive a persistent address as a unique identifier for your compressed account with `derive_address()`.
+Derive a persistent address as a unique identifier for your compressed account.
 
 ```rust
 use light_sdk::address::v1::derive_address;
@@ -304,10 +304,12 @@ The RPC returns `ValidityProofWithContext` with
 {% endtab %}
 
 {% tab title="Combined Proof" %}
+{% hint style="info" %}
 **Advantages of combined proofs**:
 
 * You only add one validity proof with 128 bytes in size instead of two to your instruction data.
 * Reduction of compute unit consumption by at least 100k, since combined proofs are verified in a single CPI by the Light System Program.
+{% endhint %}
 
 ```rust
 let hash = compressed_account.hash;
@@ -332,7 +334,7 @@ let rpc_result = rpc
 
 The RPC returns `ValidityProofWithContext` with
 
-* `proof` with a single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
+* `proof`: A single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
 * `addresses` with the public key and metadata of the address tree to pack accounts in the next step.
 * `accounts` with the public key and metadata of the state tree to pack accounts in the next step.
 {% endtab %}

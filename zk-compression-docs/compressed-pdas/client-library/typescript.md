@@ -171,24 +171,24 @@ Fetch metadata of trees with:
   * for `getValidityProof()` to prove the address does not exist yet.
 
 {% hint style="info" %}
-Only needed to create new addresses. Other interactions with compressed accounts use the existing address.
+Only needed to create new addresses. Other interactions with compressed accounts fetch it via the existing address (`getCompressedAccount(address)`).
 {% endhint %}
 
-* `getStateTreeInfos()` returns metadata for all active state trees.
+* `getStateTreeInfos()` returns `TreeInfo[]` with pubkeys and metadata for all active state trees.
 * `selectStateTreeInfo()` selects a random state tree to store the compressed account hash.
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
   * Account hashes can move to different state trees after each state transition.
-  * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction. The protocol creates new trees, once existing trees fill up.
+  * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
 
 {% hint style="info" %}
 `TreeInfo` contains metadata for a Merkle tree:
 
 * `tree`: Merkle tree account pubkey
 * `queue`: Queue account pubkey
-  * Buffers insertions before they are added to the Merkle tree
-  * Only the Light System Program interacts with the queue.
+  * Buffers updates of compressed accounts before they are added to the Merkle tree.
+  * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
 * `treeType`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
-* `cpiContext`: Optional CPI context account for batched operations across multiple programs (may be null)
+* `cpiContext` (currently on devnet): Optional CPI context account for batched operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
   * First program caches its signer checks, second program reads them and combines instruction data
   * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
@@ -224,7 +224,7 @@ const address = deriveAddress(seed, addressTree.tree);
 {% hint style="info" %}
 Use the same `addressTree` for both `deriveAddress()` and all subsequent operations on that account in your client and program.
 
-* To create a compressed account, pass the address to `getValidityProof()` to prove the address does not exist yet, or
+* To create a compressed account, pass the address to `getValidityProof()` to prove the address does not exist yet.
 * To update/close, use the address to fetch the current account with `getCompressedAccount(address)`.
 {% endhint %}
 {% endstep %}
@@ -236,7 +236,7 @@ Fetch a validity proof from your RPC provider that supports ZK Compression (Heli
 
 * To create a compressed account, you must prove the **address doesn't already exist** in the address tree.
 * To update or close a compressed account, you must **prove its account hash exists** in a state tree.
-* You can combine multiple operations in one proof to optimize compute cost and instruction data.
+* You can **combine multiple operations in one proof** to optimize compute cost and instruction data.
 
 {% hint style="info" %}
 [Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProof()` method.
@@ -258,8 +258,8 @@ const proof = await rpc.getValidityProof(
 
 The RPC returns `ValidityProofWithContext` with
 
-* `compressedProof` with the proof that the address does not exist in the address tree, passed to the program in your instruction data.
-* `newAddressParams` array with address tree public key and metadata to pack accounts in the next step.
+* `compressedProof`: The proof that the address does not exist in the address tree, passed to the program in your instruction data.
+* `newAddressParams`: An array with address tree public key and metadata to pack accounts in the next step.
 * Empty `rootIndices` and `leafIndices` arrays, since you do not reference an existing account hash, when you create a compressed account.
 {% endtab %}
 
@@ -286,16 +286,18 @@ const proof = await rpc.getValidityProof(
 
 The RPC returns `ValidityProofWithContext` with
 
-* `compressedProof` with the proof that the account hash exists in the state tree, passed to the program in your instruction data.
+* `compressedProof`: The proof that the account hash exists in the state tree, passed to the program in your instruction data.
 * `rootIndices`, `leafIndices`, and `proveByIndices` arrays with proof metadata to pack accounts in the next step.
 * An empty `newAddressParams` array, since you pass no address to the proof, when you update or close a compressed account.
 {% endtab %}
 
 {% tab title="Combined Proof" %}
+{% hint style="info" %}
 **Advantages of combined proofs**:
 
 * You only add one validity proof with 128 bytes in size instead of two to your instruction data.
 * Reduction of compute unit consumption by at least 100k, since combined proofs are verified in a single CPI by the Light System Program.
+{% endhint %}
 
 ```typescript
 const hash = compressedAccount.hash;
@@ -315,7 +317,7 @@ const proof = await rpc.getValidityProof(
 
 The RPC returns `ValidityProofWithContext` with
 
-* `compressedProof` with a single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
+* `compressedProof`: A single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
 * `newAddressParams` array with address tree public key and metadata to build `PackedAddressTreeInfo` in the next step.
 * `rootIndices`, `leafIndices`, and `proveByIndices` arrays with proof metadata to build `PackedStateTreeInfo` in the next step.
 {% endtab %}
