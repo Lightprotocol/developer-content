@@ -48,7 +48,7 @@ This guide covers the components of a Typescript client. Here is the complete fl
 
 {% stepper %}
 {% step %}
-### Dependencies
+#### Dependencies
 
 {% tabs %}
 {% tab title="npm" %}
@@ -85,7 +85,7 @@ pnpm add \
 {% endstep %}
 
 {% step %}
-### Environment
+#### Environment
 
 {% tabs %}
 {% tab title="Rpc" %}
@@ -146,7 +146,7 @@ const testRpc = await getTestRpc(lightWasm);
 {% endstep %}
 
 {% step %}
-### Tree Configuration
+#### Tree Configuration
 
 Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
@@ -154,7 +154,7 @@ Before creating a compressed account, your client must fetch metadata of two Mer
 * a state tree to store the compressed account hash.
 
 {% hint style="success" %}
-The protocol maintains Merkle trees. You don't need to initialize custom trees. \
+The protocol maintains Merkle trees. You don't need to initialize custom trees.\
 Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
@@ -199,7 +199,7 @@ Only needed to create new addresses. Other interactions with compressed accounts
 {% endstep %}
 
 {% step %}
-### Derive Address
+#### Derive Address
 
 Derive a persistent address as a unique identifier for your compressed account.
 
@@ -230,7 +230,7 @@ Use the same `addressTree` for both `deriveAddress()` and all subsequent operati
 {% endstep %}
 
 {% step %}
-### Validity Proof
+#### Validity Proof
 
 Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
@@ -325,7 +325,7 @@ The RPC returns `ValidityProofWithContext` with
 {% endstep %}
 
 {% step %}
-### Pack Accounts
+#### Pack Accounts
 
 Compressed account instructions require packing accounts into an array.
 
@@ -338,7 +338,7 @@ Compressed account instructions require packing accounts into an array.
 You will pass this array in the instruction data.
 {% endhint %}
 
-#### 1. Build PackedAccounts Helper
+**1. Build PackedAccounts Helper**
 
 Build a `PackedAccounts` helper class to construct the `remainingAccounts` array with correct indices.
 
@@ -420,7 +420,7 @@ class PackedAccounts {
 
 </details>
 
-#### 2. Initialize Helper
+**2. Initialize Helper**
 
 ```typescript
 const packedAccounts = new PackedAccounts();
@@ -455,7 +455,7 @@ Program-specific accounts (signers, fee payer) are passed to `.accounts()`, not 
 
 </details>
 
-#### 3. Pack Tree Accounts from Validity Proof
+**3. Pack Tree Accounts from Validity Proof**
 
 `getValidityProof()` returns pubkeys and other metadata of Merkle trees. You will convert the pubkeys to u8 indices that reference accounts in the `remainingAccounts` array to optimize your instruction data.
 
@@ -515,7 +515,7 @@ const packedStateTreeInfo = {
 {% endtab %}
 {% endtabs %}
 
-#### 4. Add Output State Tree
+**4. Add Output State Tree**
 
 Specify the state tree to store the new account hash.
 
@@ -530,7 +530,7 @@ const outputTreeIndex = packedAccounts.insertOrGet(outputStateTree.tree);
 The output tree is separate from the trees in your validity proof. The validity proof references trees that verify existing state (or prove an address doesn't exist), while the output tree specifies where to write the new account hash.
 {% endhint %}
 
-#### 5. Finalize Accounts
+**5. Finalize Accounts**
 
 ```typescript
 const accountMetas = packedAccounts.toAccountMetas();
@@ -555,7 +555,7 @@ Call `toAccountMetas()` to build the complete `AccountMeta[]` array for `.remain
    * All tree and queue accounts with writable flags in sequential order.
    * Light System Program writes new hashes and addresses to these accounts.
 
-#### 6. Summary
+**6. Summary**
 
 You built the `remainingAccounts` array to merge accounts into an array:
 
@@ -571,7 +571,7 @@ The accounts receive a sequential u8 index. Instruction data references accounts
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
@@ -676,7 +676,7 @@ Include the Merkle tree metadata from the Pack Accounts section:
 {% endstep %}
 
 {% step %}
-### Instruction
+#### Instruction
 
 Build the instruction with your `program_id`, `accounts`, and `data` from Step 7. Pass the accounts array you built in Step 6.
 
@@ -718,7 +718,7 @@ const instruction = await program.methods
 {% endstep %}
 
 {% step %}
-### Send Transaction
+#### Send Transaction
 
 Submit the instruction to the network.
 

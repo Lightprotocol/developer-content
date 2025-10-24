@@ -48,7 +48,7 @@ This guide covers the components of a Rust client. Here is the complete flow:
 
 {% stepper %}
 {% step %}
-### Dependencies
+#### Dependencies
 
 {% tabs %}
 {% tab title="LightClient" %}
@@ -80,7 +80,7 @@ The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to An
 {% endstep %}
 
 {% step %}
-### Environment
+#### Environment
 
 {% tabs %}
 {% tab title="LightClient" %}
@@ -155,7 +155,7 @@ let payer = rpc.get_payer().insecure_clone();
 {% endstep %}
 
 {% step %}
-### Tree Configuration
+#### Tree Configuration
 
 Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
@@ -163,7 +163,7 @@ Before creating a compressed account, your client must fetch metadata of two Mer
 * a state tree to store the compressed account hash.
 
 {% hint style="success" %}
-The protocol maintains Merkle trees. You don't need to initialize custom trees. \
+The protocol maintains Merkle trees. You don't need to initialize custom trees.\
 Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
@@ -204,7 +204,7 @@ Only needed to create new addresses. Other interactions with compressed accounts
 {% endstep %}
 
 {% step %}
-### Derive Address
+#### Derive Address
 
 Derive a persistent address as a unique identifier for your compressed account.
 
@@ -233,7 +233,7 @@ Use the same `address_tree_info.tree` for both `derive_address()` and all subseq
 {% endstep %}
 
 {% step %}
-### Validity Proof
+#### Validity Proof
 
 Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
@@ -342,7 +342,7 @@ The RPC returns `ValidityProofWithContext` with
 {% endstep %}
 
 {% step %}
-### Pack Accounts
+#### Pack Accounts
 
 Compressed account instructions require packing accounts into an array.
 
@@ -355,7 +355,7 @@ Compressed account instructions require packing accounts into an array.
 You will pass this array in the instruction data.
 {% endhint %}
 
-#### 1. Initialize PackedAccounts
+**1. Initialize PackedAccounts**
 
 {% tabs %}
 {% tab title="Anchor" %}
@@ -385,7 +385,7 @@ let mut accounts = PackedAccounts::default();
 
 ```
 
-#### 2. Add Light System Accounts
+**2. Add Light System Accounts**
 
 Add the Light System accounts your program needs to create and interact with compressed accounts.
 
@@ -417,11 +417,11 @@ accounts.add_system_accounts(config)?;
 
 <summary><em>System Accounts List</em></summary>
 
-<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td><td>Verifies validity proofs and executes CPI calls to create or interact with compressed accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program <br>- Verified by Light System Program during CPI <br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Proves your program can interact with Account Compression Program - Prevents unauthorized programs from modifying compressed account state</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger <br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts <br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to: <br>- Derive the CPI Signer PDA <br>- Verify the CPI Signer matches your program ID <br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td><td>Solana System Program to create accounts or transfer lamports</td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td><td>Verifies validity proofs and executes CPI calls to create or interact with compressed accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Proves your program can interact with Account Compression Program - Prevents unauthorized programs from modifying compressed account state</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td><td>Solana System Program to create accounts or transfer lamports</td></tr></tbody></table>
 
 </details>
 
-#### 3. Pack Tree Accounts from Validity Proof
+**3. Pack Tree Accounts from Validity Proof**
 
 `getValidityProof()` returns pubkeys and other metadata of Merkle trees. With `pack_tree_infos`, you will convert the pubkeys to u8 indices that reference accounts in the accounts array to optimize your instruction data.
 
@@ -511,7 +511,7 @@ The returned `PackedStateTreeInfos` contains:
 {% endtab %}
 {% endtabs %}
 
-#### 4. Add Output State Tree (Create Only)
+**4. Add Output State Tree (Create Only)**
 
 {% hint style="info" %}
 This step only applies when you create accounts and use **Anchor**.
@@ -528,7 +528,7 @@ let output_state_tree_index = output_state_tree_info
 * Use `output_state_tree_info` variable from Step 3 with the `TreeInfo` metadata for the randomly selected state tree
 * Call `pack_output_tree_index(&mut remaining_accounts)` to convert the tree pubkey to a u8 index.
 
-#### 5. Summary
+**5. Summary**
 
 You initialized `PackedAccounts::default()` to merge accounts into an array to optimize instruction data:
 
@@ -540,7 +540,7 @@ The accounts receive a sequential u8 index. Instruction data references accounts
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
@@ -646,7 +646,7 @@ Include the Merkle tree metadata packed in Step 6:
 {% endstep %}
 
 {% step %}
-### Instruction
+#### Instruction
 
 Build a standard Solana `Instruction` struct with your `program_id`, `accounts`, and `data` from Step 7. Pass the `remaining_accounts` array you built in Step 6.
 
@@ -717,7 +717,7 @@ This is the final account array:
 {% endstep %}
 
 {% step %}
-### Send Transaction
+#### Send Transaction
 
 ```rust
 rpc.create_and_send_transaction(&[instruction],
@@ -1700,9 +1700,7 @@ Start building programs to create, or interact with compressed accounts.
 
 [^2]: [Program ID:](https://solscan.io/account/noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV) noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV
 
-[^3]: PDA derived from Light System Program ID with seed `b"cpi_authority"`.&#x20;
-
-
+[^3]: PDA derived from Light System Program ID with seed `b"cpi_authority"`.
 
     [Pubkey](https://solscan.io/account/HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru): HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru
 
