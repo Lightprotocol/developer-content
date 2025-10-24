@@ -26,8 +26,6 @@ Here is the complete flow:&#x20;
 
 <figure><picture><source srcset="../../.gitbook/assets/program-create (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-create.png" alt=""></picture><figcaption></figcaption></figure>
 
-<figure><img src="../../.gitbook/assets/image (35).png" alt=""><figcaption></figcaption></figure>
-
 ## Implementation Guide
 
 {% stepper %}
