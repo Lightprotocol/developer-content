@@ -694,8 +694,6 @@ Your program extracts `system_accounts_offset` from instruction data and uses it
 
 * `CpiAccounts::new()` requires the slice to start at the Light System Program account.
 
-<!-- this is only true in native programs, in this example with anchor the light system program is index 0 of remaining account -->
-
 </details>
 
 2. **Get Light System accounts** by calling `remaining_accounts.to_account_metas()` to return the merged accounts array with Light System and tree account indices.
