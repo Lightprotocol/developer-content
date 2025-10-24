@@ -14,11 +14,11 @@ description: >-
 
 ## **For Development**
 
-### DeepWiki [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol)&#x20;
+### DeepWiki [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol)
 
 Use DeepWiki and its search capabilities (AskDevin) to query the Light Protocol repository in natural language.
 
-* DeepWiki generates systematic documentatio&#x6E;_._&#x20;
+* DeepWiki generates systematic documentatio&#x6E;_._
 * Use AskDevin for help with _debugging and technical questions_:
 
 {% embed url="https://drive.google.com/file/d/1irbZC4NpSE6F1XctIel0yXyVmwvRsjaU/view?usp=share_link" %}
@@ -87,16 +87,4 @@ You can specify any public GitHub repo that is indexed with DeepWiki. When you c
 
 Start building with compressed tokens or PDAs.
 
-{% columns %}
-{% column %}
-{% content-ref url="broken-reference" %}
-[Broken link](broken-reference)
-{% endcontent-ref %}
-{% endcolumn %}
-
-{% column %}
-{% content-ref url="broken-reference" %}
-[Broken link](broken-reference)
-{% endcontent-ref %}
-{% endcolumn %}
-{% endcolumns %}
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><h4>Compressed Tokens</h4></td><td><a href="../compressed-tokens/overview.md">overview.md</a></td></tr><tr><td><h4>Compressed PDAs</h4></td><td><a href="../compressed-pdas/create-a-program-with-compressed-pdas.md">create-a-program-with-compressed-pdas.md</a></td></tr></tbody></table>
