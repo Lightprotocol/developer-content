@@ -1,4 +1,4 @@
-Resources for developers to learn and build with Light.
+Resources for developers to learn and build: zkcompression.com
 
 Visit CLAUDE.md for Site Index.
 
