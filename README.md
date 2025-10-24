@@ -1,4 +1,4 @@
-Resources for developers to learn and build: zkcompression.com
+Resources for developers to learn and build: [zkcompression.com](https://www.zkcompression.com).
 
 Visit CLAUDE.md for Site Index.
 
