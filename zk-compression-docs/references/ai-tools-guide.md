@@ -19,7 +19,7 @@ description: >-
 Use DeepWiki and its search capabilities (AskDevin) to query the Light Protocol repository in natural language.
 
 * DeepWiki generates systematic documentatio&#x6E;_._&#x20;
-* Use AskDevin helps with _debugging and technical questions_:
+* Use AskDevin for help with _debugging and technical questions_:
 
 {% embed url="https://drive.google.com/file/d/1irbZC4NpSE6F1XctIel0yXyVmwvRsjaU/view?usp=share_link" %}
 
