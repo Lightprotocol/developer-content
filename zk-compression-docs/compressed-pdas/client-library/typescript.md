@@ -52,30 +52,36 @@ This guide covers the components of a Typescript client. Here is the complete fl
 
 {% tabs %}
 {% tab title="npm" %}
+{% code overflow="wrap" %}
 ```bash
 npm install --save \
     @lightprotocol/stateless.js@0.22.0 \
     @lightprotocol/compressed-token@0.22.0 \
     @solana/web3.js
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="yarn" %}
+{% code overflow="wrap" %}
 ```bash
 yarn add \
     @lightprotocol/stateless.js@0.22.0 \
     @lightprotocol/compressed-token@0.22.0 \
     @solana/web3.js
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="pnpm" %}
+{% code overflow="wrap" %}
 ```bash
 pnpm add \
     @lightprotocol/stateless.js@0.22.0 \
     @lightprotocol/compressed-token@0.22.0 \
     @solana/web3.js
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 
@@ -93,6 +99,7 @@ Connect to local, devnet or mainnet with `Rpc`.
 
 {% tabs %}
 {% tab title="Mainnet" %}
+{% code overflow="wrap" %}
 ```typescript
 import { createRpc } from '@lightprotocol/stateless.js';
 
@@ -102,9 +109,11 @@ const rpc = createRpc(
   'https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY'
 );
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Devnet" %}
+{% code overflow="wrap" %}
 ```typescript
 import { createRpc } from '@lightprotocol/stateless.js';
 
@@ -114,16 +123,19 @@ const rpc = createRpc(
   'https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY'
 );
 ```
+{% endcode %}
 
 * For Helius devnet: The endpoint serves RPC, Photon indexer, and prover API.
 {% endtab %}
 
 {% tab title="Localnet" %}
+{% code overflow="wrap" %}
 ```typescript
 import { createRpc } from '@lightprotocol/stateless.js';
 
 const rpc = createRpc();
 ```
+{% endcode %}
 
 * Defaults to `http://127.0.0.1:8899` (RPC), `http://127.0.0.1:8784` (indexer), `http://127.0.0.1:3001` (prover)
 * Requires running `light test-validator` locally
@@ -134,6 +146,7 @@ const rpc = createRpc();
 {% tab title="TestRpc" %}
 Set up test environment with `TestRpc`.
 
+{% code overflow="wrap" %}
 ```typescript
 import { getTestRpc } from '@lightprotocol/stateless.js';
 import { LightWasm, WasmFactory } from '@lightprotocol/hasher.rs';
@@ -141,6 +154,7 @@ import { LightWasm, WasmFactory } from '@lightprotocol/hasher.rs';
 const lightWasm: LightWasm = await WasmFactory.getInstance();
 const testRpc = await getTestRpc(lightWasm);
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 {% endstep %}
@@ -158,11 +172,13 @@ The protocol maintains Merkle trees. You don't need to initialize custom trees.\
 Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```typescript
 const addressTree = await rpc.getAddressTreeInfo();
 const stateTreeInfos = await rpc.getStateTreeInfos();
 const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 ```
+{% endcode %}
 
 Fetch metadata of trees with:
 
@@ -203,6 +219,7 @@ Only needed to create new addresses. Other interactions with compressed accounts
 
 Derive a persistent address as a unique identifier for your compressed account.
 
+{% code overflow="wrap" %}
 ```typescript
 const seed = deriveAddressSeed(
   [Buffer.from('my-seed')],
@@ -210,6 +227,7 @@ const seed = deriveAddressSeed(
 );
 const address = deriveAddress(seed, addressTree.tree);
 ```
+{% endcode %}
 
 **First, derive the seed**:
 
@@ -244,12 +262,14 @@ Fetch a validity proof from your RPC provider that supports ZK Compression (Heli
 
 {% tabs %}
 {% tab title="Create" %}
+{% code overflow="wrap" %}
 ```typescript
 const proof = await rpc.getValidityProof(
   [],
   [{ address, tree: addressTree.tree, queue: addressTree.queue }]
 );
 ```
+{% endcode %}
 
 **Pass these parameters**:
 
@@ -268,6 +288,7 @@ The RPC returns `ValidityProofWithContext` with
 **Update and Close** use identical proof mechanisms. The difference is in your program's instruction handler.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```typescript
 const hash = compressedAccount.hash;
 const tree = compressedAccount.merkleContext.tree;
@@ -278,6 +299,7 @@ const proof = await rpc.getValidityProof(
   []
 );
 ```
+{% endcode %}
 
 **Pass these parameters**:
 
@@ -299,6 +321,7 @@ The RPC returns `ValidityProofWithContext` with
 * Reduction of compute unit consumption by at least 100k CU, since combined proofs are verified in a single CPI by the Light System Program.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```typescript
 const hash = compressedAccount.hash;
 const tree = compressedAccount.merkleContext.tree;
@@ -309,6 +332,7 @@ const proof = await rpc.getValidityProof(
   [{ address, tree: addressTree.tree, queue: addressTree.queue }]
 );
 ```
+{% endcode %}
 
 **Pass these parameters**:
 
@@ -336,11 +360,11 @@ To minimize instruction data compressed account instructions pack accounts into 
 * **Non-Packed structs** contain full pubkeys. RPC methods return full pubkeys.
 {% endhint %}
 
-**1. Build PackedAccounts Helper**
+**1. PackedAccounts Overview**
 
-Build a `PackedAccounts` helper class to construct the `remainingAccounts` array with correct indices.
+Use the `PackedAccounts` helper from the SDK to construct the `remainingAccounts` array with correct indices.
 
-The helper
+`PackedAccounts`
 
 1. derives CPI signer PDA and builds all 8 Light System accounts with `read-only` permission flags.
 
@@ -352,6 +376,7 @@ The helper
 
 3. converts pubkeys to sequential u8 indices in the sequential order below.
 
+{% code overflow="wrap" %}
 ```
 [0]    Your program accounts 
 [1]    Light System Program
@@ -359,76 +384,24 @@ The helper
 [3-8]  Other Light System accounts
 [9+]   Merkle trees, queues
 ```
+{% endcode %}
 
-You will populate these fields in the following steps.
+**2. Import and Initialize PackedAccounts**
 
-<details>
-
-<summary>Copy-paste this helper</summary>
-
+{% code overflow="wrap" %}
 ```typescript
-import { PublicKey, AccountMeta } from '@solana/web3.js';
-import { defaultStaticAccountsStruct } from '@lightprotocol/stateless.js';
+import { PackedAccounts } from '@lightprotocol/stateless.js';
 
-class PackedAccounts {
-  private systemAccounts: AccountMeta[] = [];
-  private nextIndex: number = 0;
-  private map: Map<string, [number, AccountMeta]> = new Map();
-
-  addSystemAccounts(programId: PublicKey): void {
-    const cpiSigner = PublicKey.findProgramAddressSync(
-      [Buffer.from('cpi_authority')],
-      programId
-    )[0];
-
-    const defaults = defaultStaticAccountsStruct();
-    const lightSystemProgram = new PublicKey('SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7');
-    const systemProgram = new PublicKey('11111111111111111111111111111111');
-
-    this.systemAccounts = [
-      { pubkey: lightSystemProgram, isSigner: false, isWritable: false },
-      { pubkey: cpiSigner, isSigner: false, isWritable: false },
-      { pubkey: defaults.registeredProgramPda, isSigner: false, isWritable: false },
-      { pubkey: defaults.noopProgram, isSigner: false, isWritable: false },
-      { pubkey: defaults.accountCompressionAuthority, isSigner: false, isWritable: false },
-      { pubkey: defaults.accountCompressionProgram, isSigner: false, isWritable: false },
-      { pubkey: programId, isSigner: false, isWritable: false },
-      { pubkey: systemProgram, isSigner: false, isWritable: false },
-    ];
-  }
-
-  insertOrGet(pubkey: PublicKey, isWritable: boolean = true): number {
-    const key = pubkey.toBase58();
-    const entry = this.map.get(key);
-    if (entry) return entry[0];
-
-    const index = this.nextIndex++;
-    this.map.set(key, [index, { pubkey, isSigner: false, isWritable }]);
-    return index;
-  }
-
-  toAccountMetas(): AccountMeta[] {
-    const entries = Array.from(this.map.entries());
-    entries.sort((a, b) => a[1][0] - b[1][0]);
-    const packedAccounts = entries.map(([, [, meta]]) => meta);
-    return [...this.systemAccounts, ...packedAccounts];
-  }
-}
-```
-
-</details>
-
-**2. Initialize Helper**
-
-```typescript
 const packedAccounts = new PackedAccounts();
 packedAccounts.addSystemAccounts(programId);
 ```
+{% endcode %}
 
 Initialize the helper and populate the 8 Light System accounts:
 
-1. **Create helper instance** with `new PackedAccounts()`.
-2. **Add system accounts** with `addSystemAccounts(programId)` to populate indices 0-7.
+1. **Import `PackedAccounts`** from `@lightprotocol/stateless.js`.
+2. **Create helper instance** with `new PackedAccounts()`.
+3. **Add system accounts** with `addSystemAccounts(programId)` to populate indices 0-7.
 
 In the next steps, you will add tree and queue accounts from the validity proof, then convert to `AccountMeta[]`.
 
@@ -459,6 +432,7 @@ Program-specific accounts (signers, fee payer) are passed to `.accounts()`, not 
 
 {% tabs %}
 {% tab title="Create" %}
+{% code overflow="wrap" %}
 ```typescript
 const addressTreeIndex = packedAccounts.insertOrGet(addressTree.tree);
 const addressQueueIndex = packedAccounts.insertOrGet(addressTree.queue);
@@ -469,6 +443,7 @@ const packedAddressTreeInfo = {
   rootIndex: proof.newAddressParams[0].rootIndex
 };
 ```
+{% endcode %}
 
 * Call `insertOrGet()` with each tree and queue pubkey from the validity proof
 * Create `PackedAddressTreeInfo` with three fields:
@@ -482,6 +457,7 @@ const packedAddressTreeInfo = {
 {% endtab %}
 
 {% tab title="Update & Close" %}
+{% code overflow="wrap" %}
 ```typescript
 const merkleTreeIndex = packedAccounts.insertOrGet(compressedAccount.merkleContext.tree);
 const queueIndex = packedAccounts.insertOrGet(compressedAccount.merkleContext.queue);
@@ -494,6 +470,7 @@ const packedStateTreeInfo = {
   proveByIndex: false
 };
 ```
+{% endcode %}
 
 * Call `insertOrGet()` with the state tree and queue pubkeys from `compressedAccount.merkleContext`
 * Create `PackedStateTreeInfo` with five fields:
@@ -517,9 +494,11 @@ const packedStateTreeInfo = {
 
 Specify the state tree to store the new account hash.
 
+{% code overflow="wrap" %}
 ```typescript
 const outputTreeIndex = packedAccounts.insertOrGet(outputStateTree.tree);
 ```
+{% endcode %}
 
 * Use `outputStateTree` variable from Step 3 with the `TreeInfo` with pubkey and metadata for the randomly selected state tree
 * Call `insertOrGet(outputStateTree.tree)` to add the tree and get its index for instruction data
@@ -530,14 +509,17 @@ The output tree is separate from the trees in your validity proof. The validity 
 
 **5. Finalize Accounts**
 
+{% code overflow="wrap" %}
 ```typescript
 const accountMetas = packedAccounts.toAccountMetas();
 ```
+{% endcode %}
 
 Call `toAccountMetas()` to build the complete `AccountMeta[]` array for `.remainingAccounts()`. Packed struct indices reference accounts by their position in this array.
 
 **The method returns accounts in two sections:**
 
+{% code overflow="wrap" %}
 ```
  [systemAccounts] [packedAccounts]
        ↑               ↑
@@ -545,6 +527,7 @@ Call `toAccountMetas()` to build the complete `AccountMeta[]` array for `.remain
     accounts      queue accounts
 
 ```
+{% endcode %}
 
 1. **System accounts as `read-only`** (indices 0-7):
    * System accounts like the noop program log state changes but don't modify their own state.
@@ -581,6 +564,7 @@ The program hashes this data and the Light System Program verifies the hash agai
 
 {% tabs %}
 {% tab title="Create" %}
+{% code overflow="wrap" %}
 ```typescript
 const instructionData = {
   proof: proof.compressedProof,
@@ -588,6 +572,7 @@ const instructionData = {
   outputStateTreeIndex: outputTreeIndex,
 };
 ```
+{% endcode %}
 
 1. **Validity Proof**
 
@@ -607,6 +592,7 @@ Include the Merkle tree metadata from the Pack Accounts section:
 {% endtab %}
 
 {% tab title="Update" %}
+{% code overflow="wrap" %}
 ```typescript
 const instructionData = {
   proof: proof.compressedProof,
@@ -619,6 +605,7 @@ const instructionData = {
   newMessage,
 };
 ```
+{% endcode %}
 
 1. **Validity Proof**
 
@@ -640,6 +627,7 @@ Include the Merkle tree metadata from the Pack Accounts section:
 {% endtab %}
 
 {% tab title="Close" %}
+{% code overflow="wrap" %}
 ```typescript
 const instructionData = {
   proof: proof.compressedProof,
@@ -651,6 +639,7 @@ const instructionData = {
   currentMessage: currentAccount.message,
 };
 ```
+{% endcode %}
 
 1. **Validity Proof**
 
@@ -678,6 +667,7 @@ Include the Merkle tree metadata from the Pack Accounts section:
 
 Build the instruction with your `program_id`, `accounts`, and `data` from Step 7. Pass the accounts array you built in Step 6.
 
+{% code overflow="wrap" %}
 ```typescript
 const instruction = await program.methods
   .create(
@@ -690,6 +680,7 @@ const instruction = await program.methods
   .remainingAccounts(accountMetas)
   .instruction();
 ```
+{% endcode %}
 
 **What to include in `accounts`:**
 
@@ -707,6 +698,7 @@ const instruction = await program.methods
 
 **Final account array:**
 The client builds the final accounts array:
+{% code overflow="wrap" %}
 ```
 Named accounts from .accounts():
 [0-N]  
@@ -718,6 +710,7 @@ Remaining accounts from .remainingAccounts():
   Merkle trees, 
   queues
 ```
+{% endcode %}
 
 {% endstep %}
 
@@ -726,6 +719,7 @@ Remaining accounts from .remainingAccounts():
 
 Submit the instruction to the network.
 
+{% code overflow="wrap" %}
 ```typescript
 const blockhash = await rpc.getLatestBlockhash();
 const signedTx = buildAndSignTx(
@@ -736,6 +730,7 @@ const signedTx = buildAndSignTx(
 );
 const signature = await sendAndConfirmTx(rpc, signedTx);
 ```
+{% endcode %}
 {% endstep %}
 {% endstepper %}
 
@@ -745,51 +740,67 @@ Full TypeScript test examples using local test validator with `createRpc()`.
 
 1. Install the Light CLI first to download program binaries:
 
+{% code overflow="wrap" %}
 ```bash
 npm i -g @lightprotocol/zk-compression-cli
 ```
+{% endcode %}
 
 2. Start local test validator:
 
+{% code overflow="wrap" %}
 ```bash
 light test-validator
 ```
+{% endcode %}
 
 3. Then run tests in a separate terminal:
 
+{% code overflow="wrap" %}
 ```bash
 anchor test --skip-local-validator
 ```
+{% endcode %}
 
 {% hint style="warning" %}
 For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
 {% endhint %}
 {% tab title="Create" %}
 
+{% code overflow="wrap" %}
 ```typescript
 
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="Update" %}
+{% code overflow="wrap" %}
 ```typescript
 
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Close" %}
+{% code overflow="wrap" %}
 ```typescript
 
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="Reinitialize" %}
+{% code overflow="wrap" %}
 ```typescript
 
 ```
+{% endcode %}
 {% endtab %}
 {% tab title="Burn" %}
+{% code overflow="wrap" %}
 ```typescript
 
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 

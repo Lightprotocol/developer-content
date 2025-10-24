@@ -52,25 +52,29 @@ This guide covers the components of a Rust client. Here is the complete flow:
 
 {% tabs %}
 {% tab title="LightClient" %}
+{% code overflow="wrap" %}
 ```toml
 [dependencies]
 light-client = "0.15.0"
-light-sdk = "0.15.0"
+light-sdk = "0.16.0"
 tokio = { version = "1", features = ["full"] }
 solana-program = "2.2"
 anchor-lang = "0.31.1"  # if using Anchor programs
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="LightProgramTest" %}
+{% code overflow="wrap" %}
 ```toml
 [dependencies]
 light-program-test = "0.15.0"
-light-sdk = "0.15.0"
+light-sdk = "0.16.0"
 tokio = { version = "1", features = ["full"] }
 solana-program = "2.2"
 anchor-lang = "0.31.1"  # if using Anchor programs
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 
@@ -88,6 +92,7 @@ Connect to local, devnet or mainnet with `LightClient`.
 
 {% tabs %}
 {% tab title="Mainnet" %}
+{% code overflow="wrap" %}
 ```rust
 use light_client::{LightClient, LightClientConfig};
 use solana_sdk::signature::read_keypair_file;
@@ -102,9 +107,11 @@ let mut client = LightClient::new(config).await?;
 
 client.payer = read_keypair_file("~/.config/solana/id.json")?;
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Devnet" %}
+{% code overflow="wrap" %}
 ```rust
 use light_client::{LightClient, LightClientConfig};
 use solana_sdk::signature::read_keypair_file;
@@ -118,11 +125,13 @@ let mut client = LightClient::new(config).await?;
 
 client.payer = read_keypair_file("~/.config/solana/id.json")?;
 ```
+{% endcode %}
 
 * For Helius devnet: The endpoint serves both standard RPC and Photon indexer API.
 {% endtab %}
 
 {% tab title="Localnet" %}
+{% code overflow="wrap" %}
 ```rust
 use light_client::{LightClient, LightClientConfig};
 use solana_sdk::signature::read_keypair_file;
@@ -133,6 +142,7 @@ let mut client = LightClient::new(config).await?;
 
 client.payer = read_keypair_file("~/.config/solana/id.json")?;
 ```
+{% endcode %}
 
 * Requires running `light test-validator` locally
 {% endtab %}
@@ -142,6 +152,7 @@ client.payer = read_keypair_file("~/.config/solana/id.json")?;
 {% tab title="LightProgramTest" %}
 For testing, `LightProgramTest` provides a fully initialized test environment with auto-funded keypair, a test indexer, Light System Programs, and Merkle tree accounts.
 
+{% code overflow="wrap" %}
 ```rust
 let config = ProgramTestConfig::new_v2(
     true,
@@ -150,6 +161,7 @@ let config = ProgramTestConfig::new_v2(
 let mut rpc = LightProgramTest::new(config).await.unwrap();
 let payer = rpc.get_payer().insecure_clone();
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 {% endstep %}
@@ -167,14 +179,29 @@ The protocol maintains Merkle trees. You don't need to initialize custom trees.\
 Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
+{% tabs %}
+{% tab title="v2 (on devnet)" %}
+{% code overflow="wrap" %}
+```rust
+let address_tree_info = rpc.get_address_tree_v2();
+let output_state_tree_info = rpc.get_random_state_tree_info_v1().unwrap();
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="v1" %}
+{% code overflow="wrap" %}
 ```rust
 let address_tree_info = rpc.get_address_tree_v1();
 let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 ```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 Fetch metadata of trees with:
 
-* `get_address_tree_v1()` to return the `TreeInfo` struct with the public key and other metadata for the address tree.
+* `get_address_tree_v1()` / `get_address_tree_v2()` to return the `TreeInfo` struct with the public key and other metadata for the address tree.
   * Used to derive addresses with `derive_address()` and
   * for `get_validity_proof()` to prove the address does not exist yet.
 
@@ -182,7 +209,7 @@ Fetch metadata of trees with:
 Only needed to create new addresses. Other interactions with compressed accounts use the existing address.
 {% endhint %}
 
-* `get_random_state_tree_info()` returns `TreeInfo[]` with pubkeys and metadata for a random state tree to store the compressed account hash.
+* `get_random_state_tree_info()` / `get_random_state_tree_info_v1()` returns `TreeInfo[]` with pubkeys and metadata for a random state tree to store the compressed account hash.
   * Use this pubkey of the state tree for all outputs of a transaction.
 
 {% hint style="info" %}
@@ -208,6 +235,7 @@ Only needed to create new addresses. Other interactions with compressed accounts
 
 Derive a persistent address as a unique identifier for your compressed account.
 
+{% code overflow="wrap" %}
 ```rust
 use light_sdk::address::v1::derive_address;
 
@@ -217,6 +245,7 @@ let (address, _) = derive_address(
     &program_id,
 );
 ```
+{% endcode %}
 
 **Pass these parameters**:
 
@@ -247,6 +276,7 @@ Fetch a validity proof from your RPC provider that supports ZK Compression (Heli
 
 {% tabs %}
 {% tab title="Create" %}
+{% code overflow="wrap" %}
 ```rust
 let rpc_result = rpc
     .get_validity_proof(
@@ -260,6 +290,7 @@ let rpc_result = rpc
     .await?
     .value;
 ```
+{% endcode %}
 
 **Pass these parameters**:
 
@@ -278,6 +309,7 @@ The RPC returns `ValidityProofWithContext` with
 **Update and Close** use identical proof mechanisms. The difference is in your program's instruction handler.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 let hash = compressed_account.hash;
 
@@ -290,6 +322,7 @@ let rpc_result = rpc
     .await?
     .value;
 ```
+{% endcode %}
 
 **Pass these parameters**:
 
@@ -311,6 +344,7 @@ The RPC returns `ValidityProofWithContext` with
 * Reduction of compute unit consumption by at least 100k CU, since combined proofs are verified in a single CPI by the Light System Program.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 let hash = compressed_account.hash;
 
@@ -326,6 +360,7 @@ let rpc_result = rpc
     .await?
     .value;
 ```
+{% endcode %}
 
 **Pass these parameters**:
 
@@ -358,15 +393,19 @@ To minimize instruction data compressed account instructions pack accounts into 
 
 {% tabs %}
 {% tab title="Anchor" %}
+{% code overflow="wrap" %}
 ```rust
 let mut remaining_accounts = PackedAccounts::default();
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Native" %}
+{% code overflow="wrap" %}
 ```rust
 let mut accounts = PackedAccounts::default();
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 
@@ -376,6 +415,7 @@ let mut accounts = PackedAccounts::default();
 2. `system_accounts`: eight Light System accounts required to create or interact with compressed accounts
 3. `packed_accounts`: Merkle tree and queue accounts from the validity proof
 
+{% code overflow="wrap" %}
 ```
 [pre_accounts] [system_accounts] [packed_accounts]
        ↑               ↑                ↑
@@ -383,6 +423,7 @@ let mut accounts = PackedAccounts::default();
    fee payer      accounts      address trees
 
 ```
+{% endcode %}
 
 **2. Add Light System Accounts**
 
@@ -390,21 +431,25 @@ Add the Light System accounts your program needs to create and interact with com
 
 {% tabs %}
 {% tab title="Anchor" %}
+{% code overflow="wrap" %}
 ```rust
 let config = SystemAccountMetaConfig::new(program_create::ID);
 remaining_accounts.add_system_accounts(config);
 ```
+{% endcode %}
 
 * Pass your program ID in `SystemAccountMetaConfig::new(program_create::ID)` to derive the CPI signer PDA
 * Call `add_system_accounts(config)` - the SDK will populate the `system_accounts` vector with 8 Light System accounts in the sequence below.
 {% endtab %}
 
 {% tab title="Native" %}
+{% code overflow="wrap" %}
 ```rust
 let config = SystemAccountMetaConfig::new(native_program::ID);
 accounts.add_pre_accounts_signer(payer.pubkey());
 accounts.add_system_accounts(config)?;
 ```
+{% endcode %}
 
 * Add the signer to `pre_accounts` with `add_pre_accounts_signer(payer.pubkey())`
 * Pass your program ID in `SystemAccountMetaConfig::new()` to derive the CPI signer PDA
@@ -428,9 +473,11 @@ accounts.add_system_accounts(config)?;
 {% tab title="Anchor" %}
 {% tabs %}
 {% tab title="Create" %}
+{% code overflow="wrap" %}
 ```rust
 let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
 ```
+{% endcode %}
 
 Call `pack_tree_infos(&mut remaining_accounts)` to extract tree pubkeys and add them to the accounts array.
 
@@ -444,12 +491,14 @@ The returned `PackedTreeInfos` contain `.address_trees` as `Vec<PackedAddressTre
 {% endtab %}
 
 {% tab title="Update, Close" %}
+{% code overflow="wrap" %}
 ```rust
 let packed_tree_accounts = rpc_result
     .pack_tree_infos(&mut remaining_accounts)
     .state_trees
     .unwrap();
 ```
+{% endcode %}
 
 Call `pack_tree_infos(&mut remaining_accounts)` to extract tree pubkeys and add them to the accounts array.
 
@@ -469,10 +518,12 @@ The returned `PackedTreeInfos` contains `.state_trees` as `Option<PackedStateTre
 {% tab title="Native" %}
 {% tabs %}
 {% tab title="Create" %}
+{% code overflow="wrap" %}
 ```rust
 let output_state_tree_index = accounts.insert_or_get(*merkle_tree_pubkey);
 let packed_address_tree_info = rpc_result.pack_tree_infos(&mut accounts).address_trees[0];
 ```
+{% endcode %}
 
 * Use `insert_or_get()` to add the output state tree pubkey and get its index
 * Call `pack_tree_infos(&mut accounts)` to extract address tree info
@@ -487,12 +538,14 @@ The returned `PackedAddressTreeInfo` contains:
 {% endtab %}
 
 {% tab title="Close, Reinit, Burn" %}
+{% code overflow="wrap" %}
 ```rust
 let packed_accounts = rpc_result
     .pack_tree_infos(&mut accounts)
     .state_trees
     .unwrap();
 ```
+{% endcode %}
 
 Call `pack_tree_infos(&mut accounts)` to extract tree pubkeys and add them to the accounts array.
 
@@ -519,10 +572,12 @@ This step only applies when you create accounts.
 * For other interactions with compressed accounts (using both Anchor and Native), the output tree is included in the packed tree accounts from Step 3.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 let output_state_tree_index = output_state_tree_info
     .pack_output_tree_index(&mut remaining_accounts)?;
 ```
+{% endcode %}
 
 * Use `output_state_tree_info` variable from Step 3 with the `TreeInfo` metadata for the randomly selected state tree
 * Call `pack_output_tree_index(&mut remaining_accounts)` to add the tree to packed accounts and return its u8 index.
@@ -551,6 +606,7 @@ The program hashes this data and the Light System Program verifies the hash agai
 
 {% tabs %}
 {% tab title="Create" %}
+{% code overflow="wrap" %}
 ```rust
 let instruction_data = program_create::instruction::Create {
     proof: rpc_result.proof,
@@ -559,6 +615,7 @@ let instruction_data = program_create::instruction::Create {
     message,
 };
 ```
+{% endcode %}
 
 1. **Validity Proof**
 
@@ -578,6 +635,7 @@ Include the Merkle tree metadata packed in Step 6:
 {% endtab %}
 
 {% tab title="Update" %}
+{% code overflow="wrap" %}
 ```rust
 let instruction_data = anchor_program_update::instruction::Update {
     proof: rpc_result.proof,
@@ -590,6 +648,7 @@ let instruction_data = anchor_program_update::instruction::Update {
     new_message,
 };
 ```
+{% endcode %}
 
 1. **Validity Proof**
 
@@ -611,6 +670,7 @@ Include the Merkle tree metadata packed in Step 6:
 {% endtab %}
 
 {% tab title="Close" %}
+{% code overflow="wrap" %}
 ```rust
 let instruction_data = anchor_program_close::instruction::Close {
     proof: rpc_result.proof,
@@ -622,6 +682,7 @@ let instruction_data = anchor_program_close::instruction::Close {
     current_message: current_account.message,
 };
 ```
+{% endcode %}
 
 1. **Validity Proof**
 
@@ -710,16 +771,19 @@ This is the final account array:
 - Fee payer
 
 2. Remaining accounts:
+{% code overflow="wrap" %}
 ```
 [0]    Light System Program
 [1]    CPI Signer PDA
 [2-7]  Other Light System accounts
 [8+]   Merkle trees, queues
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Native Program" %}
 All accounts are in the array when not using Anchor.
+{% code overflow="wrap" %}
 ```
 [0]    Signers, Fee Payer
 [1]    Light System Program
@@ -727,6 +791,7 @@ All accounts are in the array when not using Anchor.
 [3-8]  Other Light System accounts
 [9+]   Merkle trees, queues
 ```
+{% endcode %}
 -> you need to use 1 as offset when creating CpiAccounts struct in your program.
 {% endtab %}
 {% endtabs %}
@@ -736,11 +801,13 @@ All accounts are in the array when not using Anchor.
 {% step %}
 #### Send Transaction
 
+{% code overflow="wrap" %}
 ```rust
 rpc.create_and_send_transaction(&[instruction],
   &payer.pubkey(), &[payer])
       .await?;
 ```
+{% endcode %}
 {% endstep %}
 {% endstepper %}
 
@@ -750,15 +817,19 @@ Full Rust test examples using `light-program-test`.
 
 1. Install the Light CLI first to download the program binaries:
 
+{% code overflow="wrap" %}
 ```bash
 npm i -g @lightprotocol/zk-compression-cli
 ```
+{% endcode %}
 
 2. Then build and run tests:
 
+{% code overflow="wrap" %}
 ```bash
 cargo test-sbf
 ```
+{% endcode %}
 
 {% hint style="warning" %}
 For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
@@ -768,6 +839,7 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 {% tab title="Anchor" %}
 {% tabs %}
 {% tab title="Create" %}
+{% code overflow="wrap" %}
 ```rust
 #![cfg(feature = "test-sbf")]
 
@@ -791,7 +863,7 @@ async fn test_create() {
     let mut rpc = LightProgramTest::new(config).await.unwrap();
     let payer = rpc.get_payer().insecure_clone();
 
-    let address_tree_info = rpc.get_address_tree_v1();
+    let address_tree_info = rpc.get_address_tree_v2();
 
     let (address, _) = derive_address(
         &[b"message", payer.pubkey().as_ref()],
@@ -818,7 +890,7 @@ async fn create_message_account(
     let mut remaining_accounts = PackedAccounts::default();
     remaining_accounts.add_system_accounts(config);
 
-    let address_tree_info = rpc.get_address_tree_v1();
+    let address_tree_info = rpc.get_address_tree_v2();
 
     let rpc_result = rpc
         .get_validity_proof(
@@ -834,7 +906,7 @@ async fn create_message_account(
     let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
 
     let output_state_tree_index = rpc
-        .get_random_state_tree_info()
+        .get_random_state_tree_info_v1()
         .unwrap()
         .pack_output_tree_index(&mut remaining_accounts)
         .unwrap();
@@ -877,9 +949,11 @@ async fn get_message_account(
     MyCompressedAccount::deserialize(&mut &data[..]).unwrap()
 }
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Update" %}
+{% code overflow="wrap" %}
 ```rust
 #![cfg(feature = "test-sbf")]
 
@@ -907,7 +981,7 @@ async fn test_update() {
     let payer = rpc.get_payer().insecure_clone();
 
     // Create account first
-    let address_tree_info = rpc.get_address_tree_v1();
+    let address_tree_info = rpc.get_address_tree_v2();
     let (address, _) = light_sdk::address::v1::derive_address(
         &[b"message", payer.pubkey().as_ref()],
         &address_tree_info.tree,
@@ -1007,9 +1081,11 @@ async fn get_message_account(
     MyCompressedAccount::deserialize(&mut &data[..]).unwrap()
 }
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Close" %}
+{% code overflow="wrap" %}
 ```rust
 #![cfg(feature = "test-sbf")]
 
@@ -1037,7 +1113,7 @@ async fn test_close() {
     let payer = rpc.get_payer().insecure_clone();
 
     // Create account first
-    let address_tree_info = rpc.get_address_tree_v1();
+    let address_tree_info = rpc.get_address_tree_v2();
     let (address, _) = light_sdk::address::v1::derive_address(
         &[b"message", payer.pubkey().as_ref()],
         &address_tree_info.tree,
@@ -1126,9 +1202,11 @@ async fn get_compressed_account(
         .value
 }
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Reinit" %}
+{% code overflow="wrap" %}
 ```rust
 #![cfg(feature = "test-sbf")]
 
@@ -1155,7 +1233,7 @@ async fn test_reinit() {
     let payer = rpc.get_payer().insecure_clone();
 
     // Create and close account
-    let address_tree_info = rpc.get_address_tree_v1();
+    let address_tree_info = rpc.get_address_tree_v2();
     let (address, _) = light_sdk::address::v1::derive_address(
         &[b"message", payer.pubkey().as_ref()],
         &address_tree_info.tree,
@@ -1245,9 +1323,11 @@ async fn get_compressed_account(
         .value
 }
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Burn" %}
+{% code overflow="wrap" %}
 ```rust
 #![cfg(feature = "test-sbf")]
 
@@ -1275,7 +1355,7 @@ async fn test_burn() {
     let payer = rpc.get_payer().insecure_clone();
 
     // Create account first
-    let address_tree_info = rpc.get_address_tree_v1();
+    let address_tree_info = rpc.get_address_tree_v2();
     let (address, _) = light_sdk::address::v1::derive_address(
         &[b"message", payer.pubkey().as_ref()],
         &address_tree_info.tree,
@@ -1363,6 +1443,7 @@ async fn get_compressed_account(
         .value
 }
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 {% endtab %}
@@ -1370,6 +1451,7 @@ async fn get_compressed_account(
 {% tab title="Native" %}
 {% tabs %}
 {% tab title="Create" %}
+{% code overflow="wrap" %}
 ```rust
 #![cfg(feature = "test-sbf")]
 
@@ -1393,7 +1475,7 @@ async fn test_create() {
     let mut rpc = LightProgramTest::new(config).await.unwrap();
     let payer = rpc.get_payer().insecure_clone();
 
-    let address_tree_info = rpc.get_address_tree_v1();
+    let address_tree_info = rpc.get_address_tree_v2();
     let address_tree_pubkey = address_tree_info.tree;
 
     let (address, _) = derive_address(
@@ -1401,7 +1483,7 @@ async fn test_create() {
         &address_tree_pubkey,
         &native_program_create::ID,
     );
-    let merkle_tree_pubkey = rpc.get_random_state_tree_info().unwrap().tree;
+    let merkle_tree_pubkey = rpc.get_random_state_tree_info_v1().unwrap().tree;
 
     create_compressed_account(
         &payer,
@@ -1481,9 +1563,11 @@ pub async fn create_compressed_account(
     Ok(())
 }
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Close" %}
+{% code overflow="wrap" %}
 ```rust
 #![cfg(feature = "test-sbf")]
 
@@ -1557,9 +1641,11 @@ pub async fn close_compressed_account(
     Ok(())
 }
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Reinit" %}
+{% code overflow="wrap" %}
 ```rust
 #![cfg(feature = "test-sbf")]
 
@@ -1626,9 +1712,11 @@ pub async fn reinit_compressed_account(
     Ok(())
 }
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Burn" %}
+{% code overflow="wrap" %}
 ```rust
 #![cfg(feature = "test-sbf")]
 
@@ -1700,6 +1788,7 @@ pub async fn burn_compressed_account(
     Ok(())
 }
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 {% endtab %}

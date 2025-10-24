@@ -38,18 +38,22 @@ Here is the complete flow to reinitialize compressed accounts:&#x20;
 
 Add dependencies to your program.
 
+{% code overflow="wrap" %}
 ```toml
 [dependencies]
-light-sdk = "0.15.0"
+light-sdk = "0.16.0"
 anchor_lang = "0.31.1"
 ```
+{% endcode %}
 
+{% code overflow="wrap" %}
 ```toml
 [dependencies]
-light-sdk = "0.15.0"
+light-sdk = "0.16.0"
 borsh = "0.10.0"
 solana-program = "2.2"
 ```
+{% endcode %}
 
 * The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.
 * Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).
@@ -64,6 +68,7 @@ declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
     derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+{% code overflow="wrap" %}
 ```
 {% endcode %}
 
@@ -90,6 +95,7 @@ pub struct MyCompressedAccount {
     pub message: String,
 }
 ```
+{% endcode %}
 
 You derive
 
@@ -109,12 +115,14 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 
 Define the instruction data with the following parameters:
 
+{% code overflow="wrap" %}
 ```rust
 pub struct InstructionData {
     proof: ValidityProof,
     account_meta: CompressedAccountMeta,
 }
 ```
+{% endcode %}
 
 1. **Validity Proof**
 
@@ -152,10 +160,11 @@ You can set custom values in the same transaction:
 
 {% code overflow="wrap" %}
 ```rust
-let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_empty(
+let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
     &ID,
     account_meta,
 )?;
+{% code overflow="wrap" %}
 ```
 {% endcode %}
 
@@ -198,6 +207,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .invoke(light_cpi_accounts)?;
 ```
+{% endcode %}
 
 **Set up `CpiAccounts::new()`:**
 
@@ -217,10 +227,12 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 The counter programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
 
+{% code overflow="wrap" %}
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
 light init testprogram
 ```
+{% endcode %}
 
 {% hint style="warning" %}
 For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
@@ -235,75 +247,170 @@ Find the source code for this example here.
 {% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
-#![allow(deprecated)]
 
-use anchor_lang::{prelude::*, AnchorDeserialize, AnchorSerialize};
+#[cfg(any(test, feature = "test-helpers"))]
+pub mod test_helpers;
+
+use borsh::{BorshDeserialize, BorshSerialize};
+use light_macros::pubkey;
 use light_sdk::{
-    account::LightAccount,
-    cpi::{v1::CpiAccounts, CpiSigner},
+    account::sha::LightAccount,
+    address::v1::derive_address,
+    cpi::{
+        v1::{CpiAccounts, LightSystemProgramCpi},
+        CpiSigner, InvokeLightSystemProgram, LightCpiInstruction,
+    },
     derive_light_cpi_signer,
-    instruction::{account_meta::CompressedAccountMeta, ValidityProof},
+    error::LightSdkError,
+    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
     LightDiscriminator,
 };
+use solana_program::{
+    account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
+};
 
-declare_id!("2Txp954YU4HmX8ZpqHVq7PCLf8pMkHfYoNWxtB9mL5gW");
-
+pub const ID: Pubkey = pubkey!("2m6LXA7E6kMSkK6QHq2WCznD6kvhDcVFqEKpETKAQxYe");
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+    derive_light_cpi_signer!("2m6LXA7E6kMSkK6QHq2WCznD6kvhDcVFqEKpETKAQxYe");
 
-#[program]
-pub mod anchor_program_reinit {
+entrypoint!(process_instruction);
 
-    use super::*;
-    use light_sdk::cpi::{
-        v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
-    };
+#[repr(u8)]
+#[derive(Debug)]
+pub enum InstructionType {
+    Create = 0,
+    Update = 1,
+}
 
-    /// Reinitializes a closed compressed account
-    pub fn reinit<'info>(
-        ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
-        proof: ValidityProof,
-        account_meta: CompressedAccountMeta,
-    ) -> Result<()> {
-        let light_cpi_accounts = CpiAccounts::new(
-            ctx.accounts.signer.as_ref(),
-            ctx.remaining_accounts,
-            crate::LIGHT_CPI_SIGNER,
-        );
+impl TryFrom<u8> for InstructionType {
+    type Error = LightSdkError;
 
-        let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_empty(
-            &crate::ID,
-            &account_meta,
-        )?;
-
-        msg!("Reinitializing closed compressed account");
-
-        LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(my_compressed_account)?
-            .invoke(light_cpi_accounts)?;
-
-        Ok(())
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(InstructionType::Create),
+            1 => Ok(InstructionType::Update),
+            _ => panic!("Invalid instruction discriminator."),
+        }
     }
 }
 
-#[derive(Accounts)]
-pub struct GenericAnchorAccounts<'info> {
-    #[account(mut)]
-    pub signer: Signer<'info>,
-}
-
 #[derive(
-    Clone,
-    Debug,
-    Default,
-    AnchorSerialize,
-    AnchorDeserialize,
-    LightDiscriminator
+    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
 )]
 pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct CreateInstructionData {
+    pub proof: ValidityProof,
+    pub address_tree_info: PackedAddressTreeInfo,
+    pub output_state_tree_index: u8,
+    pub message: String,
+}
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct UpdateInstructionData {
+    pub proof: ValidityProof,
+    pub account_meta: CompressedAccountMeta,
+    pub current_message: String,
+    pub new_message: String,
+}
+
+pub fn process_instruction(
+    program_id: &Pubkey,
+    accounts: &[AccountInfo],
+    instruction_data: &[u8],
+) -> Result<(), ProgramError> {
+    if program_id != &ID {
+        return Err(ProgramError::IncorrectProgramId);
+    }
+    if instruction_data.is_empty() {
+        return Err(ProgramError::InvalidInstructionData);
+    }
+
+    let discriminator = InstructionType::try_from(instruction_data[0])
+        .map_err(|_| ProgramError::InvalidInstructionData)?;
+
+    match discriminator {
+        InstructionType::Create => {
+            let instruction_data =
+                CreateInstructionData::try_from_slice(&instruction_data[1..])
+                    .map_err(|_| ProgramError::InvalidInstructionData)?;
+            create(accounts, instruction_data)
+        }
+        InstructionType::Update => {
+            let instruction_data =
+                UpdateInstructionData::try_from_slice(&instruction_data[1..])
+                    .map_err(|_| ProgramError::InvalidInstructionData)?;
+            update(accounts, instruction_data)
+        }
+    }
+}
+
+pub fn create(
+    accounts: &[AccountInfo],
+    instruction_data: CreateInstructionData,
+) -> Result<(), ProgramError> {
+    let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
+
+    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+
+    let (address, address_seed) = derive_address(
+        &[b"message", signer.key.as_ref()],
+        &instruction_data
+            .address_tree_info
+            .get_tree_pubkey(&light_cpi_accounts)
+            .map_err(|_| ProgramError::NotEnoughAccountKeys)?,
+        &ID,
+    );
+
+    let new_address_params = instruction_data
+        .address_tree_info
+        .into_new_address_params_packed(address_seed);
+
+    let mut my_compressed_account = LightAccount::<MyCompressedAccount>::new_init(
+        &ID,
+        Some(address),
+        instruction_data.output_state_tree_index,
+    );
+    my_compressed_account.owner = *signer.key;
+    my_compressed_account.message = instruction_data.message;
+
+    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+        .with_light_account(my_compressed_account)?
+        .with_new_addresses(&[new_address_params])
+        .invoke(light_cpi_accounts)?;
+
+    Ok(())
+}
+
+pub fn update(
+    accounts: &[AccountInfo],
+    instruction_data: UpdateInstructionData,
+) -> Result<(), ProgramError> {
+    let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
+
+    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+
+    let mut my_compressed_account = LightAccount::<MyCompressedAccount>::new_mut(
+        &ID,
+        &instruction_data.account_meta,
+        MyCompressedAccount {
+            owner: *signer.key,
+            message: instruction_data.current_message,
+        },
+    )?;
+
+    // Update the account data with new message
+    my_compressed_account.account.message = instruction_data.new_message;
+
+    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+        .with_light_account(my_compressed_account)?
+        .invoke(light_cpi_accounts)?;
+
+    Ok(())
 ```
 {% endcode %}
 {% endtab %}
@@ -313,13 +420,13 @@ pub struct MyCompressedAccount {
 ```rust
 #![allow(unexpected_cfgs)]
 
-#[cfg(feature = "test-sbf")]
-pub mod tests;
+#[cfg(any(test, feature = "test-helpers"))]
+pub mod test_helpers;
 
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey;
 use light_sdk::{
-    account::LightAccount,
+    account::sha::LightAccount,
     address::v1::derive_address,
     cpi::{
         v1::{CpiAccounts, LightSystemProgramCpi},
@@ -327,22 +434,39 @@ use light_sdk::{
     },
     derive_light_cpi_signer,
     error::LightSdkError,
-    instruction::{account_meta::CompressedAccountMeta, ValidityProof},
-    LightDiscriminator, LightHasher,
+    instruction::{account_meta::CompressedAccountMeta, PackedAddressTreeInfo, ValidityProof},
+    LightDiscriminator,
 };
 use solana_program::{
     account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
 };
 
-pub const ID: Pubkey = pubkey!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
-pub const LIGHT_CPI_SIGNER: CpiSigner = derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+pub const ID: Pubkey = pubkey!("C9WiPUaQ5PRjEWg7vUmgekfuQtAgFZFhn12ytXEMDr8y");
+pub const LIGHT_CPI_SIGNER: CpiSigner = derive_light_cpi_signer!("C9WiPUaQ5PRjEWg7vUmgekfuQtAgFZFhn12ytXEMDr8y");
 
 #[cfg(not(feature = "no-entrypoint"))]
 entrypoint!(process_instruction);
 
 #[derive(Debug, BorshSerialize, BorshDeserialize)]
 pub enum InstructionType {
+    Create,
+    Close,
     Reinit,
+}
+
+#[derive(Debug, BorshSerialize, BorshDeserialize)]
+pub struct CreateInstructionData {
+    pub proof: ValidityProof,
+    pub address_tree_info: PackedAddressTreeInfo,
+    pub output_state_tree_index: u8,
+    pub message: String,
+}
+
+#[derive(Debug, BorshSerialize, BorshDeserialize)]
+pub struct CloseInstructionData {
+    pub proof: ValidityProof,
+    pub account_meta: CompressedAccountMeta,
+    pub current_message: String,
 }
 
 #[derive(Debug, BorshSerialize, BorshDeserialize)]
@@ -351,9 +475,8 @@ pub struct ReinitInstructionData {
     pub account_meta: CompressedAccountMeta,
 }
 
-#[derive(Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher)]
+#[derive(Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator)]
 pub struct MyCompressedAccount {
-    #[hash]
     pub owner: Pubkey,
     pub message: String,
 }
@@ -370,15 +493,54 @@ pub fn process_instruction(
     match InstructionType::try_from_slice(&[*instruction_type])
         .map_err(|_| ProgramError::InvalidInstructionData)?
     {
+        InstructionType::Create => create(accounts, rest)?,
+        InstructionType::Close => close(accounts, rest)?,
         InstructionType::Reinit => reinit(accounts, rest)?,
     }
 
     Ok(())
 }
 
-fn reinit(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightSdkError> {
+fn create(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightSdkError> {
     let instruction_data =
-        ReinitInstructionData::try_from_slice(instruction_data).map_err(|_| LightSdkError::ParseError)?;
+        CreateInstructionData::try_from_slice(instruction_data).map_err(|_| LightSdkError::Borsh)?;
+
+    let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
+
+    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+
+    let (address, address_seed) = derive_address(
+        &[b"message", signer.key.as_ref()],
+        &instruction_data
+            .address_tree_info
+            .get_tree_pubkey(&light_cpi_accounts)
+            .map_err(|_| ProgramError::NotEnoughAccountKeys)?,
+        &ID,
+    );
+
+    let new_address_params = instruction_data
+        .address_tree_info
+        .into_new_address_params_packed(address_seed);
+
+    let mut my_compressed_account = LightAccount::<MyCompressedAccount>::new_init(
+        &ID,
+        Some(address),
+        instruction_data.output_state_tree_index,
+    );
+    my_compressed_account.owner = *signer.key;
+    my_compressed_account.message = instruction_data.message;
+
+    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+        .with_light_account(my_compressed_account)?
+        .with_new_addresses(&[new_address_params])
+        .invoke(light_cpi_accounts)?;
+
+    Ok(())
+}
+
+fn close(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightSdkError> {
+    let instruction_data =
+        CloseInstructionData::try_from_slice(instruction_data).map_err(|_| LightSdkError::Borsh)?;
 
     let (signer, remaining_accounts) = accounts
         .split_first()
@@ -386,7 +548,33 @@ fn reinit(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), Light
 
     let cpi_accounts = CpiAccounts::new(signer, remaining_accounts, LIGHT_CPI_SIGNER);
 
-    let my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_empty(
+    let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
+        &ID,
+        &instruction_data.account_meta,
+        MyCompressedAccount {
+            owner: *signer.key,
+            message: instruction_data.current_message,
+        },
+    )?;
+
+    LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+        .with_light_account(my_compressed_account)?
+        .invoke(cpi_accounts)?;
+
+    Ok(())
+}
+
+fn reinit(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightSdkError> {
+    let instruction_data =
+        ReinitInstructionData::try_from_slice(instruction_data).map_err(|_| LightSdkError::Borsh)?;
+
+    let (signer, remaining_accounts) = accounts
+        .split_first()
+        .ok_or(ProgramError::InvalidAccountData)?;
+
+    let cpi_accounts = CpiAccounts::new(signer, remaining_accounts, LIGHT_CPI_SIGNER);
+
+    let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
         &ID,
         &instruction_data.account_meta,
     )?;
@@ -397,7 +585,6 @@ fn reinit(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), Light
 
     Ok(())
 }
-
 ```
 {% endcode %}
 {% endtab %}

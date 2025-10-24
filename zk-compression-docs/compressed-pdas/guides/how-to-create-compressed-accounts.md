@@ -36,20 +36,24 @@ Add dependencies to your program.
 
 {% tabs %}
 {% tab title="Anchor" %}
+{% code overflow="wrap" %}
 ```toml
 [dependencies]
-light-sdk = "0.15.0"
+light-sdk = "0.16.0"
 anchor_lang = "0.31.1"
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Native Rust" %}
+{% code overflow="wrap" %}
 ```toml
 [dependencies]
-light-sdk = "0.15.0"
+light-sdk = "0.16.0"
 borsh = "0.10.0"
 solana-program = "2.2"
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 
@@ -62,12 +66,14 @@ solana-program = "2.2"
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
+{% code overflow="wrap" %}
 ```rust
 declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
     derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 ```
+{% endcode %}
 
 **`CPISigner`** is the configuration struct for CPIs to the Light System Program.
 
@@ -80,6 +86,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 {% tabs %}
 {% tab title="Anchor" %}
+{% code overflow="wrap" %}
 ```rust
 #[derive(
     Clone,
@@ -94,9 +101,11 @@ pub struct MyCompressedAccount {
     pub message: String,
 }
 ```
+{% endcode %}
 {% endtab %}
 
 {% tab title="Native Rust" %}
+{% code overflow="wrap" %}
 ```rust
 #[derive(
     Clone,
@@ -111,6 +120,7 @@ pub struct MyCompressedAccount {
     pub message: String,
 }
 ```
+{% endcode %}
 {% endtab %}
 {% endtabs %}
 
@@ -130,6 +140,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `m
 
 Define the instruction data with the following parameters:
 
+{% code overflow="wrap" %}
 ```rust
 pub struct InstructionData {
     proof: ValidityProof,
@@ -138,6 +149,7 @@ pub struct InstructionData {
     message: String,
 }
 ```
+{% endcode %}
 
 1. **Validity Proof**
 
@@ -164,6 +176,7 @@ Clients pack accounts into the `remaining_accounts` array to reduce transaction 
 
 Derive the address as a persistent unique identifier for the compressed account.
 
+{% code overflow="wrap" %}
 ```rust
 let address_merkle_tree_pubkey =
     address_tree_info.get_tree_pubkey(&light_cpi_accounts)?;
@@ -176,6 +189,7 @@ let (address, address_seed) = derive_address(
     &crate::ID,
 );
 ```
+{% endcode %}
 
 **Unpack the tree pubkey:**
 
@@ -189,7 +203,7 @@ let (address, address_seed) = derive_address(
 
 **The SDK returns:**
 
-* `address`: The derived address for the compressed account
+* `address`: The derived address for the compressed account.
 * `address_seed`: Pass this to the Light System Program CPI in _Step 8_ to create the address.
 {% endstep %}
 
@@ -201,19 +215,19 @@ Ensure global uniqueness of an address by verifying that the address tree pubkey
 {% hint style="info" %}
 Every address is unique, but the same seeds can be used to create different addresses in different address trees. To enforce that a compressed PDA can only be created once with the same seed, you must check the address tree pubkey.
 {% endhint %}
-
+{% code overflow="wrap" %}
 ```rust
-pub const ALLOWED_ADDRESS_TREE: Pubkey 
-    = pubkey!("amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2");
 let address_tree = light_cpi_accounts.tree_pubkeys().unwrap()
     [address_tree_info.address_merkle_tree_pubkey_index as usize];
 
-if address_tree != ALLOWED_ADDRESS_TREE {
+if address_tree != light_sdk::constants::ADDRESS_TREE_V2 {
     return Err(ProgramError::InvalidAccountData.into());
 }
     Ok(())
 }
 ```
+{% endcode %}
+
 {% endstep %}
 
 {% step %}
@@ -225,10 +239,11 @@ Initialize the compressed account struct with `LightAccount::new_init()`.
 `new_init()` creates a `LightAccount` instance similar to anchor `Account` and lets your program define the initial account data.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 let owner = crate::ID;
 let mut my_compressed_account
-        = LightAccount::<'_, MyCompressedAccount>::new_init(
+        = LightAccount::<MyCompressedAccount>::new_init(
     &owner,
     Some(address),
     output_state_tree_index,
@@ -237,6 +252,7 @@ let mut my_compressed_account
 my_compressed_account.owner = ctx.accounts.signer.key();
 my_compressed_account.data = data.to_string();
 ```
+{% endcode %}
 
 **Pass these parameters to `new_init()`:**
 
@@ -309,10 +325,12 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 The programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first, or simply run:
 
+{% code overflow="wrap" %}
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
 light init testprogram
 ```
+{% endcode %}
 
 {% hint style="warning" %}
 For help with debugging, see the [Error Cheatsheet](../../resources/error-cheatsheet/).
@@ -374,7 +392,7 @@ pub mod program_create {
             &crate::ID,
         );
 
-        let mut message_account = LightAccount::<'_, MessageAccount>::new_init(
+        let mut message_account = LightAccount::<MessageAccount>::new_init(
             &crate::ID,
             Some(address),
             output_state_tree_index,
@@ -525,7 +543,7 @@ pub fn create(
         .address_tree_info
         .into_new_address_params_packed(address_seed);
 
-    let mut my_compressed_account = LightAccount::<'_, MyCompressedAccount>::new_init(
+    let mut my_compressed_account = LightAccount::<MyCompressedAccount>::new_init(
         &ID,
         Some(address),
         instruction_data.output_state_tree_index,
