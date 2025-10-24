@@ -86,6 +86,7 @@
 
 ## References
 
+* [AI Tools Guide](references/ai-tools-guide.md)
 * [Whitepaper](references/whitepaper.md)
 * [Terminology](references/terminology.md)
 * [Security](references/security.md)
