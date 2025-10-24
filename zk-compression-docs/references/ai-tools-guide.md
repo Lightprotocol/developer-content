@@ -64,19 +64,19 @@ claude mcp add -s user -t http deepwiki https://mcp.deepwiki.com/mcp
 
 The MCP server offers three main tools:
 
-**read_wiki_structure** - Get a list of documentation topics for a GitHub repository
+* **read_wiki_structure** - Get a li*st of documentation topics for a GitHub repository
 
 ```
 mcp__deepwiki__read_wiki_structure("Lightprotocol/light-protocol")
 ```
 
-**read_wiki_contents** - View documentation about a GitHub repository
+* **read_wiki_contents** - View documentation about a GitHub repository
 
 ```
 mcp__deepwiki__read_wiki_contents("Lightprotocol/light-protocol")
 ```
 
-**ask_question** - Ask any question about the GitHub repository and get a context-grounded response
+* **ask_question** - Ask any question about the GitHub repository and get a context-grounded response
 
 ```
 mcp__deepwiki__ask_question("Lightprotocol/light-protocol", "your question")
@@ -86,3 +86,21 @@ mcp__deepwiki__ask_question("Lightprotocol/light-protocol", "your question")
 You can specify any public GitHub repo that is indexed with DeepWiki. When you connect to the MCP, you specify the repository when calling the tools.
 Learn more [here](https://docs.devin.ai/work-with-devin/deepwiki-mcp).
 {% endhint %}
+
+## Next Steps
+
+Start building with compressed tokens or PDAs.
+
+{% columns %}
+{% column %}
+{% content-ref url="../compressed-tokens/overview.md" %}
+[overview.md](../compressed-tokens/overview.md)
+{% endcontent-ref %}
+{% endcolumn %}
+
+{% column %}
+{% content-ref url="../compressed-pdas/create-a-program-with-compressed-pdas.md" %}
+[create-a-program-with-compressed-pdas.md](../compressed-pdas/create-a-program-with-compressed-pdas.md)
+{% endcontent-ref %}
+{% endcolumn %}
+{% endcolumns %}
