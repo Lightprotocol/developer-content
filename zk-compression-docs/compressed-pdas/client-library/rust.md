@@ -140,7 +140,7 @@ client.payer = read_keypair_file("~/.config/solana/id.json")?;
 {% endtab %}
 
 {% tab title="LightProgramTest" %}
-For testing, `LightProgramTest` provides a fully initialized test environment with auto-funded keypair, a test indexer, light system programs, and Merkle tree accounts.
+For testing, `LightProgramTest` provides a fully initialized test environment with auto-funded keypair, a test indexer, Light System Programs, and Merkle tree accounts.
 
 ```rust
 let config = ProgramTestConfig::new_v2(
@@ -705,38 +705,33 @@ Your program extracts `system_accounts_offset` from instruction data and uses it
 * `remaining_accounts_metas` returns the indices for the Light System and tree accounts.
 
 This is the final account array:
+{% tabs %}
+{% tab title="Anchor Programs" %}
+1. Account struct:
+- Signers
+- Fee payer
 
-```
-[0]    Your program accounts
-[1]    Light System Program
-[2]    CPI Signer PDA
-[3-8]  Other Light System accounts
-[9+]   Merkle trees, queues
-```
-
-In anchor program:
-
-Account struct:
-- signer
-
-Remaining accounts:
+2. Remaining accounts:
 ```
 [0]    Light System Program
 [1]    CPI Signer PDA
 [2-7]  Other Light System accounts
 [8+]   Merkle trees, queues
 ```
+{% endtab %}
 
-In native program:
-
+{% tab title="Native Program" %}
+All accounts are in the array when not using Anchor.
 ```
-[0]    Your program accounts
+[0]    Signers, Fee Payer
 [1]    Light System Program
 [2]    CPI Signer PDA
 [3-8]  Other Light System accounts
 [9+]   Merkle trees, queues
 ```
 -> you need to use 1 as offset when creating CpiAccounts struct in your program.
+{% endtab %}
+{% endtabs %}
 
 {% endstep %}
 
