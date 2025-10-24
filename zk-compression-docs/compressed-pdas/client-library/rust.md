@@ -140,7 +140,7 @@ client.payer = read_keypair_file("~/.config/solana/id.json")?;
 {% endtab %}
 
 {% tab title="LightProgramTest" %}
-For testing, `LightProgramTest` provides a validator with auto-funded keypair and all infrastructure.
+For testing, `LightProgramTest` provides a fully initialized test environment with auto-funded keypair, a test indexer, light system programs, and Merkle tree accounts.
 
 ```rust
 let config = ProgramTestConfig::new_v2(
@@ -250,7 +250,7 @@ Fetch a validity proof from your RPC provider that supports ZK Compression (Heli
 ```rust
 let rpc_result = rpc
     .get_validity_proof(
-        vec![], 
+        vec![],
         vec![AddressWithTree {
             address: *address,
             tree: address_tree_info.tree,
@@ -263,7 +263,7 @@ let rpc_result = rpc
 
 **Pass these parameters**:
 
-* Leave (`vec![]`) empty to create compressed accounts, since no compressed account exists yet to reference.
+* Leave (`vec![]`) empty to create compressed accounts, since no compressed account exists yet.
 * Specify in (`vec![AddressWithTree]`) the new address to create with its address tree.
 
 The RPC returns `ValidityProofWithContext` with
@@ -283,7 +283,7 @@ let hash = compressed_account.hash;
 
 let rpc_result = rpc
     .get_validity_proof(
-        vec![hash],  
+        vec![hash],
         vec![],
         None,
     )
@@ -294,7 +294,7 @@ let rpc_result = rpc
 **Pass these parameters**:
 
 * Specify in (`vec![hash]`) the hash of the existing compressed account to prove its existence in the state tree.
-* Leave (`vec![]`) empty, since the proof verifies the account hash exists in a state tree, not the address in an address tree.
+* (`vec![]`) remains empty, since the proof verifies the account hash exists in a state tree, not that the address doesn't exist in an address tree.
 
 The RPC returns `ValidityProofWithContext` with
 
@@ -308,7 +308,7 @@ The RPC returns `ValidityProofWithContext` with
 **Advantages of combined proofs**:
 
 * You only add one validity proof with 128 bytes in size instead of two to your instruction data.
-* Reduction of compute unit consumption by at least 100k, since combined proofs are verified in a single CPI by the Light System Program.
+* Reduction of compute unit consumption by at least 100k CU, since combined proofs are verified in a single CPI by the Light System Program.
 {% endhint %}
 
 ```rust
@@ -344,15 +344,14 @@ The RPC returns `ValidityProofWithContext` with
 {% step %}
 #### Pack Accounts
 
-Compressed account instructions require packing accounts into an array.
+To minimize instruction data compressed account instructions pack accounts into an array, and send indices that reference these accounts in the instruction data.
 
 {% hint style="info" %}
 **"Packing" accounts optimizes instruction size:**
 
-* **Packed structs** contain account **indices** (u8) instead of 32 byte pubkeys. The indices point to the `remainingAccounts` array.
+* **Packed structs** contain account **indices** (u8) instead of 32 byte pubkeys. The indices point to the `remainingAccounts` in anchor, and the account info slice in native programs.
 * **Non-Packed structs** contain full pubkeys. RPC methods return full pubkeys.
 
-You will pass this array in the instruction data.
 {% endhint %}
 
 **1. Initialize PackedAccounts**
@@ -417,7 +416,7 @@ accounts.add_system_accounts(config)?;
 
 <summary><em>System Accounts List</em></summary>
 
-<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td><td>Verifies validity proofs and executes CPI calls to create or interact with compressed accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Proves your program can interact with Account Compression Program - Prevents unauthorized programs from modifying compressed account state</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td><td>Solana System Program to create accounts or transfer lamports</td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td><td>Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts </td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Access control to the Account Compression Program</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td><td>Solana System Program to create accounts or transfer lamports</td></tr></tbody></table>
 
 </details>
 
@@ -435,13 +434,13 @@ let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
 
 Call `pack_tree_infos(&mut remaining_accounts)` to extract tree pubkeys and add them to the accounts array.
 
-The returned `PackedTreeInfos` contains `.address_trees` as `Vec<PackedAddressTreeInfo>`:
+The returned `PackedTreeInfos` contain `.address_trees` as `Vec<PackedAddressTreeInfo>`:
 
 * `address_merkle_tree_pubkey_index`: Points to the address tree account
 * `address_queue_pubkey_index`: Points to the address queue account
   * The queue buffers new addresses before they are inserted into the address tree
 * `root_index`: The Merkle root index from the validity proof
-  * Specifies which historical root to verify the address does not exist in the tree
+  * Specifies the root to verify the address does not exist in the tree
 {% endtab %}
 
 {% tab title="Update, Close" %}
@@ -462,7 +461,7 @@ The returned `PackedTreeInfos` contains `.state_trees` as `Option<PackedStateTre
 * `leaf_index`: The leaf position in the Merkle tree from the validity proof
   * Specifies which leaf contains your account hash to verify it exists in the tree
 * `root_index`: The Merkle root index from the validity proof
-  * Specifies which historical root to verify the account hash against
+  * Specifies the root to verify the account hash against
 {% endtab %}
 {% endtabs %}
 {% endtab %}
@@ -484,7 +483,7 @@ The returned `PackedAddressTreeInfo` contains:
 * `address_queue_pubkey_index`: Points to the address queue account
   * The queue buffers new addresses before they are inserted into the address tree
 * `root_index`: The Merkle root index from the validity proof
-  * Specifies which historical root to verify the address does not exist in the tree
+  * Specifies the root to verify the address does not exist in the tree
 {% endtab %}
 
 {% tab title="Close, Reinit, Burn" %}
@@ -498,14 +497,14 @@ let packed_accounts = rpc_result
 Call `pack_tree_infos(&mut accounts)` to extract tree pubkeys and add them to the accounts array.
 
 The returned `PackedStateTreeInfos` contains:
-
+<!-- Points and References are both used, could consider consistent language, I prefer References -->
 * `merkle_tree_pubkey_index`: Points to the state tree account
 * `queue_pubkey_index`: Points to the nullifier queue account
   * The queue tracks nullified (spent) account hashes to prevent double-spending
 * `leaf_index`: The leaf position in the Merkle tree from the validity proof
   * Specifies which leaf contains your account hash to verify it exists in the tree
 * `root_index`: The Merkle root index from the validity proof
-  * Specifies which historical root to verify the account hash against
+  * Specifies the root to verify the account hash against
 {% endtab %}
 {% endtabs %}
 {% endtab %}
@@ -514,7 +513,7 @@ The returned `PackedStateTreeInfos` contains:
 **4. Add Output State Tree (Create Only)**
 
 {% hint style="info" %}
-This step only applies when you create accounts and use **Anchor**.
+This step only applies when you create accounts.
 
 * With native Rust, the output tree index is added using `insert_or_get()` in Step 3.
 * For other interactions with compressed accounts (using both Anchor and Native), the output tree is included in the packed tree accounts from Step 3.
@@ -526,17 +525,17 @@ let output_state_tree_index = output_state_tree_info
 ```
 
 * Use `output_state_tree_info` variable from Step 3 with the `TreeInfo` metadata for the randomly selected state tree
-* Call `pack_output_tree_index(&mut remaining_accounts)` to convert the tree pubkey to a u8 index.
+* Call `pack_output_tree_index(&mut remaining_accounts)` to add the tree to packed accounts and return its u8 index.
 
 **5. Summary**
 
 You initialized `PackedAccounts::default()` to merge accounts into an array to optimize instruction data:
 
-* Light System accounts to create and interact with compressed accounts via the Light System Program
-* Tree accounts from the validity proof to prove an address does not exist (create) or existence of the account hash (update/close)
-* The output state tree to store the new compressed account hash
+* added Light System accounts to create and interact with compressed accounts via the Light System Program
+* added tree accounts from the validity proof to prove an address does not exist (create) or existence of the account hash (update/close)
+* added the output state tree to store the new compressed account hash
 
-The accounts receive a sequential u8 index. Instruction data references accounts via these indices in this order.
+The accounts are referenced in instruction data by u8 indices in Packed structs.
 {% endstep %}
 
 {% step %}
@@ -674,9 +673,8 @@ let (remaining_accounts_metas,
 **What to include in `accounts`:**
 
 1. **Create your program-specific accounts struct** with any accounts required by your program. Use `AnchorAccounts`, or manually build `Vec<AccountMeta>` - it won't interfere with compression-related accounts.
-2. **Client-program coordination:** The client builds accounts in the order defined by `PackedAccounts` (program accounts, system accounts, tree accounts).
+2. **Client-program coordination:** The client builds accounts in the order defined by `PackedAccounts` (arbitrary pre accounts, system accounts, packed (tree) accounts).
 
-* The SDK automatically passes offset indices in instruction data to your program, which uses them to parse the `AccountInfo` array.
 * You can safely ignore `_system_accounts_offset` and `_tree_accounts_offset` on the client side.
 
 {% hint style="success" %}
@@ -695,7 +693,8 @@ let (remaining_accounts_metas,
 Your program extracts `system_accounts_offset` from instruction data and uses it to slice the `AccountInfo` array before passing to `CpiAccounts::new()`.
 
 * `CpiAccounts::new()` requires the slice to start at the Light System Program account.
-* If you pass the full array without offsetting, `CpiAccounts` expects the Light System Program at position 0, but it's actually at position 1, which leads to the `InvalidCpiAccountsOffset` error.
+
+<!-- this is only true in native programs, in this example with anchor the light system program is index 0 of remaining account -->
 
 </details>
 
@@ -708,12 +707,37 @@ Your program extracts `system_accounts_offset` from instruction data and uses it
 This is the final account array:
 
 ```
-[0]    Your program accounts 
+[0]    Your program accounts
 [1]    Light System Program
 [2]    CPI Signer PDA
 [3-8]  Other Light System accounts
 [9+]   Merkle trees, queues
 ```
+
+In anchor program:
+
+Account struct:
+- signer
+
+Remaining accounts:
+```
+[0]    Light System Program
+[1]    CPI Signer PDA
+[2-7]  Other Light System accounts
+[8+]   Merkle trees, queues
+```
+
+In native program:
+
+```
+[0]    Your program accounts
+[1]    Light System Program
+[2]    CPI Signer PDA
+[3-8]  Other Light System accounts
+[9+]   Merkle trees, queues
+```
+-> you need to use 1 as offset when creating CpiAccounts struct in your program.
+
 {% endstep %}
 
 {% step %}
