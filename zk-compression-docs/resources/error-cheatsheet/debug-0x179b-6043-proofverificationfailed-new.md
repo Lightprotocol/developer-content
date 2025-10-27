@@ -9,7 +9,7 @@ You're passing an invalid proof. The proof provided cannot be verified against t
 
 ### Checklist
 
-Zero-knowledge proofs verify different things depending on the instruction type:
+Validity proofs verify different things depending on the instruction type:
 
 1. [**Verify Root Indices**](debug-0x179b-6043-proofverificationfailed-new.md#wrong-root-index) - The `root_index` references a Merkle tree root stored on-chain.
    * The `root_index` from client must correspond to the correct root hash in the state tree or address tree.
