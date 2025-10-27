@@ -22,6 +22,10 @@ Find [full code examples at the end](typescript.md#full-code-example) for Anchor
 
 ## Implementation Guide
 
+{% hint style="info" %}
+Ask anything via <a href="https://deepwiki.com/Lightprotocol/light-protocol/3.1-javascripttypescript-sdks"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+{% endhint %}
+
 This guide covers the components of a Typescript client. Here is the complete flow:
 
 {% tabs %}

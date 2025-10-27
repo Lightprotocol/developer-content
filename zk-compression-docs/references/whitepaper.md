@@ -4,6 +4,10 @@ description: Complete whitepaper introducing ZK Compression.
 
 # Whitepaper
 
+{% hint style="info" %}
+Ask anything via <a href="https://deepwiki.com/Lightprotocol/light-protocol"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+{% endhint %}
+
 ### Scaling the Design Space for On-chain Applications with ZK Compression
 
 **Light Protocol Team**

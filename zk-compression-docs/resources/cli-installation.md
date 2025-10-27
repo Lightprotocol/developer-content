@@ -13,6 +13,11 @@ The CLI will use this wallet as the default fee payer and mint authority.
 
 ### Installation
 
+{% hint style="info" %}
+Ask anything via <a href="https://deepwiki.com/Lightprotocol/light-protocol/6.3-cli-tools#command-line-options"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+{% endhint %}
+
+
 {% stepper %}
 {% step %}
 **Install the ZK Compression CLI**

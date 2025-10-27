@@ -22,6 +22,10 @@ Find full code examples [at the end for Anchor and native Rust](rust.md#full-cod
 
 ## Implementation Guide
 
+{% hint style="info" %}
+Ask anything via <a href="https://deepwiki.com/Lightprotocol/light-protocol/3.2-rust-client-sdk"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+{% endhint %}
+
 This guide covers the components of a Rust client. Here is the complete flow:
 
 {% tabs %}

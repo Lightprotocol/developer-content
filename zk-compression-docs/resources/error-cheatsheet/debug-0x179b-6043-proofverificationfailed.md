@@ -8,6 +8,10 @@ description: Common cause and debug steps for ProofVerificationFailed (0x179B / 
 
 You're passing an invalid proof. The proof provided cannot be verified against the expected state.
 
+{% hint style="success" %}
+Use AskDevin or the MCP Configuration for help with debugging: <a href="https://deepwiki.com/Lightprotocol/light-protocol"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>.
+{% endhint %}
+
 ### **Common causes and Debug Steps**
 
 {% hint style="info" %}

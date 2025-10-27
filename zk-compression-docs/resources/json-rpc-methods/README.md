@@ -23,6 +23,10 @@ The API exposed by the indexer closely mirrors existing RPC calls, with one-to-o
 
 ### Creating an RPC Connection
 
+{% hint style="info" %}
+Ask anything via <a href="https://deepwiki.com/Lightprotocol/light-protocol/3.3-rpc-and-indexer-integration"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+{% endhint %}
+
 Connect to a specific RPC endpoint
 
 {% tabs %}

@@ -15,6 +15,10 @@ description: >-
 * Reach out on [Discord](https://discord.com/invite/CYvjBgzRFP) for support
 * Share the exact error code and a reproducer (GitHub repo / gist)
 
+{% hint style="success" %}
+Use AskDevin or the MCP Configuration for help with debugging: <a href="https://deepwiki.com/Lightprotocol/light-protocol"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>.
+{% endhint %}
+
 ***
 
 ## 6000 - 6053 / SystemProgramError Variants
