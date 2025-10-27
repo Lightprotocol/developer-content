@@ -23,9 +23,11 @@
   * [Add Wallet Support for Compressed Tokens](compressed-tokens/advanced-guides/add-wallet-support-for-compressed-tokens.md)
   * [Create an Airdrop](compressed-tokens/advanced-guides/create-an-airdrop.md)
   * [Use Token 2022 with Compression](compressed-tokens/advanced-guides/use-token-2022-with-compression.md)
-* [Example Clients](compressed-tokens/example-clients/README.md)
+* [Examples](compressed-tokens/example-clients/README.md)
   * [Example Web Client](https://github.com/Lightprotocol/example-web-client)
   * [Example Node.js Client](https://github.com/Lightprotocol/example-nodejs-client)
+  * [Claim Implementation Airdrops](https://github.com/Lightprotocol/example-compressed-claim)
+  * [Example Token Distribution](https://github.com/Lightprotocol/example-token-distribution)
 
 ## Compressed PDAs
 
@@ -72,7 +74,7 @@
   * [Program Development](resources/sdks/program-development.md)
 * [Error Cheatsheet](resources/error-cheatsheet/README.md)
   * [Debug 0x179b / 6043 / ProofVerificationFailed](resources/error-cheatsheet/debug-0x179b-6043-proofverificationfailed.md)
-  * [Debug  0x36D2 / 14034 / InvalidCpiAccountsOffset](resources/error-cheatsheet/debug-0x36d2-14034-invalidcpiaccountsoffset.md)
+  * [Debug 0x36D2 / 14034 / InvalidCpiAccountsOffset](resources/error-cheatsheet/debug-0x36d2-14034-invalidcpiaccountsoffset.md)
 
 ## Learn
 
