@@ -46,13 +46,17 @@ The client passes the incorrect `root_index` for the Merkle tree. It must refere
 
 **Add prints:**
 
+{% tabs %}
+{% tab title="TypeScript" %}
 ```typescript
 // Client - log root_index extracted from proof
 console.log("Proof root indices:", proofRpcResult.rootIndices);
 // Client - log root_index being sent to instruction
 console.log("Sending root index:", compressedAccountMeta.treeInfo.rootIndex);
 ```
+{% endtab %}
 
+{% tab title="Rust" %}
 ```rust
 // Client - log root_index extracted from proof
 let root_indices = proof_result.value.get_root_indices();
@@ -63,9 +67,10 @@ println!("Sending root_index: {}", account_meta.tree_info.root_index);
 // On-chain - log received root_index
 msg!("Received root_index: {}", account_meta.tree_info.root_index);
 ```
+{% endtab %}
+{% endtabs %}
 
-Add backtrace to your test command:
-
+**Add backtrace** to your test command:
 ```bash
 RUST_BACKTRACE=1 cargo test-sbf
 ```
@@ -78,14 +83,27 @@ Client seeds don't match on chain address derivation.
 * The address is derived from `custom_seeds`, `address_merkle_tree_pubkey`, and `program_id`.
 * The inputs to `derive_address()` must be identical: `custom_seeds` (content and order), `address_merkle_tree_pubkey`, and `program_id`.
 
+**Add prints:**
+
+{% tabs %}
+{% tab title="TypeScript" %}
 ```typescript
 // Client - log seeds/address used to request proof
 console.log("Client seeds:", seeds, "address:", address);
 ```
+{% endtab %}
 
+{% tab title="Rust" %}
 ```rust
 // Onchain - log seeds/address
 msg!("Program seeds: {:?}, address: {:?}", seeds, address);
+```
+{% endtab %}
+{% endtabs %}
+
+**Add backtrace** to your test command:
+```bash
+RUST_BACKTRACE=1 cargo test-sbf
 ```
 
 ### For update/close/reinit/burn instructions
@@ -99,6 +117,8 @@ The compressed account hash must match the hash stored in the state tree.
 
 **Add prints:**
 
+{% tabs %}
+{% tab title="TypeScript" %}
 ```typescript
 // Client - log account fetched from indexer
 console.log("Fetched account hash:", compressedAccount.hash);
@@ -107,7 +127,9 @@ console.log("Leaf index:", compressedAccount.leafIndex);
 // Client - log current account being sent to instruction
 console.log("Sending current account:", currentAccount);
 ```
+{% endtab %}
 
+{% tab title="Rust" %}
 ```rust
 // Client - log account fetched from indexer
 let account = indexer.get_compressed_account(address).await?;
@@ -121,9 +143,10 @@ println!("Sending current account: {:?}", current_account);
 msg!("Processing account at leaf_index: {}", account_meta.tree_info.leaf_index);
 msg!("Current account data: {:?}", current_account);
 ```
+{% endtab %}
+{% endtabs %}
 
-Add backtrace to your test command:
-
+**Add backtrace** to your test command:
 ```bash
 RUST_BACKTRACE=1 cargo test-sbf
 ```
