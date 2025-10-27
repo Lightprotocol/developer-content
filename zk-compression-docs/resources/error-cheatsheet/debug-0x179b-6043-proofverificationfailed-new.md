@@ -77,11 +77,10 @@ RUST_BACKTRACE=1 cargo test-sbf
 
 ### For create instructions
 
-Client seeds don't match on chain address derivation.
+Client and on chain seeds/addresses should be identical.
 
-* Focus on consistency between client-side and on-chain address derivation inputs.
+* Focus on consistency between client-side and on-chain address derivation inputs for `derive_address()`.
 * The address is derived from `custom_seeds`, `address_merkle_tree_pubkey`, and `program_id`.
-* The inputs to `derive_address()` must be identical: `custom_seeds` (content and order), `address_merkle_tree_pubkey`, and `program_id`.
 
 **Add prints:**
 
@@ -108,12 +107,10 @@ RUST_BACKTRACE=1 cargo test-sbf
 
 ### For update/close/reinit/burn instructions
 
-The compressed account hash must match the hash stored in the state tree.
+The compressed account hash must match the hash in the validity proof.
 
 * Focus on consistency between the account fetched from indexer and the account data sent to the instruction.
 * The hash is computed from account fields (`owner`, `lamports`, `address`, `data`) plus `merkle_context` (`leaf_index`, `merkle_tree_pubkey`, `is_batched`).
-* The account must not be modified between fetching from indexer and sending the transaction.
-* The computed hash must match the leaf stored at `leaf_index` in the state tree.
 
 **Add prints:**
 
