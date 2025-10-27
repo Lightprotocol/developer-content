@@ -9,18 +9,16 @@ You're passing an invalid proof. The proof provided cannot be verified against t
 
 ### Checklist
 
-Validity proofs verify different things depending on the instruction type:
+1. [**Root Indices**](#wrong-root-index) - All instructions verify the `root_index` points to a valid Merkle root.
+   * The `root_index` from client must match a root in the `root_history` array of the state tree or address tree.
+   * The proof confirms: "This state existed in the Merkle tree at this historical root"
 
-1. [**Verify Root Indices**](debug-0x179b-6043-proofverificationfailed-new.md#wrong-root-index) - The `root_index` references a Merkle tree root stored on-chain.
-   * The `root_index` from client must correspond to the correct root hash in the state tree or address tree.
-   * The `root_index` tells the verifier which Merkle root to use for verification.
-2. [**Verify Addresses**](debug-0x179b-6043-proofverificationfailed-new.md#for-create-instructions) - For create instructions, prove the address doesn't exist in the address tree.
+2. [**Addresses**](#for-create-instructions) - Create instructions prove the address doesn't exist in the address tree.
    * The address derivation (`custom_seeds`, `address_merkle_tree_pubkey`, `program_id`) must match between client and on-chain.
-   * Uses `ValidityProof` with the address as input.
    * The proof confirms: "This address is unique and not already used in this address tree"
-3. [**Verify Account Hashes**](debug-0x179b-6043-proofverificationfailed-new.md#for-updateclosereinitiburn-instructions) - For update/close/reinit/burn instructions, prove the account exists in the state tree.
-   * `ValidityProof` with the account hash as input.
-   * Verifies the account hash matches the leaf at `leaf_index` in the state tree
+
+3. [**Account Hashes**](#for-updateclosereinitiburn-instructions) - Update/close/reinit/burn instructions prove the account exists in the state tree.
+   * The account hash must match the leaf at `leaf_index` in the state tree.
    * The proof confirms: "This account exists at this position in the state tree with this Merkle root hash"
 
 {% hint style="success" %}
