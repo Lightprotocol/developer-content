@@ -19,7 +19,7 @@
   * [How to Merge Compressed Token Accounts](compressed-tokens/guides/how-to-merge-compressed-token-accounts.md)
   * [How to Mint Compressed Tokens](compressed-tokens/guides/how-to-mint-compressed-tokens.md)
   * [How to Transfer Compressed Token](compressed-tokens/guides/how-to-transfer-compressed-token.md)
-* [Advanced Guides](compressed-tokens/advanced-guides/README.md)
+* [Implementation Guides](compressed-tokens/advanced-guides/README.md)
   * [Add Wallet Support for Compressed Tokens](compressed-tokens/advanced-guides/add-wallet-support-for-compressed-tokens.md)
   * [Create an Airdrop](compressed-tokens/advanced-guides/create-an-airdrop.md)
   * [Use Token 2022 with Compression](compressed-tokens/advanced-guides/use-token-2022-with-compression.md)

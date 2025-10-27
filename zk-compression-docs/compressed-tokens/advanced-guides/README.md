@@ -1,12 +1,10 @@
 ---
 description: >-
-  Reference table mapping all advanced guides with descriptions. Guides for
-  airdrop, using token-2022, and wallet support for compressed tokens.
+  Reference table to implementation guides. Guides for airdrop, using
+  token-2022, and wallet support for compressed tokens.
 ---
 
-# Advanced Guides
-
-## Advanced Guides
+# Implementation Guides
 
 | Guide                                                                                   | Description                                                           |
 | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
