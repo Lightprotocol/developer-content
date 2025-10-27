@@ -9,7 +9,7 @@ description: Common cause and debug steps for ProofVerificationFailed (0x179B / 
 You're passing an invalid proof. The proof provided cannot be verified against the expected state.
 
 {% hint style="success" %}
-Use AskDevin or the MCP Configuration for help with debugging: <a href="https://deepwiki.com/Lightprotocol/light-protocol"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>.
+For help with debugging use the [MCP Configuration](../../references/ai-tools-guide.md#mcp) or AskDevin via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol).
 {% endhint %}
 
 ### **Common causes and Debug Steps**
@@ -40,4 +40,3 @@ msg!("Program seeds: {:?}, address: {:?}", seeds, address);
 
 * Reach out on [Discord](https://discord.com/invite/CYvjBgzRFP) for support
 * Share the exact error code and a reproducer (GitHub repo / gist)
-

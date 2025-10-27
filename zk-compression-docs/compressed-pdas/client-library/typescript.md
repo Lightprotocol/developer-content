@@ -23,7 +23,7 @@ Find [full code examples at the end](typescript.md#full-code-example) for Anchor
 ## Implementation Guide
 
 {% hint style="info" %}
-Ask anything via <a href="https://deepwiki.com/Lightprotocol/light-protocol/3.1-javascripttypescript-sdks"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol/3.1-javascripttypescript-sdks).
 {% endhint %}
 
 This guide covers the components of a Typescript client. Here is the complete flow:
@@ -52,7 +52,7 @@ This guide covers the components of a Typescript client. Here is the complete fl
 
 {% stepper %}
 {% step %}
-#### Dependencies
+**Dependencies**
 
 {% tabs %}
 {% tab title="npm" %}
@@ -95,7 +95,7 @@ pnpm add \
 {% endstep %}
 
 {% step %}
-#### Environment
+**Environment**
 
 {% tabs %}
 {% tab title="Rpc" %}
@@ -164,7 +164,7 @@ const testRpc = await getTestRpc(lightWasm);
 {% endstep %}
 
 {% step %}
-#### Tree Configuration
+**Tree Configuration**
 
 Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
@@ -219,7 +219,7 @@ Only needed to create new addresses. Other interactions with compressed accounts
 {% endstep %}
 
 {% step %}
-#### Derive Address
+**Derive Address**
 
 Derive a persistent address as a unique identifier for your compressed account.
 
@@ -252,7 +252,7 @@ Use the same `addressTree` for both `deriveAddress()` and all subsequent operati
 {% endstep %}
 
 {% step %}
-#### Validity Proof
+**Validity Proof**
 
 Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
@@ -353,7 +353,7 @@ The RPC returns `ValidityProofWithContext` with
 {% endstep %}
 
 {% step %}
-#### Pack Accounts
+**Pack Accounts**
 
 To minimize instruction data compressed account instructions pack accounts into an array, and send indices that reference these accounts in the instruction data.
 
@@ -419,7 +419,7 @@ Program-specific accounts (signers, fee payer) are passed to `.accounts()`, not 
 
 | # | Account                            | Purpose                                                                                                                                                                                        |
 | - | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | Light System Program\[^1]          | Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts                                                                     |
+| 1 | Light System Program\[^1]          | Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts                                                                    |
 | 2 | CPI Signer\[^2]                    | <p>- Signs CPI calls from your program to Light System Program<br>- PDA verified by Light System Program during CPI<br>- Derived from your program ID</p>                                      |
 | 3 | Registered Program PDA             | Access control to the Account Compression Program                                                                                                                                              |
 | 4 | Noop Program\[^3]                  | <p>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</p>                                                           |
@@ -556,7 +556,7 @@ The accounts receive a sequential u8 index. Instruction data references accounts
 {% endstep %}
 
 {% step %}
-#### Instruction Data
+**Instruction Data**
 
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
@@ -667,7 +667,7 @@ Include the Merkle tree metadata from the Pack Accounts section:
 {% endstep %}
 
 {% step %}
-#### Instruction
+**Instruction**
 
 Build the instruction with your `program_id`, `accounts`, and `data` from Step 7. Pass the accounts array you built in Step 6.
 
@@ -700,8 +700,8 @@ const instruction = await program.methods
 * `.remainingAccounts()` appends the Merkle tree and queue accounts after named accounts.
 * Returns `TransactionInstruction` with `programId`, merged `keys` (all accounts concatenated), and serialized instruction `data`.
 
-**Final account array:**
-The client builds the final accounts array:
+**Final account array:** The client builds the final accounts array:
+
 {% code overflow="wrap" %}
 ```
 Named accounts from .accounts():
@@ -715,11 +715,10 @@ Remaining accounts from .remainingAccounts():
   queues
 ```
 {% endcode %}
-
 {% endstep %}
 
 {% step %}
-#### Send Transaction
+**Send Transaction**
 
 Submit the instruction to the network.
 
@@ -769,44 +768,31 @@ anchor test --skip-local-validator
 {% hint style="warning" %}
 For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
 {% endhint %}
-{% tab title="Create" %}
 
 {% code overflow="wrap" %}
 ```typescript
-
 ```
 {% endcode %}
-{% endtab %}
-{% tab title="Update" %}
+
 {% code overflow="wrap" %}
 ```typescript
-
 ```
 {% endcode %}
-{% endtab %}
 
-{% tab title="Close" %}
 {% code overflow="wrap" %}
 ```typescript
-
 ```
 {% endcode %}
-{% endtab %}
-{% tab title="Reinitialize" %}
+
 {% code overflow="wrap" %}
 ```typescript
-
 ```
 {% endcode %}
-{% endtab %}
-{% tab title="Burn" %}
+
 {% code overflow="wrap" %}
 ```typescript
-
 ```
 {% endcode %}
-{% endtab %}
-{% endtabs %}
 
 ## Next Steps
 

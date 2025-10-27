@@ -23,7 +23,7 @@ Find full code examples [at the end for Anchor and native Rust](rust.md#full-cod
 ## Implementation Guide
 
 {% hint style="info" %}
-Ask anything via <a href="https://deepwiki.com/Lightprotocol/light-protocol/3.2-rust-client-sdk"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol/3.2-rust-client-sdk).
 {% endhint %}
 
 This guide covers the components of a Rust client. Here is the complete flow:
@@ -52,7 +52,7 @@ This guide covers the components of a Rust client. Here is the complete flow:
 
 {% stepper %}
 {% step %}
-#### Dependencies
+**Dependencies**
 
 {% tabs %}
 {% tab title="LightClient" %}
@@ -88,7 +88,7 @@ The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to An
 {% endstep %}
 
 {% step %}
-#### Environment
+**Environment**
 
 {% tabs %}
 {% tab title="LightClient" %}
@@ -171,7 +171,7 @@ let payer = rpc.get_payer().insecure_clone();
 {% endstep %}
 
 {% step %}
-#### Tree Configuration
+**Tree Configuration**
 
 Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
@@ -235,7 +235,7 @@ Only needed to create new addresses. Other interactions with compressed accounts
 {% endstep %}
 
 {% step %}
-#### Derive Address
+**Derive Address**
 
 Derive a persistent address as a unique identifier for your compressed account.
 
@@ -266,7 +266,7 @@ Use the same `address_tree_info.tree` for both `derive_address()` and all subseq
 {% endstep %}
 
 {% step %}
-#### Validity Proof
+**Validity Proof**
 
 Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
@@ -381,7 +381,7 @@ The RPC returns `ValidityProofWithContext` with
 {% endstep %}
 
 {% step %}
-#### Pack Accounts
+**Pack Accounts**
 
 To minimize instruction data compressed account instructions pack accounts into an array, and send indices that reference these accounts in the instruction data.
 
@@ -390,7 +390,6 @@ To minimize instruction data compressed account instructions pack accounts into 
 
 * **Packed structs** contain account **indices** (u8) instead of 32 byte pubkeys. The indices point to the `remainingAccounts` in anchor, and the account info slice in native programs.
 * **Non-Packed structs** contain full pubkeys. RPC methods return full pubkeys.
-
 {% endhint %}
 
 **1. Initialize PackedAccounts**
@@ -465,7 +464,7 @@ accounts.add_system_accounts(config)?;
 
 <summary><em>System Accounts List</em></summary>
 
-<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td><td>Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts </td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Access control to the Account Compression Program</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td><td>Solana System Program to create accounts or transfer lamports</td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td><td>Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Access control to the Account Compression Program</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td><td>Solana System Program to create accounts or transfer lamports</td></tr></tbody></table>
 
 </details>
 
@@ -554,7 +553,7 @@ let packed_accounts = rpc_result
 Call `pack_tree_infos(&mut accounts)` to extract tree pubkeys and add them to the accounts array.
 
 The returned `PackedStateTreeInfos` contains:
-<!-- Points and References are both used, could consider consistent language, I prefer References -->
+
 * `merkle_tree_pubkey_index`: Points to the state tree account
 * `queue_pubkey_index`: Points to the nullifier queue account
   * The queue tracks nullified (spent) account hashes to prevent double-spending
@@ -598,7 +597,7 @@ The accounts are referenced in instruction data by u8 indices in Packed structs.
 {% endstep %}
 
 {% step %}
-#### Instruction Data
+**Instruction Data**
 
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
@@ -710,7 +709,7 @@ Include the Merkle tree metadata packed in Step 6:
 {% endstep %}
 
 {% step %}
-#### Instruction
+**Instruction**
 
 Build a standard Solana `Instruction` struct with your `program_id`, `accounts`, and `data` from Step 7. Pass the `remaining_accounts` array you built in Step 6.
 
@@ -768,13 +767,16 @@ Your program extracts `system_accounts_offset` from instruction data and uses it
 * `remaining_accounts_metas` returns the indices for the Light System and tree accounts.
 
 This is the final account array:
+
 {% tabs %}
 {% tab title="Anchor Programs" %}
 1. Account struct:
-- Signers
-- Fee payer
+
+* Signers
+* Fee payer
 
 2. Remaining accounts:
+
 {% code overflow="wrap" %}
 ```
 [0]    Light System Program
@@ -787,6 +789,7 @@ This is the final account array:
 
 {% tab title="Native Program" %}
 All accounts are in the array when not using Anchor.
+
 {% code overflow="wrap" %}
 ```
 [0]    Signers, Fee Payer
@@ -796,14 +799,14 @@ All accounts are in the array when not using Anchor.
 [9+]   Merkle trees, queues
 ```
 {% endcode %}
+
 -> you need to use 1 as offset when creating CpiAccounts struct in your program.
 {% endtab %}
 {% endtabs %}
-
 {% endstep %}
 
 {% step %}
-#### Send Transaction
+**Send Transaction**
 
 {% code overflow="wrap" %}
 ```rust

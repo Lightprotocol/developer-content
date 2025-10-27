@@ -12,7 +12,7 @@ Burning a compressed account
 
 * consumes the existing account hash, and
 * produces no output state.
-* A burned account cannot be reinitialized.&#x20;
+* A burned account cannot be reinitialized.
 
 {% hint style="success" %}
 Find [full code examples of a counter program at the end](how-to-burn-compressed-accounts.md#full-code-example) for Anchor and native Rust.
@@ -21,19 +21,17 @@ Find [full code examples of a counter program at the end](how-to-burn-compressed
 ## Implementation Guide
 
 This guide will cover the components of a Solana program that burns compressed accounts.\
-Here is the complete flow to burn compressed accounts:&#x20;
+Here is the complete flow to burn compressed accounts:
 
 <figure><picture><source srcset="../../.gitbook/assets/program-burn (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-burn.png" alt=""></picture><figcaption></figcaption></figure>
 
-{% stepper %}
-{% step %}
 ### Program Setup
 
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
 
-#### Dependencies
+**Dependencies**
 
 Add dependencies to your program.
 
@@ -57,7 +55,7 @@ solana-program = "2.2"
 * The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.
 * Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).
 
-#### Constants
+**Constants**
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
@@ -75,7 +73,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 * CPIs to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
 * `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 
-#### Compressed Account
+**Compressed Account**
 
 Define your compressed account struct.
 
@@ -93,7 +91,6 @@ pub struct MyCompressedAccount {
     pub message: String,
 }
 ```
-{% endcode %}
 
 You derive
 
@@ -102,14 +99,12 @@ You derive
 * `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.&#x20;
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.
 {% endhint %}
 
 </details>
-{% endstep %}
 
-{% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -142,10 +137,8 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 
 * Define fields to include the current account data passed by the client.
 * This depends on your program logic. This example includes the `current_message` field.
-{% endstep %}
 
-{% step %}
-### Burn Compressed Account
+#### Burn Compressed Account
 
 Burn the compressed account permanently with `LightAccount::new_burn()`. No account can be reinitialized at this address in the future.
 
@@ -180,12 +173,10 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 * A `LightAccount` wrapper that marks the account as burned permanent with no output state.
 
 {% hint style="info" %}
-`new_burn()`  hashes the input state. The Light System Program verifies the input hash and nullifies it permanently in _Step 4_.&#x20;
+`new_burn()` hashes the input state. The Light System Program verifies the input hash and nullifies it permanently in _Step 4_.
 {% endhint %}
-{% endstep %}
 
-{% step %}
-### Light System Program CPI
+#### Light System Program CPI
 
 The Light System Program CPI burns the compressed account permanently.
 
@@ -222,8 +213,6 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove the account exists in the state tree _- defined in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount` wrapper configured to burn the account _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
-{% endstep %}
-{% endstepper %}
 
 ## Full Code Example
 
