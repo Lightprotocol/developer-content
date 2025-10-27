@@ -50,7 +50,7 @@ The client passes the incorrect `root_index` for the Merkle tree. It must refere
 {% tab title="TypeScript" %}
 ```typescript
 // Client - log root_index extracted from proof
-console.log("Proof root indices:", proofRpcResult.rootIndices);
+console.log("Proof root indices:", proofRpcResult.value.rootIndices);
 // Client - log root_index being sent to instruction
 console.log("Sending root index:", compressedAccountMeta.treeInfo.rootIndex);
 ```
