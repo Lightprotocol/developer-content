@@ -127,6 +127,10 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 <table><thead><tr><th width="360.35003662109375">Guide</th><th>Description</th></tr></thead><tbody><tr><td><a href="advanced-guides/create-an-airdrop.md">Create an Airdrop</a></td><td>Create an airdrop, with or without code</td></tr><tr><td><a href="advanced-guides/use-token-2022-with-compression.md">Use Token-2022 with compressed tokens</a></td><td>Create and transfer compressed tokens with Token-2022 extensions</td></tr><tr><td><a href="advanced-guides/add-wallet-support-for-compressed-tokens.md">Add Wallet Support for Compressed Tokens</a></td><td>Implement compressed token support in your wallet application</td></tr></tbody></table>
 
+## Examples
+
+<table><thead><tr><th width="360">Example Client</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/example-web-client">Example Web Client</a></td><td>Demonstrates how to use @lightprotocol/stateless.js in a browser environment to interact with the ZK Compression API</td></tr><tr><td><a href="https://github.com/Lightprotocol/example-nodejs-client">Example Node.js Client</a></td><td>Script to execute basic compression/decompression/transfers</td></tr><tr><td><a href="https://github.com/Lightprotocol/example-compressed-claim">Example Compressed Claim</a></td><td>Demo for time-locked airdrop with compressed tokens</td></tr><tr><td><a href="https://github.com/Lightprotocol/example-token-distribution">Example Token Distribution</a></td><td>Token distribution example implementation for airdrops, payments, and rewards</td></tr></tbody></table>
+
 ***
 
 ## Next Steps
