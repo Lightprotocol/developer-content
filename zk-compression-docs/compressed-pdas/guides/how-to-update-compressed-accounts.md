@@ -27,15 +27,15 @@ Here is the complete flow:
 
 <figure><picture><source srcset="../../.gitbook/assets/program-update (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-update.png" alt=""></picture><figcaption></figcaption></figure>
 
-
-
+{% stepper %}
+{% step %}
 ### Program Setup
 
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
 
-**Dependencies**
+#### Dependencies
 
 Add dependencies to your program.
 
@@ -64,9 +64,13 @@ solana-program = "2.2"
 Set program address and derive the CPI authority PDA to call the Light System program.
 
 {% code overflow="wrap" %}
-````
+```rust
+declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
-</div>
+pub const LIGHT_CPI_SIGNER: CpiSigner =
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+```
+{% endcode %}
 
 **`CPISigner`** is the configuration struct for CPI's to the Light System Program.
 
@@ -90,7 +94,7 @@ pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
-````
+```
 {% endcode %}
 
 You derive
@@ -104,8 +108,10 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endhint %}
 
 </details>
+{% endstep %}
 
-#### Instruction Data
+{% step %}
+### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -141,8 +147,10 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 * Define fields to include the current account data passed by the client.
 * This depends on your program logic. This example includes `current_message` and `new_message` fields.
   * `new_message` contains the the new data that will replace the `data` field of the compressed account after the update.
+{% endstep %}
 
-#### Update Compressed Account
+{% step %}
+### Update Compressed Account
 
 Load the compressed account and update it with `LightAccount::new_mut()`.
 
@@ -183,8 +191,10 @@ my_compressed_account.message = new_message;
 {% hint style="info" %}
 `new_mut()` only hashes the input state. The Light System Program verifies that input hash exists in a state tree and creates the output hash in _Step 4._
 {% endhint %}
+{% endstep %}
 
-#### Light System Program CPI
+{% step %}
+### Light System Program CPI
 
 Invoke the Light System Program to update the compressed account.
 
@@ -197,9 +207,18 @@ The Light System Program
 {% endhint %}
 
 {% code overflow="wrap" %}
-````
+```rust
+let light_cpi_accounts = CpiAccounts::new(
+    fee_payer,
+    remaining_accounts,
+    LIGHT_CPI_SIGNER,
+);
 
-</div>
+LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
+    .with_light_account(my_compressed_account)?
+    .invoke(light_cpi_accounts)?;
+```
+{% endcode %}
 
 **Set up `CpiAccounts::new()`:**
 
@@ -212,19 +231,18 @@ The Light System Program
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove that the account exists in the specified state tree - _in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount`  with the modified compressed account data _- defined in Step 3_
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
-
-</div>
-
-</div>
+{% endstep %}
+{% endstepper %}
 
 ## Full Code Example
 
 The counter programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first, or simply run:
 
+{% code overflow="wrap" %}
 ```bash
 npm -g i @lightprotocol/zk-compression-cli
 light init testprogram
-````
+```
 {% endcode %}
 
 {% hint style="warning" %}

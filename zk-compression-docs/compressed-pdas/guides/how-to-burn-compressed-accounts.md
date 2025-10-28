@@ -25,13 +25,15 @@ Here is the complete flow to burn compressed accounts:
 
 <figure><picture><source srcset="../../.gitbook/assets/program-burn (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-burn.png" alt=""></picture><figcaption></figcaption></figure>
 
+{% stepper %}
+{% step %}
 ### Program Setup
 
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
 
-**Dependencies**
+#### Dependencies
 
 Add dependencies to your program.
 
@@ -103,8 +105,10 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endhint %}
 
 </details>
+{% endstep %}
 
-#### Instruction Data
+{% step %}
+### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -137,8 +141,10 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 
 * Define fields to include the current account data passed by the client.
 * This depends on your program logic. This example includes the `current_message` field.
+{% endstep %}
 
-#### Burn Compressed Account
+{% step %}
+### Burn Compressed Account
 
 Burn the compressed account permanently with `LightAccount::new_burn()`. No account can be reinitialized at this address in the future.
 
@@ -175,8 +181,10 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 {% hint style="info" %}
 `new_burn()` hashes the input state. The Light System Program verifies the input hash and nullifies it permanently in _Step 4_.
 {% endhint %}
+{% endstep %}
 
-#### Light System Program CPI
+{% step %}
+### Light System Program CPI
 
 The Light System Program CPI burns the compressed account permanently.
 
@@ -213,6 +221,8 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove the account exists in the state tree _- defined in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount` wrapper configured to burn the account _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
+{% endstep %}
+{% endstepper %}
 
 ## Full Code Example
 

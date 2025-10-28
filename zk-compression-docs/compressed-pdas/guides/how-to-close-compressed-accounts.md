@@ -25,13 +25,15 @@ Here is the complete flow to close compressed accounts:
 
 <figure><picture><source srcset="../../.gitbook/assets/programßclose.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-close.png" alt=""></picture><figcaption></figcaption></figure>
 
-#### Program Setup
+{% stepper %}
+{% step %}
+### Program Setup
 
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
 
-**Dependencies**
+#### Dependencies
 
 Add dependencies to your program.
 
@@ -105,8 +107,10 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endhint %}
 
 </details>
+{% endstep %}
 
-#### Instruction Data
+{% step %}
+### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -140,8 +144,10 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 
 * Define fields to include the current account data passed by the client.
 * This depends on your program logic. This example includes the `current_message` field.
+{% endstep %}
 
-#### Close Compressed Account
+{% step %}
+### Close Compressed Account
 
 Load the compressed account and mark it as closed with `LightAccount::new_close()`.
 
@@ -174,9 +180,9 @@ Load the compressed account and mark it as closed with `LightAccount::new_close(
 * the output contains zeroes as data hash that indicates no data content, and
 * the data field contains an empty vector, instead of serialized account fields.
 {% endhint %}
+{% endstep %}
 
-
-
+{% step %}
 ### Light System Program CPI
 
 Invoke the Light System Program to close the compressed account. This empty account can be reinitialized with `LightAccount::new_empty()`.
@@ -212,6 +218,8 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove the compressed account exists in the state tree _- defined in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount` wrapper configured to close the account with the zero values _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
+{% endstep %}
+{% endstepper %}
 
 ## Full Code Example
 
