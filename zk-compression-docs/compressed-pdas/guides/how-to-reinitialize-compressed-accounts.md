@@ -22,7 +22,7 @@ Find [full code examples of a counter program at the end](how-to-reinitialize-co
 ## Implementation Guide
 
 This guide will cover the components of a Solana program that reinitializes compressed accounts.\
-Here is the complete flow to reinitialize compressed accounts:&#x20;
+Here is the complete flow to reinitialize compressed accounts:
 
 <figure><picture><source srcset="../../.gitbook/assets/program-reinit (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-reinit.png" alt=""></picture><figcaption></figcaption></figure>
 
@@ -103,7 +103,7 @@ You derive
 * `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.&#x20;
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.
 {% endhint %}
 
 </details>
