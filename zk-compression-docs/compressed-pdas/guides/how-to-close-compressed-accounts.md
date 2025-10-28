@@ -159,7 +159,15 @@ Load the compressed account and mark it as closed with `LightAccount::new_close(
 {% endhint %}
 
 {% code overflow="wrap" %}
-```
+```rust
+let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
+    &ID,
+    &account_meta,
+    MyCompressedAccount {
+        owner: *signer_key,
+        message: current_message,
+    },
+)?;
 ```
 {% endcode %}
 

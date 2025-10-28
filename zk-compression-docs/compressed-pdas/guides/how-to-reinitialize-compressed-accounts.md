@@ -68,7 +68,6 @@ declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
     derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
-{% code overflow="wrap" %}
 ```
 {% endcode %}
 
@@ -164,7 +163,6 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
     &ID,
     account_meta,
 )?;
-{% code overflow="wrap" %}
 ```
 {% endcode %}
 
