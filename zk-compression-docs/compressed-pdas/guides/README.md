@@ -3,6 +3,7 @@ description: >-
   Overview and comparison of guides to create, update, close, reinitialize, and
   burn permanently compressed accounts. Guides include step-by-step
   implementation and full code examples.
+hidden: true
 ---
 
 # Guides
