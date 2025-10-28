@@ -59,8 +59,8 @@ This guide covers the components of a Typescript client. Here is the complete fl
 {% code overflow="wrap" %}
 ```bash
 npm install --save \
-    @lightprotocol/stateless.js@0.22.0 \
-    @lightprotocol/compressed-token@0.22.0 \
+    @lightprotocol/stateless.js@0.22.1-alpha.1 \
+    @lightprotocol/compressed-token@0.22.1-alpha.1 \
     @solana/web3.js
 ```
 {% endcode %}
@@ -70,8 +70,8 @@ npm install --save \
 {% code overflow="wrap" %}
 ```bash
 yarn add \
-    @lightprotocol/stateless.js@0.22.0 \
-    @lightprotocol/compressed-token@0.22.0 \
+    @lightprotocol/stateless.js@0.22.1-alpha.1 \
+    @lightprotocol/compressed-token@0.22.1-alpha.1 \
     @solana/web3.js
 ```
 {% endcode %}
@@ -81,8 +81,8 @@ yarn add \
 {% code overflow="wrap" %}
 ```bash
 pnpm add \
-    @lightprotocol/stateless.js@0.22.0 \
-    @lightprotocol/compressed-token@0.22.0 \
+    @lightprotocol/stateless.js@0.22.1-alpha.1 \
+    @lightprotocol/compressed-token@0.22.1-alpha.1 \
     @solana/web3.js
 ```
 {% endcode %}
