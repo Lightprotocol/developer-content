@@ -27,13 +27,13 @@ Here is the complete flow to burn compressed accounts:
 
 {% stepper %}
 {% step %}
-### Program Setup
+#### Program Setup
 
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
 
-#### Dependencies
+**Dependencies**
 
 Add dependencies to your program.
 
@@ -110,7 +110,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -146,7 +146,7 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 {% endstep %}
 
 {% step %}
-### Burn Compressed Account
+#### Burn Compressed Account
 
 Burn the compressed account permanently with `LightAccount::new_burn()`. No account can be reinitialized at this address in the future.
 
@@ -180,13 +180,13 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 
 * A `LightAccount` wrapper that marks the account as burned permanent with no output state.
 
-{% hint style="success" %}
+{% hint style="info" %}
 `new_burn()` hashes the input state. The Light System Program verifies the input hash and nullifies it permanently in _Step 4_.
 {% endhint %}
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+#### Light System Program CPI
 
 The Light System Program CPI burns the compressed account permanently.
 

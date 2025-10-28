@@ -28,13 +28,13 @@ Here is the complete flow to reinitialize compressed accounts:
 
 {% stepper %}
 {% step %}
-### Program Setup
+#### Program Setup
 
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
 
-#### Dependencies
+**Dependencies**
 
 Add dependencies to your program.
 
@@ -58,7 +58,7 @@ solana-program = "2.2"
 * The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.
 * Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).
 
-#### Constants
+**Constants**
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
@@ -76,7 +76,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 * CPIs to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
 * `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 
-#### Compressed Account
+**Compressed Account**
 
 Define your compressed account struct.
 
@@ -111,7 +111,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -142,7 +142,7 @@ Reinitialization does not require `current_value` parameters. `new_empty()` auto
 {% endstep %}
 
 {% step %}
-### Reinitialize Closed Account
+#### Reinitialize Closed Account
 
 Reinitialize the closed account with `LightAccount::new_empty()`.
 
@@ -177,13 +177,13 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
 * A `LightAccount` wrapper with account data automatically initialized to default values using the `Default` trait.
 * This creates a zero-initialized instance: `Pubkey` as all zeros, `u64` as `0`, `String` as empty.
 
-{% hint style="success" %}
+{% hint style="info" %}
 `new_empty()` reconstructs the closed account hash with zero values. The Light System Program verifies the closed account hash and creates the output hash in _Step 4_.
 {% endhint %}
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+#### Light System Program CPI
 
 Invoke the Light System Program to reinitialize the compressed account.
 

@@ -27,13 +27,13 @@ Here is the complete flow to close compressed accounts:
 
 {% stepper %}
 {% step %}
-### Program Setup
+#### Program Setup
 
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
 
-#### Dependencies
+**Dependencies**
 
 Add dependencies to your program.
 
@@ -110,7 +110,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -147,7 +147,7 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 {% endstep %}
 
 {% step %}
-### Close Compressed Account
+#### Close Compressed Account
 
 Load the compressed account and mark it as closed with `LightAccount::new_close()`.
 
@@ -181,7 +181,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
 
 * A `LightAccount` wrapper similar to Anchor's `Account` that marks the account for closure.
 
-{% hint style="success" %}
+{% hint style="info" %}
 `new_close()` hashes the input state and marks the account for closure. The Light System Program creates output state with zero values:
 
 * a zero discriminator (`0u8; 8`) removes type identification of the account,
@@ -191,7 +191,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+#### Light System Program CPI
 
 Invoke the Light System Program to close the compressed account. This empty account can be reinitialized with `LightAccount::new_empty()`.
 

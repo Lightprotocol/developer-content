@@ -29,13 +29,13 @@ Here is the complete flow:
 
 {% stepper %}
 {% step %}
-### Program Setup
+#### Program Setup
 
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
 
-#### Dependencies
+**Dependencies**
 
 Add dependencies to your program.
 
@@ -77,7 +77,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 * CPIs to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
 * `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 
-#### Compressed Account
+**Compressed Account**
 
 Define your compressed account struct.
 
@@ -112,7 +112,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -151,7 +151,7 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 {% endstep %}
 
 {% step %}
-### Update Compressed Account
+#### Update Compressed Account
 
 Load the compressed account and update it with `LightAccount::new_mut()`.
 
@@ -189,13 +189,13 @@ my_compressed_account.message = new_message;
 * A `LightAccount` wrapper similar to Anchor's `Account`.
 * `new_mut()` lets the program modify the output state. This example sets `message` to `new_message`.
 
-{% hint style="success" %}
+{% hint style="info" %}
 `new_mut()` only hashes the input state. The Light System Program verifies that input hash exists in a state tree and creates the output hash in _Step 4._
 {% endhint %}
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+#### Light System Program CPI
 
 Invoke the Light System Program to update the compressed account.
 
@@ -230,7 +230,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Build the CPI instruction**:
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove that the account exists in the specified state tree - _in the Instruction Data (Step 2)._
-* `with_light_account` adds the `LightAccount`  with the modified compressed account data _- defined in Step 3_
+* `with_light_account` adds the `LightAccount` with the modified compressed account data _- defined in Step 3_
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 {% endstep %}
 {% endstepper %}
