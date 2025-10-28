@@ -1,6 +1,6 @@
 ---
 description: >-
-  Complete guide to create compressed accounts in Solana programs with full code
+  Guide to create compressed accounts in Solana programs with full code
   examples.
 ---
 
