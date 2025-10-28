@@ -3,7 +3,6 @@ description: >-
   Overview and comparison of guides to create, update, close, reinitialize, and
   burn permanently compressed accounts. Guides include step-by-step
   implementation and full code examples.
-hidden: true
 ---
 
 # Guides
@@ -41,3 +40,11 @@ hidden: true
 <figure><img src="../../.gitbook/assets/Untitled (6).png" alt=""><figcaption></figcaption></figure>
 {% endtab %}
 {% endtabs %}
+
+### Next Steps
+
+Create a compressed account.
+
+{% content-ref url="how-to-create-compressed-accounts.md" %}
+[how-to-create-compressed-accounts.md](how-to-create-compressed-accounts.md)
+{% endcontent-ref %}

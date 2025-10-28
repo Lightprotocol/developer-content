@@ -2,27 +2,26 @@
 description: >-
   Complete guide to create compressed accounts in Solana programs with full code
   examples.
-hidden: true
 ---
 
 # How to Create Compressed Accounts
 
 ## Overview
 
-Compressed accounts and addresses are created via CPI to the Light System Program.&#x20;
+Compressed accounts and addresses are created via CPI to the Light System Program.
 
 * Compressed and regular Solana accounts share the same functionality and are fully composable.
 * A compressed account has two identifiers: the account hash and its address (optional). In comparison, regular Solana accounts are identified by their address.
 * The account hash is not persistent and changes with every write to the account.
-* For Solana PDA like behavior your compressed account needs an address as persistent identifier. \
+* For Solana PDA like behavior your compressed account needs an address as persistent identifier.\
   Fungible state like [compressed token accounts](../../compressed-tokens/guides/how-to-create-compressed-token-accounts.md) do not need addresses.
 
 {% hint style="success" %}
 Find [full code examples at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-This guide will cover the components of a Solana program that creates compressed accounts. \
-Here is the complete flow:&#x20;
+This guide will cover the components of a Solana program that creates compressed accounts.\
+Here is the complete flow:
 
 <figure><picture><source srcset="../../.gitbook/assets/program-create (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-create.png" alt=""></picture><figcaption></figcaption></figure>
 
@@ -30,7 +29,7 @@ Here is the complete flow:&#x20;
 
 {% stepper %}
 {% step %}
-### Dependencies
+#### Dependencies
 
 Add dependencies to your program.
 
@@ -62,7 +61,7 @@ solana-program = "2.2"
 {% endstep %}
 
 {% step %}
-### Constants
+#### Constants
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
@@ -82,7 +81,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 {% endstep %}
 
 {% step %}
-### Compressed Account
+#### Compressed Account
 
 {% tabs %}
 {% tab title="Anchor" %}
@@ -136,7 +135,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `m
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -172,7 +171,7 @@ Clients pack accounts into the `remaining_accounts` array to reduce transaction 
 {% endstep %}
 
 {% step %}
-### Derive Address
+#### Derive Address
 
 Derive the address as a persistent unique identifier for the compressed account.
 
@@ -208,13 +207,14 @@ let (address, address_seed) = derive_address(
 {% endstep %}
 
 {% step %}
-### Address Tree Check
+#### Address Tree Check
 
 Ensure global uniqueness of an address by verifying that the address tree pubkey matches the program's tree constant.
 
 {% hint style="info" %}
 Every address is unique, but the same seeds can be used to create different addresses in different address trees. To enforce that a compressed PDA can only be created once with the same seed, you must check the address tree pubkey.
 {% endhint %}
+
 {% code overflow="wrap" %}
 ```rust
 let address_tree = light_cpi_accounts.tree_pubkeys().unwrap()
@@ -227,11 +227,10 @@ if address_tree != light_sdk::constants::ADDRESS_TREE_V2 {
 }
 ```
 {% endcode %}
-
 {% endstep %}
 
 {% step %}
-### Initialize Compressed Account
+#### Initialize Compressed Account
 
 Initialize the compressed account struct with `LightAccount::new_init()`.
 
@@ -263,13 +262,13 @@ my_compressed_account.data = data.to_string();
 **The SDK creates:**
 
 * A `LightAccount` wrapper similar to Anchor's `Account.`
-* `new_init()` lets the program set the initial  data.  This example sets:
+* `new_init()` lets the program set the initial data. This example sets:
   * `owner` to the signer's pubkey
   * `data` to an arbitrary string
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+#### Light System Program CPI
 
 Invoke the Light System Program to create the compressed account and its address.
 
@@ -588,9 +587,7 @@ Build a client for your program or learn how to update compressed accounts.
 
 [^3]: [Program ID:](https://solscan.io/account/noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV) noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV
 
-[^4]: PDA derived from Light System Program ID with seed `b"cpi_authority"`.&#x20;
-
-
+[^4]: PDA derived from Light System Program ID with seed `b"cpi_authority"`.
 
     [Pubkey](https://solscan.io/account/HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru): HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru
 

@@ -1,13 +1,12 @@
 ---
 description: Guide to close compressed accounts in Solana programs with full code examples.
-hidden: true
 ---
 
 # How to Close Compressed Accounts
 
 ## Overview
 
-Compressed accounts are closed via CPI to the Light System Program.&#x20;
+Compressed accounts are closed via CPI to the Light System Program.
 
 Closing a compressed account
 
@@ -22,19 +21,17 @@ Find [full code examples of a counter program at the end](how-to-close-compresse
 ## Implementation Guide
 
 This guide will cover the components of a Solana program that closes compressed accounts.\
-Here is the complete flow to close compressed accounts:&#x20;
+Here is the complete flow to close compressed accounts:
 
 <figure><picture><source srcset="../../.gitbook/assets/programßclose.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-close.png" alt=""></picture><figcaption></figcaption></figure>
 
-{% stepper %}
-{% step %}
-### Program Setup
+#### Program Setup
 
 <details>
 
 <summary>Dependencies, Constants, Compressed Account</summary>
 
-#### Dependencies
+**Dependencies**
 
 Add dependencies to your program.
 
@@ -58,7 +55,7 @@ solana-program = "2.2"
 * The `light-sdk` provides macros, wrappers and CPI interface to create and interact with compressed accounts.
 * Add the serialization library (`borsh` for native Rust, or use `AnchorSerialize`).
 
-#### Constants
+**Constants**
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
@@ -76,7 +73,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 * CPIs to the Light System program must be signed with a PDA derived by your program with the seed `b"authority"`
 * `derive_light_cpi_signer!` derives the CPI signer PDA for you at compile time.
 
-#### Compressed Account
+**Compressed Account**
 
 Define your compressed account struct.
 
@@ -104,14 +101,12 @@ You derive
 * `LightDiscriminator` to implements a unique type ID (8 bytes) to distinguish account types. The default compressed account layout enforces a discriminator in its _own field_, [not the first 8 bytes of the data field](#user-content-fn-1)[^1].
 
 {% hint style="info" %}
-The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.&#x20;
+The traits listed above are required for `LightAccount`. `LightAccount` wraps `MyCompressedAccount` in Step 3 to set the discriminator and create the compressed account's data.
 {% endhint %}
 
 </details>
-{% endstep %}
 
-{% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -145,10 +140,8 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 
 * Define fields to include the current account data passed by the client.
 * This depends on your program logic. This example includes the `current_message` field.
-{% endstep %}
 
-{% step %}
-### Close Compressed Account
+#### Close Compressed Account
 
 Load the compressed account and mark it as closed with `LightAccount::new_close()`.
 
@@ -160,16 +153,7 @@ Load the compressed account and mark it as closed with `LightAccount::new_close(
 {% endhint %}
 
 {% code overflow="wrap" %}
-```rust
-let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
-    &ID,
-    account_meta,
-    MyCompressedAccount {
-        owner: *signer.key,
-        message: current_message,
-    },
-)?;
-{% code overflow="wrap" %}
+```
 ```
 {% endcode %}
 
@@ -190,9 +174,9 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
 * the output contains zeroes as data hash that indicates no data content, and
 * the data field contains an empty vector, instead of serialized account fields.
 {% endhint %}
-{% endstep %}
 
-{% step %}
+
+
 ### Light System Program CPI
 
 Invoke the Light System Program to close the compressed account. This empty account can be reinitialized with `LightAccount::new_empty()`.
@@ -216,7 +200,6 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .invoke(light_cpi_accounts)?;
 ```
-{% endcode %}
 
 **Set up `CpiAccounts::new()`:**
 
@@ -229,8 +212,6 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove the compressed account exists in the state tree _- defined in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount` wrapper configured to close the account with the zero values _- defined in Step 3_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
-{% endstep %}
-{% endstepper %}
 
 ## Full Code Example
 
