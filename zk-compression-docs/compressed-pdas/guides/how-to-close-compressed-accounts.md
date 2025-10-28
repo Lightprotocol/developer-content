@@ -181,7 +181,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
 
 * A `LightAccount` wrapper similar to Anchor's `Account` that marks the account for closure.
 
-{% hint style="info" %}
+{% hint style="success" %}
 `new_close()` hashes the input state and marks the account for closure. The Light System Program creates output state with zero values:
 
 * a zero discriminator (`0u8; 8`) removes type identification of the account,

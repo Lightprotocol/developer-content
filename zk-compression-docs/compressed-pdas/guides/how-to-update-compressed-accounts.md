@@ -188,7 +188,7 @@ my_compressed_account.message = new_message;
 * A `LightAccount` wrapper similar to Anchor's `Account`.
 * `new_mut()` lets the program modify the output state. This example sets `message` to `new_message`.
 
-{% hint style="info" %}
+{% hint style="success" %}
 `new_mut()` only hashes the input state. The Light System Program verifies that input hash exists in a state tree and creates the output hash in _Step 4._
 {% endhint %}
 {% endstep %}

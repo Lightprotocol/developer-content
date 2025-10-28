@@ -145,7 +145,7 @@ Reinitialization does not require `current_value` parameters. `new_empty()` auto
 
 Reinitialize the closed account with `LightAccount::new_empty()`.
 
-{% hint style="info" %}
+{% hint style="success" %}
 `new_empty()`
 
 1. reconstructs the closed account hash with zero values as input, and
@@ -176,8 +176,8 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
 * A `LightAccount` wrapper with account data automatically initialized to default values using the `Default` trait.
 * This creates a zero-initialized instance: `Pubkey` as all zeros, `u64` as `0`, `String` as empty.
 
-{% hint style="info" %}
-`new_empty()` reconstructs the closed account hash with zero values. The Light System Program verifies the closed account hash and creates the output hash in _Step 4_.&#x20;
+{% hint style="success" %}
+`new_empty()` reconstructs the closed account hash with zero values. The Light System Program verifies the closed account hash and creates the output hash in _Step 4_.
 {% endhint %}
 {% endstep %}
 
@@ -186,7 +186,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
 
 Invoke the Light System Program to reinitialize the compressed account.
 
-{% hint style="info" %}
+{% hint style="success" %}
 The Light System Program
 
 * validates the closed account hash exists in state tree,
@@ -194,6 +194,7 @@ The Light System Program
 * appends the new account hash with provided values to the state tree.
 {% endhint %}
 
+{% code overflow="wrap" %}
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
     fee_payer,

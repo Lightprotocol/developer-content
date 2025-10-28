@@ -148,7 +148,7 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 
 Burn the compressed account permanently with `LightAccount::new_burn()`. No account can be reinitialized at this address in the future.
 
-{% hint style="info" %}
+{% hint style="success" %}
 `new_burn()`
 
 1. hashes the current account data as input state and
@@ -178,7 +178,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 
 * A `LightAccount` wrapper that marks the account as burned permanent with no output state.
 
-{% hint style="info" %}
+{% hint style="success" %}
 `new_burn()` hashes the input state. The Light System Program verifies the input hash and nullifies it permanently in _Step 4_.
 {% endhint %}
 {% endstep %}
@@ -188,7 +188,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 
 The Light System Program CPI burns the compressed account permanently.
 
-{% hint style="info" %}
+{% hint style="success" %}
 The Light System Program
 
 * validates the account exists in state tree with the validity,
