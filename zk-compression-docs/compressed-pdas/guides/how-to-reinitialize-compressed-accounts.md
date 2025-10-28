@@ -80,6 +80,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 Define your compressed account struct.
 
+{% code overflow="wrap" %}
 ```rust
 #[derive(
     Clone,

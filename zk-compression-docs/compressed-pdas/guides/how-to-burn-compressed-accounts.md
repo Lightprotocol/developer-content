@@ -79,6 +79,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 Define your compressed account struct.
 
+{% code overflow="wrap" %}
 ```rust
 #[derive(
     Clone,
@@ -93,6 +94,7 @@ pub struct MyCompressedAccount {
     pub message: String,
 }
 ```
+{% endcode %}
 
 You derive
 
