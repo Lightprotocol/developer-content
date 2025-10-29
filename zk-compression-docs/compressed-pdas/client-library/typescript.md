@@ -9,8 +9,9 @@ description: >-
 The TypeScript Client SDK provides two test environments:
 
 * **For local testing, use `TestRpc`.**
-  * `TestRpc` provides a fully initialized test environment with auto-funded keypair, a test indexer, Light System Programs, and Merkle tree accounts.
-  * Parses events and builds Merkle trees on-demand to generate proofs instantly without persisting state.
+  * `TestRpc` is an in-memory indexer that parses events and builds Merkle trees on-demand to generate proofs instantly without persisting state.
+  * Requires a running test validator with Light System Programs and Merkle tree accounts.
+  * Provides an auto-funded keypair for testing.
 * **For test-validator, devnet and mainnet use `Rpc`**
   * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
   * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
@@ -188,10 +189,10 @@ Fetch metadata of trees with:
 
 * `getAddressTreeInfo()` to return `TreeInfo` with the public key and other metadata for the address tree.
   * Used to derive addresses with `deriveAddress()` and
-  * for `getValidityProof()` to prove the address does not exist yet.
+  * for `getValidityProofV0()` to prove the address does not exist yet.
 
 {% hint style="info" %}
-Only needed to create new addresses. Other interactions with compressed accounts fetch it via the existing address (`getCompressedAccount(address)`).
+`getAddressTreeInfo()` is only needed to create new addresses. Other interactions with compressed accounts fetch it via the existing address (`getCompressedAccount(address)`).
 {% endhint %}
 
 * `getStateTreeInfos()` returns `TreeInfo[]` with pubkeys and metadata for all active state trees.
@@ -223,6 +224,8 @@ Only needed to create new addresses. Other interactions with compressed accounts
 
 Derive a persistent address as a unique identifier for your compressed account.
 
+{% tabs %}
+{% tab title="V1 Address Trees" %}
 {% code overflow="wrap" %}
 ```typescript
 const seed = deriveAddressSeed(
@@ -232,6 +235,20 @@ const seed = deriveAddressSeed(
 const address = deriveAddress(seed, addressTree.tree);
 ```
 {% endcode %}
+{% endtab %}
+
+{% tab title="V2 Address Trees" %}
+{% code overflow="wrap" %}
+```typescript
+const seed = deriveAddressSeed(
+  [Buffer.from('my-seed')],
+  programId
+);
+const address = deriveAddress(seed, addressTree.tree);
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 **First, derive the seed**:
 
@@ -246,7 +263,7 @@ const address = deriveAddress(seed, addressTree.tree);
 {% hint style="info" %}
 Use the same `addressTree` for both `deriveAddress()` and all subsequent operations on that account in your client and program.
 
-* To create a compressed account, pass the address to `getValidityProof()` to prove the address does not exist yet.
+* To create a compressed account, pass the address to `getValidityProofV0()` to prove the address does not exist yet.
 * To update/close, use the address to fetch the current account with `getCompressedAccount(address)`.
 {% endhint %}
 {% endstep %}
@@ -258,19 +275,19 @@ Fetch a validity proof from your RPC provider that supports ZK Compression (Heli
 
 * To create a compressed account, you must prove the **address doesn't already exist** in the address tree.
 * To update or close a compressed account, you must **prove its account hash exists** in a state tree.
-* You can **combine multiple operations in one proof** to optimize compute cost and instruction data.
+* You can **combine multiple addresses and hashes in one proof** to optimize compute cost and instruction data.
 
 {% hint style="info" %}
-[Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProof()` method.
+[Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProofV0()` method.
 {% endhint %}
 
 {% tabs %}
 {% tab title="Create" %}
 {% code overflow="wrap" %}
 ```typescript
-const proof = await rpc.getValidityProof(
+const proof = await rpc.getValidityProofV0(
   [],
-  [{ address, tree: addressTree.tree, queue: addressTree.queue }]
+  [{ address: bn(address.toBytes()), tree: addressTree.tree, queue: addressTree.queue }]
 );
 ```
 {% endcode %}
@@ -278,16 +295,16 @@ const proof = await rpc.getValidityProof(
 **Pass these parameters**:
 
 * Leave (`[]`) empty to create compressed accounts, since no compressed account exists yet.
-* Specify the new address with its tree and queue pubkeys in `[{ address, tree, queue }]`.
+* Specify the new address with its tree and queue pubkeys in `[{ address: bn(address.toBytes()), tree, queue }]` and convert it to the required format.
 
-The RPC returns `ValidityProofWithContext` with
+The RPC returns proof result with
 
 * `compressedProof`: The proof that the address does not exist in the address tree, passed to the program in your instruction data.
-* `newAddressParams`: An array with address tree public key and metadata to pack accounts in the next step.
-* Empty `rootIndices` and `leafIndices` arrays, since no compressed account exists yet.
+* `rootIndices`: An array with root index from the validity proof for the address tree.
+* Empty `leafIndices` array, since no compressed account exists yet.
 {% endtab %}
 
-{% tab title="Update & Close" %}
+{% tab title="Update, Close, Reinit, Burn" %}
 {% hint style="info" %}
 **Update and Close** use identical proof mechanisms. The difference is in your program's instruction handler.
 {% endhint %}
@@ -295,10 +312,10 @@ The RPC returns `ValidityProofWithContext` with
 {% code overflow="wrap" %}
 ```typescript
 const hash = compressedAccount.hash;
-const tree = compressedAccount.merkleContext.tree;
-const queue = compressedAccount.merkleContext.queue;
+const tree = compressedAccount.treeInfo.tree;
+const queue = compressedAccount.treeInfo.queue;
 
-const proof = await rpc.getValidityProof(
+const proof = await rpc.getValidityProofV0(
   [{ hash, tree, queue }],
   []
 );
@@ -308,13 +325,13 @@ const proof = await rpc.getValidityProof(
 **Pass these parameters**:
 
 * Specify the account hash with its tree and queue pubkeys in `[{ hash, tree, queue }]`.
+* Get `tree` and `queue` from `compressedAccount.treeInfo.tree` and `compressedAccount.treeInfo.queue`.
 * (`[]`) remains empty, since the proof verifies the account hash exists in a state tree, not that the address doesn't exist in an address tree.
 
-The RPC returns `ValidityProofWithContext` with
+The RPC returns proof result with
 
 * `compressedProof`: The proof that the account hash exists in the state tree, passed to the program in your instruction data.
-* `rootIndices`, `leafIndices`, and `proveByIndices` arrays with proof metadata to pack accounts in the next step.
-* An empty `newAddressParams` array, since you pass no address to the proof, when you update or close a compressed account.
+* `rootIndices` and `leafIndices` arrays with proof metadata to pack accounts in the next step.
 {% endtab %}
 
 {% tab title="Combined Proof" %}
@@ -328,41 +345,79 @@ The RPC returns `ValidityProofWithContext` with
 {% code overflow="wrap" %}
 ```typescript
 const hash = compressedAccount.hash;
-const tree = compressedAccount.merkleContext.tree;
-const queue = compressedAccount.merkleContext.queue;
+const tree = compressedAccount.treeInfo.tree;
+const queue = compressedAccount.treeInfo.queue;
 
-const proof = await rpc.getValidityProof(
+const proof = await rpc.getValidityProofV0(
   [{ hash, tree, queue }],
-  [{ address, tree: addressTree.tree, queue: addressTree.queue }]
+  [{ address: bn(address.toBytes()), tree: addressTree.tree, queue: addressTree.queue }]
 );
 ```
 {% endcode %}
 
 **Pass these parameters**:
 
-* Specify the existing account hash with its tree and queue pubkeys in `[{ hash, tree, queue }]`.
-* Specify the new address with its tree and queue pubkeys in `[{ address, tree, queue }]`.
+* Specify one or more existing account hashes with their tree and queue pubkeys in `[{ hash, tree, queue }]`.
+* Specify one or more new addresses with their tree and queue pubkeys in `[{ address: bn(address.toBytes()), tree, queue }]`.
 
-The RPC returns `ValidityProofWithContext` with
+The RPC returns proof result with
 
 * `compressedProof`: A single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
-* `newAddressParams` array with address tree public key and metadata to build `PackedAddressTreeInfo` in the next step.
-* `rootIndices`, `leafIndices`, and `proveByIndices` arrays with proof metadata to build `PackedStateTreeInfo` in the next step.
+* `rootIndices` and `leafIndices` arrays with proof metadata to build `PackedAddressTreeInfo` and `PackedStateTreeInfo` in the next step.
 {% endtab %}
 {% endtabs %}
+
+**Supported Combinations and Maximums**
+
+The specific combinations and maximums depend on the circuit version (v1 or v2) and the proof type.
+* Combine multiple hashes **or** multiple addresses in a single proof, or
+* multiple hashes **and** addresses in a single combined proof.
+
+{% tabs %}
+{% tab title="V1 Circuits" %}
+
+| **Hashes-only** | | | | | |
+|---------|:---:|:---:|:---:|:---:|:---:|
+| | 1 | 2 | 3 | 4 | 8 |
+
+| **Addresses-only** | | | | | |
+|---------|:---:|:---:|:---:|:---:|:---:|
+| | 1 | 2 | 3 | 4 | 8 |
+
+| **Single Combined Proofs** | Any combination of |
+|---------|:---:|
+| Hashes | 1, 2, 3, 4, 8 |
+| Addresses | 1, 2, 4, 8 |
+
+{% endtab %}
+
+{% tab title="V2 Circuits" %}
+
+| **Hashes-only** | |
+|---------|:---:|
+| | 1 to 20 |
+
+| **Addresses-only** | |
+|---------|:---:|
+| | 1 to 32 |
+
+| **Single Combined Proofs** | Any combination of |
+|---------|:---:|
+| Hashes | 1 to 4 |
+| Addresses | 1 to 4 |
+
+{% endtab %}
+{% endtabs %}
+
 {% endstep %}
 
 {% step %}
 **Pack Accounts**
 
-To minimize instruction data compressed account instructions pack accounts into an array, and send indices that reference these accounts in the instruction data.
-
-{% hint style="info" %}
-**"Packing" accounts optimizes instruction size:**
-
-* **Packed structs** contain account **indices** (u8) instead of 32 byte pubkeys. The indices point to the `remainingAccounts` in Anchor.
-* **Non-Packed structs** contain full pubkeys. RPC methods return full pubkeys.
-{% endhint %}
+To optimize instruction data we pack accounts into an array:
+* Every packed account is assigned to an u8 index.
+* Indices are included in instruction data, instead of 32 byte pubkeys.
+* The indices point to the `remainingAccounts` in Anchor.
 
 **1. PackedAccounts Overview**
 
@@ -394,18 +449,20 @@ Use the `PackedAccounts` helper from the SDK to construct the `remainingAccounts
 
 {% code overflow="wrap" %}
 ```typescript
-import { PackedAccounts } from '@lightprotocol/stateless.js';
+import { PackedAccounts, SystemAccountMetaConfig } from '@lightprotocol/stateless.js';
 
+const systemAccountConfig = new SystemAccountMetaConfig(programId);
 const packedAccounts = new PackedAccounts();
-packedAccounts.addSystemAccounts(programId);
+packedAccounts.addSystemAccounts(systemAccountConfig);
 ```
 {% endcode %}
 
 Initialize the helper and populate the 8 Light System accounts:
 
-1. **Import `PackedAccounts`** from `@lightprotocol/stateless.js`.
-2. **Create helper instance** with `new PackedAccounts()`.
-3. **Add system accounts** with `addSystemAccounts(programId)` to populate indices 0-7.
+1. **Import `PackedAccounts` and `SystemAccountMetaConfig`** from `@lightprotocol/stateless.js`. Use 0.22.1-alpha.1
+2. **Create system account config** with `new SystemAccountMetaConfig(programId)`.
+3. **Create helper instance** with `new PackedAccounts()`.
+4. **Add system accounts** with `addSystemAccounts(systemAccountConfig)` to populate indices 0-7.
 
 In the next steps, you will add tree and queue accounts from the validity proof, then convert to `AccountMeta[]`.
 
@@ -422,17 +479,17 @@ Program-specific accounts (signers, fee payer) are passed to `.accounts()`, not 
 | 1 | Light System Program\[^1]          | Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts                                                                    |
 | 2 | CPI Signer\[^2]                    | <p>- Signs CPI calls from your program to Light System Program<br>- PDA verified by Light System Program during CPI<br>- Derived from your program ID</p>                                      |
 | 3 | Registered Program PDA             | Access control to the Account Compression Program                                                                                                                                              |
-| 4 | Noop Program\[^3]                  | <p>- Logs compressed account state to Solana ledger<br>- Indexers parse transaction logs to reconstruct compressed account state</p>                                                           |
+| 4 | Noop Program\[^3]                  | <p>- Logs compressed account state to Solana ledger. Only used in v1.<br>- Indexers parse transaction logs to reconstruct compressed account state</p>                                                           |
 | 5 | Account Compression Authority\[^4] | Signs CPI calls from Light System Program to Account Compression Program                                                                                                                       |
 | 6 | Account Compression Program\[^5]   | <p>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</p>                                                                          |
 | 7 | Invoking Program                   | <p>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</p> |
-| 8 | System Program\[^6]                | Solana System Program to create accounts or transfer lamports                                                                                                                                  |
+| 8 | System Program\[^6]                | Solana System Program to transfer lamports                                                                                                                                  |
 
 </details>
 
 **3. Pack Tree Accounts from Validity Proof**
 
-`getValidityProof()` returns pubkeys and other metadata of Merkle trees. You will convert the pubkeys to u8 indices that reference accounts in the `remainingAccounts` array to optimize your instruction data.
+`getValidityProofV0()` returns pubkeys and other metadata of Merkle trees. You will convert the pubkeys to u8 indices that reference accounts in the `remainingAccounts` array to optimize your instruction data.
 
 {% tabs %}
 {% tab title="Create" %}
@@ -444,7 +501,7 @@ const addressQueueIndex = packedAccounts.insertOrGet(addressTree.queue);
 const packedAddressTreeInfo = {
   addressMerkleTreePubkeyIndex: addressTreeIndex,
   addressQueuePubkeyIndex: addressQueueIndex,
-  rootIndex: proof.newAddressParams[0].rootIndex
+  rootIndex: proof.rootIndices[0]
 };
 ```
 {% endcode %}
@@ -456,41 +513,40 @@ const packedAddressTreeInfo = {
    * The address tree is used to derive addresses and verify the address does not already exist
 2. `addressQueuePubkeyIndex`: Points to the address queue account in `remainingAccounts`
    * The queue buffers new addresses before they are inserted into the address tree
-3. `rootIndex`: The Merkle root index from `proof.newAddressParams[0].rootIndex` (Validity Proof step)
+3. `rootIndex`: The Merkle root index from `proof.rootIndices[0]` (Validity Proof step)
    * Specifies the root to verify the address does not exist in the tree
 {% endtab %}
 
-{% tab title="Update & Close" %}
+{% tab title="Update, Close, Reinit, Burn" %}
 {% code overflow="wrap" %}
 ```typescript
-const merkleTreeIndex = packedAccounts.insertOrGet(compressedAccount.merkleContext.tree);
-const queueIndex = packedAccounts.insertOrGet(compressedAccount.merkleContext.queue);
+const merkleTreeIndex = packedAccounts.insertOrGet(compressedAccount.treeInfo.tree);
+const queueIndex = packedAccounts.insertOrGet(compressedAccount.treeInfo.queue);
 
 const packedStateTreeInfo = {
   merkleTreePubkeyIndex: merkleTreeIndex,
   queuePubkeyIndex: queueIndex,
-  leafIndex: proof.leafIndices[0],
+  leafIndex: compressedAccount.leafIndex,
   rootIndex: proof.rootIndices[0],
   proveByIndex: false
 };
 ```
 {% endcode %}
 
-* Call `insertOrGet()` with the state tree and queue pubkeys from `compressedAccount.merkleContext`
+* Call `insertOrGet()` with the state tree and queue pubkeys from `compressedAccount.treeInfo`
 * Create `PackedStateTreeInfo` with five fields:
 
 1. `merkleTreePubkeyIndex`: Points to the state tree account in `remainingAccounts`
    * The state tree stores the existing account hash that Light System Program verifies
 2. `queuePubkeyIndex`: Points to the nullifier queue account in `remainingAccounts`
    * The queue tracks nullified (spent) account hashes to prevent double-spending
-3. `leafIndex`: The leaf position in the Merkle tree from `proof.leafIndices[0]`
+3. `leafIndex`: The leaf position in the Merkle tree from `compressedAccount.leafIndex`
    * Specifies which leaf contains your account hash to verify it exists in the tree
 4. `rootIndex`: The Merkle root index from `proof.rootIndices[0]`
    * Specifies the root to verify the account hash against
-5. `proveByIndex`: The proof verification mode from the validity proof
-   * `false` for StateV1 trees: requires full Merkle proof path from leaf to root
-   * `true` for StateV2 trees: account validity established by index position in tree
-   * Value comes from `proof.proveByIndex` returned by the RPC
+5. `proveByIndex`: The proof verification mode.
+   * `false` for v1 state trees
+   * `true` for v2 state trees
 {% endtab %}
 {% endtabs %}
 
@@ -515,11 +571,13 @@ The output tree is separate from the trees in your validity proof. The validity 
 
 {% code overflow="wrap" %}
 ```typescript
-const accountMetas = packedAccounts.toAccountMetas();
+const { remainingAccounts } = packedAccounts.toAccountMetas();
 ```
 {% endcode %}
 
-Call `toAccountMetas()` to build the complete `AccountMeta[]` array for `.remainingAccounts()`. Packed struct indices reference accounts by their position in this array.
+Call `toAccountMetas()` to build the complete accounts structure for `.remainingAccounts()`. 
+* Packed struct indices reference accounts by their position in this array. 
+* The method returns an object with a `remainingAccounts` property containing the `AccountMeta[]` array.
 
 **The method returns accounts in two sections:**
 
@@ -570,8 +628,12 @@ The program hashes this data and the Light System Program verifies the hash agai
 {% tab title="Create" %}
 {% code overflow="wrap" %}
 ```typescript
+const proof = {
+  0: proofRpcResult.compressedProof,
+};
+
 const instructionData = {
-  proof: proof.compressedProof,
+  proof,
   addressTreeInfo: packedAddressTreeInfo,
   outputStateTreeIndex: outputTreeIndex,
 };
@@ -580,7 +642,7 @@ const instructionData = {
 
 1. **Validity Proof**
 
-* Add the `compressedProof` you fetched to prove that the address does not exist yet in the specified address tree.
+* Add and wrap the `compressedProof` you fetched to prove that the address does not exist yet in the specified address tree.
 
 2. **Specify Merkle trees to store address and account hash**
 
@@ -598,8 +660,12 @@ Include the Merkle tree metadata from the Pack Accounts section:
 {% tab title="Update" %}
 {% code overflow="wrap" %}
 ```typescript
+const proof = {
+  0: proofRpcResult.compressedProof,
+};
+
 const instructionData = {
-  proof: proof.compressedProof,
+  proof,
   accountMeta: {
     treeInfo: packedStateTreeInfo,
     address: compressedAccount.address,
@@ -613,7 +679,8 @@ const instructionData = {
 
 1. **Validity Proof**
 
-* Add the `compressedProof` you fetched to prove the account hash exists in the state tree.
+* Add and wrap the `compressedProof` you fetched to prove the account hash exists in the state tree.
+
 
 2. **Specify input hash and output state tree**
 
@@ -633,8 +700,12 @@ Include the Merkle tree metadata from the Pack Accounts section:
 {% tab title="Close" %}
 {% code overflow="wrap" %}
 ```typescript
+const proof = {
+  0: proofRpcResult.compressedProof,
+};
+
 const instructionData = {
-  proof: proof.compressedProof,
+  proof,
   accountMeta: {
     treeInfo: packedStateTreeInfo,
     address: compressedAccount.address,
@@ -647,7 +718,7 @@ const instructionData = {
 
 1. **Validity Proof**
 
-* Add the `compressedProof` you fetched to prove the account hash exists in the state tree.
+* Add and wrap the `compressedProof` you fetched to prove the account hash exists in the state tree.
 
 2. **Specify input hash and output state tree**
 
@@ -681,7 +752,7 @@ const instruction = await program.methods
   .accounts({
     signer: payer.publicKey
   })
-  .remainingAccounts(accountMetas)
+  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
   .instruction();
 ```
 {% endcode %}
@@ -745,7 +816,7 @@ Full TypeScript test examples using local test validator with `createRpc()`.
 
 {% code overflow="wrap" %}
 ```bash
-npm i -g @lightprotocol/zk-compression-cli
+npm -g i @lightprotocol/zk-compression-cli@0.27.1-alpha.2
 ```
 {% endcode %}
 
@@ -771,26 +842,1217 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 
 {% code overflow="wrap" %}
 ```typescript
+// Create Compressed Account Example
+import * as anchor from "@coral-xyz/anchor";
+import { Program, web3 } from "@coral-xyz/anchor";
+import { Create } from "../target/types/create";
+import idl from "../target/idl/create.json";
+import {
+  bn,
+  CompressedAccountWithMerkleContext,
+  confirmTx,
+  createRpc,
+  defaultStaticAccountsStruct,
+  defaultTestStateTreeAccounts,
+  deriveAddress,
+  deriveAddressSeed,
+  LightSystemProgram,
+  PackedAccounts,
+  Rpc,
+  sleep,
+  SystemAccountMetaConfig,
+} from "@lightprotocol/stateless.js";
+import * as assert from "assert";
+
+const path = require("path");
+const os = require("os");
+require("dotenv").config();
+
+const anchorWalletPath = path.join(os.homedir(), ".config/solana/id.json");
+process.env.ANCHOR_WALLET = anchorWalletPath;
+
+describe("test-anchor", () => {
+  const program = anchor.workspace.Create as Program<Create>;
+  const coder = new anchor.BorshCoder(idl as anchor.Idl);
+
+  it("create compressed account", async () => {
+    let signer = new web3.Keypair();
+    let rpc = createRpc(
+      "http://127.0.0.1:8899",
+      "http://127.0.0.1:8784",
+      "http://127.0.0.1:3001",
+      {
+        commitment: "confirmed",
+      },
+    );
+    let lamports = web3.LAMPORTS_PER_SOL;
+    await rpc.requestAirdrop(signer.publicKey, lamports);
+    await sleep(2000);
+
+    const outputStateTree = defaultTestStateTreeAccounts().merkleTree;
+    const addressTree = defaultTestStateTreeAccounts().addressTree;
+    const addressQueue = defaultTestStateTreeAccounts().addressQueue;
+
+    const messageSeed = new TextEncoder().encode("message");
+    const seed = deriveAddressSeed(
+      [messageSeed, signer.publicKey.toBytes()],
+      new web3.PublicKey(program.idl.address),
+    );
+    const address = deriveAddress(seed, addressTree);
+
+    // Create compressed account with message
+    const txId = await createCompressedAccount(
+      rpc,
+      addressTree,
+      addressQueue,
+      address,
+      program,
+      outputStateTree,
+      signer,
+      "Hello, compressed world!",
+    );
+    console.log("Transaction ID:", txId);
+
+    // Wait for indexer to process the transaction
+    const slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    let compressedAccount = await rpc.getCompressedAccount(bn(address.toBytes()));
+    let myAccount = coder.types.decode(
+      "MyCompressedAccount",
+      compressedAccount.data.data,
+    );
+
+    console.log("Decoded data owner:", myAccount.owner.toBase58());
+    console.log("Decoded data message:", myAccount.message);
+
+    // Verify account data
+    assert.ok(
+      myAccount.owner.equals(signer.publicKey),
+      "Owner should match signer public key"
+    );
+    assert.strictEqual(
+      myAccount.message,
+      "Hello, compressed world!",
+      "Message should match the created message"
+    );
+  });
+});
+
+async function createCompressedAccount(
+  rpc: Rpc,
+  addressTree: anchor.web3.PublicKey,
+  addressQueue: anchor.web3.PublicKey,
+  address: anchor.web3.PublicKey,
+  program: anchor.Program<Create>,
+  outputStateTree: anchor.web3.PublicKey,
+  signer: anchor.web3.Keypair,
+  message: string,
+) {
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [],
+    [
+      {
+        tree: addressTree,
+        queue: addressQueue,
+        address: bn(address.toBytes()),
+      },
+    ],
+  );
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const addressMerkleTreePubkeyIndex =
+    remainingAccounts.insertOrGet(addressTree);
+  const addressQueuePubkeyIndex = remainingAccounts.insertOrGet(addressQueue);
+  const packedAddressTreeInfo = {
+    rootIndex: proofRpcResult.rootIndices[0],
+    addressMerkleTreePubkeyIndex,
+    addressQueuePubkeyIndex,
+  };
+  const outputStateTreeIndex =
+    remainingAccounts.insertOrGet(outputStateTree);
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .createAccount(proof, packedAddressTreeInfo, outputStateTreeIndex, message)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
 ```
 {% endcode %}
 
 {% code overflow="wrap" %}
 ```typescript
+// Update Compressed Account Example
+import * as anchor from "@coral-xyz/anchor";
+import { Program, web3 } from "@coral-xyz/anchor";
+import { Update } from "../target/types/update";
+import updateIdl from "../target/idl/update.json";
+import {
+  bn,
+  CompressedAccountWithMerkleContext,
+  confirmTx,
+  createRpc,
+  defaultStaticAccountsStruct,
+  defaultTestStateTreeAccounts,
+  deriveAddress,
+  deriveAddressSeed,
+  LightSystemProgram,
+  PackedAccounts,
+  Rpc,
+  sleep,
+  SystemAccountMetaConfig,
+} from "@lightprotocol/stateless.js";
+import * as assert from "assert";
+
+const path = require("path");
+const os = require("os");
+require("dotenv").config();
+
+const anchorWalletPath = path.join(os.homedir(), ".config/solana/id.json");
+process.env.ANCHOR_WALLET = anchorWalletPath;
+
+describe("test-anchor-update", () => {
+  const updateProgram = anchor.workspace.Update as Program<Update>;
+  const updateCoder = new anchor.BorshCoder(updateIdl as anchor.Idl);
+
+  it("update compressed account message", async () => {
+    let signer = new web3.Keypair();
+    let rpc = createRpc(
+      "http://127.0.0.1:8899",
+      "http://127.0.0.1:8784",
+      "http://127.0.0.1:3001",
+      {
+        commitment: "confirmed",
+      },
+    );
+    let lamports = web3.LAMPORTS_PER_SOL;
+    await rpc.requestAirdrop(signer.publicKey, lamports);
+    await sleep(2000);
+
+    const outputStateTree = defaultTestStateTreeAccounts().merkleTree;
+    const addressTree = defaultTestStateTreeAccounts().addressTree;
+    const addressQueue = defaultTestStateTreeAccounts().addressQueue;
+
+    const messageSeed = new TextEncoder().encode("message");
+    const seed = deriveAddressSeed(
+      [messageSeed, signer.publicKey.toBytes()],
+      new web3.PublicKey(updateProgram.idl.address),
+    );
+    const address = deriveAddress(seed, addressTree);
+
+    // Step 1: Create compressed account with initial message using update program's create_account
+    const createTxId = await createCompressedAccount(
+      rpc,
+      addressTree,
+      addressQueue,
+      address,
+      updateProgram,
+      outputStateTree,
+      signer,
+      "Hello, compressed world!",
+    );
+    console.log("Create Transaction ID:", createTxId);
+
+    // Wait for indexer to process the create transaction
+    let slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    // Step 2: Get the created account
+    let compressedAccount = await rpc.getCompressedAccount(bn(address.toBytes()));
+    let myAccount = updateCoder.types.decode(
+      "MyCompressedAccount",
+      compressedAccount.data.data,
+    );
+    assert.strictEqual(myAccount.message, "Hello, compressed world!");
+    assert.ok(myAccount.owner.equals(signer.publicKey), "Owner should match signer public key");
+    console.log("Created message:", myAccount.message);
+
+    // Step 3: Update the account with new message
+    const updateTxId = await updateCompressedAccount(
+      rpc,
+      compressedAccount,
+      updateProgram,
+      outputStateTree,
+      signer,
+      "Hello again, compressed World!",
+    );
+    console.log("Update Transaction ID:", updateTxId);
+
+    // Wait for indexer to process the update transaction
+    slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    // Step 4: Verify the update
+    compressedAccount = await rpc.getCompressedAccount(bn(address.toBytes()));
+    myAccount = updateCoder.types.decode(
+      "MyCompressedAccount",
+      compressedAccount.data.data,
+    );
+    console.log("Updated message:", myAccount.message);
+
+    assert.ok(myAccount.owner.equals(signer.publicKey), "Owner should match signer public key");
+    assert.strictEqual(myAccount.message, "Hello again, compressed World!", "Message should be updated");
+  });
+});
+
+async function createCompressedAccount(
+  rpc: Rpc,
+  addressTree: anchor.web3.PublicKey,
+  addressQueue: anchor.web3.PublicKey,
+  address: anchor.web3.PublicKey,
+  program: anchor.Program<Update>,
+  outputStateTree: anchor.web3.PublicKey,
+  signer: anchor.web3.Keypair,
+  message: string,
+) {
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [],
+    [
+      {
+        tree: addressTree,
+        queue: addressQueue,
+        address: bn(address.toBytes()),
+      },
+    ],
+  );
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const addressMerkleTreePubkeyIndex =
+    remainingAccounts.insertOrGet(addressTree);
+  const addressQueuePubkeyIndex = remainingAccounts.insertOrGet(addressQueue);
+  const packedAddressTreeInfo = {
+    rootIndex: proofRpcResult.rootIndices[0],
+    addressMerkleTreePubkeyIndex,
+    addressQueuePubkeyIndex,
+  };
+  const outputStateTreeIndex =
+    remainingAccounts.insertOrGet(outputStateTree);
+
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .createAccount(proof, packedAddressTreeInfo, outputStateTreeIndex, message)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
+
+async function updateCompressedAccount(
+  rpc: Rpc,
+  compressedAccount: CompressedAccountWithMerkleContext,
+  program: anchor.Program<Update>,
+  outputStateTree: anchor.web3.PublicKey,
+  signer: anchor.web3.Keypair,
+  newMessage: string,
+) {
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [
+      {
+        hash: compressedAccount.hash,
+        tree: compressedAccount.treeInfo.tree,
+        queue: compressedAccount.treeInfo.queue,
+      },
+    ],
+    [],
+  );
+
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const merkleTreePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.tree,
+  );
+  const queuePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.queue,
+  );
+  const outputStateTreeIndex =
+    remainingAccounts.insertOrGet(outputStateTree);
+
+  // Deserialize current account using update program's coder
+  const coder = new anchor.BorshCoder(updateIdl as anchor.Idl);
+  const currentAccount = coder.types.decode(
+    "MyCompressedAccount",
+    compressedAccount.data.data,
+  );
+
+  const compressedAccountMeta = {
+    treeInfo: {
+      merkleTreePubkeyIndex,
+      queuePubkeyIndex,
+      leafIndex: compressedAccount.leafIndex,
+      proveByIndex: false,
+      rootIndex: proofRpcResult.rootIndices[0],
+    },
+    outputStateTreeIndex,
+    address: compressedAccount.address,
+  };
+
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .updateAccount(proof, currentAccount, compressedAccountMeta, newMessage)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
 ```
 {% endcode %}
 
 {% code overflow="wrap" %}
 ```typescript
+// Close Compressed Account Example
+import * as anchor from "@coral-xyz/anchor";
+import { Program, web3 } from "@coral-xyz/anchor";
+import { Close } from "../target/types/close";
+import closeIdl from "../target/idl/close.json";
+import {
+  bn,
+  CompressedAccountWithMerkleContext,
+  confirmTx,
+  createRpc,
+  defaultStaticAccountsStruct,
+  defaultTestStateTreeAccounts,
+  deriveAddress,
+  deriveAddressSeed,
+  LightSystemProgram,
+  PackedAccounts,
+  Rpc,
+  sleep,
+  SystemAccountMetaConfig,
+} from "@lightprotocol/stateless.js";
+import * as assert from "assert";
+
+const path = require("path");
+const os = require("os");
+require("dotenv").config();
+
+const anchorWalletPath = path.join(os.homedir(), ".config/solana/id.json");
+process.env.ANCHOR_WALLET = anchorWalletPath;
+
+describe("test-anchor-close", () => {
+  const closeProgram = anchor.workspace.Close as Program<Close>;
+  const closeCoder = new anchor.BorshCoder(closeIdl as anchor.Idl);
+
+  it("close compressed account", async () => {
+    let signer = new web3.Keypair();
+    let rpc = createRpc(
+      "http://127.0.0.1:8899",
+      "http://127.0.0.1:8784",
+      "http://127.0.0.1:3001",
+      {
+        commitment: "confirmed",
+      },
+    );
+    let lamports = web3.LAMPORTS_PER_SOL;
+    await rpc.requestAirdrop(signer.publicKey, lamports);
+    await sleep(2000);
+
+    const outputStateTree = defaultTestStateTreeAccounts().merkleTree;
+    const addressTree = defaultTestStateTreeAccounts().addressTree;
+    const addressQueue = defaultTestStateTreeAccounts().addressQueue;
+
+    const messageSeed = new TextEncoder().encode("message");
+    const seed = deriveAddressSeed(
+      [messageSeed, signer.publicKey.toBytes()],
+      new web3.PublicKey(closeProgram.idl.address),
+    );
+    const address = deriveAddress(seed, addressTree);
+
+    const createTxId = await createCompressedAccount(
+      rpc,
+      addressTree,
+      addressQueue,
+      address,
+      closeProgram,
+      outputStateTree,
+      signer,
+      "Hello, compressed world!",
+    );
+    console.log("Create Transaction ID:", createTxId);
+
+    // Wait for indexer to process the create transaction
+    let slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    let compressedAccount = await rpc.getCompressedAccount(bn(address.toBytes()));
+    let myAccount = closeCoder.types.decode(
+      "MyCompressedAccount",
+      compressedAccount.data.data,
+    );
+    assert.strictEqual(myAccount.message, "Hello, compressed world!");
+    assert.ok(myAccount.owner.equals(signer.publicKey), "Owner should match signer public key");
+    console.log("Created message:", myAccount.message);
+
+    const closeTxId = await closeCompressedAccount(
+      rpc,
+      compressedAccount,
+      closeProgram,
+      outputStateTree,
+      signer,
+      "Hello, compressed world!",
+    );
+    console.log("Close Transaction ID:", closeTxId);
+
+    // Wait for indexer to process the close transaction
+    slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    // After closing, the account exists with zero data.
+    // Verify the account was closed by checking that data.data is empty.
+    const closedAccount = await rpc.getCompressedAccount(bn(address.toBytes()));
+    assert.ok(
+      closedAccount.data.data === null ||
+      (Buffer.isBuffer(closedAccount.data.data) && closedAccount.data.data.length === 0),
+      "Closed account should have null or empty data.data"
+    );
+    console.log("Verified account was closed (data.data is empty as expected)");
+  });
+});
+
+async function createCompressedAccount(
+  rpc: Rpc,
+  addressTree: anchor.web3.PublicKey,
+  addressQueue: anchor.web3.PublicKey,
+  address: anchor.web3.PublicKey,
+  program: anchor.Program<Close>,
+  outputStateTree: anchor.web3.PublicKey,
+  signer: anchor.web3.Keypair,
+  message: string,
+) {
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [],
+    [
+      {
+        tree: addressTree,
+        queue: addressQueue,
+        address: bn(address.toBytes()),
+      },
+    ],
+  );
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const addressMerkleTreePubkeyIndex =
+    remainingAccounts.insertOrGet(addressTree);
+  const addressQueuePubkeyIndex = remainingAccounts.insertOrGet(addressQueue);
+  const packedAddressTreeInfo = {
+    rootIndex: proofRpcResult.rootIndices[0],
+    addressMerkleTreePubkeyIndex,
+    addressQueuePubkeyIndex,
+  };
+  const outputStateTreeIndex =
+    remainingAccounts.insertOrGet(outputStateTree);
+
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .createAccount(proof, packedAddressTreeInfo, outputStateTreeIndex, message)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
+
+async function closeCompressedAccount(
+  rpc: Rpc,
+  compressedAccount: CompressedAccountWithMerkleContext,
+  program: anchor.Program<Close>,
+  outputStateTree: anchor.web3.PublicKey,
+  signer: anchor.web3.Keypair,
+  message: string,
+) {
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [
+      {
+        hash: compressedAccount.hash,
+        tree: compressedAccount.treeInfo.tree,
+        queue: compressedAccount.treeInfo.queue,
+      },
+    ],
+    [],
+  );
+
+  const merkleTreePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.tree,
+  );
+  const queuePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.queue,
+  );
+  const outputStateTreeIndex =
+    remainingAccounts.insertOrGet(outputStateTree);
+
+  const coder = new anchor.BorshCoder(closeIdl as anchor.Idl);
+  const currentAccount = coder.types.decode(
+    "MyCompressedAccount",
+    compressedAccount.data.data,
+  );
+
+  const compressedAccountMeta = {
+    treeInfo: {
+      merkleTreePubkeyIndex,
+      queuePubkeyIndex,
+      leafIndex: compressedAccount.leafIndex,
+      proveByIndex: false,
+      rootIndex: proofRpcResult.rootIndices[0],
+    },
+    address: compressedAccount.address,
+    outputStateTreeIndex,
+  };
+
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .closeAccount(proof, compressedAccountMeta, message)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
 ```
 {% endcode %}
 
 {% code overflow="wrap" %}
 ```typescript
+// Reinitialize Compressed Account Example
+import * as anchor from "@coral-xyz/anchor";
+import { Program, web3 } from "@coral-xyz/anchor";
+import { Reinit } from "../target/types/reinit";
+import reinitIdl from "../target/idl/reinit.json";
+import {
+  bn,
+  CompressedAccountWithMerkleContext,
+  confirmTx,
+  createRpc,
+  defaultStaticAccountsStruct,
+  defaultTestStateTreeAccounts,
+  deriveAddress,
+  deriveAddressSeed,
+  LightSystemProgram,
+  PackedAccounts,
+  Rpc,
+  sleep,
+  SystemAccountMetaConfig,
+} from "@lightprotocol/stateless.js";
+import * as assert from "assert";
+
+const path = require("path");
+const os = require("os");
+require("dotenv").config();
+
+const anchorWalletPath = path.join(os.homedir(), ".config/solana/id.json");
+process.env.ANCHOR_WALLET = anchorWalletPath;
+
+describe("test-anchor-reinit", () => {
+  const reinitProgram = anchor.workspace.Reinit as Program<Reinit>;
+  const reinitCoder = new anchor.BorshCoder(reinitIdl as anchor.Idl);
+
+  it("reinitialize compressed account", async () => {
+    let signer = new web3.Keypair();
+    let rpc = createRpc(
+      "http://127.0.0.1:8899",
+      "http://127.0.0.1:8784",
+      "http://127.0.0.1:3001",
+      {
+        commitment: "confirmed",
+      },
+    );
+    let lamports = web3.LAMPORTS_PER_SOL;
+    await rpc.requestAirdrop(signer.publicKey, lamports);
+    await sleep(2000);
+
+    const outputStateTree = defaultTestStateTreeAccounts().merkleTree;
+    const addressTree = defaultTestStateTreeAccounts().addressTree;
+    const addressQueue = defaultTestStateTreeAccounts().addressQueue;
+
+    const messageSeed = new TextEncoder().encode("message");
+    const seed = deriveAddressSeed(
+      [messageSeed, signer.publicKey.toBytes()],
+      new web3.PublicKey(reinitProgram.idl.address),
+    );
+    const address = deriveAddress(seed, addressTree);
+
+    const createTxId = await createCompressedAccount(
+      rpc,
+      addressTree,
+      addressQueue,
+      address,
+      reinitProgram,
+      outputStateTree,
+      signer,
+      "Hello, compressed world!",
+    );
+    console.log("Create Transaction ID:", createTxId);
+
+    // Wait for indexer to process the transaction
+    let slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    let compressedAccount = await rpc.getCompressedAccount(bn(address.toBytes()));
+    let myAccount = reinitCoder.types.decode(
+      "MyCompressedAccount",
+      compressedAccount.data.data,
+    );
+    assert.strictEqual(myAccount.message, "Hello, compressed world!");
+    assert.ok(myAccount.owner.equals(signer.publicKey), "Owner should match signer public key");
+    console.log("Created message:", myAccount.message);
+
+    const closeTxId = await closeCompressedAccount(
+      rpc,
+      compressedAccount,
+      reinitProgram,
+      outputStateTree,
+      signer,
+      "Hello, compressed world!",
+    );
+    console.log("Close Transaction ID:", closeTxId);
+
+    // Wait for indexer to process the close transaction
+    slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    let closedCompressedAccount = await rpc.getCompressedAccount(bn(address.toBytes()));
+
+    // The getValidityProofV0 call will fetch the current closed account state.
+    const reinitTxId = await reinitCompressedAccount(
+      rpc,
+      closedCompressedAccount,
+      reinitProgram,
+      outputStateTree,
+      signer,
+    );
+    console.log("Reinit Transaction ID:", reinitTxId);
+
+    // Wait for indexer to process the reinit transaction
+    slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    // Verify the account was reinitialized with default values
+    let reinitializedAccount = await rpc.getCompressedAccount(bn(address.toBytes()));
+    let reinitMyAccount = reinitCoder.types.decode(
+      "MyCompressedAccount",
+      reinitializedAccount.data.data,
+    );
+    assert.strictEqual(reinitMyAccount.message, "", "Message should be empty (default)");
+    assert.ok(
+      reinitMyAccount.owner.equals(web3.PublicKey.default),
+      "Owner should be default PublicKey"
+    );
+    console.log("Compressed account was reinitialized with default values");
+  });
+});
+
+async function createCompressedAccount(
+  rpc: Rpc,
+  addressTree: anchor.web3.PublicKey,
+  addressQueue: anchor.web3.PublicKey,
+  address: anchor.web3.PublicKey,
+  program: anchor.Program<Reinit>,
+  outputStateTree: anchor.web3.PublicKey,
+  signer: anchor.web3.Keypair,
+  message: string,
+) {
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [],
+    [
+      {
+        tree: addressTree,
+        queue: addressQueue,
+        address: bn(address.toBytes()),
+      },
+    ],
+  );
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const addressMerkleTreePubkeyIndex =
+    remainingAccounts.insertOrGet(addressTree);
+  const addressQueuePubkeyIndex = remainingAccounts.insertOrGet(addressQueue);
+  const packedAddressTreeInfo = {
+    rootIndex: proofRpcResult.rootIndices[0],
+    addressMerkleTreePubkeyIndex,
+    addressQueuePubkeyIndex,
+  };
+  const outputStateTreeIndex =
+    remainingAccounts.insertOrGet(outputStateTree);
+
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .createAccount(proof, packedAddressTreeInfo, outputStateTreeIndex, message)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
+
+async function closeCompressedAccount(
+  rpc: Rpc,
+  compressedAccount: CompressedAccountWithMerkleContext,
+  program: anchor.Program<Reinit>,
+  outputStateTree: anchor.web3.PublicKey,
+  signer: anchor.web3.Keypair,
+  message: string,
+) {
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [
+      {
+        hash: compressedAccount.hash,
+        tree: compressedAccount.treeInfo.tree,
+        queue: compressedAccount.treeInfo.queue,
+      },
+    ],
+    [],
+  );
+
+  const merkleTreePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.tree,
+  );
+  const queuePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.queue,
+  );
+  const outputStateTreeIndex =
+    remainingAccounts.insertOrGet(outputStateTree);
+
+  const coder = new anchor.BorshCoder(reinitIdl as anchor.Idl);
+  const currentAccount = coder.types.decode(
+    "MyCompressedAccount",
+    compressedAccount.data.data,
+  );
+
+  const compressedAccountMeta = {
+    treeInfo: {
+      merkleTreePubkeyIndex,
+      queuePubkeyIndex,
+      leafIndex: compressedAccount.leafIndex,
+      proveByIndex: false,
+      rootIndex: proofRpcResult.rootIndices[0],
+    },
+    address: compressedAccount.address,
+    outputStateTreeIndex,
+  };
+
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .closeAccount(proof, compressedAccountMeta, message)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
+
+async function reinitCompressedAccount(
+  rpc: Rpc,
+  compressedAccount: CompressedAccountWithMerkleContext,
+  program: anchor.Program<Reinit>,
+  outputStateTree: anchor.web3.PublicKey,
+  signer: anchor.web3.Keypair,
+) {
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [
+      {
+        hash: compressedAccount.hash,
+        tree: compressedAccount.treeInfo.tree,
+        queue: compressedAccount.treeInfo.queue,
+      },
+    ],
+    [],
+  );
+
+  const merkleTreePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.tree,
+  );
+  const queuePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.queue,
+  );
+  const outputStateTreeIndex =
+    remainingAccounts.insertOrGet(outputStateTree);
+
+  const compressedAccountMeta = {
+    treeInfo: {
+      merkleTreePubkeyIndex,
+      queuePubkeyIndex,
+      leafIndex: compressedAccount.leafIndex,
+      proveByIndex: false,
+      rootIndex: proofRpcResult.rootIndices[0],
+    },
+    address: compressedAccount.address,
+    outputStateTreeIndex,
+  };
+
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .reinitAccount(proof, compressedAccountMeta)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
 ```
 {% endcode %}
 
 {% code overflow="wrap" %}
 ```typescript
+// Burn Compressed Account Example
+import * as anchor from "@coral-xyz/anchor";
+import { Program, web3 } from "@coral-xyz/anchor";
+import { Burn } from "../target/types/burn";
+import burnIdl from "../target/idl/burn.json";
+import {
+  bn,
+  CompressedAccountWithMerkleContext,
+  confirmTx,
+  createRpc,
+  defaultStaticAccountsStruct,
+  defaultTestStateTreeAccounts,
+  deriveAddress,
+  deriveAddressSeed,
+  LightSystemProgram,
+  PackedAccounts,
+  Rpc,
+  sleep,
+  SystemAccountMetaConfig,
+} from "@lightprotocol/stateless.js";
+import * as assert from "assert";
+
+const path = require("path");
+const os = require("os");
+require("dotenv").config();
+
+const anchorWalletPath = path.join(os.homedir(), ".config/solana/id.json");
+process.env.ANCHOR_WALLET = anchorWalletPath;
+
+describe("test-anchor-burn", () => {
+  const burnProgram = anchor.workspace.Burn as Program<Burn>;
+  const burnCoder = new anchor.BorshCoder(burnIdl as anchor.Idl);
+
+  it("burn compressed account", async () => {
+    let signer = new web3.Keypair();
+    let rpc = createRpc(
+      "http://127.0.0.1:8899",
+      "http://127.0.0.1:8784",
+      "http://127.0.0.1:3001",
+      {
+        commitment: "confirmed",
+      },
+    );
+    let lamports = web3.LAMPORTS_PER_SOL;
+    await rpc.requestAirdrop(signer.publicKey, lamports);
+    await sleep(2000);
+
+    const outputStateTree = defaultTestStateTreeAccounts().merkleTree;
+    const addressTree = defaultTestStateTreeAccounts().addressTree;
+    const addressQueue = defaultTestStateTreeAccounts().addressQueue;
+
+    const messageSeed = new TextEncoder().encode("message");
+    const seed = deriveAddressSeed(
+      [messageSeed, signer.publicKey.toBytes()],
+      new web3.PublicKey(burnProgram.idl.address),
+    );
+    const address = deriveAddress(seed, addressTree);
+
+    // Step 1: Create compressed account with initial message
+    const createTxId = await createCompressedAccount(
+      rpc,
+      addressTree,
+      addressQueue,
+      address,
+      burnProgram,
+      outputStateTree,
+      signer,
+      "Hello, compressed world!",
+    );
+    console.log("Create Transaction ID:", createTxId);
+
+    // Wait for indexer to process the create transaction
+    let slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    // Step 2: Get the created account and verify
+    let compressedAccount = await rpc.getCompressedAccount(bn(address.toBytes()));
+    let myAccount = burnCoder.types.decode(
+      "MyCompressedAccount",
+      compressedAccount.data.data,
+    );
+    assert.strictEqual(myAccount.message, "Hello, compressed world!");
+    assert.ok(myAccount.owner.equals(signer.publicKey), "Owner should match signer public key");
+    console.log("Created message:", myAccount.message);
+
+    // Step 3: Burn the account permanently
+    const burnTxId = await burnCompressedAccount(
+      rpc,
+      compressedAccount,
+      burnProgram,
+      signer,
+      "Hello, compressed world!",
+    );
+    console.log("Burn Transaction ID:", burnTxId);
+
+    // Wait for indexer to process the burn transaction
+    slot = await rpc.getSlot();
+    await rpc.confirmTransactionIndexed(slot);
+
+    // Step 4: Verify the account is burned (does not exist)
+    try {
+      await rpc.getCompressedAccount(bn(address.toBytes()));
+      assert.fail("Expected account to not exist after burning");
+    } catch (error: any) {
+      // Account should not exist after burn
+      console.log("Verified account was burned");
+    }
+  });
+});
+
+async function createCompressedAccount(
+  rpc: Rpc,
+  addressTree: anchor.web3.PublicKey,
+  addressQueue: anchor.web3.PublicKey,
+  address: anchor.web3.PublicKey,
+  program: anchor.Program<Burn>,
+  outputStateTree: anchor.web3.PublicKey,
+  signer: anchor.web3.Keypair,
+  message: string,
+) {
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [],
+    [
+      {
+        tree: addressTree,
+        queue: addressQueue,
+        address: bn(address.toBytes()),
+      },
+    ],
+  );
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const addressMerkleTreePubkeyIndex =
+    remainingAccounts.insertOrGet(addressTree);
+  const addressQueuePubkeyIndex = remainingAccounts.insertOrGet(addressQueue);
+  const packedAddressTreeInfo = {
+    rootIndex: proofRpcResult.rootIndices[0],
+    addressMerkleTreePubkeyIndex,
+    addressQueuePubkeyIndex,
+  };
+  const outputStateTreeIndex =
+    remainingAccounts.insertOrGet(outputStateTree);
+
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .createAccount(proof, packedAddressTreeInfo, outputStateTreeIndex, message)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
+
+async function burnCompressedAccount(
+  rpc: Rpc,
+  compressedAccount: CompressedAccountWithMerkleContext,
+  program: anchor.Program<Burn>,
+  signer: anchor.web3.Keypair,
+  currentMessage: string,
+) {
+  const proofRpcResult = await rpc.getValidityProofV0(
+    [
+      {
+        hash: compressedAccount.hash,
+        tree: compressedAccount.treeInfo.tree,
+        queue: compressedAccount.treeInfo.queue,
+      },
+    ],
+    [],
+  );
+
+  const systemAccountConfig = new SystemAccountMetaConfig(program.programId);
+  let remainingAccounts = new PackedAccounts();
+  remainingAccounts.addSystemAccounts(systemAccountConfig);
+
+  const merkleTreePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.tree,
+  );
+  const queuePubkeyIndex = remainingAccounts.insertOrGet(
+    compressedAccount.treeInfo.queue,
+  );
+
+  // CompressedAccountMetaBurn does not have output_state_tree_index
+  const compressedAccountMeta = {
+    treeInfo: {
+      merkleTreePubkeyIndex,
+      queuePubkeyIndex,
+      leafIndex: compressedAccount.leafIndex,
+      proveByIndex: false,
+      rootIndex: proofRpcResult.rootIndices[0],
+    },
+    address: compressedAccount.address,
+  };
+
+  let proof = {
+    0: proofRpcResult.compressedProof,
+  };
+  const computeBudgetIx = web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 1000000,
+  });
+  let tx = await program.methods
+    .burnAccount(proof, compressedAccountMeta, currentMessage)
+    .accounts({
+      signer: signer.publicKey,
+    })
+    .preInstructions([computeBudgetIx])
+    .remainingAccounts(remainingAccounts.toAccountMetas().remainingAccounts)
+    .signers([signer])
+    .transaction();
+  tx.recentBlockhash = (await rpc.getRecentBlockhash()).blockhash;
+  tx.sign(signer);
+
+  const sig = await rpc.sendTransaction(tx, [signer]);
+  await confirmTx(rpc, sig);
+  return sig;
+}
 ```
 {% endcode %}
 
