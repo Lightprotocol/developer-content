@@ -298,6 +298,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
     .with_light_account(my_compressed_account)?
     .invoke(cpi_accounts)?;
 ```
+{% endcode %}
 
 **Set up `CpiAccounts::new()`:**
 
@@ -311,7 +312,6 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
     * `split_first()` extracts the fee payer from the accounts array to separate it from the Light System Program accounts needed for the CPI.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
 
-{% endcode %}
 {% endtab %}
 {% endtabs %}
 
