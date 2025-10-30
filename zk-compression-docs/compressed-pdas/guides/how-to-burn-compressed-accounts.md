@@ -79,15 +79,25 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 Define your compressed account struct.
 
+{% tabs %}
+{% tab title="Anchor" %}
+{% code overflow="wrap" %}
+```rust
+#[event] // declared as event so that it is part of the idl.
+#[derive(Clone, Debug, Default, LightDiscriminator)]
+pub struct MyCompressedAccount {
+    pub owner: Pubkey,
+    pub message: String,
+}
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Native Rust" %}
 {% code overflow="wrap" %}
 ```rust
 #[derive(
-    Clone,
-    Debug,
-    Default,
-    BorshSerialize, // AnchorSerialize
-    BorshDeserialize, // AnchorDeserialize
-    LightDiscriminator
+    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
 )]
 pub struct MyCompressedAccount {
     pub owner: Pubkey,
@@ -95,6 +105,8 @@ pub struct MyCompressedAccount {
 }
 ```
 {% endcode %}
+{% endtab %}
+{% endtabs %}
 
 You derive
 
@@ -114,15 +126,34 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 
 Define the instruction data with the following parameters:
 
+{% tabs %}
+{% tab title="Anchor" %}
+
 {% code overflow="wrap" %}
 ```rust
-pub struct InstructionData {
+pub fn burn_account<'info>(
+    ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
     proof: ValidityProof,
     account_meta: CompressedAccountMetaBurn,
-    current_message: string,
+    current_message: String,
+) -> Result<()>
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Native Rust" %}
+
+{% code overflow="wrap" %}
+```rust
+pub struct BurnInstructionData {
+    pub proof: ValidityProof,
+    pub account_meta: CompressedAccountMetaBurn,
+    pub current_account: MyCompressedAccount,
 }
 ```
 {% endcode %}
+{% endtab %}
+{% endtabs %}
 
 1. **Validity Proof**
 
@@ -131,7 +162,7 @@ pub struct InstructionData {
 
 2. **Specify input state**
 
-* `CompressedAccountMetaBurn` points to the existing account hash so the Light System Program nullify it permanently:
+* Define `account_meta: CompressedAccountMetaBurn` to reference the existing account for the Light System Program to nullify permanently:
   * `tree_info: PackedStateTreeInfo`: References the existing account hash in the state tree.
   * `address`: The account's derived address.
 
@@ -142,7 +173,7 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 3. **Current account data**
 
 * Define fields to include the current account data passed by the client.
-* This depends on your program logic. This example includes the `current_message` field.
+* This depends on your program logic. This example includes `current_message` (or `current_account` in Native Rust).
 {% endstep %}
 
 {% step %}
@@ -157,28 +188,48 @@ Burn the compressed account permanently with `LightAccount::new_burn()`. No acco
 2. creates no output state to burn the account permanently.
 {% endhint %}
 
+{% tabs %}
+{% tab title="Anchor" %}
 {% code overflow="wrap" %}
 ```rust
 let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
-    &ID,
-    account_meta,
+    &crate::ID,
+    &account_meta,
     MyCompressedAccount {
-        owner: *signer.key,
+        owner: ctx.accounts.signer.key(),
         message: current_message,
     },
 )?;
 ```
 {% endcode %}
+{% endtab %}
+
+{% tab title="Native Rust" %}
+{% code overflow="wrap" %}
+```rust
+let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
+    &ID,
+    &instruction_data.account_meta,
+    instruction_data.current_account,
+)?;
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 **Pass these parameters to `new_burn()`:**
 
-* `&ID`: The program's ID that owns the compressed account.
+* `&program_id`: The program's ID that owns the compressed account.
 * `&account_meta`: The `CompressedAccountMetaBurn` from instruction data (_Step 2_) that identifies the existing account for the Light System Program to nullify permanently.
-* `MyCompressedAccount { ... }`: The current account data. `new_burn()` hashes the input state for verification by the Light System Program.
+  * Anchor: Pass `&account_meta` directly
+  * Native Rust: Pass `&instruction_data.account_meta`
+* Include the curent account data.
+  * Anchor: Build `MyCompressedAccount` with `owner` and `message`.
+  * Native Rust: Pass `instruction_data.current_account` directly.
 
 **The SDK creates:**
 
-* A `LightAccount` wrapper that marks the account as burned permanent with no output state.
+* A `LightAccount` wrapper that marks the account as burned permanently with no output state.
 
 {% hint style="info" %}
 `new_burn()` hashes the input state. The Light System Program verifies the input hash and nullifies it permanently in _Step 4_.
@@ -198,12 +249,14 @@ The Light System Program
 * creates no output state.
 {% endhint %}
 
+{% tabs %}
+{% tab title="Anchor" %}
 {% code overflow="wrap" %}
 ```rust
 let light_cpi_accounts = CpiAccounts::new(
-    fee_payer,
-    remaining_accounts,
-    LIGHT_CPI_SIGNER,
+    ctx.accounts.signer.as_ref(),
+    ctx.remaining_accounts,
+    crate::LIGHT_CPI_SIGNER,
 );
 
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
@@ -211,12 +264,40 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .invoke(light_cpi_accounts)?;
 ```
 {% endcode %}
+{% endtab %}
+
+{% tab title="Native Rust" %}
+{% code overflow="wrap" %}
+```rust
+let (signer, remaining_accounts) = accounts
+    .split_first();
+
+let cpi_accounts = CpiAccounts::new(signer, remaining_accounts, LIGHT_CPI_SIGNER);
+
+LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
+    .with_light_account(my_compressed_account)?
+    .invoke(cpi_accounts)?;
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 **Set up `CpiAccounts::new()`:**
 
-* `fee_payer`: Fee payer and transaction signer
-* `remaining_accounts`: `AccountInfo` slice with Light System and packed tree accounts.
+* Include fee payer and transaction signer
+* `accounts`: `AccountInfo` slice with Light System and packed tree accounts.
+  * in Anchor `ctx.remaining_accounts` provides all accounts after the program-defined accounts
+  * in Native Rust `split_first()` extracts the fee payer from the accounts array to separate it from the Light System Program accounts needed for the CPI.
+    * The `CpiAccounts::new()` and `CpiAccounts::new_with_config()` methods expect the `fee_payer` as a separate argument and the rest of the accounts as a slice.
 * `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
+
+<details>
+
+<summary><em>System Accounts List</em></summary>
+
+<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-2">​Light System Program​</a></td><td>Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Access control to the Account Compression Program</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-3">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger. Only used in v1.<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-5">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client and the account compression program do not interact directly.</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-6">​System Program​</a></td><td>Solana System Program to transfer lamports</td></tr></tbody></table>
+
+</details>
 
 **Build the CPI instruction**:
 
@@ -228,7 +309,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 
 ## Full Code Example
 
-The counter programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
+The example programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
 
 {% code overflow="wrap" %}
 ```bash
@@ -244,7 +325,7 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-Find the source code for this example [here](https://github.com/Lightprotocol/program-examples/blob/main/counter/anchor/programs/counter/src/lib.rs).
+Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/anchor/burn).
 {% endhint %}
 
 {% code overflow="wrap" %}
@@ -262,10 +343,10 @@ use light_sdk::{
     LightDiscriminator,
 };
 
-declare_id!("A1KqLAv8emDMsoGTUcf5r9hxrC1PXQ5rtr8EnBnBY6hR");
+declare_id!("BJhPWQnD31mdo6739Mac1gLuSsbbwTmpgjHsW6shf6WA");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("A1KqLAv8emDMsoGTUcf5r9hxrC1PXQ5rtr8EnBnBY6hR");
+    derive_light_cpi_signer!("BJhPWQnD31mdo6739Mac1gLuSsbbwTmpgjHsW6shf6WA");
 
 #[program]
 pub mod burn {
@@ -367,7 +448,11 @@ pub struct MyCompressedAccount {
 {% endcode %}
 {% endtab %}
 
-{% tab title="Native" %}
+{% tab title="Native Rust" %}
+{% hint style="info" %}
+Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/native/programs/burn).
+{% endhint %}
+
 {% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
@@ -528,3 +613,15 @@ Build a client for your program or get an overview on all compressed account ope
 {% endcolumns %}
 
 [^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
+
+[^2]: ​[Program ID:](https://solscan.io/account/SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7) SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+
+[^3]: [Program ID:](https://solscan.io/account/noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV) noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV
+
+[^4]: PDA derived from Light System Program ID with seed `b"cpi_authority"`.
+
+    [Pubkey](https://solscan.io/account/HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru): HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru
+
+[^5]: [Program ID](https://solscan.io/account/compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq): compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq
+
+[^6]: ​[Program ID](https://solscan.io/account/11111111111111111111111111111111): 11111111111111111111111111111111
