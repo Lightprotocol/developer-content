@@ -133,7 +133,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 ***
 
-## Next Steps
+# Next Steps
 
 Get started with the first cookbook guide.
 

@@ -515,7 +515,7 @@ fn close(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightS
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Build a client for your program or learn how to reinitialize compressed accounts.
 

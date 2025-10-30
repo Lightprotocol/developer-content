@@ -63,7 +63,7 @@ Clients and custom programs do not interact with Forester nodes or the Account C
 {% endstep %}
 {% endstepper %}
 
-## Next Steps
+# Next Steps
 
 In the following sections, we'll dive into the core concepts that make ZK Compression possible:
 

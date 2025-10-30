@@ -71,7 +71,7 @@ We encourage you to build things that you're excited about. For inspiration, we 
 * Reach out via [Discord](https://discord.com/invite/CYvjBgzRFP) or [Telegram](https://t.me/tilo_light).
 * Book a Call in our [Office hours](https://calendly.com/tilo-light/1000x-office-hours)
 
-## Next Steps
+# Next Steps
 
 Get started in less than 5 minutes with compressed tokens.
 

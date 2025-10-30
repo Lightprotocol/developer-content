@@ -190,7 +190,7 @@ Caused by:
 
 <table><thead><tr><th width="360">Example</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/counter/anchor">Counter (Anchor)</a></td><td>Full compressed account lifecycle (create, increment, decrement, reset, close) using Anchor framework</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/counter/native">Counter (Native)</a></td><td>Native Solana program implementation with Rust tests</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/counter/pinocchio">Counter (Pinocchio)</a></td><td>Pinocchio implementation using light-sdk-pinocchio with Rust tests</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/create-and-update">Create-and-Update</a></td><td>Create new compressed accounts and update existing ones within a single instruction and one validity proof</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/read-only">Read-Only</a></td><td>Create compressed accounts and read them on-chain</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/account-comparison">Account Comparison</a></td><td>Compare compressed accounts with standard Solana accounts</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/zk-id">ZK-ID</a></td><td>Program that uses zero-knowledge proofs for identity verification with compressed accounts</td></tr></tbody></table>
 
-## Next Steps
+# Next Steps
 
 Get an overview of the SDKs or Program Examples.
 

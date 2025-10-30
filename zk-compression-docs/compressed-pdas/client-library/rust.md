@@ -2417,7 +2417,7 @@ pub async fn burn_compressed_account(
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Start building programs to create, or interact with compressed accounts.
 

@@ -509,7 +509,7 @@ fn burn(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightSd
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Build a client for your program or get an overview on all compressed account operations.
 

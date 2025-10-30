@@ -590,7 +590,7 @@ fn reinit(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), Light
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Build a client for your program or learn how to burn compressed accounts.
 

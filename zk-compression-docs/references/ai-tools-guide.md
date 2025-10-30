@@ -83,7 +83,7 @@ mcp__deepwiki__ask_question("Lightprotocol/light-protocol", "your question")
 You can specify any public GitHub repo that is indexed with DeepWiki. When you connect to the MCP, you specify the repository when calling the tools. Learn more [here](https://docs.devin.ai/work-with-devin/deepwiki-mcp).
 {% endhint %}
 
-## Next Steps
+# Next Steps
 
 Start building with compressed tokens or PDAs.
 

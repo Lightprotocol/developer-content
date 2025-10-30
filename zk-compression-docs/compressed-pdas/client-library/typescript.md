@@ -535,11 +535,11 @@ const compressedAccountMeta = {
 
 * Call `insertOrGet()` with the output state tree
 * Create `compressedAccountMeta` with three top-level fields:
-  * `treeInfo`: Packed state tree metadata with five fields
+  * `treeInfo`: State tree metadata with u8 indices pointing to accounts in `remainingAccounts`
   * `address`: The compressed account's address
   * `outputStateTreeIndex`: Points to the output state tree
 
-**treeInfo fields:**
+**`treeInfo` fields (PackedStateTreeInfo):**
 
 1. `merkleTreePubkeyIndex`: Points to the state tree account in `remainingAccounts`
    * The state tree stores the existing account hash that Light System Program verifies
@@ -565,7 +565,7 @@ const outputTreeIndex = packedAccounts.insertOrGet(outputStateTree.tree);
 ```
 {% endcode %}
 
-* Use `outputStateTree` variable from Step 3 with the `TreeInfo` with pubkey and metadata for the randomly selected state tree
+* Use `outputStateTree` variable from [Tree Configuration](typescript.md#tree-configuration) (Step 3) with the `TreeInfo` containing pubkey and metadata for the randomly selected state tree
 * Call `insertOrGet(outputStateTree.tree)` to add the tree and get its index for instruction data
 
 {% hint style="info" %}
@@ -608,7 +608,7 @@ Call `toAccountMetas()` to build the complete accounts structure for `.remaining
 You built the `remainingAccounts` array to merge accounts into an array:
 
 * Light System accounts to create and interact with compressed accounts via the Light System Program
-* Tree accounts from the validity proof to prove address non-existence (create) or existence of the account hash (update/close)
+* Tree accounts from the validity proof to prove address non-existence (create) or existence of the account hash (update/close/reinit/burn)
 * The output state tree to store the new account hash
 
 The accounts receive a sequential u8 index. Instruction data references accounts via these indices in this order.
@@ -925,7 +925,8 @@ Pass the proof, compressed account metadata (without `outputStateTreeIndex`), an
   (e.g., signer)
 [N+1-N+8] 
   Light System accounts from .remainingAccounts()
-[N+9+]    Merkle trees and queues from .remainingAccounts()
+[N+9+]   
+  Merkle trees and queues from .remainingAccounts()
 ```
 {% endcode %}
 {% endstep %}
@@ -982,6 +983,8 @@ anchor test --skip-local-validator
 For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
 {% endhint %}
 
+{% tabs %}
+{% tab title="Create" %}
 {% code overflow="wrap" %}
 ```typescript
 // Create Compressed Account Example
@@ -1139,7 +1142,9 @@ async function createCompressedAccount(
 }
 ```
 {% endcode %}
+{% endtab %}
 
+{% tab title="Update" %}
 {% code overflow="wrap" %}
 ```typescript
 // Update Compressed Account Example
@@ -1388,7 +1393,9 @@ async function updateCompressedAccount(
 }
 ```
 {% endcode %}
+{% endtab %}
 
+{% tab title="Close" %}
 {% code overflow="wrap" %}
 ```typescript
 // Close Compressed Account Example
@@ -1632,7 +1639,9 @@ async function closeCompressedAccount(
 }
 ```
 {% endcode %}
+{% endtab %}
 
+{% tab title="Reinit" %}
 {% code overflow="wrap" %}
 ```typescript
 // Reinitialize Compressed Account Example
@@ -1961,7 +1970,9 @@ async function reinitCompressedAccount(
 }
 ```
 {% endcode %}
+{% endtab %}
 
+{% tab title="Burn" %}
 {% code overflow="wrap" %}
 ```typescript
 // Burn Compressed Account Example
@@ -2197,8 +2208,10 @@ async function burnCompressedAccount(
 }
 ```
 {% endcode %}
+{% endtab %}
+{% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Start building programs to create, or interact with compressed accounts.
 
