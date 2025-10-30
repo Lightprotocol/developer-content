@@ -284,7 +284,11 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 ```rust
 let signer = accounts.first();
 
-let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+let light_cpi_accounts = CpiAccounts::new(
+    signer,
+    &accounts[1..],
+    LIGHT_CPI_SIGNER
+);
 
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
     .with_light_account(my_compressed_account)?
@@ -580,7 +584,11 @@ pub fn create(
 ) -> Result<(), ProgramError> {
     let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
-    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+    let light_cpi_accounts = CpiAccounts::new(
+    signer,
+    &accounts[1..],
+    LIGHT_CPI_SIGNER
+);
 
     let (address, address_seed) = derive_address(
         &[b"message", signer.key.as_ref()],
@@ -617,7 +625,11 @@ pub fn update(
 ) -> Result<(), ProgramError> {
     let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
-    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+    let light_cpi_accounts = CpiAccounts::new(
+    signer,
+    &accounts[1..],
+    LIGHT_CPI_SIGNER
+);
 
     let mut my_compressed_account = LightAccount::<MyCompressedAccount>::new_mut(
         &ID,

@@ -268,7 +268,11 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 let (signer, remaining_accounts) = accounts
     .split_first();
 
-let cpi_accounts = CpiAccounts::new(signer, remaining_accounts, LIGHT_CPI_SIGNER);
+let cpi_accounts = CpiAccounts::new(
+    signer,
+    remaining_accounts,
+    LIGHT_CPI_SIGNER
+);
 
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
     .with_light_account(my_compressed_account)?
@@ -566,7 +570,11 @@ fn create(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), Light
 
     let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
-    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+    let light_cpi_accounts = CpiAccounts::new(
+        signer,
+        &accounts[1..],
+        LIGHT_CPI_SIGNER
+    );
 
     let (address, address_seed) = derive_address(
         &[b"message", signer.key.as_ref()],
@@ -605,7 +613,11 @@ fn close(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightS
         .split_first()
         .ok_or(ProgramError::InvalidAccountData)?;
 
-    let cpi_accounts = CpiAccounts::new(signer, remaining_accounts, LIGHT_CPI_SIGNER);
+    let cpi_accounts = CpiAccounts::new(
+        signer,
+        remaining_accounts,
+        LIGHT_CPI_SIGNER
+    );
 
     let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
         &ID,
@@ -631,7 +643,11 @@ fn reinit(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), Light
         .split_first()
         .ok_or(ProgramError::InvalidAccountData)?;
 
-    let cpi_accounts = CpiAccounts::new(signer, remaining_accounts, LIGHT_CPI_SIGNER);
+    let cpi_accounts = CpiAccounts::new(
+        signer,
+        remaining_accounts,
+        LIGHT_CPI_SIGNER
+    );
 
     let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
         &ID,

@@ -6,8 +6,6 @@ description: >-
 hidden: true
 ---
 
-# Guides
-
 ### Guides Overview <a href="#subsection-jvtgde75u" id="subsection-jvtgde75u"></a>
 
 | Guide                                                                                 | Description                                                                  |

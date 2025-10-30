@@ -362,7 +362,11 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 ```rust
 let signer = accounts.first();
 
-let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+let light_cpi_accounts = CpiAccounts::new(
+    signer,
+    &accounts[1..],
+    LIGHT_CPI_SIGNER
+);
 
 let new_address_params = instruction_data
     .address_tree_info
@@ -614,7 +618,11 @@ pub fn create(
 ) -> Result<(), ProgramError> {
     let signer = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
-    let light_cpi_accounts = CpiAccounts::new(signer, &accounts[1..], LIGHT_CPI_SIGNER);
+    let light_cpi_accounts = CpiAccounts::new(
+        signer,
+        &accounts[1..],
+        LIGHT_CPI_SIGNER
+    );
 
     let (address, address_seed) = derive_address(
         &[b"message", signer.key.as_ref()],
