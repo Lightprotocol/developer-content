@@ -145,7 +145,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 Run this script to transfer compressed tokens to a recipient!
 
-<pre class="language-typescript" data-title="transfer-compressed-tokens.ts"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
+<pre class="language-typescript" data-title="transfer-compressed-tokens.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
 // 2. Create SPL mint and token pool for compression with initial tokens
 // 3. Call transfer() with mint, amount, owner, recipient
 // 4. Verify transferred tokens via getCompressedTokenAccountsByOwner

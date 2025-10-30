@@ -148,7 +148,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 Run this script to merge multiple compressed token accounts into one!
 
-<pre class="language-typescript" data-title="merge-compressed-accounts.ts"><code class="lang-typescript">// 1: Setup funded payer and connect to local validator
+<pre class="language-typescript" data-title="merge-compressed-accounts.ts" data-overflow="wrap"><code class="lang-typescript">// 1: Setup funded payer and connect to local validator
 // 2. Create mint and multiple compressed accounts  
 // 3. Call mergeTokenAccounts() to consolidate multiple compressed accounts to one output
 // 4. Use getCompressedTokenAccountsByOwner() to query account states before and after merge

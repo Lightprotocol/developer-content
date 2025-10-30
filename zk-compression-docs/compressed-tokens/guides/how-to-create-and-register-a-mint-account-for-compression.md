@@ -147,7 +147,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 Run this script to create a mint account with token pool for compression.
 
-<pre class="language-typescript" data-title="create-mint.ts"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
+<pre class="language-typescript" data-title="create-mint.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
 // 2. Create SPL mint with token pool for compression via createMint()
 
 import { Keypair } from '@solana/web3.js';

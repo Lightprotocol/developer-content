@@ -18,7 +18,7 @@ Closing a compressed account
 Find [full code examples of a counter program at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-## Implementation Guide
+# Implementation Guide
 
 This guide will cover the components of a Solana program that closes compressed accounts.\
 Here is the complete flow to close compressed accounts:
@@ -27,7 +27,7 @@ Here is the complete flow to close compressed accounts:
 
 {% stepper %}
 {% step %}
-#### Program Setup
+## Program Setup
 
 <details>
 
@@ -110,7 +110,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-#### Instruction Data
+## Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -147,7 +147,7 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 {% endstep %}
 
 {% step %}
-#### Close Compressed Account
+## Close Compressed Account
 
 Load the compressed account and mark it as closed with `LightAccount::new_close()`.
 
@@ -191,7 +191,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
 {% endstep %}
 
 {% step %}
-#### Light System Program CPI
+## Light System Program CPI
 
 Invoke the Light System Program to close the compressed account. This empty account can be reinitialized with `LightAccount::new_empty()`.
 
@@ -235,7 +235,7 @@ The counter programs below implement all steps from this guide. Make sure you ha
 
 {% code overflow="wrap" %}
 ```bash
-npm -g i @lightprotocol/zk-compression-cli
+npm -g i @lightprotocol/zk-compression-cli@0.27.1-alpha.2
 light init testprogram
 ```
 {% endcode %}

@@ -199,15 +199,15 @@ const stateTreeInfos = await rpc.getStateTreeInfos();
 const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 ```
 {% endcode %}
-* V2: `rpc.getAddressTreeInfoV2()` returns `TreeInfo` with the public key and other metadata for the address tree.
-
+* V2: 
 {% endtab %}
 {% endtabs %}
 
 **Address Trees:**
-For addresses, `TreeInfo` is used
-* to derive addresses and 
-*for `getValidityProofV0()` to prove the address does not exist yet.
+`getDefaultAddressTreeInfo()` / `rpc.getAddressTreeInfoV2()` returns `TreeInfo` with the public key and other metadata for the address tree.
+* `TreeInfo` is used
+  * to derive addresses and 
+  * for `getValidityProofV0()` to prove the address does not exist yet.
 
 **State Trees:**
 * `getStateTreeInfos()` returns `TreeInfo[]` with pubkeys and metadata for all active state trees.
@@ -217,7 +217,7 @@ For addresses, `TreeInfo` is used
   * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
 
 {% hint style="info" %}
-`TreeInfo` contains pubkeys and other metadata for a Merkle tree:
+**`TreeInfo` contains pubkeys and other metadata of a Merkle tree.**
 
 * `tree`: Merkle tree account pubkey
 * `queue`: Queue account pubkey
@@ -329,7 +329,7 @@ The RPC returns proof result with
 
 {% tab title="Update, Close, Reinit, Burn" %}
 {% hint style="info" %}
-**Update and Close** use identical proof mechanisms. The difference is in your program's instruction handler.
+These operations proof that the account hash exists in the state tree. The difference is in your program's instruction handler.
 {% endhint %}
 
 {% code overflow="wrap" %}
@@ -387,7 +387,6 @@ The RPC returns proof result with
 
 * `compressedProof`: A single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
 * `rootIndices` and `leafIndices` arrays with proof metadata to build `PackedAddressTreeInfo` and `PackedStateTreeInfo` in the next step.
-{% endtab %}
 
 **Supported Combinations and Maximums**
 
@@ -427,7 +426,7 @@ V2 circuits can prove in a single proof
 | Addresses | 1 to 4 |
 
 {% endtab %}
-{% endtabs %}
+{% endtab %}
 {% endtabs %}
 
 {% endstep %}

@@ -18,7 +18,7 @@ Burning a compressed account
 Find [full code examples of a counter program at the end](how-to-burn-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-## Implementation Guide
+# Implementation Guide
 
 This guide will cover the components of a Solana program that burns compressed accounts.\
 Here is the complete flow to burn compressed accounts:
@@ -27,7 +27,7 @@ Here is the complete flow to burn compressed accounts:
 
 {% stepper %}
 {% step %}
-#### Program Setup
+## Program Setup
 
 <details>
 
@@ -110,7 +110,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-#### Instruction Data
+## Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -146,7 +146,7 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 {% endstep %}
 
 {% step %}
-#### Burn Compressed Account
+## Burn Compressed Account
 
 Burn the compressed account permanently with `LightAccount::new_burn()`. No account can be reinitialized at this address in the future.
 
@@ -186,7 +186,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 {% endstep %}
 
 {% step %}
-#### Light System Program CPI
+## Light System Program CPI
 
 The Light System Program CPI burns the compressed account permanently.
 
@@ -232,7 +232,7 @@ The counter programs below implement all steps from this guide. Make sure you ha
 
 {% code overflow="wrap" %}
 ```bash
-npm -g i @lightprotocol/zk-compression-cli
+npm -g i @lightprotocol/zk-compression-cli@0.27.1-alpha.2
 light init testprogram
 ```
 {% endcode %}

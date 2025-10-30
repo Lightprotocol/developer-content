@@ -15,7 +15,7 @@ Build client applications that interact with ZK Compression across web, Node.js,
 [typescript.md](../../compressed-pdas/client-library/typescript.md)
 {% endcontent-ref %}
 
-## Rust Client&#x20;
+## Rust Client
 
 * For devnet and mainnet use [`light-client`](https://docs.rs/light-client)&#x20;
   * An RPC client for compressed accounts and tokens. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).

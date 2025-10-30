@@ -68,6 +68,7 @@ msg!("Received root_index: {}", account_meta.tree_info.root_index);
 {% endtab %}
 {% endtabs %}
 
+
 **Add backtrace** to your test command:
 ```bash
 RUST_BACKTRACE=1 cargo test-sbf
@@ -145,6 +146,290 @@ msg!("Current account data: {:?}", current_account);
 ```bash
 RUST_BACKTRACE=1 cargo test-sbf
 ```
+
+## Full Example
+
+### Reading the Error Output
+
+When ProofVerificationFailed occurs, understanding where to look in the transaction logs is critical. The verification happens in the Light System Program (via CPI from your program), not in your program's logs.
+
+{% stepper %}
+{% step %}
+### Identify the error
+
+Look for the error code in the transaction status:
+- `Failed: InstructionError(0, Custom(6043))`
+- 6043 in decimal = 0x179b in hex = ProofVerificationFailed
+{% endstep %}
+
+{% step %}
+### Find Light System Program logs
+
+Search for the Light System Program CPI in the transaction logs:
+- `Program SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7 invoke [2]`
+- The `[2]` indicates call depth: `[1]` = your program, `[2]` = CPI to Light System Program
+- Call flow: Client → YourProgram [1] → CPI → Light System Program [2]
+- All verification details appear AFTER this line
+- Your program's logs (above this) don't show root verification details
+{% endstep %}
+
+{% step %}
+### Check what values the Light System Program received
+
+In the Light System Program logs, look for different fields depending on instruction type:
+
+{% tabs %}
+{% tab title="Account Hash (Update/Close/Reinit/Burn)" %}
+For instructions that update or close existing compressed accounts:
+
+**A) `proof_input_compressed_account_hashes`**
+- The account hash from your proof
+- Compare with `hash` field from `rpc.getCompressedAccount()`
+- Must match exactly
+
+**B) `input roots`**
+- The root hash fetched from `root_history[root_index]` of the state tree
+- NOT the expected root - it's what was fetched based on your `root_index`
+- **Important**: State tree roots appear first in the array
+
+**C) `input_compressed_accounts_with_merkle_context`**
+- Find `root_index: U16(...)`
+- This is the index you sent
+{% endtab %}
+
+{% tab title="Address (Create)" %}
+For instructions that create new compressed accounts:
+
+**A) `new_addresses`**
+- The address(es) being created
+- Compare with address derived from your seeds on client
+
+**B) `new_address_roots`**
+- The root hash fetched from `root_history[root_index]` of the address tree
+- NOT the expected root - it's what was fetched based on your `root_index`
+
+**C) `new_addresses` → `address_merkle_tree_root_index`**
+- Find `address_merkle_tree_root_index: U16(...)`
+- This is the index you sent
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+
+{% step %}
+### Add Prints to Client code to compare values
+
+{% tabs %}
+{% tab title="TypeScript" %}
+{% code overflow="wrap" %}
+```typescript
+// For update/close instructions
+console.log("Proof root indices:", proofRpcResult.rootIndices);
+console.log("Sending root index:", compressedAccountMeta.treeInfo.rootIndex);
+
+// For create instructions with addresses
+console.log("Proof root indices:", proofRpcResult.rootIndices);
+console.log("Sending address root index:", addressTreeInfo.rootIndex);
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Rust" %}
+{% code overflow="wrap" %}
+```rust
+// For update/close instructions
+let root_indices = proof_result.value.get_root_indices();
+println!("Proof root indices: {:?}", root_indices);
+println!("Sending root_index: {}", account_meta.tree_info.root_index);
+
+// For create instructions with addresses
+let address_root_indices = proof_result.value.get_address_root_indices();
+println!("Proof address root indices: {:?}", address_root_indices);
+println!("Sending address root_index: {}", address_tree_info.root_index);
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+- The first value is what the proof expects
+- The second value is what you actually sent
+- These must match
+{% endstep %}
+
+{% step %}
+### Compare the values
+
+✓ If `proof_input_compressed_account_hashes` matches your fetched account hash:
+- Account data is correct
+
+✗ If "Sending root index" doesn't match "Proof root indices":
+- You're using the wrong `root_index`
+- FIX: Use `proofRpcResult.rootIndices[0]` instead of hardcoding
+{% endstep %}
+
+{% step %}
+### The fix
+
+Always use the `root_index` from the proof response:
+
+{% tabs %}
+{% tab title="TypeScript" %}
+{% code overflow="wrap" %}
+```typescript
+// For update/close instructions
+compressedAccountMeta.treeInfo.rootIndex = proofRpcResult.rootIndices[0];
+
+// For create instructions with addresses
+addressTreeInfo.rootIndex = proofRpcResult.rootIndices[0];
+
+// For multiple accounts: rootIndices[0] is for first account,
+// rootIndices[1] for second, etc.
+// For addresses: address root indices come AFTER account root indices
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Rust" %}
+{% code overflow="wrap" %}
+```rust
+// For update/close instructions
+account_meta.tree_info.root_index = rpc_result.get_root_indices()[0];
+
+// For create instructions with addresses
+address_tree_info.root_index = rpc_result.get_address_root_indices()[0];
+
+// For multiple accounts: get_root_indices()[0] is for first account,
+// get_root_indices()[1] for second, etc.
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+{% endstep %}
+{% endstepper %}
+
+## Error Example
+
+Here's what a ProofVerificationFailed error looks like in the transaction logs:
+
+{% code overflow="wrap" %}
+```
+┌─── Transaction #2 ───────────────────────────────────────────────────┐
+│ Status: Failed: InstructionError(0, Custom(6043))
+│
+│ Program Logs:
+│
+│ Your program logs (don't show root verification):
+│ Program YourProgram invoke [1]
+│ Instruction: UpdateAccount
+│
+│ ┌─────────────────────────────────────────────────────┐
+│ │ Light System Program logs (critical details here)   │
+│ └─────────────────────────────────────────────────────┘
+│ Program SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7 invoke [2]
+│
+│ proof  Ref(CompressedProof { a: [...], b: [...], c: [...] })
+```
+{% endcode %}
+
+{% tabs %}
+{% tab title="Account Hash Verification (Update/Close/Reinit/Burn)" %}
+{% code overflow="wrap" %}
+```
+│ ✓ CORRECT: Account hash matches the fetched account
+│ proof_input_compressed_account_hashes [[14, 248, 45, 12, ...]]
+│                                         ↑ Compare with hash from rpc.getCompressedAccount()
+│
+│ ✗ ROOT HASH FETCHED FROM root_history[root_index]
+│   Light System Program fetched root_history[0] (see root_index below)
+│   This root hash is what's stored at index 0
+│   But the proof was generated with a DIFFERENT root
+│ input roots [[18, 12, 88, 241, ...]]
+│               ↑ This is from root_history[0], NOT the expected root
+│
+│   HOW TO FIX:
+│   Use the root_index from proof response:
+│     TypeScript: proofRpcResult.rootIndices[0]
+│     Rust: proof_result.value.get_root_indices()[0]
+│
+│ ✗ THE BUG: root_index: U16(0)
+│   Hardcoded to 0 instead of using proof response
+│ input_compressed_accounts_with_merkle_context:
+│   [... root_index: U16(0) ...]
+│         ↑ Compare with proofRpcResult.rootIndices[0]
+```
+{% endcode %}
+
+**Key Comparison Points:**
+
+1. **Account Hash** (`proof_input_compressed_account_hashes`)
+   - Compare with: `hash` from `rpc.getCompressedAccount()`
+   - Must match exactly
+
+2. **State Tree Root Hash** (`input roots`)
+   - Fetched from `root_history[root_index]` on-chain
+   - NOT the expected root - just what was fetched
+
+3. **Root Index** (`root_index: U16(...)`)
+   - Compare with: `proofRpcResult.rootIndices[0]` from client
+   - Should come from proof response
+{% endtab %}
+
+{% tab title="Address Verification (Create)" %}
+{% code overflow="wrap" %}
+```
+│ ✗ ADDRESS ROOT HASH FETCHED FROM root_history[root_index]
+│   Light System Program fetched root_history[0] from address tree
+│   But the proof was generated with a DIFFERENT address tree root
+│ new_address_roots [[42, 156, 73, 201, ...]]
+│                    ↑ This is from root_history[0] of the address tree
+│
+│   HOW TO FIX:
+│   Use the root_index from proof response:
+│     TypeScript: proofRpcResult.rootIndices[0]
+│     Rust: proof_result.value.get_address_root_indices()[0]
+│
+│ ✗ THE BUG: root_index: U16(0)
+│   Hardcoded to 0 instead of using proof response
+│ new_addresses [NewAddressParams {
+│   address: [0, 223, 172, 91, ...],
+│   address_merkle_tree_account_index: 0,
+│   address_queue_account_index: 1,
+│   address_merkle_tree_root_index: U16(0)
+│   ↑ Compare with proofRpcResult.rootIndices[0]
+│ }]
+```
+{% endcode %}
+
+**Key Comparison Points:**
+
+1. **Address Derivation**
+   - Client seeds must match on-chain seeds exactly
+   - Verify in your program logs
+
+2. **Address Tree Root Hash** (`new_address_roots`)
+   - Fetched from `root_history[root_index]` of address tree
+   - NOT the expected root - just what was fetched
+
+3. **Address Root Index** (`address_merkle_tree_root_index: U16(...)`)
+   - Compare with: `proofRpcResult.rootIndices[0]` from client
+   - Should come from proof response
+
+{% hint style="info" %}
+**Mixed Transactions**: When you have both accounts AND addresses, the `rootIndices` array contains state tree roots first, then address tree roots:
+- `rootIndices[0]` = first state tree root
+- `rootIndices[1]` = second state tree root
+- `rootIndices[2]` = first address tree root
+{% endhint %}
+{% endtab %}
+{% endtabs %}
+
+{% code overflow="wrap" %}
+```
+│ ✗ VERIFICATION FAILED
+│ Program SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7 failed:
+│   custom program error: 0x179b
+└──────────────────────────────────────────────────────────────────────┘
+```
+{% endcode %}
 
 ## **Still having issues?** We're here to help!
 

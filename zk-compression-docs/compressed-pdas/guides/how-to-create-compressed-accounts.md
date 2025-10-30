@@ -20,7 +20,7 @@ Compressed accounts and addresses are created via CPI to the Light System Progra
 Find [full code examples at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-## Implementation Guide
+# Implementation Guide
 
 This guide will cover the components of a Solana program that creates compressed accounts.\
 Here is the complete flow:
@@ -29,7 +29,7 @@ Here is the complete flow:
 
 {% stepper %}
 {% step %}
-#### Dependencies
+## Dependencies
 
 Add dependencies to your program.
 
@@ -61,10 +61,12 @@ solana-program = "2.2"
 {% endstep %}
 
 {% step %}
-#### Constants
+## Constants
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
+{% tabs %}
+{% tab title="Anchor" %}
 {% code overflow="wrap" %}
 ```rust
 declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
@@ -73,6 +75,18 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
     derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
 ```
 {% endcode %}
+{% endtab %}
+
+{% tab title="Native Rust" %}
+{% code overflow="wrap" %}
+```rust
+pub const ID: Pubkey = pubkey!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+pub const LIGHT_CPI_SIGNER: CpiSigner =
+    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 **`CPISigner`** is the configuration struct for CPIs to the Light System Program.
 
@@ -81,20 +95,14 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 {% endstep %}
 
 {% step %}
-#### Compressed Account
+## Compressed Account
 
 {% tabs %}
 {% tab title="Anchor" %}
 {% code overflow="wrap" %}
 ```rust
-#[derive(
-    Clone,
-    Debug,
-    Default,
-    AnchorSerialize,
-    AnchorDeserialize,
-    LightDiscriminator
-)]
+#[event]
+#[derive(Clone, Debug, Default, LightDiscriminator)]
 pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
@@ -135,17 +143,18 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `m
 {% endstep %}
 
 {% step %}
-#### Instruction Data
+## Instruction Data
 
 Define the instruction data with the following parameters:
 
 {% code overflow="wrap" %}
 ```rust
-pub struct InstructionData {
-    proof: ValidityProof,
-    address_tree_info: PackedAddressTreeInfo,
-    output_state_tree_index: u8,
-    message: String,
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct CreateInstructionData {
+    pub proof: ValidityProof,
+    pub address_tree_info: PackedAddressTreeInfo,
+    pub output_state_tree_index: u8,
+    pub message: String,
 }
 ```
 {% endcode %}
@@ -171,7 +180,7 @@ Clients pack accounts into the `remaining_accounts` array to reduce transaction 
 {% endstep %}
 
 {% step %}
-#### Derive Address
+## Derive Address
 
 Derive the address as a persistent unique identifier for the compressed account.
 
@@ -207,7 +216,7 @@ let (address, address_seed) = derive_address(
 {% endstep %}
 
 {% step %}
-#### Address Tree Check
+## Address Tree Check
 
 Ensure global uniqueness of an address by verifying that the address tree pubkey matches the program's tree constant.
 
@@ -230,7 +239,7 @@ if address_tree != light_sdk::constants::ADDRESS_TREE_V2 {
 {% endstep %}
 
 {% step %}
-#### Initialize Compressed Account
+## Initialize Compressed Account
 
 Initialize the compressed account struct with `LightAccount::new_init()`.
 
@@ -268,7 +277,7 @@ my_compressed_account.data = data.to_string();
 {% endstep %}
 
 {% step %}
-#### Light System Program CPI
+## Light System Program CPI
 
 Invoke the Light System Program to create the compressed account and its address.
 
@@ -326,7 +335,7 @@ The programs below implement all steps from this guide. Make sure you have your 
 
 {% code overflow="wrap" %}
 ```bash
-npm -g i @lightprotocol/zk-compression-cli
+npm -g i @lightprotocol/zk-compression-cli@0.27.1-alpha.2
 light init testprogram
 ```
 {% endcode %}
@@ -338,7 +347,7 @@ For help with debugging, see the [Error Cheatsheet](../../resources/error-cheats
 {% tabs %}
 {% tab title="Anchor" %}
 {% hint style="info" %}
-Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L27).
+Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/anchor/create).
 {% endhint %}
 
 {% code overflow="wrap" %}
@@ -356,21 +365,21 @@ use light_sdk::{
     LightDiscriminator,
 };
 
-declare_id!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+declare_id!("Hps5oaKdYWqjVZJnAxUE1uwbozwEgZZGCRA57p2wdqcS");
 
 pub const LIGHT_CPI_SIGNER: CpiSigner =
-    derive_light_cpi_signer!("rent4o4eAiMbxpkAM1HeXzks9YeGuz18SEgXEizVvPq");
+    derive_light_cpi_signer!("Hps5oaKdYWqjVZJnAxUE1uwbozwEgZZGCRA57p2wdqcS");
 
 #[program]
-pub mod program_create {
+pub mod create {
 
     use super::*;
     use light_sdk::cpi::{
         v1::LightSystemProgramCpi, InvokeLightSystemProgram, LightCpiInstruction,
     };
 
-    /// Creates a new compressed account with a message
-    pub fn create_message_account<'info>(
+    /// Creates a new compressed account
+    pub fn create_account<'info>(
         ctx: Context<'_, '_, '_, 'info, GenericAnchorAccounts<'info>>,
         proof: ValidityProof,
         address_tree_info: PackedAddressTreeInfo,
@@ -391,22 +400,22 @@ pub mod program_create {
             &crate::ID,
         );
 
-        let mut message_account = LightAccount::<MessageAccount>::new_init(
+        let mut my_compressed_account = LightAccount::<MyCompressedAccount>::new_init(
             &crate::ID,
             Some(address),
             output_state_tree_index,
         );
 
-        message_account.owner = ctx.accounts.signer.key();
-        message_account.message = message;
+        my_compressed_account.owner = ctx.accounts.signer.key();
+        my_compressed_account.message = message.clone();
 
         msg!(
             "Created compressed account with message: {}",
-            message_account.message
+            my_compressed_account.message
         );
 
         LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
-            .with_light_account(message_account)?
+            .with_light_account(my_compressed_account)?
             .with_new_addresses(&[address_tree_info.into_new_address_params_packed(address_seed)])
             .invoke(light_cpi_accounts)?;
 
@@ -420,9 +429,10 @@ pub struct GenericAnchorAccounts<'info> {
     pub signer: Signer<'info>,
 }
 
+// declared as event so that it is part of the idl.
 #[event]
 #[derive(Clone, Debug, Default, LightDiscriminator)]
-pub struct MessageAccount {
+pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
 }
@@ -432,17 +442,20 @@ pub struct MessageAccount {
 
 {% tab title="Native" %}
 {% hint style="info" %}
-Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/9cdeea7e655463afbfc9a58fb403d5401052e2d2/counter/native/src/lib.rs#L160).
+Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/native/programs/create).
 {% endhint %}
 
 {% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 
+#[cfg(any(test, feature = "test-helpers"))]
+pub mod test_helpers;
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use light_macros::pubkey;
 use light_sdk::{
-    account::LightAccount,
+    account::sha::LightAccount,
     address::v1::derive_address,
     cpi::{
         v1::{CpiAccounts, LightSystemProgramCpi},
@@ -451,7 +464,7 @@ use light_sdk::{
     derive_light_cpi_signer,
     error::LightSdkError,
     instruction::{PackedAddressTreeInfo, ValidityProof},
-    LightDiscriminator, LightHasher,
+    LightDiscriminator,
 };
 use solana_program::{
     account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
@@ -464,6 +477,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 entrypoint!(process_instruction);
 
 #[repr(u8)]
+#[derive(Debug)]
 pub enum InstructionType {
     Create = 0,
 }
@@ -480,10 +494,9 @@ impl TryFrom<u8> for InstructionType {
 }
 
 #[derive(
-    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator, LightHasher,
+    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
 )]
 pub struct MyCompressedAccount {
-    #[hash]
     pub owner: Pubkey,
     pub message: String,
 }
@@ -557,7 +570,6 @@ pub fn create(
 
     Ok(())
 }
-
 ```
 {% endcode %}
 {% endtab %}

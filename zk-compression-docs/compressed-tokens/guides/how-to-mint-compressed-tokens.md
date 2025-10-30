@@ -144,7 +144,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 Run this script to mint compressed tokens to a recipient!
 
-<pre class="language-typescript" data-title="mint-compressed-tokens.ts"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
+<pre class="language-typescript" data-title="mint-compressed-tokens.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
 // 2. Create SPL mint with token pool for compression
 // 3. Call mintTo() with mint, recipient, and amount - mint SPL tokens to pool and create compressed token accounts
 // 4. Verify via getCompressedTokenAccountsByOwner

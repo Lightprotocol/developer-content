@@ -191,7 +191,6 @@ let address_tree_info = rpc.get_address_tree_v1();
 let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 ```
 {% endcode %}
-* V1: `get_address_tree_v1()` returns `TreeInfo` with the public key and other metadata for the address tree.
 {% endtab %}
 
 {% tab title="V2 Trees" %}
@@ -201,14 +200,14 @@ let address_tree_info = rpc.get_address_tree_v2();
 let output_state_tree_info = rpc.get_random_state_tree_info_v2().unwrap();
 ```
 {% endcode %}
-* V2: `get_address_tree_v2()` returns `TreeInfo` with the public key and other metadata for the address tree.
 {% endtab %}
 {% endtabs %}
 
 **Address Trees:**
-For addresses, `TreeInfo` is used
-* to derive addresses and
-* for `get_validity_proof()` to prove the address does not exist yet.
+ `get_address_tree_v1()` / `get_address_tree_v2()` returns `TreeInfo` with the public key and other metadata for the address tree.
+* `TreeInfo` is used
+    * to derive addresses and
+    * for `get_validity_proof()` to prove the address does not exist yet.
 
 **State Trees:**
 * `get_random_state_tree_info()` / `get_random_state_tree_info_v2()` returns `TreeInfo` with pubkeys and metadata for a random state tree to store the compressed account hash.
@@ -238,6 +237,8 @@ For addresses, `TreeInfo` is used
 ## Derive Address
 
 Derive a persistent address as a unique identifier for your compressed account.
+
+Use the derivation method that matches your address tree type from the previous step.
 
 {% tabs %}
 {% tab title="V1 Address Trees" %}
@@ -328,7 +329,7 @@ The RPC returns `ValidityProofWithContext` with
 
 {% tab title="Update & Close" %}
 {% hint style="info" %}
-**Update and Close** use identical proof mechanisms. The difference is in your program's instruction handler.
+These operations proof that the account hash exists in the state tree. The difference is in your program's instruction handler.
 {% endhint %}
 
 {% code overflow="wrap" %}

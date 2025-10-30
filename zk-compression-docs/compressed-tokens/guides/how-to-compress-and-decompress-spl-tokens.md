@@ -173,7 +173,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 Convert compressed tokens to regular SPL tokens.
 
-<pre class="language-typescript" data-title="decompress-tokens.ts"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
+<pre class="language-typescript" data-title="decompress-tokens.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
 // 2. Create SPL mint with token pool and mint initial compressed tokens
 // 3. Call decompress() to convert compressed tokens to SPL tokens
 // 4. Verify decompressed balance via getTokenAccountBalance
@@ -260,7 +260,7 @@ decompressTokens().catch(console.error);
 
 Continue from the previous step to compress regular SPL tokens back to compressed format.
 
-<pre class="language-typescript" data-title="compress-tokens.ts"><code class="lang-typescript">// Continue from Step 1 - compress SPL tokens
+<pre class="language-typescript" data-title="compress-tokens.ts" data-overflow="wrap"><code class="lang-typescript">// Continue from Step 1 - compress SPL tokens
 // 1. Call compress() to convert SPL tokens to compressed format
 // 2. Verify balances via getTokenAccountBalance and getCompressedTokenAccountsByOwner
 

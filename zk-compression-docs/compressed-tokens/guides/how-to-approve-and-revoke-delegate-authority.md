@@ -161,7 +161,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 Run this script to approve delegate authority for compressed tokens!
 
-<pre class="language-typescript" data-title="approve-delegates.ts"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
+<pre class="language-typescript" data-title="approve-delegates.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
 // 2. Create mint and token pool with initial tokens
 // 3. Call approve() with mint, amount, owner, delegate
 // 4. Verify delegation via getCompressedTokenAccountsByDelegate
@@ -270,7 +270,7 @@ approveDelegates().catch(console.error);
 
 Remove delegate authority from previously approved accounts.
 
-<pre class="language-typescript" data-title="revoke-delegates.ts"><code class="lang-typescript">// Continue from approve setup - revoke delegate authority
+<pre class="language-typescript" data-title="revoke-delegates.ts" data-overflow="wrap"><code class="lang-typescript">// Continue from approve setup - revoke delegate authority
 // 1. Get delegated accounts to revoke via getCompressedTokenAccountsByDelegate
 // 2. Call revoke() with delegated accounts and token owner - remove delegate authority and return control to owner
 // 3. Verify delegation removed via getCompressedTokenAccountsByDelegate

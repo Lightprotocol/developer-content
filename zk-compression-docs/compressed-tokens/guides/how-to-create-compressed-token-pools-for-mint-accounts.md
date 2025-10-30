@@ -146,7 +146,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 Run this script to create token pools for an SPL mint!
 
-<pre class="language-typescript" data-title="create-token-pools.ts"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
+<pre class="language-typescript" data-title="create-token-pools.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
 // 2. Create SPL mint 
 // 3. Call createTokenPool() to register mint with compressed token program
 // 4. Add additional pools to increase write-lock capacity (optional)

@@ -19,7 +19,7 @@ An empty compressed account can be reinitialized
 Find [full code examples of a counter program at the end](how-to-reinitialize-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-## Implementation Guide
+# Implementation Guide
 
 This guide will cover the components of a Solana program that reinitializes compressed accounts.\
 Here is the complete flow to reinitialize compressed accounts:
@@ -28,7 +28,7 @@ Here is the complete flow to reinitialize compressed accounts:
 
 {% stepper %}
 {% step %}
-#### Program Setup
+## Program Setup
 
 <details>
 
@@ -111,7 +111,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-#### Instruction Data
+## Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -142,7 +142,7 @@ Reinitialization does not require `current_value` parameters. `new_empty()` auto
 {% endstep %}
 
 {% step %}
-#### Reinitialize Closed Account
+## Reinitialize Closed Account
 
 Reinitialize the closed account with `LightAccount::new_empty()`.
 
@@ -183,7 +183,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
 {% endstep %}
 
 {% step %}
-#### Light System Program CPI
+## Light System Program CPI
 
 Invoke the Light System Program to reinitialize the compressed account.
 
@@ -229,7 +229,7 @@ The counter programs below implement all steps from this guide. Make sure you ha
 
 {% code overflow="wrap" %}
 ```bash
-npm -g i @lightprotocol/zk-compression-cli
+npm -g i @lightprotocol/zk-compression-cli@0.27.1-alpha.2
 light init testprogram
 ```
 {% endcode %}

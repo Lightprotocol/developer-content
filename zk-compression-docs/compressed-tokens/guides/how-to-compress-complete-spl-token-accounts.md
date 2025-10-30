@@ -161,7 +161,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 Run this script to compress an entire SPL token account!
 
-<pre class="language-typescript" data-title="compress-spl-token-accounts.ts"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
+<pre class="language-typescript" data-title="compress-spl-token-accounts.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
 // 2. Create SPL token account with tokens
 // 3. Call compressSplTokenAccount() to convert SPL tokens to compressed format
 // 4. Verify results via getTokenAccountBalance and getCompressedTokenAccountsByOwner
