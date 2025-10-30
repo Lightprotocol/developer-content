@@ -390,13 +390,13 @@ The RPC returns proof result with
 
 **Supported Combinations and Maximums**
 
-{% hint style="info" %}
-These maximums are determined by the available circuit verifying keys. Different proof sizes require different circuits optimized for that specific combination. View the [source code here](https://github.com/Lightprotocol/light-protocol/tree/871215642b4b5b69d2bcd7eca22542346d0e2cfa/program-libs/verifier/src/verifying_keys).
-{% endhint %}
-
 The specific combinations and maximums depend on the circuit version (v1 or v2) and the proof type.
 * Combine multiple hashes **or** multiple addresses in a single proof, or
 * multiple hashes **and** addresses in a single combined proof.
+
+{% hint style="info" %}
+The combinations and maximums are determined by the available circuit verifying keys. Different proof sizes require different circuits optimized for that specific combination. View the [source code here](https://github.com/Lightprotocol/light-protocol/tree/871215642b4b5b69d2bcd7eca22542346d0e2cfa/program-libs/verifier/src/verifying_keys).
+{% endhint %}
 
 {% tabs %}
 {% tab title="V1 Circuits" %}
@@ -428,6 +428,7 @@ V2 circuits can prove in a single proof
 {% endtab %}
 {% endtabs %}
 {% endtab %}
+{% endtabs %}
 
 {% endstep %}
 
