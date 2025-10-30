@@ -1,7 +1,5 @@
 ---
-description: >-
-  Guide to reinitialize compressed accounts in Solana programs with full code
-  examples.
+description: Guide to reinitialize compressed accounts in Solana programs with full code examples.
 ---
 
 # How to Reinitialize Compressed Accounts
@@ -85,7 +83,12 @@ Define your compressed account struct.
 {% code overflow="wrap" %}
 ```rust
 #[event] // declared as event so that it is part of the idl.
-#[derive(Clone, Debug, Default, LightDiscriminator)]
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    LightDiscriminator
+)]
 pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,

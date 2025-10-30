@@ -1,7 +1,5 @@
 ---
-description: >-
-  Guide to update compressed accounts in Solana programs with full code
-  examples.
+description: Guide to update compressed accounts in Solana programs with full code examples.
 ---
 
 # How to Update Compressed Accounts
@@ -86,7 +84,12 @@ Define your compressed account struct.
 {% code overflow="wrap" %}
 ```rust
 #[event] // declared as event so that it is part of the idl.
-#[derive(Clone, Debug, Default, LightDiscriminator)]
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    LightDiscriminator
+)]
 pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
@@ -639,7 +642,7 @@ pub fn update(
 {% endtab %}
 {% endtabs %}
 
-### Next steps
+# Next Steps
 
 Build a client for your program or learn how to close compressed accounts.
 

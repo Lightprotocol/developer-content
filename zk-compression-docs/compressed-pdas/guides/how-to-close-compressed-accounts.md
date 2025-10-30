@@ -84,7 +84,12 @@ Define your compressed account struct.
 {% code overflow="wrap" %}
 ```rust
 #[event] // declared as event so that it is part of the idl.
-#[derive(Clone, Debug, Default, LightDiscriminator)]
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    LightDiscriminator
+)]
 pub struct MyCompressedAccount {
     pub owner: Pubkey,
     pub message: String,
