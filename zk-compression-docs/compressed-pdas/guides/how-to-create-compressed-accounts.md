@@ -356,6 +356,18 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_new_addresses(&[new_address_params])
     .invoke(light_cpi_accounts)?;
 ```
+
+**Set up `CpiAccounts::new()`:**
+
+`CpiAccounts::new()` parses accounts for the CPI call to Light System Program.
+
+**Pass these parameters:**
+
+* `ctx.accounts.signer.as_ref()`: the transaction signer
+* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts` and passes it to the instruction.
+* `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
+
 {% endcode %}
 {% endtab %}
 
@@ -380,46 +392,17 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
     .invoke(light_cpi_accounts)?;
 ```
 {% endcode %}
-{% endtab %}
-{% endtabs %}
 
 **Set up `CpiAccounts::new()`:**
 
 `CpiAccounts::new()` parses accounts for the CPI call to Light System Program.
 
-{% tabs %}
-{% tab title="Anchor" %}
-```rust
-let light_cpi_accounts = CpiAccounts::new(
-    &accounts.fee_payer,
-    ctx.remaining_accounts,
-    &LIGHT_CPI_SIGNER,
-)?;
-```
-
 **Pass these parameters:**
 
-* `&accounts.fee_payer`: Fee payer account from Anchor constraints
-* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
-  The client builds this with `PackedAccounts` and passes it to the instruction.
-* `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA
-{% endtab %}
-
-{% tab title="Native" %}
-```rust
-let light_cpi_accounts = CpiAccounts::new(
-    fee_payer_info,
-    remaining_accounts,
-    &LIGHT_CPI_SIGNER,
-)?;
-```
-
-**Pass these parameters:**
-
-* `fee_payer_info`: Fee payer `AccountInfo`
-* `remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
-  The client builds this with `PackedAccounts` and passes it as `&accounts[1..]`.
-* `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA
+* `signer`: account that signs and pays for the transaction
+* `&accounts[1..]`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts`.
+* `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
 {% endtab %}
 {% endtabs %}
 

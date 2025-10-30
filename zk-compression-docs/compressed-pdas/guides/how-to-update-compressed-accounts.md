@@ -275,6 +275,17 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
     .invoke(light_cpi_accounts)?;
 ```
+
+**Set up `CpiAccounts::new()`:**
+
+`CpiAccounts::new()` parses accounts for the CPI call to Light System Program.
+
+**Pass these parameters:**
+
+* `ctx.accounts.signer.as_ref()`: the transaction signer
+* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts` and passes it to the instruction.
+* `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
 {% endcode %}
 {% endtab %}
 
@@ -294,17 +305,19 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
     .invoke(light_cpi_accounts)?;
 ```
 {% endcode %}
-{% endtab %}
-{% endtabs %}
 
 **Set up `CpiAccounts::new()`:**
 
-* Include fee payer and transaction signer
-* `accounts`: `AccountInfo` slice with Light System and packed tree accounts.
-  * in Anchor `ctx.remaining_accounts` provides all accounts after the program-defined accounts
-  * in Native Rust `&accounts` extracts all accounts after the signer to pass the Light System Program accounts needed for the CPI.
-    * The `CpiAccounts::new()` and `CpiAccounts::new_with_config()` methods expect the `fee_payer` as a separate argument and the rest of the accounts as a slice.
-* `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
+`CpiAccounts::new()` parses accounts for the CPI call to Light System Program.
+
+**Pass these parameters:**
+
+* `signer`: account that signs and pays for the transaction
+* `&accounts[1..]`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts`.
+* `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
+{% endtab %}
+{% endtabs %}
 
 <details>
 
