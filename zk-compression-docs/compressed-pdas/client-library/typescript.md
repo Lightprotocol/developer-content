@@ -426,8 +426,8 @@ V2 circuits can prove in a single proof
 | Addresses | 1 to 4 |
 
 {% endtab %}
-{% endtab %}
 {% endtabs %}
+{% endtab %}
 
 {% endstep %}
 
