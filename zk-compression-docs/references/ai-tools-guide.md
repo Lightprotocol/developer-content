@@ -4,17 +4,15 @@ description: >-
   DeepWiki, and AI Search guides.
 ---
 
-# AI Tools Guide
-
-## **For Docs**
+# **For Docs**
 
 * **Docs AI Search** - Search documentation with AI in the search bar.
 * **llms.txt** - Site index for LLM navigation: [https://zkcompression.com/llms.txt](https://zkcompression.com/llms.txt).
 * **Markdown Export** - Append `.md` to any page URL for raw markdown.
 
-## **For Development**
+# **For Development**
 
-### DeepWiki [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol)
+## DeepWiki [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol)
 
 Use DeepWiki and its search capabilities (AskDevin) to query the Light Protocol repository in natural language.
 
@@ -27,11 +25,11 @@ Use DeepWiki and its search capabilities (AskDevin) to query the Light Protocol 
 You can index and query any public GitHub repository with DeepWiki to produce wikis with architecture diagrams, source links, and codebase summaries.
 {% endhint %}
 
-### MCP
+## MCP
 
 The Model Context Protocol (MCP) is an open standard to connect AI apps to data sources and tools. The DeepWiki MCP server provides access to the Light Protocol repository with its search capabilities (AskDevin).
 
-#### Installation
+### Installation
 
 {% tabs %}
 {% tab title="Claude Code" %}
@@ -57,7 +55,7 @@ claude mcp add -s user -t http deepwiki https://mcp.deepwiki.com/mcp
 {% endtab %}
 {% endtabs %}
 
-#### Tools
+### Tools
 
 The MCP server offers three main tools:
 

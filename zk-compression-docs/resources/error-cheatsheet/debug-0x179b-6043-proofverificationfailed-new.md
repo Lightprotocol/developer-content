@@ -7,7 +7,9 @@ hidden: true
 
 You're passing an invalid proof. The proof provided cannot be verified against the expected state.
 
-### Checklist
+### Common Causes
+
+Mismatches in account hashes, Merkle roots, or addresses will lead to verification failure.
 
 1. [**Root Indices**](#wrong-root-index) - All instructions verify the `root_index` points to a valid Merkle root.
    * The `root_index` from client must match a root in the `root_history` array of the state tree or address tree.
