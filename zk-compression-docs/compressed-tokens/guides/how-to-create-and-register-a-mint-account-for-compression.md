@@ -4,7 +4,6 @@ description: >-
   compression with `createMint()`, troubleshooting and advanced configurations.
 ---
 
-# How to Create and Register a Mint Account for Compression
 
 {% hint style="info" %}
 The mint account itself requires rent (like regular SPL mints), but individual compressed token accounts are rent-free.

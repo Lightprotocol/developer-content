@@ -5,7 +5,6 @@ description: >-
   distribute SPL tokens.
 ---
 
-# Create an Airdrop
 
 ### Cost Comparison
 

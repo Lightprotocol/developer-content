@@ -6,7 +6,6 @@ description: >-
 icon: headset
 ---
 
-# Support
 
 ## Support
 

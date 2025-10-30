@@ -4,7 +4,6 @@ description: >-
   higher compute unit usage, and per-transaction state cost.
 ---
 
-# Considerations
 
 ### Overview
 

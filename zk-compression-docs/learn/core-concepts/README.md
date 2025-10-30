@@ -5,7 +5,6 @@ description: >-
   considerations.
 ---
 
-# Core Concepts
 
 {% hint style="info" %}
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol) to query the Light Protocol repo in natural language.

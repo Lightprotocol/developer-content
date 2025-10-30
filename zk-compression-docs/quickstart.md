@@ -3,7 +3,6 @@ description: Create your first compressed token in minutes.
 icon: bolt
 ---
 
-# Quickstart
 
 ### Create your first compressed tokens
 

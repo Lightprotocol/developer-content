@@ -4,7 +4,6 @@ description: >-
   Includes a step-by-step implementation guide and full code examples.
 ---
 
-# Typescript
 
 The TypeScript Client SDK provides two test environments:
 

@@ -3,13 +3,12 @@ description: Common causes and debug steps for ProofVerificationFailed (0x179B /
 hidden: true
 ---
 
-# Debug 0x179b / 6043 / ProofVerificationFailed (new)
 
 You're passing an invalid proof. The proof provided cannot be verified against the expected state.
 
 ### Common Causes
 
-Mismatches in account hashes, Merkle roots, or addresses will lead to verification failure.
+Mismatches between the proof  in account hashes, Merkle roots, or addresses will lead to verification failure.
 
 1. [**Root Indices**](#wrong-root-index) - All instructions verify the `root_index` points to a valid Merkle root.
    * The `root_index` from client must match a root in the `root_history` array of the state tree or address tree.

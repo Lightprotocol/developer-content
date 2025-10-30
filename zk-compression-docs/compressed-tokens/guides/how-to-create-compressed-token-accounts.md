@@ -4,7 +4,6 @@ description: >-
   and difference to regular token accounts.
 ---
 
-# How to Create Compressed Token Accounts
 
 Compressed token accounts store ownership information for compressed tokens like regular token accounts with two core differences. Compressed Tokens
 

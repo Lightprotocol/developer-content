@@ -2,7 +2,6 @@
 description: Guide to create compressed accounts in Solana programs with full code examples.
 ---
 
-# How to Create Compressed Accounts
 
 ## Overview
 
@@ -349,9 +348,12 @@ let light_cpi_accounts = CpiAccounts::new(
     crate::LIGHT_CPI_SIGNER,
 );
 
+let new_address_params = address_tree_info
+    .into_new_address_params_packed(address_seed);
+
 LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_light_account(my_compressed_account)?
-    .with_new_addresses(&[address_tree_info.into_new_address_params_packed(address_seed)])
+    .with_new_addresses(&[new_address_params])
     .invoke(light_cpi_accounts)?;
 ```
 {% endcode %}
@@ -383,12 +385,43 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 
 **Set up `CpiAccounts::new()`:**
 
-* Include fee payer and transaction signer
-* `accounts`: `AccountInfo` slice with Light System and packed tree accounts.
-  * in Anchor `ctx.remaining_accounts` provides all accounts after the program-defined accounts
-  * in Native Rust `&accounts` extracts all accounts after the signer to pass the Light System Program accounts needed for the CPI.
-    * The `CpiAccounts::new()` and `CpiAccounts::new_with_config()` methods expect the `fee_payer` as a separate argument and the rest of the accounts as a slice.
-* `LIGHT_CPI_SIGNER`: Your program's CPI signer defined in Constants.
+`CpiAccounts::new()` parses accounts for the CPI call to Light System Program.
+
+{% tabs %}
+{% tab title="Anchor" %}
+```rust
+let light_cpi_accounts = CpiAccounts::new(
+    &accounts.fee_payer,
+    ctx.remaining_accounts,
+    &LIGHT_CPI_SIGNER,
+)?;
+```
+
+**Pass these parameters:**
+
+* `&accounts.fee_payer`: Fee payer account from Anchor constraints
+* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts` and passes it to the instruction.
+* `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA
+{% endtab %}
+
+{% tab title="Native" %}
+```rust
+let light_cpi_accounts = CpiAccounts::new(
+    fee_payer_info,
+    remaining_accounts,
+    &LIGHT_CPI_SIGNER,
+)?;
+```
+
+**Pass these parameters:**
+
+* `fee_payer_info`: Fee payer `AccountInfo`
+* `remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts` and passes it as `&accounts[1..]`.
+* `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA
+{% endtab %}
+{% endtabs %}
 
 <details>
 
@@ -400,7 +433,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 
 **Build the CPI instruction**:
 
-* `new_cpi()` initializes the CPI instruction with the `proof` to prove that an address does not exist yet in the specified address tree _- defined in the Instruction Data (Step 4)._
+`new_cpi()` initializes the CPI instruction with the `proof` to prove that an address does not exist yet in the specified address tree _- defined in the Instruction Data (Step 4)._
 * `with_light_account` adds the `LightAccount` with the initial compressed account data to the CPI instruction _- defined in Step 7_.
 * `with_new_addresses` adds the `address_seed` and metadata to the CPI instruction data - returned by `derive_address` _in Step 5_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts.`

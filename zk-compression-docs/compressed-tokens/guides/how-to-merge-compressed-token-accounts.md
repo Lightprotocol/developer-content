@@ -5,7 +5,6 @@ description: >-
   configurations.
 ---
 
-# How to Merge Compressed Token Accounts
 
 The `mergeTokenAccounts()` function consolidates multiple compressed accounts of the same mint into a single compressed account.
 

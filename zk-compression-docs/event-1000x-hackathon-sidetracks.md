@@ -5,7 +5,6 @@ description: >-
 icon: calendar-exclamation
 ---
 
-# Event: 1000x Hackathon Sidetracks
 
 <figure><img src=".gitbook/assets/1000x-cypherpunk-docs.png" alt=""><figcaption></figcaption></figure>
 

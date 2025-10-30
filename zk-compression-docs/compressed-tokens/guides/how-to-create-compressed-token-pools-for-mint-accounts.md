@@ -4,7 +4,6 @@ description: >-
   mints with `createTokenPool()`, troubleshooting and advanced configurations.
 ---
 
-# How to Create Compressed Token Pools for Mint Accounts
 
 The `createTokenPool()` function registers an existing SPL mint with the compressed token program and creates a token pool PDA. `createTokenPool()` requires only `fee_payer` and has no mint authority constraint.
 

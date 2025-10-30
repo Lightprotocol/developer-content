@@ -4,7 +4,6 @@ description: >-
   token-2022, and wallet support for compressed tokens.
 ---
 
-# Implementation Guides
 
 | Guide                                                                                   | Description                                                           |
 | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |

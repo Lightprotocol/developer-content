@@ -4,7 +4,6 @@ description: >-
   Lookup Tables.
 ---
 
-# Addresses & URLs
 
 ### RPC URLs
 

@@ -2,7 +2,6 @@
 description: Guide to close compressed accounts in Solana programs with full code examples.
 ---
 
-# How to Close Compressed Accounts
 
 ## Overview
 

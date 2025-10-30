@@ -4,7 +4,6 @@ description: >-
   DeepWiki, and AI Search guides.
 ---
 
-# **For Docs**
 
 * **Docs AI Search** - Search documentation with AI in the search bar.
 * **llms.txt** - Site index for LLM navigation: [https://zkcompression.com/llms.txt](https://zkcompression.com/llms.txt).

@@ -5,7 +5,6 @@ description: >-
 hidden: true
 ---
 
-# How to Combine Operations in One Transaction
 
 Combine multiple operations in a single transaction for create mint, mint tokens, and transfer.
 

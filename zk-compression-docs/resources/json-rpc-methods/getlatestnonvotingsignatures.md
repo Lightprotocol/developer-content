@@ -4,7 +4,6 @@ description: >-
   transactions. Overview with RPC method guide.
 ---
 
-# getLatestNonVotingSignatures
 
 {% openapi-operation spec="get-latest-non-voting-signatures" path="/" method="post" %}
 [OpenAPI get-latest-non-voting-signatures](https://raw.githubusercontent.com/helius-labs/photon/refs/heads/main/src/openapi/specs/getLatestNonVotingSignatures.yaml)

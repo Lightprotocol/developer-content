@@ -2,7 +2,6 @@
 description: Common cause and debug steps for ProofVerificationFailed (0x179B / 6043)
 ---
 
-# Debug 0x179b / 6043 / ProofVerificationFailed
 
 ### Description
 

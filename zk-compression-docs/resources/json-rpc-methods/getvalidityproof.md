@@ -5,7 +5,6 @@ description: >-
   guide with use cases, tips and examples.
 ---
 
-# getValidityProof
 
 The`getValidityProof` RPC method generates zero-knowledge proofs to verify that the given accounts are valid or the new addresses can be created. This proof is required for any operation on compressed accounts (transfer, approve, decompress, etc.) for on-chain verification of compressed state.
 

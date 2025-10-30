@@ -2,7 +2,6 @@
 description: Guide to reinitialize compressed accounts in Solana programs with full code examples.
 ---
 
-# How to Reinitialize Compressed Accounts
 
 ## Overview
 

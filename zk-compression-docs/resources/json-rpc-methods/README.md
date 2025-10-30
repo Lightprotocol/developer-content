@@ -4,7 +4,6 @@ description: >-
   practices, and error codes.
 ---
 
-# JSON RPC methods
 
 {% hint style="info" %}
 [Helius Labs](https://github.com/helius-labs) maintains the canonical RPC API and [Photon indexer implementation](https://github.com/helius-labs/photon).

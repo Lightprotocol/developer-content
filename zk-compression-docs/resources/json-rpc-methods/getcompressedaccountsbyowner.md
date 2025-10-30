@@ -4,7 +4,6 @@ description: >-
   with use cases, tips and examples.
 ---
 
-# getCompressedAccountsByOwner
 
 The`getCompressedAccountsByOwner` RPC method returns all compressed accounts owned by a specific address, with support for filtering, pagination, and data slicing.
 

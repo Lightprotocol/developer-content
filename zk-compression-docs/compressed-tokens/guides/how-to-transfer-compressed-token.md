@@ -4,7 +4,6 @@ description: >-
   accounts with `transfer()`, troubleshooting and advanced configurations.
 ---
 
-# How to Transfer Compressed Token
 
 The `transfer()` function moves compressed tokens between accounts. Unlike regular SPL transfers that update existing account balances, compressed transfers consume input accounts from the sender and create new output accounts for sender and recipient with updated balances.
 

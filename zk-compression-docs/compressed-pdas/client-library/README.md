@@ -5,7 +5,6 @@ description: >-
 hidden: true
 ---
 
-# Client Library
 
 {% columns %}
 {% column %}

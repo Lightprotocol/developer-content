@@ -5,7 +5,6 @@ description: >-
   examples.
 ---
 
-# getTransactionWithCompressionInfo
 
 The`getTransactionWithCompressionInfo` RPC method returns transaction data along with compression information showing which compressed accounts were opened (created) and closed (consumed) during the transaction. This method helps with transaction analysis, account lifecycle tracking, and debugging of compression operations.
 

@@ -2,7 +2,6 @@
 description: Guide to burn compressed accounts in Solana programs with full code examples.
 ---
 
-# How to Burn Compressed Accounts
 
 ## Overview
 

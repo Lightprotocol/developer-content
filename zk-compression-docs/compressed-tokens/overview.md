@@ -4,8 +4,6 @@ description: >-
   cookbook.
 ---
 
-# Overview
-
 Compressed tokens provide full SPL token functionality without per-account rent cost.
 
 <table><thead><tr><th valign="middle">Creation</th><th width="200" align="center">Regular SPL Token</th><th width="200" align="center">Compressed Token</th><th align="center">Cost Reduction</th></tr></thead><tbody><tr><td valign="middle">100 Token Accounts</td><td align="center">~ 0.2 SOL</td><td align="center"><strong>~ 0.00004 SOL</strong></td><td align="center"><em><strong>5000x</strong></em></td></tr></tbody></table>

@@ -4,7 +4,6 @@ description: >-
   accounts.
 ---
 
-# Lifecycle of a Transaction
 
 {% hint style="info" %}
 This guide assumes you are familiar with transactions on Solana. If you aren't, we recommend to read the [Solana documentation on transactions](https://solana.com/docs/core/transactions).

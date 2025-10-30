@@ -4,7 +4,6 @@ description: >-
   indexers and Prover.
 ---
 
-# Node Operators
 
 {% hint style="success" %}
 Developers don't need to run any nodes to use ZK Compression.

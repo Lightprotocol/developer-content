@@ -5,7 +5,6 @@ description: >-
   transfers.
 ---
 
-# How to compress and decompress SPL Tokens
 
 The `compress()` and `decompress()` functions convert SPL tokens between compressed and regular format.
 

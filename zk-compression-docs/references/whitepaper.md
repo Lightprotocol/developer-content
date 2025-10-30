@@ -2,7 +2,6 @@
 description: Complete whitepaper introducing ZK Compression.
 ---
 
-# Whitepaper
 
 {% hint style="info" %}
 Ask anything via <a href="https://deepwiki.com/Lightprotocol/light-protocol"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>

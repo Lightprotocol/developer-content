@@ -4,7 +4,6 @@ description: >-
   `approve()` and `revoke()`, troubleshooting and advanced configurations.
 ---
 
-# How to approve and revoke delegate authority
 
 The `approve()` and `revoke()` functions grant and remove delegate spending authority for compressed tokens. Only the token owner can perform these operations.
 

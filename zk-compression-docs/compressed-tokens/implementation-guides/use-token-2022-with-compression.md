@@ -4,7 +4,6 @@ description: >-
   with ZK Compression.
 ---
 
-# Use Token 2022 with Compression
 
 ### What you will do
 

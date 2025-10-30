@@ -4,7 +4,6 @@ description: >-
   with use cases, tips and examples.
 ---
 
-# getCompressedAccount
 
 The `getCompressedAccount` RPC method retrieves information about a specific compressed account using either its address or hash. Information includes the compressed account state, balance, and metadata.
 

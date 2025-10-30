@@ -4,7 +4,6 @@ description: >-
   interact with compressed accounts and compressed tokens on Solana.
 ---
 
-# CLI Installation
 
 {% hint style="info" %}
 Make sure you have a wallet set up at `~/.config/solana/id.json`. [Get one here](https://docs.solanalabs.com/cli/wallets/file-system), if you don't have one.\

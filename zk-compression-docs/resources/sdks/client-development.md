@@ -2,7 +2,6 @@
 description: Overview to Client side development. Quick access to TypeScript and Rust SDKs.
 ---
 
-# Client Development
 
 Build client applications that interact with ZK Compression across web, Node.js, and native environments using our TypeScript and Rust SDKs.
 

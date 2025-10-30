@@ -4,7 +4,6 @@ description: >-
   account with the given hash. Overview with RPC method guide.
 ---
 
-# getCompressionSignaturesForAccount
 
 {% openapi-operation spec="get-compression-signatures-for-account" path="/getCompressionSignaturesForAccount" method="post" %}
 [OpenAPI get-compression-signatures-for-account](https://raw.githubusercontent.com/helius-labs/photon/refs/heads/main/src/openapi/specs/getCompressionSignaturesForAccount.yaml)

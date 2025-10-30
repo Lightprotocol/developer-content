@@ -5,7 +5,6 @@ description: >-
   for account migration and to reclaim rent afterwards.
 ---
 
-# How to Compress complete SPL Token Accounts
 
 The `compressSplTokenAccount` function compresses the balance of an SPL token account, with an optional `remainingAmount` parameter to leave tokens in the original account.
 

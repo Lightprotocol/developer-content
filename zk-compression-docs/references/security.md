@@ -4,7 +4,6 @@ description: >-
   and formal verification of circuits.
 ---
 
-# Security
 
 ### Bug Bounty
 
