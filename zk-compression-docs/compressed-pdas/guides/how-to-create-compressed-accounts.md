@@ -356,6 +356,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
     .with_new_addresses(&[new_address_params])
     .invoke(light_cpi_accounts)?;
 ```
+{% endcode %}
 
 **Set up `CpiAccounts::new()`:**
 
@@ -368,7 +369,6 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
   The client builds this with `PackedAccounts` and passes it to the instruction.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
 
-{% endcode %}
 {% endtab %}
 
 {% tab title="Native Rust" %}
@@ -392,6 +392,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
     .invoke(light_cpi_accounts)?;
 ```
 {% endcode %}
+
 
 **Set up `CpiAccounts::new()`:**
 
