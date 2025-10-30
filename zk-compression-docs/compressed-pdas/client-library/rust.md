@@ -20,7 +20,7 @@ The Rust Client SDK provides two test environments:
 Find full code examples [at the end for Anchor and native Rust](rust.md#full-code-example).
 {% endhint %}
 
-## Implementation Guide
+# Implementation Guide
 
 {% hint style="info" %}
 Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol/3.2-rust-client-sdk).
@@ -52,7 +52,7 @@ This guide covers the components of a Rust client. Here is the complete flow:
 
 {% stepper %}
 {% step %}
-**Dependencies**
+## Dependencies
 
 {% tabs %}
 {% tab title="LightClient" %}
@@ -88,7 +88,7 @@ The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to An
 {% endstep %}
 
 {% step %}
-**Environment**
+## Environment
 
 {% tabs %}
 {% tab title="LightClient" %}
@@ -171,7 +171,7 @@ let payer = rpc.get_payer().insecure_clone();
 {% endstep %}
 
 {% step %}
-**Tree Configuration**
+## Tree Configuration
 
 Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
@@ -184,37 +184,37 @@ Find the [addresses for Merkle trees here](https://www.zkcompression.com/resourc
 {% endhint %}
 
 {% tabs %}
-{% tab title="v2 (on devnet)" %}
-{% code overflow="wrap" %}
-```rust
-let address_tree_info = rpc.get_address_tree_v2();
-let output_state_tree_info = rpc.get_random_state_tree_info_v2().unwrap();
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="v1" %}
+{% tab title="V1 Trees" %}
 {% code overflow="wrap" %}
 ```rust
 let address_tree_info = rpc.get_address_tree_v1();
 let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 ```
 {% endcode %}
+* V1: `get_address_tree_v1()` returns `TreeInfo` with the public key and other metadata for the address tree.
+{% endtab %}
+
+{% tab title="V2 Trees" %}
+{% code overflow="wrap" %}
+```rust
+let address_tree_info = rpc.get_address_tree_v2();
+let output_state_tree_info = rpc.get_random_state_tree_info_v2().unwrap();
+```
+{% endcode %}
+* V2: `get_address_tree_v2()` returns `TreeInfo` with the public key and other metadata for the address tree.
 {% endtab %}
 {% endtabs %}
 
-Fetch metadata of trees with:
+**Address Trees:**
+For addresses, `TreeInfo` is used
+* to derive addresses and
+* for `get_validity_proof()` to prove the address does not exist yet.
 
-* `get_address_tree_v1()` / `get_address_tree_v2()` to return the `TreeInfo` struct with the public key and other metadata for the address tree.
-  * Used to derive addresses with `derive_address()` and
-  * for `get_validity_proof()` to prove the address does not exist yet.
-
-{% hint style="info" %}
-Only needed to create new addresses. Other interactions with compressed accounts use the existing address.
-{% endhint %}
-
-* `get_random_state_tree_info()` / `get_random_state_tree_info_v1()` returns `TreeInfo[]` with pubkeys and metadata for a random state tree to store the compressed account hash.
-  * Use this pubkey of the state tree for all outputs of a transaction.
+**State Trees:**
+* `get_random_state_tree_info()` / `get_random_state_tree_info_v2()` returns `TreeInfo` with pubkeys and metadata for a random state tree to store the compressed account hash.
+  * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
+  * Account hashes can move to different state trees after each state transition.
+  * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
 
 {% hint style="info" %}
 `TreeInfo` contains pubkeys and other metadata of a Merkle tree:
@@ -223,11 +223,11 @@ Only needed to create new addresses. Other interactions with compressed accounts
 * `queue`: Queue account pubkey
   * Buffers updates of compressed accounts before they are added to the Merkle tree.
   * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
-* `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion.
-* `cpi_context` (currently on devnet): Optional CPI context account for batch operations across multiple programs (may be null)
+* `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
+* `cpi_context` (currently on devnet): Optional CPI context account for batched operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
-  * First program caches its signer checks, second program reads them and combines instruction data.
-  * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts.
+  * First program caches its signer checks, second program reads them and combines instruction data
+  * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
 * `next_tree_info`: The tree to use for the next operation when the current tree is full (may be null)
   * When set, use this tree as output tree.
   * The protocol creates new trees, once existing trees fill up.
@@ -235,7 +235,7 @@ Only needed to create new addresses. Other interactions with compressed accounts
 {% endstep %}
 
 {% step %}
-**Derive Address**
+## Derive Address
 
 Derive a persistent address as a unique identifier for your compressed account.
 
@@ -284,7 +284,7 @@ Use the same `address_tree_info.tree` for both `derive_address()` and all subseq
 {% endstep %}
 
 {% step %}
-**Validity Proof**
+## Validity Proof
 
 Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
@@ -397,6 +397,10 @@ The RPC returns `ValidityProofWithContext` with
 
 **Supported Combinations and Maximums**
 
+{% hint style="info" %}
+These maximums are determined by the available circuit verifying keys. Different proof sizes require different circuits optimized for that specific combination. View the [source code here](https://github.com/Lightprotocol/light-protocol/tree/871215642b4b5b69d2bcd7eca22542346d0e2cfa/program-libs/verifier/src/verifying_keys).
+{% endhint %}
+
 The specific combinations and maximums depend on the circuit version (v1 or v2) and the proof type.
 * Combine multiple hashes **or** multiple addresses in a single proof, or
 * multiple hashes **and** addresses in a single combined proof.
@@ -404,37 +408,29 @@ The specific combinations and maximums depend on the circuit version (v1 or v2) 
 {% tabs %}
 {% tab title="V1 Circuits" %}
 
-| **Hashes-only** | | | | | |
-|---------|:---:|:---:|:---:|:---:|:---:|
-| | 1 | 2 | 3 | 4 | 8 |
-
-| **Addresses-only** | | | | | |
-|---------|:---:|:---:|:---:|:---:|:---:|
-| | 1 | 2 | 3 | 4 | 8 |
+V1 circuits can prove in a single proof
+* 1, 2, 3, 4, or 8 hashes,
+* 1, 2, 3, 4, or 8 addresses, or
+* multiple hashes or addresses in any combination of the below.
 
 | **Single Combined Proofs** | Any combination of |
 |---------|:---:|
 | Hashes | 1, 2, 3, 4, 8 |
-| Addresses | 1, 2, 4, 8 | 
+| Addresses | 1, 2, 4, 8 |
 
 {% endtab %}
 
 {% tab title="V2 Circuits" %}
 
-V2 circuits allow any combination of the below.
-
-| **Hashes-only** | |
-|---------|:---:|
-| | 1 to 20 |
-
-| **Addresses-only** | |
-|---------|:---:|
-| | 1 to 32 |
+V2 circuits can prove in a single proof
+* 1 to 20 hashes,
+* 1 to 32 addresses, or
+* multiple hashes or addresses in any combination of the below.
 
 | **Single Combined Proofs** | Any combination of |
 |---------|:---:|
 | Hashes | 1 to 4 |
-| Addresses | 1 to 4 | 
+| Addresses | 1 to 4 |
 
 {% endtab %}
 {% endtabs %}
@@ -444,7 +440,7 @@ V2 circuits allow any combination of the below.
 {% endstep %}
 
 {% step %}
-**Pack Accounts**
+## Pack Accounts
 
 To optimize instruction data we pack accounts into an array:
 * Every packed account is assigned to an u8 index.
@@ -525,7 +521,7 @@ accounts.add_system_accounts(config)?;
 
 <summary><em>System Accounts List</em></summary>
 
-<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td><td>Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Access control to the Account Compression Program</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger. Only used in v1.<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client the account compression program do not directly</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td><td>Solana System Program to transfer lamports</td></tr></tbody></table>
+<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td><td>Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Access control to the Account Compression Program</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger. Only used in v1.<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client and the account compression program do not interact directly.</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td><td>Solana System Program to transfer lamports</td></tr></tbody></table>
 
 </details>
 
@@ -658,7 +654,7 @@ The accounts are referenced in instruction data by u8 indices in Packed structs.
 {% endstep %}
 
 {% step %}
-**Instruction Data**
+## Instruction Data
 
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
@@ -766,11 +762,77 @@ Include the Merkle tree metadata packed in Step 6:
 * Pass the complete current account data. The program reconstructs the existing account hash from this data to verify it matches the hash in the state tree.
 * In this example, we pass `current_message` from the fetched account before closing.
 {% endtab %}
+
+{% tab title="Reinit" %}
+{% code overflow="wrap" %}
+```rust
+let instruction_data = anchor_program_reinit::instruction::Reinit {
+    proof: rpc_result.proof,
+    account_meta: CompressedAccountMeta {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+        output_state_tree_index: packed_tree_accounts.output_tree_index,
+    },
+};
+```
+{% endcode %}
+
+1. **Validity Proof**
+
+* Add the `ValidityProof` you fetched with `getValidityProof()` from your RPC provider to prove the account hash exists in the state tree.
+
+2. **Specify input hash and output state tree**
+
+Include the Merkle tree metadata packed in Step 6:
+
+* `CompressedAccountMeta` points to the input hash and specifies the output state tree:
+  * `tree_info: PackedStateTreeInfo` points to the existing account hash that will be nullified by the Light System Program
+  * `address` specifies the account's derived address
+  * `output_state_tree_index` points to the state tree that will store the reinitialized account hash
+
+3. **Account data initialization**
+
+* Reinitialize creates an account with default-initialized values (e.g., `Pubkey` as all zeros, numbers as `0`, strings as empty).
+* To set custom values, update the account in the same or a separate transaction.
+{% endtab %}
+
+{% tab title="Burn" %}
+{% code overflow="wrap" %}
+```rust
+let instruction_data = anchor_program_burn::instruction::Burn {
+    proof: rpc_result.proof,
+    account_meta: CompressedAccountMetaBurn {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+    },
+    current_message: current_account.message,
+};
+```
+{% endcode %}
+
+1. **Validity Proof**
+
+* Add the `ValidityProof` you fetched with `getValidityProof()` from your RPC provider to prove the account hash exists in the state tree.
+
+2. **Specify input hash**
+
+Include the Merkle tree metadata packed in Step 6:
+
+* `CompressedAccountMetaBurn` points to the input hash:
+  * `tree_info: PackedStateTreeInfo` points to the existing account hash that will be nullified by the Light System Program
+  * `address` specifies the account's derived address
+  * No `output_state_tree_index`, since burn does not create output state.
+
+3. **Pass current account data**
+
+* Pass the complete current account data. The program reconstructs the existing account hash from this data to verify it matches the hash in the state tree.
+* In this example, we pass `current_message` from the fetched account before burning.
+{% endtab %}
 {% endtabs %}
 {% endstep %}
 
 {% step %}
-**Instruction**
+## Instruction
 
 Build a standard Solana `Instruction` struct with your `program_id`, `accounts`, and `data` from Step 7. Pass the `remaining_accounts` array you built in Step 6.
 
@@ -867,7 +929,7 @@ All accounts are in the array when not using Anchor.
 {% endstep %}
 
 {% step %}
-**Send Transaction**
+## Send Transaction
 
 {% code overflow="wrap" %}
 ```rust
