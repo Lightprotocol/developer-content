@@ -10,15 +10,17 @@ description: Program example repository for compressed accounts with tests.
 
 ## Basic Operations
 
-- **[basic-operations/anchor](./basic-operations/anchor/)** - Anchor program with Rust and TypeScript tests
-- **[basic-operations/native-rust](./basic-operations/native-rust/)** - Native Solana program with light-sdk and Rust tests.
+* [**basic-operations/anchor**](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/anchor) - Anchor program with Rust and TypeScript tests
+* [**basic-operations/native-rust**](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/native-rust) - Native Solana program with `light-sdk` and Rust tests.
 
+{% hint style="info" %}
 Basic Operations include:
 - **create** - Initialize a new compressed account.
 - **update** - Modify data in an existing compressed account.
 - **close** - Clear account data and preserve its address.
 - **reinit** - Reinitialize a closed account with the same address.
 - **burn** - Permanently delete a compressed account.
+{% endhint %}
 
 ## Counter Program
 

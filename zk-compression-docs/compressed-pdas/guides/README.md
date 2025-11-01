@@ -9,7 +9,7 @@ description: >-
 
 | Guide                                                                                 | Description                                                                  |
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [How to Create Compressed Accounts](how-to-create-compressed-accounts.md)             | Create compressed accounts with addresses                                    |
+| [How to Create Compressed Accounts](how-to-create-compressed-accounts.md)             | Create compressed accounts with address                                    |
 | [How to Update Compressed Accounts](how-to-update-compressed-accounts.md)             | Update compressed accounts                                                   |
 | [How to Close Compressed Accounts](how-to-close-compressed-accounts.md)               | Close compressed accounts, retain the address                                |
 | [How to Reinitialize Compressed Accounts](how-to-reinitialize-compressed-accounts.md) | Reinitialize closed compressed accounts with the same address and new values |
