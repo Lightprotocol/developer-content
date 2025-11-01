@@ -6,7 +6,7 @@ description: >-
 
 # How to Create Compressed Accounts
 
-## Overview
+# Overview
 
 Compressed accounts and addresses are created via CPI to the Light System Program.
 
@@ -424,7 +424,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 {% endstep %}
 {% endstepper %}
 
-## Full Code Example
+# Full Code Example
 
 The example programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first, or simply run:
 

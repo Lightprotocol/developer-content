@@ -941,7 +941,7 @@ rpc.create_and_send_transaction(&[instruction],
 {% endstep %}
 {% endstepper %}
 
-## Full Code Examples
+# Full Code Examples
 
 Full Rust test examples using `light-program-test`.
 

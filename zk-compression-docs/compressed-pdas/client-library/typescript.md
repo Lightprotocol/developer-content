@@ -950,7 +950,7 @@ const signature = await sendAndConfirmTx(rpc, signedTx);
 {% endstep %}
 {% endstepper %}
 
-## Full Code Examples
+# Full Code Examples
 
 Full TypeScript test examples using local test validator with `createRpc()`.
 

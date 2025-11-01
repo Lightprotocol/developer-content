@@ -1,12 +1,9 @@
 ---
-description: >-
-  Guide to reinitialize compressed accounts in Solana programs with full code
-  examples.
+description: Guide to reinitialize compressed accounts in Solana programs with full code examples.
 ---
 
-# How to Reinitialize Compressed Accounts
 
-## Overview
+# Overview
 
 Compressed accounts are reinitialized via CPI to the Light System Program.
 
@@ -16,10 +13,10 @@ An empty compressed account can be reinitialized
 * to create a new account hash at the same address with new values.
 
 {% hint style="success" %}
-Find [full code examples of a counter program at the end](how-to-reinitialize-compressed-accounts.md#full-code-example) for Anchor and native Rust.
+Find [full code examples at the end](how-to-reinitialize-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-## Implementation Guide
+# Implementation Guide
 
 This guide will cover the components of a Solana program that reinitializes compressed accounts.\
 Here is the complete flow to reinitialize compressed accounts:
@@ -28,7 +25,7 @@ Here is the complete flow to reinitialize compressed accounts:
 
 {% stepper %}
 {% step %}
-### Program Setup
+## Program Setup
 
 <details>
 
@@ -80,9 +77,40 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 Define your compressed account struct.
 
+{% tabs %}
+{% tab title="Anchor" %}
 ```rust
-#[event] // declared as event so that it is part of the idl.#[derive(    Clone,    Debug,    Default,    LightDiscriminator)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}#[derive(    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}
+#[event] // declared as event so that it is part of the idl.
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    LightDiscriminator
+)]
+pub struct MyCompressedAccount {
+    pub owner: Pubkey,
+    pub message: String,
+}
 ```
+{% endtab %}
+
+{% tab title="Native Rust" %}
+```rust
+#[derive(
+    Debug, 
+    Default, 
+    Clone, 
+    BorshSerialize, 
+    BorshDeserialize, 
+    LightDiscriminator,
+)]
+pub struct MyCompressedAccount {
+    pub owner: Pubkey,
+    pub message: String,
+}
+```
+{% endtab %}
+{% endtabs %}
 
 You derive
 
@@ -98,12 +126,13 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-### Instruction Data
+## Instruction Data
 
 Define the instruction data with the following parameters:
 
 {% tabs %}
 {% tab title="Anchor" %}
+
 {% code overflow="wrap" %}
 ```rust
 pub fn reinit_account<'info>(
@@ -116,6 +145,7 @@ pub fn reinit_account<'info>(
 {% endtab %}
 
 {% tab title="Native Rust" %}
+
 {% code overflow="wrap" %}
 ```rust
 pub struct ReinitInstructionData {
@@ -145,7 +175,7 @@ Reinitialization does not require `current_value` parameters. `new_empty()` auto
 {% endstep %}
 
 {% step %}
-### Reinitialize Closed Account
+## Reinitialize Closed Account
 
 Reinitialize the closed account with `LightAccount::new_empty()`.
 
@@ -203,7 +233,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+## Light System Program CPI
 
 Invoke the Light System Program to reinitialize the compressed account.
 
@@ -238,7 +268,8 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Pass these parameters:**
 
 * `ctx.accounts.signer.as_ref()`: the transaction signer
-* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`. The client builds this with `PackedAccounts` and passes it to the instruction.
+* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts` and passes it to the instruction.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
 {% endtab %}
 
@@ -267,9 +298,11 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 **Pass these parameters:**
 
 * `signer`: account that signs and pays for the transaction
-* `remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`. The client builds this with `PackedAccounts`.
-  * `split_first()` extracts the fee payer from the accounts array to separate it from the Light System Program accounts needed for the CPI.
+* `remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts`.
+    * `split_first()` extracts the fee payer from the accounts array to separate it from the Light System Program accounts needed for the CPI.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
+
 {% endtab %}
 {% endtabs %}
 
@@ -285,11 +318,11 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 
 * `new_cpi()` initializes the CPI instruction with the `proof` to prove the closed account hash exists in the state tree _- defined in the Instruction Data (Step 2)._
 * `with_light_account` adds the `LightAccount` configured with the closed account hash as input and provided values as output _- defined in Step 3_.
-* `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts` to reinitialize the compressed account.
+* `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts`.
 {% endstep %}
 {% endstepper %}
 
-## Full Code Example
+# Full Code Example
 
 The counter programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
 
@@ -310,7 +343,7 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/anchor/reinit).
 {% endhint %}
 
-{% code overflow="wrap" expandable="true" %}
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
@@ -461,7 +494,7 @@ pub struct MyCompressedAccount {
 Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/native/programs/reinit).
 {% endhint %}
 
-{% code overflow="wrap" expandable="true" %}
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 
@@ -647,7 +680,7 @@ fn reinit(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), Light
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Build a client for your program or learn how to burn compressed accounts.
 

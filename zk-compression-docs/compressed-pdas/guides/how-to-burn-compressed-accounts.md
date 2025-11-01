@@ -2,9 +2,8 @@
 description: Guide to burn compressed accounts in Solana programs with full code examples.
 ---
 
-# How to Burn Compressed Accounts
 
-## Overview
+# Overview
 
 Compressed accounts are permanently burned via CPI to the Light System Program.
 
@@ -18,7 +17,7 @@ Burning a compressed account
 Find [full code examples at the end](how-to-burn-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-## Implementation Guide
+# Implementation Guide
 
 This guide will cover the components of a Solana program that burns compressed accounts.\
 Here is the complete flow to burn compressed accounts:
@@ -27,7 +26,7 @@ Here is the complete flow to burn compressed accounts:
 
 {% stepper %}
 {% step %}
-### Program Setup
+## Program Setup
 
 <details>
 
@@ -79,7 +78,40 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 Define your compressed account struct.
 
-\#\[event] // declared as event so that it is part of the idl.#\[derive(    Clone,    Debug,    Default,    LightDiscriminator)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}#\[derive(    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}
+{% tabs %}
+{% tab title="Anchor" %}
+```rust
+#[event] // declared as event so that it is part of the idl.
+#[derive(
+    Clone,
+    Debug,
+    Default,
+    LightDiscriminator
+)]
+pub struct MyCompressedAccount {
+    pub owner: Pubkey,
+    pub message: String,
+}
+```
+{% endtab %}
+
+{% tab title="Native Rust" %}
+```rust
+#[derive(
+    Debug, 
+    Default, 
+    Clone, 
+    BorshSerialize, 
+    BorshDeserialize, 
+    LightDiscriminator,
+)]
+pub struct MyCompressedAccount {
+    pub owner: Pubkey,
+    pub message: String,
+}
+```
+{% endtab %}
+{% endtabs %}
 
 You derive
 
@@ -95,12 +127,13 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-### Instruction Data
+## Instruction Data
 
 Define the instruction data with the following parameters:
 
 {% tabs %}
 {% tab title="Anchor" %}
+
 {% code overflow="wrap" %}
 ```rust
 pub fn burn_account<'info>(
@@ -114,6 +147,7 @@ pub fn burn_account<'info>(
 {% endtab %}
 
 {% tab title="Native Rust" %}
+
 {% code overflow="wrap" %}
 ```rust
 pub struct BurnInstructionData {
@@ -148,7 +182,7 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 {% endstep %}
 
 {% step %}
-### Burn Compressed Account
+## Burn Compressed Account
 
 Burn the compressed account permanently with `LightAccount::new_burn()`. No account can be reinitialized at this address in the future.
 
@@ -208,7 +242,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+## Light System Program CPI
 
 The Light System Program CPI burns the compressed account permanently.
 
@@ -243,8 +277,10 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Pass these parameters:**
 
 * `ctx.accounts.signer.as_ref()`: the transaction signer
-* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`. The client builds this with `PackedAccounts` and passes it to the instruction.
+* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts` and passes it to the instruction.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
+
 {% endtab %}
 
 {% tab title="Native Rust" %}
@@ -272,9 +308,11 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 **Pass these parameters:**
 
 * `signer`: account that signs and pays for the transaction
-* `remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`. The client builds this with `PackedAccounts`.
-  * `split_first()` extracts the fee payer from the accounts array to separate it from the Light System Program accounts needed for the CPI.
+* `remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
+  The client builds this with `PackedAccounts`.
+    * `split_first()` extracts the fee payer from the accounts array to separate it from the Light System Program accounts needed for the CPI.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
+
 {% endtab %}
 {% endtabs %}
 
@@ -294,7 +332,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 {% endstep %}
 {% endstepper %}
 
-## Full Code Example
+# Full Code Example
 
 The example programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
 
@@ -315,7 +353,7 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/anchor/burn).
 {% endhint %}
 
-{% code overflow="wrap" expandable="true" %}
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
@@ -440,7 +478,7 @@ pub struct MyCompressedAccount {
 Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/native/programs/burn).
 {% endhint %}
 
-{% code overflow="wrap" expandable="true" %}
+{% code overflow="wrap" %}
 ```rust
 #![allow(unexpected_cfgs)]
 
@@ -589,7 +627,7 @@ fn burn(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightSd
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Build a client for your program or get an overview on all compressed account operations.
 
