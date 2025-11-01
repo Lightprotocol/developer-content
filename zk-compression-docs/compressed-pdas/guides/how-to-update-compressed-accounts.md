@@ -1,7 +1,10 @@
 ---
-description: Guide to update compressed accounts in Solana programs with full code examples.
+description: >-
+  Guide to update compressed accounts in Solana programs with full code
+  examples.
 ---
 
+# How to Update Compressed Accounts
 
 ## Overview
 
@@ -17,7 +20,7 @@ The update of a compressed account follows a UTXO pattern, unlike regular Solana
 Find [full code examples at the end](how-to-update-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-# Implementation Guide
+## Implementation Guide
 
 This guide will cover the components of a Solana program that updates compressed accounts.\
 Here is the complete flow:
@@ -26,7 +29,7 @@ Here is the complete flow:
 
 {% stepper %}
 {% step %}
-## Program Setup
+### Program Setup
 
 <details>
 
@@ -78,39 +81,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 Define your compressed account struct.
 
-{% tabs %}
-{% tab title="Anchor" %}
-{% code overflow="wrap" %}
-```rust
-#[event] // declared as event so that it is part of the idl.
-#[derive(
-    Clone,
-    Debug,
-    Default,
-    LightDiscriminator
-)]
-pub struct MyCompressedAccount {
-    pub owner: Pubkey,
-    pub message: String,
-}
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Native Rust" %}
-{% code overflow="wrap" %}
-```rust
-#[derive(
-    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,
-)]
-pub struct MyCompressedAccount {
-    pub owner: Pubkey,
-    pub message: String,
-}
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
+\#\[event] // declared as event so that it is part of the idl.#\[derive(    Clone,    Debug,    Default,    LightDiscriminator)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}#\[derive(    Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}
 
 You derive
 
@@ -126,7 +97,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-## Instruction Data
+### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -148,7 +119,6 @@ pub fn update_account<'info>(
 {% endtab %}
 
 {% tab title="Native Rust" %}
-
 {% code overflow="wrap" %}
 ```rust
 pub struct UpdateInstructionData {
@@ -186,7 +156,7 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 {% endstep %}
 
 {% step %}
-## Update Compressed Account
+### Update Compressed Account
 
 Load the compressed account and update it with `LightAccount::new_mut()`.
 
@@ -249,7 +219,7 @@ my_compressed_account.account.message = instruction_data.new_message;
 {% endstep %}
 
 {% step %}
-## Light System Program CPI
+### Light System Program CPI
 
 Invoke the Light System Program to update the compressed account.
 
@@ -284,8 +254,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Pass these parameters:**
 
 * `ctx.accounts.signer.as_ref()`: the transaction signer
-* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
-  The client builds this with `PackedAccounts` and passes it to the instruction.
+* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`. The client builds this with `PackedAccounts` and passes it to the instruction.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
 {% endtab %}
 
@@ -313,8 +282,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 **Pass these parameters:**
 
 * `signer`: account that signs and pays for the transaction
-* `&accounts[1..]`: Slice with `[system_accounts, ...packed_tree_accounts]`.
-  The client builds this with `PackedAccounts`.
+* `&accounts[1..]`: Slice with `[system_accounts, ...packed_tree_accounts]`. The client builds this with `PackedAccounts`.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
 {% endtab %}
 {% endtabs %}
@@ -326,7 +294,6 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 <table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-2">​Light System Program​</a></td><td>Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Access control to the Account Compression Program</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-3">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger. Only used in v1.<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-5">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client and the account compression program do not interact directly.</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-6">​System Program​</a></td><td>Solana System Program to transfer lamports</td></tr></tbody></table>
 
 </details>
-
 
 **Build the CPI instruction**:
 
@@ -357,7 +324,7 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/anchor/programs/counter/src/lib.rs#L71).
 {% endhint %}
 
-{% code overflow="wrap" %}
+{% code overflow="wrap" expandable="true" %}
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
@@ -485,7 +452,7 @@ pub struct MyCompressedAccount {
 Find the source code [here](https://github.com/Lightprotocol/program-examples/blob/3a9ff76d0b8b9778be0e14aaee35e041cabfb8b2/counter/native/src/lib.rs#L197).
 {% endhint %}
 
-{% code overflow="wrap" %}
+{% code overflow="wrap" expandable="true" %}
 ```rust
 #![allow(unexpected_cfgs)]
 
@@ -666,7 +633,7 @@ pub fn update(
 {% endtab %}
 {% endtabs %}
 
-# Next Steps
+## Next Steps
 
 Build a client for your program or learn how to close compressed accounts.
 

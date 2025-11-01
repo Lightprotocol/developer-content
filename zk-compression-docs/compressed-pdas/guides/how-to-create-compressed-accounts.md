@@ -1,7 +1,10 @@
 ---
-description: Guide to create compressed accounts in Solana programs with full code examples.
+description: >-
+  Guide to create compressed accounts in Solana programs with full code
+  examples.
 ---
 
+# How to Create Compressed Accounts
 
 ## Overview
 
@@ -17,7 +20,7 @@ Compressed accounts and addresses are created via CPI to the Light System Progra
 Find [full code examples at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-# Implementation Guide
+## Implementation Guide
 
 This guide will cover the components of a Solana program that creates compressed accounts.\
 Here is the complete flow:
@@ -26,7 +29,7 @@ Here is the complete flow:
 
 {% stepper %}
 {% step %}
-## Dependencies
+### Dependencies
 
 Add dependencies to your program.
 
@@ -58,7 +61,7 @@ solana-program = "2.2"
 {% endstep %}
 
 {% step %}
-## Constants
+### Constants
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
@@ -92,7 +95,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 {% endstep %}
 
 {% step %}
-## Compressed Account
+### Compressed Account
 
 {% tabs %}
 {% tab title="Anchor" %}
@@ -145,7 +148,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `m
 {% endstep %}
 
 {% step %}
-## Instruction Data
+### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -203,7 +206,7 @@ Clients pack accounts into the accounts array to reduce transaction size. Packed
 {% endstep %}
 
 {% step %}
-## Derive Address
+### Derive Address
 
 Derive the address as a persistent unique identifier for the compressed account.
 
@@ -240,8 +243,8 @@ let (address, address_seed) = derive_address(
 
 * `&custom_seeds`: Arbitrary byte slices that uniquely identify the account. This example uses `b"message"` and the signer's pubkey.
 * `&address_tree_pubkey`: The pubkey of the address tree where the address will be created.
-    * Retrieved by calling `get_tree_pubkey()` on `address_tree_info`, which unpacks the index from the accounts array.
-    * This parameter ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
+  * Retrieved by calling `get_tree_pubkey()` on `address_tree_info`, which unpacks the index from the accounts array.
+  * This parameter ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
 * `&program_id`: Your program's ID.
 
 **The SDK returns:**
@@ -251,7 +254,7 @@ let (address, address_seed) = derive_address(
 {% endstep %}
 
 {% step %}
-## Address Tree Check (optional)
+### Address Tree Check (optional)
 
 Ensure global uniqueness of an address by verifying that the address tree pubkey matches the program's tree constant.
 
@@ -272,7 +275,7 @@ if address_tree != light_sdk::constants::ADDRESS_TREE_V2 {
 {% endstep %}
 
 {% step %}
-## Initialize Compressed Account
+### Initialize Compressed Account
 
 Initialize the compressed account struct with `LightAccount::new_init()`.
 
@@ -326,7 +329,7 @@ my_compressed_account.message = instruction_data.message;
 {% endstep %}
 
 {% step %}
-## Light System Program CPI
+### Light System Program CPI
 
 Invoke the Light System Program to create the compressed account and its address.
 
@@ -365,10 +368,8 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, proof)
 **Pass these parameters:**
 
 * `ctx.accounts.signer.as_ref()`: the transaction signer
-* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`.
-  The client builds this with `PackedAccounts` and passes it to the instruction.
+* `ctx.remaining_accounts`: Slice with `[system_accounts, ...packed_tree_accounts]`. The client builds this with `PackedAccounts` and passes it to the instruction.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
-
 {% endtab %}
 
 {% tab title="Native Rust" %}
@@ -393,7 +394,6 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 ```
 {% endcode %}
 
-
 **Set up `CpiAccounts::new()`:**
 
 `CpiAccounts::new()` parses accounts for the CPI call to Light System Program.
@@ -401,8 +401,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 **Pass these parameters:**
 
 * `signer`: account that signs and pays for the transaction
-* `&accounts[1..]`: Slice with `[system_accounts, ...packed_tree_accounts]`.
-  The client builds this with `PackedAccounts`.
+* `&accounts[1..]`: Slice with `[system_accounts, ...packed_tree_accounts]`. The client builds this with `PackedAccounts`.
 * `&LIGHT_CPI_SIGNER`: Your program's CPI signer PDA defined in Constants.
 {% endtab %}
 {% endtabs %}
@@ -418,6 +417,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 **Build the CPI instruction**:
 
 `new_cpi()` initializes the CPI instruction with the `proof` to prove that an address does not exist yet in the specified address tree _- defined in the Instruction Data (Step 4)._
+
 * `with_light_account` adds the `LightAccount` with the initial compressed account data to the CPI instruction _- defined in Step 7_.
 * `with_new_addresses` adds the `address_seed` and metadata to the CPI instruction data - returned by `derive_address` _in Step 5_.
 * `invoke(light_cpi_accounts)` calls the Light System Program with `CpiAccounts.`
@@ -445,7 +445,7 @@ For help with debugging, see the [Error Cheatsheet](../../resources/error-cheats
 Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/anchor/create).
 {% endhint %}
 
-{% code overflow="wrap" %}
+{% code overflow="wrap" expandable="true" %}
 ```rust
 #![allow(unexpected_cfgs)]
 #![allow(deprecated)]
@@ -540,7 +540,7 @@ pub struct MyCompressedAccount {
 Find the source code [here](https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/native/programs/create).
 {% endhint %}
 
-{% code overflow="wrap" %}
+{% code overflow="wrap" expandable="true" %}
 ```rust
 #![allow(unexpected_cfgs)]
 
@@ -674,7 +674,7 @@ pub fn create(
 {% endtab %}
 {% endtabs %}
 
-# Next Steps
+## Next Steps
 
 Build a client for your program or learn how to update compressed accounts.
 
