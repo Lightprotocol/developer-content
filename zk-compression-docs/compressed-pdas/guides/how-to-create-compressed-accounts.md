@@ -1,11 +1,7 @@
 ---
 title: How to Create Compressed Accounts
-description: >-
-  Guide to create compressed accounts in Solana programs with full code
-  examples.
+description: Guide to create compressed accounts in Solana programs with full code examples.
 ---
-
-# Overview
 
 Compressed accounts and addresses are created via CPI to the Light System Program.
 

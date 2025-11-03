@@ -1,9 +1,7 @@
 ---
-description: >-
-  Overview of all available ZK compression JSON RPC endpoints on Solana, best
-  practices, and error codes.
+title: JSON RPC Methods
+description: Overview of all available ZK compression JSON RPC endpoints on Solana, best practices, and error codes.
 ---
-
 
 {% hint style="info" %}
 [Helius Labs](https://github.com/helius-labs) maintains the canonical RPC API and [Photon indexer implementation](https://github.com/helius-labs/photon).

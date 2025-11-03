@@ -1,9 +1,7 @@
 ---
-description: >-
-  Overview to all of ZK Compression's RPC URLs, Program IDs & Accounts and
-  Lookup Tables.
+title: Addresses and URLs
+description: Overview to all of ZK Compression's RPC URLs, Program IDs & Accounts and Lookup Tables.
 ---
-
 
 ### RPC URLs
 

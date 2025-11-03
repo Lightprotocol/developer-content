@@ -1,9 +1,7 @@
 ---
-description: >-
-  Steps to set up your local environment for ZK Compression development. CLI to
-  interact with compressed accounts and compressed tokens on Solana.
+title: CLI Installation
+description: Steps to set up your local environment for ZK Compression development. CLI to interact with compressed accounts and compressed tokens on Solana.
 ---
-
 
 {% hint style="info" %}
 Make sure you have a wallet set up at `~/.config/solana/id.json`. [Get one here](https://docs.solanalabs.com/cli/wallets/file-system), if you don't have one.\

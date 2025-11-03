@@ -1,7 +1,6 @@
 ---
-description: >-
-  Complete overview to compressed tokens core features, setup guide and
-  cookbook.
+title: Compressed Tokens Overview
+description: Complete overview to compressed tokens core features, setup guide and cookbook.
 ---
 
 Compressed tokens provide full SPL token functionality without per-account rent cost.

@@ -1,7 +1,7 @@
 ---
-description: Complete guide to add Compressed Token Support to Your Wallet Application.
+title: Add Wallet Support for Compressed Tokens
+description: Complete guide to add Compressed Token Support to Your Wallet Application
 ---
-
 
 ### What you will do
 

@@ -3,9 +3,6 @@ title: How to Update Compressed Accounts
 description: Guide to update compressed accounts in Solana programs with full code examples.
 ---
 
-
-# Overview
-
 Compressed accounts are updated via CPI to the Light System Program.
 
 The update of a compressed account follows a UTXO pattern, unlike regular Solana accounts that overwrite data in place. Each update of a compressed account

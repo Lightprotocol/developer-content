@@ -1,9 +1,7 @@
 ---
-description: >-
-  Retrieve compressed account information by address or hash. RPC method guide
-  with use cases, tips and examples.
+title: getCompressedAccount
+description: Retrieve compressed account information by address or hash. RPC method guide with use cases, tips and examples.
 ---
-
 
 The `getCompressedAccount` RPC method retrieves information about a specific compressed account using either its address or hash. Information includes the compressed account state, balance, and metadata.
 

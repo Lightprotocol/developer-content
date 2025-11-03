@@ -1,10 +1,7 @@
 ---
-description: >-
-  Retrieve a single ZK Proof used by the compression program to verify that the
-  given accounts are valid and the new addresses can be created. RPC method
-  guide with use cases, tips and examples.
+title: getValidityProof
+description: Retrieve a single ZK Proof used by the compression program to verify that the given accounts are valid and the new addresses can be created. RPC method guide with use cases, tips and examples.
 ---
-
 
 The`getValidityProof` RPC method generates zero-knowledge proofs to verify that the given accounts are valid or the new addresses can be created. This proof is required for any operation on compressed accounts (transfer, approve, decompress, etc.) for on-chain verification of compressed state.
 

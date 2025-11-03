@@ -1,9 +1,7 @@
 ---
-description: >-
-  Build a Typescript client to create or interact with compressed accounts.
-  Includes a step-by-step implementation guide and full code examples.
+title: TypeScript Client
+description: Build a Typescript client to create or interact with compressed accounts. Includes a step-by-step implementation guide and full code examples.
 ---
-
 
 The TypeScript Client SDK provides two test environments:
 

@@ -1,9 +1,7 @@
 ---
-description: >-
-  Overview to the Compressed Account Model, State Merkle trees, and Validity
-  Proofs.
+title: Compressed Account Model
+description: Overview to the Compressed Account Model, State Merkle trees, and Validity Proofs.
 ---
-
 
 {% hint style="info" %}
 This guide assumes that you're familiar with [Solana's account model](https://solana.com/docs/core/accounts).

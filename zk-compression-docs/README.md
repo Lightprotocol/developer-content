@@ -1,7 +1,8 @@
 ---
+title: ZK Compression
+description: Solana account primitive for tokens and PDAs at a fraction of the cost - scale to millions of users without sacrificing L1 performance and security.
 icon: book-open
 ---
-
 
 <figure><img src="https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FUSHRVTOe2wsILog8ttiB%2Fbanner-current.png?alt=media&#x26;token=328bffb3-ddc4-4839-80a5-adcdb20c787e" alt=""><figcaption></figcaption></figure>
 

@@ -1,9 +1,7 @@
 ---
-description: >-
-  Complete guide to create and manage token pools for compressed tokens for SPL
-  mints with `createTokenPool()`, troubleshooting and advanced configurations.
+title: How to Create Compressed Token Pools for Mint Accounts
+description: Complete guide to create and manage token pools for compressed tokens for SPL mints with `createTokenPool()`, troubleshooting and advanced configurations.
 ---
-
 
 The `createTokenPool()` function registers an existing SPL mint with the compressed token program and creates a token pool PDA. `createTokenPool()` requires only `fee_payer` and has no mint authority constraint.
 

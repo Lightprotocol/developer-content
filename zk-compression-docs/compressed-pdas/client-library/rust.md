@@ -1,9 +1,7 @@
 ---
-description: >-
-  Build a Rust client to create or interact with compressed accounts and tokens.
-  Includes a step-by-step implementation guide and full code examples.
+title: Rust Client
+description: Build a Rust client to create or interact with compressed accounts and tokens. Includes a step-by-step implementation guide and full code examples.
 ---
-
 
 The Rust Client SDK provides two test environments:
 

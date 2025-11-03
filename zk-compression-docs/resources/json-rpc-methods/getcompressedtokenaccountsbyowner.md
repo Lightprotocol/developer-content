@@ -1,9 +1,7 @@
 ---
-description: >-
-  Retrieve compressed token accounts owned by a specific address. RPC method
-  guide with use cases, tips and examples.
+title: getCompressedTokenAccountsByOwner
+description: Retrieve compressed token accounts owned by a specific address. RPC method guide with use cases, tips and examples.
 ---
-
 
 The`getCompressedTokenAccountsByOwner` RPC method retrieves all compressed token accounts owned by a specific public key. The method supports mint filtering to query specific tokens, cursor-based pagination for handling large result sets, and returns parsed token data with merkle context for verification.
 

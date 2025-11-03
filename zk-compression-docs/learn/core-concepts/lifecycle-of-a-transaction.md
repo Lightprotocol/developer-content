@@ -1,9 +1,7 @@
 ---
-description: >-
-  Overview to the lifecycle of a transaction that interacts with compressed
-  accounts.
+title: Lifecycle of a Transaction
+description: Overview to the lifecycle of a transaction that interacts with compressed accounts.
 ---
-
 
 {% hint style="info" %}
 This guide assumes you are familiar with transactions on Solana. If you aren't, we recommend to read the [Solana documentation on transactions](https://solana.com/docs/core/transactions).

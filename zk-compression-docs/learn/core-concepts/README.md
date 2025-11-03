@@ -1,10 +1,7 @@
 ---
-description: >-
-  Overview to ZK Compression's Core Concepts. Get a high-level system overview
-  and learn about the compressed account model, lifecycle of a transaction, and
-  considerations.
+title: Core Concepts
+description: Overview to ZK Compression's Core Concepts. Get a high-level system overview and learn about the compressed account model, lifecycle of a transaction, and considerations.
 ---
-
 
 {% hint style="info" %}
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol) to query the Light Protocol repo in natural language.

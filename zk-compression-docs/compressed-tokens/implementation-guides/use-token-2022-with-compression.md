@@ -1,9 +1,7 @@
 ---
-description: >-
-  Complete guide to mint, compress and transfer tokens with Token-2022 Metadata
-  with ZK Compression.
+title: Use Token-2022 with Compression
+description: Complete guide to mint, compress and transfer tokens with Token-2022 Metadata with ZK Compression.
 ---
-
 
 ### What you will do
 

@@ -1,11 +1,8 @@
 ---
-description: >-
-  Get expert help with ZK Compression, compressed tokens, compressed PDAs, local
-  development and more. Discord community, Telegram, and Email support
-  available.
+title: Support
+description: Get expert help with ZK Compression, compressed tokens, compressed PDAs, local development and more. Discord community, Telegram, and Email support available.
 icon: headset
 ---
-
 
 ## Support
 

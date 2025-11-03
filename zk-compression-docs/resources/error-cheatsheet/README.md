@@ -1,9 +1,7 @@
 ---
-description: >-
-  Complete error code reference for ZK Compression. Search error codes with hex
-  values and messages.
+title: Error Cheatsheet
+description: Complete error code reference for ZK Compression. Search error codes with hex values and messages.
 ---
-
 
 ## How to use this page
 

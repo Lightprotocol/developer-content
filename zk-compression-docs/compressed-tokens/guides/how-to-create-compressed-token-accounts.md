@@ -1,9 +1,7 @@
 ---
-description: >-
-  Short guide to compressed token account creation with ZK Compression on Solana
-  and difference to regular token accounts.
+title: How to Create Compressed Token Accounts
+description: Short guide to compressed token account creation with ZK Compression on Solana and difference to regular token accounts.
 ---
-
 
 Compressed token accounts store ownership information for compressed tokens like regular token accounts with two core differences. Compressed Tokens
 

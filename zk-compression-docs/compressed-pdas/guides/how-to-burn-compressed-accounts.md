@@ -3,9 +3,6 @@ title: How to Burn Compressed Accounts
 description: Guide to burn compressed accounts in Solana programs with full code examples.
 ---
 
-
-# Overview
-
 Compressed accounts are permanently burned via CPI to the Light System Program.
 
 Burning a compressed account

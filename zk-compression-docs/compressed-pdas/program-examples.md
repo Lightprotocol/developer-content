@@ -1,8 +1,7 @@
 ---
+title: Examples
 description: Program example repository for compressed accounts with tests.
 ---
-
-# Examples
 
 {% hint style="success" %}
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/program-examples) to query the program examples in natural language.

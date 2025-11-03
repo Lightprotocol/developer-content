@@ -1,10 +1,7 @@
 ---
-description: >-
-  Complete guide to merge multiple compressed token accounts into a single
-  account with `mergeTokenAccounts()`, troubleshooting and advanced
-  configurations.
+title: How to Merge Compressed Token Accounts
+description: Complete guide to merge multiple compressed token accounts into a single account with mergeTokenAccounts(), troubleshooting and advanced configurations.
 ---
-
 
 The `mergeTokenAccounts()` function consolidates multiple compressed accounts of the same mint into a single compressed account.
 

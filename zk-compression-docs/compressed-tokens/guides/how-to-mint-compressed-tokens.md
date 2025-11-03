@@ -1,9 +1,7 @@
 ---
-description: >-
-  Complete guide to mint compressed tokens with `mintTo()`, troubleshooting, and
-  advanced configurations.
+title: How to Mint Compressed Tokens
+description: Complete guide to mint compressed tokens with mintTo(), troubleshooting, and advanced configurations.
 ---
-
 
 The `mintTo()` function creates compressed token accounts for recipients and increases the mint's token supply. Only the mint authority can perform this operation.
 

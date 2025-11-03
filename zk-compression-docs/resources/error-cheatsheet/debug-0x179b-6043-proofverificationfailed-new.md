@@ -1,8 +1,8 @@
 ---
-description: Common causes and debug steps for ProofVerificationFailed (0x179B / 6043)
+title: Debug: ProofVerificationFailed - New (0x179b)
+description: Common causes and debug steps for ProofVerificationFailed (0x179B / 6043).
 hidden: true
 ---
-
 
 You're passing an invalid proof. The proof provided cannot be verified against the expected state.
 

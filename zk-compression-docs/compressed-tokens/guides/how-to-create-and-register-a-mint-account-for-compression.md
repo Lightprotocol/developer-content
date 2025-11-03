@@ -1,9 +1,7 @@
 ---
-description: >-
-  Complete guide to create and register an SPL token mint account for
-  compression with `createMint()`, troubleshooting and advanced configurations.
+title: How to Create and Register a Mint Account for Compression
+description: Complete guide to create and register an SPL token mint account for compression with createMint(), troubleshooting and advanced configurations.
 ---
-
 
 {% hint style="info" %}
 The mint account itself requires rent (like regular SPL mints), but individual compressed token accounts are rent-free.

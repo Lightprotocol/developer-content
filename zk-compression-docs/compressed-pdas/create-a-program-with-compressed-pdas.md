@@ -1,7 +1,7 @@
 ---
-description: Overview to compressed PDA core features and guide for program development.
+title: Create a Program with Compressed PDAs
+description: Overview to compressed PDA core features and guide for program development
 ---
-
 
 Compressed PDAs provide full functionality of accounts at PDAs, without per-account rent cost.
 

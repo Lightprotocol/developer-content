@@ -1,7 +1,7 @@
 ---
-description: Overview to terminology related to ZK Compression and Solana.
+title: Terminology
+description: Overview to terminology related to ZK Compression and Solana
 ---
-
 
 ### Account
 

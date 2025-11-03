@@ -1,10 +1,8 @@
 ---
-description: >-
-  Complete guide to combine multiple compressed token operations in a single
-  transaction.
+title: How to Combine Operations in One Transaction
+description: Complete guide to combine multiple compressed token operations in a single transaction with instruction-level APIs.
 hidden: true
 ---
-
 
 Combine multiple operations in a single transaction for create mint, mint tokens, and transfer.
 

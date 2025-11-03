@@ -1,9 +1,7 @@
 ---
-description: >-
-  Overview to Light Protocol's bug bounty program, third party security audits,
-  and formal verification of circuits.
+title: Security
+description: Overview to Light Protocol's bug bounty program, third party security audits, and formal verification of circuits.
 ---
-
 
 ### Bug Bounty
 

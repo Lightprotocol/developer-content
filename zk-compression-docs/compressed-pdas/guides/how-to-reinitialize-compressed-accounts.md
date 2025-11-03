@@ -3,9 +3,6 @@ title: How to Reinitialize Compressed Accounts
 description: Guide to reinitialize compressed accounts in Solana programs with full code examples.
 ---
 
-
-# Overview
-
 Compressed accounts are reinitialized via CPI to the Light System Program.
 
 An empty compressed account can be reinitialized

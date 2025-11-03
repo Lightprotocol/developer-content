@@ -1,10 +1,7 @@
 ---
-description: >-
-  Complete guide to create an airdrop – with or without code. Access to cost
-  calculation and best practices. ZK compression is the most efficient way to
-  distribute SPL tokens.
+title: Create an Airdrop
+description: Complete guide to create an airdrop – with or without code. Access to cost calculation and best practices. ZK compression is the most efficient way to distribute SPL tokens.
 ---
-
 
 ### Cost Comparison
 

@@ -1,4 +1,5 @@
 ---
+title: Quick Start
 description: Create your first compressed token in minutes.
 icon: bolt
 ---

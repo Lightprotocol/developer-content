@@ -1,9 +1,7 @@
 ---
-description: >-
-  Guidance to AI tools when working with ZK Compression. Includes MCP server,
-  DeepWiki, and AI Search guides.
+title: AI Tools Guide
+description: Guidance to AI tools when working with ZK Compression. Includes MCP server, DeepWiki, and AI Search guides.
 ---
-
 
 * **Docs AI Search** - Search documentation with AI in the search bar.
 * **llms.txt** - Site index for LLM navigation: [https://zkcompression.com/llms.txt](https://zkcompression.com/llms.txt).

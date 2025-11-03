@@ -1,10 +1,7 @@
 ---
-description: >-
-  Retrieve the transaction data for the transaction with the given signature
-  along with parsed compression info. RPC method guide with use cases, tips and
-  examples.
+title: getTransactionWithCompressionInfo
+description: Retrieve the transaction data for the transaction with the given signature along with parsed compression info. RPC method guide with use cases, tips and examples.
 ---
-
 
 The`getTransactionWithCompressionInfo` RPC method returns transaction data along with compression information showing which compressed accounts were opened (created) and closed (consumed) during the transaction. This method helps with transaction analysis, account lifecycle tracking, and debugging of compression operations.
 

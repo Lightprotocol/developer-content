@@ -3,9 +3,6 @@ title: How to Close Compressed Accounts
 description: Guide to close compressed accounts in Solana programs with full code examples.
 ---
 
-
-# Overview
-
 Compressed accounts are closed via CPI to the Light System Program.
 
 Closing a compressed account

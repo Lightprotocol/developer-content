@@ -1,10 +1,7 @@
 ---
-description: >-
-  Learn how to run ZK Compression infrastructure, such as Forester nodes, Photon
-  indexers and Prover nodes.
+title: Node Operators
+description: Learn how to run ZK Compression infrastructure, such as Forester nodes, Photon indexers and Prover nodes.
 ---
-
-# Node Operators
 
 {% hint style="success" %}
 Developers don't need to run any nodes to use ZK Compression.

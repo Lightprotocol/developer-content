@@ -1,9 +1,7 @@
 ---
-description: >-
-  Overview to on-chain program development. Quick access to SDKs for Anchor,
-  Pinocchio, or native Rust.
+title: Program Development
+description: Overview to on-chain program development. Quick access to SDKs for Anchor, Pinocchio, or native Rust.
 ---
-
 
 ZK Compression's Rust crates are published to [crates.io](https://docs.rs/releases/search?query=zk+compression) and can be found on [docs.rs](https://crates.io/search?q=zk%20compression) with the `light-` prefix.
 

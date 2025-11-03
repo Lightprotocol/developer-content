@@ -1,10 +1,7 @@
 ---
-description: >-
-  Complete guide to compress SPL tokens with `compress()` and decompress with
-  `decompress()`, troubleshooting and advanced configurations. Best used for
-  transfers.
+title: How to Compress and Decompress SPL Tokens
+description: Complete guide to compress SPL tokens with compress() and decompress with decompress(), troubleshooting and advanced configurations.
 ---
-
 
 The `compress()` and `decompress()` functions convert SPL tokens between compressed and regular format.
 
