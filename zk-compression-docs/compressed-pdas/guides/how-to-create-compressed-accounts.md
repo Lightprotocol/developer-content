@@ -1,4 +1,5 @@
 ---
+title: How to Create Compressed Accounts
 description: >-
   Guide to create compressed accounts in Solana programs with full code
   examples.

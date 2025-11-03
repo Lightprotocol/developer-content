@@ -1,4 +1,5 @@
 ---
+title: How to Update Compressed Accounts
 description: Guide to update compressed accounts in Solana programs with full code examples.
 ---
 
