@@ -4,6 +4,8 @@ description: >-
   examples.
 ---
 
+# How to Create Compressed Accounts
+
 # Overview
 
 Compressed accounts and addresses are created via CPI to the Light System Program.
@@ -18,7 +20,7 @@ Compressed accounts and addresses are created via CPI to the Light System Progra
 Find [full code examples at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-# Implementation Guide
+## Implementation Guide
 
 This guide will cover the components of a Solana program that creates compressed accounts.\
 Here is the complete flow:
@@ -27,7 +29,7 @@ Here is the complete flow:
 
 {% stepper %}
 {% step %}
-## Dependencies
+### Dependencies
 
 Add dependencies to your program.
 
@@ -59,7 +61,7 @@ solana-program = "2.2"
 {% endstep %}
 
 {% step %}
-## Constants
+### Constants
 
 Set program address and derive the CPI authority PDA to call the Light System program.
 
@@ -93,7 +95,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 {% endstep %}
 
 {% step %}
-## Compressed Account
+### Compressed Account
 
 {% tabs %}
 {% tab title="Anchor" %}
@@ -146,7 +148,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `m
 {% endstep %}
 
 {% step %}
-## Instruction Data
+### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -204,7 +206,7 @@ Clients pack accounts into the accounts array to reduce transaction size. Packed
 {% endstep %}
 
 {% step %}
-## Derive Address
+### Derive Address
 
 Derive the address as a persistent unique identifier for the compressed account.
 
@@ -252,7 +254,7 @@ let (address, address_seed) = derive_address(
 {% endstep %}
 
 {% step %}
-## Address Tree Check (optional)
+### Address Tree Check (optional)
 
 Ensure global uniqueness of an address by verifying that the address tree pubkey matches the program's tree constant.
 
@@ -273,7 +275,7 @@ if address_tree != light_sdk::constants::ADDRESS_TREE_V2 {
 {% endstep %}
 
 {% step %}
-## Initialize Compressed Account
+### Initialize Compressed Account
 
 Initialize the compressed account struct with `LightAccount::new_init()`.
 
@@ -327,7 +329,7 @@ my_compressed_account.message = instruction_data.message;
 {% endstep %}
 
 {% step %}
-## Light System Program CPI
+### Light System Program CPI
 
 Invoke the Light System Program to create the compressed account and its address.
 

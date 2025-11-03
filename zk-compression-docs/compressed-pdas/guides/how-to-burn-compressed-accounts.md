@@ -80,7 +80,6 @@ Define your compressed account struct.
 
 {% tabs %}
 {% tab title="Anchor" %}
-{% code overflow="wrap" %}
 ```rust
 #[event] // declared as event so that it is part of the idl.
 #[derive(
@@ -94,18 +93,16 @@ pub struct MyCompressedAccount {
     pub message: String,
 }
 ```
-{% endcode %}
 {% endtab %}
 
 {% tab title="Native Rust" %}
-{% code overflow="wrap" %}
 ```rust
 #[derive(
-    Debug,
-    Default,
-    Clone,
-    BorshSerialize,
-    BorshDeserialize,
+    Debug, 
+    Default, 
+    Clone, 
+    BorshSerialize, 
+    BorshDeserialize, 
     LightDiscriminator,
 )]
 pub struct MyCompressedAccount {
@@ -113,7 +110,6 @@ pub struct MyCompressedAccount {
     pub message: String,
 }
 ```
-{% endcode %}
 {% endtab %}
 {% endtabs %}
 
