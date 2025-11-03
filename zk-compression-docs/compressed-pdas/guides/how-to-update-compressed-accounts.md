@@ -671,6 +671,20 @@ pub fn update(
 
 Build a client for your program or learn how to close compressed accounts.
 
+{% columns %}
+{% column %}
+{% content-ref url="../client-library/" %}
+[client-library](../client-library/)
+{% endcontent-ref %}
+{% endcolumn %}
+
+{% column %}
+{% content-ref url="how-to-reinitialize-compressed-accounts.md" %}
+[how-to-close-compressed-accounts.md](how-to-close-compressed-accounts.md)
+{% endcontent-ref %}
+{% endcolumn %}
+{% endcolumns %}
+
 [^1]: The [Anchor](https://www.anchor-lang.com/) framework reserves the first 8 bytes of a _regular account's data field_ for the discriminator.
 
 [^2]: ​[Program ID:](https://solscan.io/account/SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7) SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
