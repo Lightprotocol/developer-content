@@ -234,10 +234,10 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 
 **The SDK creates:**
 
-* A `LightAccount` wrapper that marks the account as burned permanently with no output state.
+* A `LightAccount` wrapper that marks the account as permanently burned with no output state.
 
 {% hint style="info" %}
-`new_burn()` hashes the input state. The Light System Program verifies the input hash and nullifies it permanently in _Step 4_.
+`new_burn()` hashes the input state. The Light System Program verifies the input hash and nullifies it in _Step 4_.
 {% endhint %}
 {% endstep %}
 
@@ -250,7 +250,7 @@ The Light System Program CPI burns the compressed account permanently.
 The Light System Program
 
 * validates the account exists in state tree with the validity,
-* nullifies the existing account hash permanently, and
+* nullifies the existing account hash, and
 * creates no output state.
 {% endhint %}
 
