@@ -1,9 +1,10 @@
 ---
 description: >-
-  Set up ZK Compression infrastructure. Learn how to run Forester nodes, Photon
-  indexers and Prover.
+  Learn how to run ZK Compression infrastructure, such as Forester nodes, Photon
+  indexers and Prover nodes.
 ---
 
+# Node Operators
 
 {% hint style="success" %}
 Developers don't need to run any nodes to use ZK Compression.
@@ -19,7 +20,7 @@ There are three different types of nodes:
 * Light forester nodes
 {% endhint %}
 
-### Photon Indexer Node
+#### Photon Indexer Node
 
 Indexer nodes use an existing connection to a Solana RPC full node to parse the transactions involving Light Protocol programs, enabling clients to read and write zk-compressed state.
 
@@ -27,7 +28,7 @@ The canonical ZK Compression indexer is named Photon and is maintained by Helius
 
 {% embed url="https://github.com/helius-labs/photon" %}
 
-### Prover Node
+#### Prover Node
 
 Provers generate validity proofs for state inclusion and PDA uniqueness on behalf of app developers
 
@@ -37,7 +38,7 @@ Please refer to the Github repo for more info:
 
 {% embed url="https://github.com/Lightprotocol/light-protocol/tree/main/light-prover" %}
 
-### Forester Node
+#### Forester Node
 
 These nodes manage the creation, rollover, and updating of shared and program-owned state trees. Running a forester node is permissionless for your own state trees.
 
