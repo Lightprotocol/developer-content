@@ -3,14 +3,11 @@ description: Create your first compressed token in minutes.
 icon: bolt
 ---
 
-
-### Create your first compressed tokens
-
 With this guide you will mint compressed tokens in under 5 minutes.
 
 {% stepper %}
 {% step %}
-**Install Dependencies**
+## Install Dependencies
 
 {% tabs %}
 {% tab title="npm" %}
@@ -49,7 +46,7 @@ pnpm add \
 {% endstep %}
 
 {% step %}
-**Create an RPC connection**
+## Create an RPC connection
 
 Run `test-connection.ts` to verify your setup:
 
@@ -69,7 +66,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-**Create and Mint Compressed Tokens**
+## Create and Mint Compressed Tokens
 
 <details>
 
@@ -168,7 +165,7 @@ main().catch(console.error);
 {% endstep %}
 
 {% step %}
-**Success!**
+## Success!
 
 That's it - you've created and minted compressed tokens. The output shows:
 
@@ -179,10 +176,20 @@ That's it - you've created and minted compressed tokens. The output shows:
 
 ***
 
-### Next Steps
+# Next Steps
 
-Get an overview of compressed tokens and dive right into the cookbook.
+Get an overview of compressed tokens or build a program with compressed accounts.
 
-{% content-ref url="broken-reference" %}
-[Broken link](broken-reference)
+{% columns %}
+{% column %}
+{% content-ref url="compressed-tokens/overview.md" %}
+[compressed-tokens/overview.md](compressed-tokens/overview.md)
 {% endcontent-ref %}
+{% endcolumn %}
+
+{% column %}
+{% content-ref url="compressed-pdas/create-a-program-with-compressed-pdas.md" %}
+[compressed-pdas/create-a-program-with-compressed-pdas.md](compressed-pdas/create-a-program-with-compressed-pdas.md)
+{% endcontent-ref %}
+{% endcolumn %}
+{% endcolumns %}
