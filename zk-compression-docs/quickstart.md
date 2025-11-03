@@ -5,6 +5,10 @@ icon: bolt
 
 With this guide you will mint compressed tokens in under 5 minutes.
 
+{% hint style="success" %}
+Compressed tokens are SPL compatible and supported by leading wallets such as Phantom or Backpack.
+{% endhint %}
+
 {% stepper %}
 {% step %}
 ## Install Dependencies
@@ -165,12 +169,15 @@ main().catch(console.error);
 {% endstep %}
 
 {% step %}
-## Success!
+## That's it!
 
-That's it - you've created and minted compressed tokens. The output shows:
+You've created and minted compressed tokens. The output shows:
 
-* Address of SPL mint with token pool for compression
-* Compressed Token balance
+* Mint address
+* Create mint transaction link
+* Minted token amount
+* Mint transaction link
+* Compressed token balance
 {% endstep %}
 {% endstepper %}
 
