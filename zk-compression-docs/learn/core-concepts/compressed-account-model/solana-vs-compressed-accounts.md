@@ -1,5 +1,5 @@
 ---
-title: Solana vs Compressed Accounts - Technical Comparison
+title: Solana vs Compressed Accounts
 description: Technical reference comparing regular Solana accounts and compressed accounts.
 hidden: true
 ---

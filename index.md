@@ -126,6 +126,7 @@ zk-compression-docs/
 │  │  ├─ [Index](learn/core-concepts/README.md) — Overview to ZK Compression's Core Concepts. Get a high-level system overview
 │  │  ├─ Compressed Account Model/
 │  │  │  ├─ [Overview](compressed-account-model/README.md) — Overview to the Compressed Account Model, State Merkle trees, and Validity Proofs
+│  │  │  ├─ [Solana vs Compressed Accounts](compressed-account-model/solana-vs-compressed-accounts.md) — Comparison of regular Solana accounts and compressed accounts
 │  │  │  ├─ [State Merkle Trees](README.md#state-merkle-trees)
 │  │  │  └─ [Validity Proofs](README.md#validity-proofs)
 │  │  ├─ [Lifecycle of a Transaction](lifecycle-of-a-transaction.md) — Overview to the lifecycle of a transaction that interacts with compressed accounts
