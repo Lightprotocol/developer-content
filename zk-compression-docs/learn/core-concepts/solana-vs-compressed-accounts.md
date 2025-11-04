@@ -33,6 +33,7 @@ These are the steps that allow transactions to use the account data inside Solan
 {% hint style="success" %}
 * Merkle trees are provided by the protocol and Indexers generate validity proofs. 
 * Developers don't configure state Merkle trees or generate validity proofs.
+
 [Learn more about Merkle trees here](<add-link-to-merkle-trees>). 
 {% endhint %}
 
@@ -47,7 +48,7 @@ pub struct CompressedAccount {
     pub address: Option<[u8; 32]>,            // Optional persistent identifier
     pub data: Option<CompressedAccountData>,  // Account data
     pub hash: [u8; 32],                       // Unique account hash
-    pub tree_info: TreeInfo,                  // State tree metadata
+    pub tree_info: TreeInfo,                  // Merkle tree metadata
 }
 ```
 
@@ -58,12 +59,6 @@ This shows the key fields. The full struct includes additional fields: `slot_cre
 <details>
 
 <summary>Solana Account Structure</summary>
-
-Regular Solana accounts store state on chain.
-* Each account stores up to 10 MB of data.
-* Creating a Solana account requires a rent exemption balance, tied to account size.
-* The account is accessible by its address identifier during [program](https://solana.com/docs/core/accounts#program-account) execution.
-* The identifier can be a public key or [PDA (program derived address)](https://solana.com/docs/core/pda).
 
 ```rust
 pub struct Account {
