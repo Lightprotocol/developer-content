@@ -81,12 +81,13 @@
 
 * [Core Concepts](learn/core-concepts/README.md)
   * [Compressed Account Model](learn/core-concepts/compressed-account-model/README.md)
+    * [Solana vs Compressed Accounts](learn/core-concepts/solana-vs-compressed-accounts.md)
+    * [Merkle Trees](learn/core-concepts/merkle-trees.md)
     * [State Merkle Trees](learn/core-concepts/compressed-account-model/README.md#state-merkle-trees)
     * [Validity Proofs](learn/core-concepts/compressed-account-model/README.md#validity-proofs)
   * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
   * [Considerations](learn/core-concepts/considerations.md)
 * [Node Operators](learn/node-operators.md)
-* [Solana vs Compressed Accounts](learn/core-concepts/solana-vs-compressed-accounts.md)
 
 
 ## References
