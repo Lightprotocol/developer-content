@@ -11,7 +11,7 @@ The Rust Client SDK provides two client implementations:
 * **For devnet and mainnet use** [**`light-client`**](https://docs.rs/light-client)
   * `light-client` is an RPC client for compressed accounts and tokens. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
   * Connects to Photon indexer to query compressed accounts and generate validity proofs.
-* `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits to allow switching between `light-program-test`, local test validator, and public Solana networks.
+* `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits for consistent usage across `light-program-test`, local test validator, and public Solana networks.
 
 {% hint style="success" %}
 Find full code examples [at the end for Anchor and native Rust](rust.md#full-code-example).
@@ -237,9 +237,11 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 {% step %}
 ## Derive Address
 
-Derive a persistent address as a unique identifier for your compressed account.
+Derive a persistent address as a unique identifier for your compressed account, similar to [program-derived addresses (PDAs)](https://solana.com/docs/core/pda).
 
-Use the derivation method that matches your address tree type from the previous step.
+* Use the derivation method that matches your address tree type from the previous step.
+* Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
+* The key difference to PDAs is that compressed accounts require an **address tree** parameter. 
 
 {% hint style="info" %}
 V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
@@ -277,13 +279,11 @@ let (address, _) = derive_address(
 
 **Pass these parameters**:
 
-* `&[b"my-seed"]`: Arbitrary byte slices that uniquely identify the account
+* `&[b"my-seed"]`: Predefined inputs, such as strings, numbers or other account addresses.
 * `&address_tree_info.tree`: Specify the tree pubkey to ensure an address is unique to this address tree. Different trees produce different addresses from identical seeds.
 * `&program_id`: Specify the program owner pubkey.
 
 {% hint style="info" %}
-The `addressTree.tree` pubkey ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
-
 Use the same `address_tree_info.tree` for both `derive_address()` and all subsequent operations on that account in your client and program.
 
 * To create a compressed account, pass the address to `get_validity_proof()` to prove the address does not exist yet.

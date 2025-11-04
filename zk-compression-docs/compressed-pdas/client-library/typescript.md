@@ -10,7 +10,7 @@ The TypeScript Client SDK provides two RPC clients:
 * **For test-validator, devnet and mainnet use `Rpc`.**
   * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
   * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
-* `Rpc` and `TestRpc` implement the same `CompressionApiInterface` to allow switching between `TestRpc`, local test validator, and public Solana networks.
+* `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
 
 {% hint style="success" %}
 Find [full code examples at the end](typescript.md#full-code-example) for Anchor.
@@ -236,9 +236,11 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 {% step %}
 ## Derive Address
 
-Derive a persistent address as a unique identifier for your compressed account.
+Derive a persistent address as a unique identifier for your compressed account, similar to [program-derived addresses (PDAs)](https://solana.com/docs/core/pda).
 
-Use the derivation method that matches your address tree type from the previous step.
+* Use the derivation method that matches your address tree type from the previous step.
+* Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
+* The key difference to PDAs is that compressed accounts require an **address tree** parameter. 
 
 {% hint style="info" %}
 V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
@@ -257,7 +259,7 @@ const address = deriveAddress(seed, addressTree.tree);
 {% endcode %}
 
 **Derive the seed**:
-* Pass arbitrary byte slices in the array to uniquely identify the account
+* Predefined inputs, such as strings, numbers or other account addresses
 * Specify `programId` to combine with your seeds
 
 **Then, derive the address**:
@@ -276,18 +278,16 @@ const address = deriveAddressV2(seed, addressTree.tree, programId);
 {% endcode %}
 
 **Derive the seed**:
-* Pass arbitrary byte slices in the array to uniquely identify the account
+* Predefined inputs, such as strings, numbers or other account addresses
 
 **Then, derive the address**:
-* Pass the derived 32-byte `seed` from the first step
-* Specify `addressTree.tree` pubkey
+* Pass the derived 32-byte `seed` from the first step.
+* Specify `addressTree.tree` pubkey to ensure an address is unique to an address tree. Different trees produce different addresses from identical seeds.
 * Specify `programId` in the address derivation. V2 includes it here instead of in the seed.
 {% endtab %}
 {% endtabs %}
 
 {% hint style="info" %}
-The `addressTree.tree` pubkey ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
-
 Use the same `addressTree` for both address derivation and all subsequent operations:
 * To create a compressed account, pass the address to `getValidityProofV0()` to prove the address does not exist yet.
 * To update/close, use the address to fetch the current account with `getCompressedAccount(address)`.

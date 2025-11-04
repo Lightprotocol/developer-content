@@ -236,7 +236,7 @@ let (address, address_seed) = derive_address(
 
 **Pass these parameters to `derive_address()`:**
 
-* `&custom_seeds`: Arbitrary byte slices that uniquely identify the account. This example uses `b"message"` and the signer's pubkey.
+* `&custom_seeds`: Predefined inputs, such as strings, numbers or other account addresses. This example uses `b"message"` and the signer's pubkey.
 * `&address_tree_pubkey`: The pubkey of the address tree where the address will be created.
   * Retrieved by calling `get_tree_pubkey()` on `address_tree_info`, which unpacks the index from the accounts array.
   * This parameter ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
