@@ -1,5 +1,5 @@
 ---
-title: Debug: ProofVerificationFailed - New (0x179b)
+title: Debug ProofVerificationFailed - New (0x179b)
 description: Common causes and debug steps for ProofVerificationFailed (0x179B / 6043).
 hidden: true
 ---
