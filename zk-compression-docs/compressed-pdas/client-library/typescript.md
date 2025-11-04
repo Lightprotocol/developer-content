@@ -185,7 +185,6 @@ const stateTreeInfos = await rpc.getStateTreeInfos();
 const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 ```
 {% endcode %}
-* V1: `getDefaultAddressTreeInfo()` returns `TreeInfo` with the public key and other metadata for the address tree.
 {% endtab %}
 
 {% tab title="V2 Trees" %}
@@ -196,7 +195,6 @@ const stateTreeInfos = await rpc.getStateTreeInfos();
 const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 ```
 {% endcode %}
-* V2: 
 {% endtab %}
 {% endtabs %}
 
