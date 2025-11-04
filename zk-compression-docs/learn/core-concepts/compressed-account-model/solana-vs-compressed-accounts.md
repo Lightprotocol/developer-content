@@ -1,7 +1,6 @@
 ---
 title: Solana vs Compressed Accounts
 description: Technical reference comparing regular Solana accounts and compressed accounts.
-hidden: true
 ---
 
 ZK Compression extends Solana's account model with compressed accounts. This guide provides a technical comparison of regular and compressed Solana accounts.
