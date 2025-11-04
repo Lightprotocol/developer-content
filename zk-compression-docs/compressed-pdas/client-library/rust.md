@@ -216,7 +216,7 @@ let output_state_tree_info = rpc.get_random_state_tree_info_v2().unwrap();
 `TreeInfo` contains pubkeys and other metadata of a Merkle tree:
 
 * `tree`: Merkle tree account pubkey
-* `queue`: Queue account pubkey
+* `queue`: Queue account pubkey of queue associated with a Merkle tree
   * Buffers updates of compressed accounts before they are added to the Merkle tree.
   * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
 * `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion

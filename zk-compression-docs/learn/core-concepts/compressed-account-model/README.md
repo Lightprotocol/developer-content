@@ -16,7 +16,7 @@ ZK compressed state is stored in compressed accounts. Compressed accounts are si
 * An `address` can optionally be set as a permanent unique ID of the compressed account
 * All compressed accounts are stored in sparse state trees. Only the tree's state root (i.e., a small fingerprint of all compressed accounts) is stored in the on-chain account space
 
-These differences allow the protocol to store states as calldata in the less expensive Solana ledger space instead of costly on-chain account space
+These differences allow the protocol to store states as calldata in the less expensive Solana ledger space instead of costly on-chain account space.
 
 To understand the similarities and differences between Solana's regular account model and compressed accounts, let's first look at compressed accounts with Program-Derived Addresses (PDAs)
 
