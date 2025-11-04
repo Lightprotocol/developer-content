@@ -174,6 +174,10 @@ The protocol maintains Merkle trees. You don't need to initialize custom trees.\
 Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
+{% hint style="info" %}
+V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
+{% endhint %}
+
 {% tabs %}
 {% tab title="V1 Trees" %}
 {% code overflow="wrap" %}
@@ -188,6 +192,7 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 {% endtab %}
 
 {% tab title="V2 Trees" %}
+
 {% code overflow="wrap" %}
 ```typescript
 const addressTree = await rpc.getAddressTreeInfoV2();
@@ -235,6 +240,10 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 Derive a persistent address as a unique identifier for your compressed account.
 
 Use the derivation method that matches your address tree type from the previous step.
+
+{% hint style="info" %}
+V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
+{% endhint %}
 
 {% tabs %}
 {% tab title="V1 Address Trees" %}
@@ -433,7 +442,9 @@ V2 circuits can prove in a single proof
 To optimize instruction data we pack accounts into an array:
 * Every packed account is assigned to an u8 index.
 * Indices are included in instruction data, instead of 32 byte pubkeys.
-* The indices point to the `remainingAccounts` in Anchor.
+* The indices point to the instructions accounts
+    * in anchor to `remainingAccounts`, and
+    * in native programs to the account info slice.
 
 **1. Initialize PackedAccounts**
 

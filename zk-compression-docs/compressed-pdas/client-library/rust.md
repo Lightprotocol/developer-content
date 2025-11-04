@@ -180,6 +180,10 @@ The protocol maintains Merkle trees. You don't need to initialize custom trees.\
 Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
 {% endhint %}
 
+{% hint style="info" %}
+V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
+{% endhint %}
+
 {% tabs %}
 {% tab title="V1 Trees" %}
 {% code overflow="wrap" %}
@@ -237,6 +241,10 @@ Derive a persistent address as a unique identifier for your compressed account.
 
 Use the derivation method that matches your address tree type from the previous step.
 
+{% hint style="info" %}
+V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
+{% endhint %}
+
 {% tabs %}
 {% tab title="V1 Address Trees" %}
 {% code overflow="wrap" %}
@@ -274,6 +282,8 @@ let (address, _) = derive_address(
 * `&program_id`: Specify the program owner pubkey.
 
 {% hint style="info" %}
+The `addressTree.tree` pubkey ensures an address is unique to an address tree. Different trees produce different addresses from identical seeds.
+
 Use the same `address_tree_info.tree` for both `derive_address()` and all subsequent operations on that account in your client and program.
 
 * To create a compressed account, pass the address to `get_validity_proof()` to prove the address does not exist yet.
@@ -324,7 +334,7 @@ The RPC returns `ValidityProofWithContext` with
 * An empty `accounts` field, since you do not reference an existing account, when you create a compressed account.
 {% endtab %}
 
-{% tab title="Update & Close" %}
+{% tab title="Update, Close, Reinit, Burn" %}
 {% hint style="info" %}
 These operations proof that the account hash exists in the state tree. The difference is in your program's instruction handler.
 {% endhint %}
@@ -353,7 +363,7 @@ The RPC returns `ValidityProofWithContext` with
 
 * `proof` with the proof that the account hash exists in the state tree, passed to the program in your instruction data.
 * `accounts` with the public key and metadata of the state tree to pack accounts in the next step.
-* An empty `addresses` field, since you passed no metadata to create an address, when you update or close a compressed account.
+* An empty `addresses` field, since you passed no metadata to create an address, when you update, close, reinitialize or burn a compressed account.
 {% endtab %}
 
 {% tab title="Combined Proof" %}
@@ -621,13 +631,14 @@ The returned `PackedStateTreeInfos` contains:
 {% endtab %}
 {% endtabs %}
 
-**4. Add Output State Tree (Create Only)**
+**4. Add Output State Tree**
 
 {% hint style="info" %}
 This step only applies when you create accounts.
 
-* With native Rust, the output tree index is added using `insert_or_get()` in Step 3.
+* With native Rust, the output tree index is added using `insert_or_get()` in Step 3 (Pack Tree Accounts from Validity Proof).
 * For other interactions with compressed accounts (using both Anchor and Native), the output tree is included in the packed tree accounts from Step 3.
+* Burn instructions don't include an output tree since they do not create output state.
 {% endhint %}
 
 {% code overflow="wrap" %}
