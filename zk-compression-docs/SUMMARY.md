@@ -10,15 +10,15 @@
 
 * [Overview](compressed-tokens/overview.md)
 * [Guides](compressed-tokens/guides/README.md)
-  * [How to approve and revoke delegate authority](compressed-tokens/guides/how-to-approve-and-revoke-delegate-authority.md)
+  * [How to Create Compressed Token Accounts](compressed-tokens/guides/how-to-create-compressed-token-accounts.md)
+  * [How to Mint Compressed Tokens](compressed-tokens/guides/how-to-mint-compressed-tokens.md)
+  * [How to Transfer Compressed Token](compressed-tokens/guides/how-to-transfer-compressed-token.md)
   * [How to compress and decompress SPL Tokens](compressed-tokens/guides/how-to-compress-and-decompress-spl-tokens.md)
   * [How to Compress complete SPL Token Accounts](compressed-tokens/guides/how-to-compress-complete-spl-token-accounts.md)
   * [How to Create and Register a Mint Account for Compression](compressed-tokens/guides/how-to-create-and-register-a-mint-account-for-compression.md)
-  * [How to Create Compressed Token Accounts](compressed-tokens/guides/how-to-create-compressed-token-accounts.md)
   * [How to Create Compressed Token Pools for Mint Accounts](compressed-tokens/guides/how-to-create-compressed-token-pools-for-mint-accounts.md)
   * [How to Merge Compressed Token Accounts](compressed-tokens/guides/how-to-merge-compressed-token-accounts.md)
-  * [How to Mint Compressed Tokens](compressed-tokens/guides/how-to-mint-compressed-tokens.md)
-  * [How to Transfer Compressed Token](compressed-tokens/guides/how-to-transfer-compressed-token.md)
+  * [How to approve and revoke delegate authority](compressed-tokens/guides/how-to-approve-and-revoke-delegate-authority.md)
 * [Implementation Guides](compressed-tokens/implementation-guides/README.md)
   * [Add Wallet Support for Compressed Tokens](compressed-tokens/implementation-guides/add-wallet-support-for-compressed-tokens.md)
   * [Create an Airdrop](compressed-tokens/implementation-guides/create-an-airdrop.md)
@@ -86,6 +86,8 @@
   * [Lifecycle of a Transaction](learn/core-concepts/lifecycle-of-a-transaction.md)
   * [Considerations](learn/core-concepts/considerations.md)
 * [Node Operators](learn/node-operators.md)
+* [Solana vs Compressed Accounts](learn/core-concepts/solana-vs-compressed-accounts.md)
+
 
 ## References
 
