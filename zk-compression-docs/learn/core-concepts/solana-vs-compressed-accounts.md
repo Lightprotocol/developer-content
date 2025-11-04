@@ -140,6 +140,7 @@ Learn more about address derivation for a [Rust Client here](../client-library/r
 
 <summary>Solana PDA Derivation</summary>
 
+{% code title="derive-pda.ts" %}
 ```typescript
 const [pda] = PublicKey.findProgramAddressSync(
   [
@@ -149,7 +150,9 @@ const [pda] = PublicKey.findProgramAddressSync(
   programId
 );
 ```
+{% endcode %}
 
+{% code title="derive-pda.rs" %}
 ```rust
 let (pda, _bump) = Pubkey::find_program_address(
   &[
@@ -159,6 +162,7 @@ let (pda, _bump) = Pubkey::find_program_address(
   &program_id
 );
 ```
+{% endcode %}
 
 </details>
 
@@ -228,7 +232,7 @@ let rpc_result = rpc
 ```
 
 {% hint style="info" %}
-Find the source code here: [account-comparison/tests/test_compressed_account.rs:40-52, 146-151](https://github.com/Lightprotocol/program-examples/blob/main/account-comparison/programs/account-comparison/tests/test_compressed_account.rs#L40-L52)
+Find the [source code here](https://github.com/Lightprotocol/program-examples/blob/main/account-comparison/programs/account-comparison/tests/test_compressed_account.rs#L40-L52)
 {% endhint %}
 
 
@@ -262,6 +266,6 @@ Find the source code here: [account-comparison/tests/test_solana_account.rs:31-3
 # Next Steps
 Learn how state trees store compressed accounts and address trees store addresses.
 
-{% content-ref url="merkle-trees.md" %}
-[merkle-trees.md](merkle-trees.md)
+{% content-ref url="merkle-trees-validity-proofs.md" %}
+[merkle-trees-validity-proofs.md](merkle-trees-validity-proofs.md)
 {% endcontent-ref %}
