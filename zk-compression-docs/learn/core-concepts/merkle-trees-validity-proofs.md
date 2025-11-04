@@ -4,9 +4,9 @@ description: Learn the core concepts of state and address Merkle trees.
 hidden: true
 ---
 
-## Overview
+# Overview
 
-The protocol uses two types:
+The protocol uses two types of Merkle trees:
 
 * [**State trees**](#state-trees) store compressed account hashes
 * [**Address trees**](#address-merkle-trees) store addresses that serve as persistent identifiers
@@ -19,28 +19,28 @@ Developers don't need to maintain or initialize Merkle trees themselves.
 
 {% endhint %}
 
-## State trees
-
-Compressed accounts are stored as hashes in state trees.
+# State trees
 
 A state tree is a binary Merkle tree that stores data of millions of compressed Solana accounts in leaves for efficient cryptographic verification the integrity of all leaves in a tree.
 
 {% stepper %}
 {% step %}
-### Merkle Tree
+## Merkle Tree
 
 A Merkle tree compresses data by hashing adjacent leaves repeatedly into a single root hash, starting from the lowest level. The hash of a compressed Solana account is stored as a leaf in a State tree.
 {% endstep %}
 
 {% step %}
-### Merkle Root Hash
+## Merkle Root Hash
 
 Only this root hash is stored on chain as single value on chain to secure the integrity of all compressed state in a tree. The raw state can thus be stored as calldata in the much cheaper Solana ledger space while preserving Solana's security guarantees.
 {% endstep %}
 
 <figure><img src="https://content.gitbook.com/content/GcNj6jjKQBC0HgPwNdGy/blobs/yYZGfWfsZriTXPIN0bIt/state%20merkle%20tree.png" alt="A diagram illustrating a binary state Merkle tree with a depth of 3 and a proof path for Leaf 1. The tree consists of 8 leaves, each representing a compressed account hash. The leaves are paired up to form nodes at each level, culminating in a single root node at the top. The proof path for Leaf 1 is highlighted, showing the hashes needed to verify the integrity of Leaf 1 up to the root node. For ZK Compression V1, &#x22;Light&#x22; state trees have a depth of 26, allowing for approximately 67 million leaves with compressed account hashes per tree."><figcaption><p>A Binary state Merkle tree, with depth 3 and proof path for Leaf 1.<br>For ZK Compression, “Light” state trees have a depth of 26, i.e. contain ~67 million leaves with compressed account hashes per tree.</p></figcaption></figure>
+{% endstep %}
 
-#### Leaf Hash Structure: Compressed Account Hashes
+{% step %}
+### Leaf Hash Structure: Compressed Account Hashes
 
 For compressed Solana accounts, the 32 byte leaf hashes effectively mirror the regular Solana account layout: `{DataHash, StateHash; Owner, Lamports`.
 
@@ -58,9 +58,10 @@ For [details on the compressed account structure see this section](solana-vs-com
 {% endhint %}
 
 <figure><img src="https://content.gitbook.com/content/GcNj6jjKQBC0HgPwNdGy/blobs/PpPbEKFXwnxGN6Y9FrlU/leaf%20hash%20structure%20state%20tree.png" alt="Here&#x27;s an alt text for this image:  &#x22;Diagram showing the compressed account data structure within leaves of a Merkle tree. Four leaf nodes (Leaf 0, Leaf 1, Leaf 2, Leaf 3) are displayed at the top, each containing &#x27;Compressed Account Hash&#x27;. Below this, the data structure is broken down into components: Datahash, Lamports, OwnerHash, Address, Discriminator, StateTreeHash, and Leaf_Index in the top row, with Data, Owner, and State Tree shown in the bottom row. Leaf 1 is highlighted in green. The diagram illustrates how compressed account data is organized within the Merkle tree structure.&#x22;"><figcaption><p><a href="https://github.com/Lightprotocol/light-protocol/blob/9df1ca508813ec792f756fb65b0b266a2438d080/program-libs/compressed-account/src/compressed_account.rs#L303">Compressed Account Data Structure</a> in Leaf of Merkle Tree.</p></figcaption></figure>
+{% endstep %}
 
 {% step %}
-### Merkle and Validity Proofs
+## Merkle and Validity Proofs
 
 [Validity proofs](#user-content-fn-1)[^1] prove compressed accounts exist in state trees with a constant 128-byte proof size. This proof must be included in every transaction to verify the on-chain state.
 
@@ -98,7 +99,7 @@ When using V2 trees, RPC requests automatically choose the proof mechanism.
 {% endstep %}
 {% endstepper %}
 
-## Address Merkle trees
+# Address Merkle trees
 
 Address trees store addresses that serve as optional, persistent identifiers for compressed accounts. 
 
@@ -108,7 +109,7 @@ Every address is unique within its address tree, but the same seeds can create d
 
 {% stepper %}
 {% step %}
-### What Address Trees Store
+## Address Tree Structure
 
 Address trees store derived addresses in an indexed structure. Unlike state trees that store account hashes, address trees store the actual address values along with pointers to maintain sorted order.
 
@@ -116,13 +117,13 @@ These addresses are used only when compressed accounts require a persistent iden
 {% endstep %}
 
 {% step %}
-### Address Root Hash
+## Address Root Hash
 
 Like state trees, only the root hash is stored on-chain to verify all addresses in the tree. The raw addresses are stored in the Solana ledger.
 {% endstep %}
 
 {% step %}
-### Merkle and Validity Proofs
+## Merkle and Validity Proofs
 
 When creating a compressed account with an address, a validity proof verifies the address doesn't already exist in a specified address tree. The constant 128-byte proof must be included in the transaction only when creating accounts with addresses, not for every compressed account operation.
 
