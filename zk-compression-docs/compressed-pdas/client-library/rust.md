@@ -3,15 +3,15 @@ title: Rust Client
 description: Build a Rust client to create or interact with compressed accounts and tokens. Includes a step-by-step implementation guide and full code examples.
 ---
 
-The Rust Client SDK provides two test environments:
+The Rust Client SDK provides two client implementations:
 
 * **For local testing, use** [**`light-program-test`**](https://docs.rs/light-program-test)**.**
   * Initializes a [LiteSVM](https://github.com/LiteSVM/LiteSVM) optimized for ZK Compression with auto-funded payer, local prover server and TestIndexer to generate proofs instantly. Requires Light CLI for program binaries.
   * Use for unit and integration tests of your program or client code.
 * **For devnet and mainnet use** [**`light-client`**](https://docs.rs/light-client)
   * `light-client` is an RPC client for compressed accounts and tokens. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
-  * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
-* `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits. Seamlessly switch between `light-program-test`, local test validator, and public Solana networks.
+  * Connects to Photon indexer to query compressed accounts and generate validity proofs.
+* `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits to allow switching between `light-program-test`, local test validator, and public Solana networks.
 
 {% hint style="success" %}
 Find full code examples [at the end for Anchor and native Rust](rust.md#full-code-example).
@@ -60,7 +60,7 @@ light-client = "0.16.0"
 light-sdk = "0.16.0"
 tokio = { version = "1", features = ["full"] }
 solana-program = "2.2"
-anchor-lang = "0.31.1"  # if using Anchor programs
+anchor-lang = "0.31.1" 
 ```
 {% endcode %}
 {% endtab %}
@@ -68,12 +68,12 @@ anchor-lang = "0.31.1"  # if using Anchor programs
 {% tab title="LightProgramTest" %}
 {% code overflow="wrap" %}
 ```toml
-[dependencies]
+[dev-dependencies]
 light-program-test = "0.16.0"
 light-sdk = "0.16.0"
 tokio = { version = "1", features = ["full"] }
 solana-program = "2.2"
-anchor-lang = "0.31.1"  # if using Anchor programs
+anchor-lang = "0.31.1"
 ```
 {% endcode %}
 {% endtab %}
@@ -198,7 +198,7 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 {% code overflow="wrap" %}
 ```rust
 let address_tree_info = rpc.get_address_tree_v2();
-let output_state_tree_info = rpc.get_random_state_tree_info_v2().unwrap();
+let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 ```
 {% endcode %}
 {% endtab %}
@@ -211,7 +211,7 @@ let output_state_tree_info = rpc.get_random_state_tree_info_v2().unwrap();
     * for `get_validity_proof()` to prove the address does not exist yet.
 
 **State Trees:**
-* `get_random_state_tree_info()` / `get_random_state_tree_info_v2()` returns `TreeInfo` with pubkeys and metadata for a random state tree to store the compressed account hash.
+* `get_random_state_tree_info()` returns `TreeInfo` with pubkeys and metadata for a state tree to store the compressed account hash.
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
   * Account hashes can move to different state trees after each state transition.
   * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
@@ -502,12 +502,12 @@ Add the Light System accounts your program needs to create and interact with com
 {% code overflow="wrap" %}
 ```rust
 let config = SystemAccountMetaConfig::new(program_create::ID);
-remaining_accounts.add_system_accounts(config);
+remaining_accounts.add_system_accounts(config)?;
 ```
 {% endcode %}
 
 * Pass your program ID in `SystemAccountMetaConfig::new(program_create::ID)` to derive the CPI signer PDA
-* Call `add_system_accounts(config)` - the SDK will populate the `system_accounts` vector with 8 Light System accounts in the sequence below.
+* Call `add_system_accounts(config)?` - the SDK will populate the `system_accounts` vector with 8 Light System accounts in the sequence below.
 {% endtab %}
 
 {% tab title="Native" %}
@@ -634,12 +634,12 @@ The returned `PackedStateTreeInfos` contains:
 **4. Add Output State Tree**
 
 {% hint style="info" %}
-This step only applies when you create accounts.
-
-* With native Rust, the output tree index is added using `insert_or_get()` in Step 3 (Pack Tree Accounts from Validity Proof).
-* For other interactions with compressed accounts (using both Anchor and Native), the output tree is included in the packed tree accounts from Step 3.
-* Burn instructions don't include an output tree since they do not create output state.
+When packing accounts on the client side, you must specify the output state tree to store the new account hash *except* for burn instructions.
 {% endhint %}
+
+{% tabs %}
+{% tab title="Anchor" %}
+For create instructions:
 
 {% code overflow="wrap" %}
 ```rust
@@ -650,6 +650,26 @@ let output_state_tree_index = output_state_tree_info
 
 * Use `output_state_tree_info` variable from Step 3 with the `TreeInfo` metadata for the randomly selected state tree
 * Call `pack_output_tree_index(&mut remaining_accounts)` to add the tree to packed accounts and return its u8 index.
+
+For update, close, and reinitialize instructions, the `output_state_tree_index` is automatically included in `CompressedAccountMeta` from `pack_tree_infos()` in Step 3.
+{% endtab %}
+
+{% tab title="Native" %}
+For create instructions, the output state tree was already added in Step 3:
+
+{% code overflow="wrap" %}
+```rust
+// Already done in Step 3:
+let output_state_tree_index = accounts.insert_or_get(*merkle_tree_pubkey);
+```
+{% endcode %}
+
+* `insert_or_get()` adds the output state tree pubkey to the accounts array and returns its u8 index
+* This happens before calling `pack_tree_infos()` to extract address tree info in Step 3
+
+For update, close, and reinitialize instructions, the `output_state_tree_index` is automatically included in `CompressedAccountMeta` from `pack_tree_infos()` in Step 3.
+{% endtab %}
+{% endtabs %}
 
 **5. Summary**
 

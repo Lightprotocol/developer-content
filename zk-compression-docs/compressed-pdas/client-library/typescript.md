@@ -3,15 +3,14 @@ title: TypeScript Client
 description: Build a Typescript client to create or interact with compressed accounts. Includes a step-by-step implementation guide and full code examples.
 ---
 
-The TypeScript Client SDK provides two test environments:
+The TypeScript Client SDK provides two RPC clients:
 
-* **For local testing, use `TestRpc`.**
-  * `TestRpc` is an in-memory indexer that parses events and builds Merkle trees on-demand to generate proofs instantly without persisting state.
-  * Requires a running test validator with Light System Programs and Merkle tree accounts.
+* **For unit tests, use `TestRpc`.**
+  * Mock RPC instance that parses events and builds Merkle trees on-demand without persisting state.
 * **For test-validator, devnet and mainnet use `Rpc`.**
   * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
   * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
-* `Rpc` and `TestRpc` implement the same `CompressionApiInterface`. Seamlessly switch between `TestRpc`, local test validator, and public Solana networks.
+* `Rpc` and `TestRpc` implement the same `CompressionApiInterface` to allow switching between `TestRpc`, local test validator, and public Solana networks.
 
 {% hint style="success" %}
 Find [full code examples at the end](typescript.md#full-code-example) for Anchor.
