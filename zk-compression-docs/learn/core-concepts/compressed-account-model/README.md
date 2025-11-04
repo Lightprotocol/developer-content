@@ -24,7 +24,7 @@ To understand the similarities and differences between Solana's regular account 
 
 #### Compressed PDA Accounts
 
-Like regular accounts, each compressed PDA account can be identified by its unique persistent address, represented as 32 bytes in the format of a `PublicKey`. Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them
+Like regular accounts, each compressed PDA account can be identified by its unique persistent address, represented as 32 bytes in the format of a `PublicKey`. Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
 
 <figure><img src="https://content.gitbook.com/content/GcNj6jjKQBC0HgPwNdGy/blobs/36SCAGSoEAQQ3IlQTg3x/image.png" alt="A diagram illustrating the structure of a compressed account in the Light Protocol system. The compressed account is owned by a program and is associated with a compressed PDA (Program Derived Address) account. The compressed account contains data bytes, lamports (account balance), an owner (the program that owns the account), and an address (represented as a public key). The owner of the compressed account has the authority to modify its data and transfer lamports from it. The compressed account is identified by its unique hash, which changes with each write operation. An address can be optionally set as a permanent unique identifier for the compressed account. Compressed accounts are stored in sparse Merkle trees, with only the trees&#x27; sparse state structure and roots stored in the on-chain account space, while the underlying data is stored off-chain." width="563"><figcaption><p>Compressed PDA Accounts</p></figcaption></figure>
 
