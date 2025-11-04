@@ -1,6 +1,7 @@
 ---
 title: Solana vs Compressed Accounts
 description: Technical reference comparing regular Solana accounts and compressed accounts.
+hidden: true
 ---
 
 ZK Compression extends Solana's account model with compressed accounts. This guide provides a technical comparison of regular and compressed Solana accounts.
@@ -34,9 +35,8 @@ Find the source code here: [agave/sdk/account/src/lib.rs:48-60](https://github.c
 Compressed accounts mirror the regular Solana account layout. 
 * State is stored on the Solana ledger and is reconstructed by indexers.
 * Account data is verified against on-chain roots with every transaction, which allows transactions to use the account data inside Solana's virtual machine as if it were stored on-chain.
-* No fixed maximum like Solana's 10 MB, but Solana's 1,232-byte transaction limit constrains practical data size to roughly 1 KB per account.
+* No fixed maximum size like Solana's 10 MB, but Solana's 1,232-byte transaction limit constrains practical data size to roughly 1 KB per account.
 * Compressed accounts are identified by its unique hash, or optionally an address.
-* For this reason, the compressed account struct contains additional fields.
 
 ```rust
 pub struct CompressedAccount {
