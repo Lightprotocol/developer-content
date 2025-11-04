@@ -1,16 +1,16 @@
 ---
 title: Compressed Account Model
-description: Overview to compressed account structure and 
+description: Overview to compressed account structure and how to access compressed account data
 hidden: true
 ---
+
+## Overview
 
 {% hint style="info" %}
 This guide assumes that you're familiar with [Solana's account model](https://solana.com/docs/core/accounts).
 {% endhint %}
 
-## Overview
-
-ZK compressed state is stored in compressed accounts. Compressed accounts are similar to regular Solana accounts but with five main differences:
+Compressed accounts store state and are similar to regular Solana accounts but with five main differences:
 
 * Each compressed account can be identified by its hash
 * Each write to a compressed account changes its hash
@@ -19,9 +19,9 @@ ZK compressed state is stored in compressed accounts. Compressed accounts are si
 
 These differences make compressed accounts rent-free and allow the protocol to store state as calldata on the Solana ledger instead of the costly on-chain account space.
 
-## How compressed accounts work
+## In a Nutshell
 
-These are the steps that allow transactions to use the account data inside Solana's virtual machine as if it were stored on-chain:
+Transactions can use compressed account data inside Solana's virtual machine as if it were stored on-chain by combining state compression and zero-knowledge proofs:
 
 1. Millions of compressed accounts are stored as hashes in Merkle tree leaves
 2. All accounts in one Merkle tree are compressed into a root hash
@@ -34,7 +34,7 @@ These are the steps that allow transactions to use the account data inside Solan
 * Merkle trees are provided by the protocol and Indexers generate validity proofs. 
 * Developers don't configure state Merkle trees or generate validity proofs.
 
-[Learn more about Merkle trees here](<add-link-to-merkle-trees>). 
+[You will learn more about Merkle trees and validity proofs in the next section](merkle-trees.md). 
 {% endhint %}
 
 ## Compressed Account Structure
@@ -47,9 +47,7 @@ pub struct CompressedAccount {
     pub data: Option<CompressedAccountData>,  // Account data
     pub hash: [u8; 32],                       // Unique account hash
     pub lamports: u64,                        // Account balance
-    pub leaf_index: u32,                      // Position in state tree
     pub owner: Pubkey,                        // Program that owns this account
-    pub tree_info: TreeInfo,                  // Merkle tree metadata
 }
 ```
 
@@ -258,8 +256,8 @@ Find the source code here: [account-comparison/tests/test_solana_account.rs:31-3
 </details>
 
 # Next Steps
-Learn how state trees store compressed accounts and address trees store addresses are stored.
+Learn how state trees store compressed accounts and address trees store addresses.
 
-{% content-ref url="../lifecycle-of-a-transaction.md" %}
-[lifecycle-of-a-transaction.md](../lifecycle-of-a-transaction.md)
+{% content-ref url="merkle-trees.md" %}
+[merkle-trees.md](merkle-trees.md)
 {% endcontent-ref %}
