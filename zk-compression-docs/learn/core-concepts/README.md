@@ -39,7 +39,7 @@ Solana Programs invoke[^2] the [Light System Program](#user-content-fn-3)[^3] to
 {% step %}
 ### **State Updates**
 
-At the end of an instruction, the new state is recorded as a log on the Solana ledger.
+The new state is recorded as a log on the Solana ledger with each transaction.
 {% endstep %}
 
 {% step %}
