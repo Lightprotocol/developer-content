@@ -39,7 +39,7 @@ Only this root hash is stored on chain as single value on chain to secure the in
 {% endstep %}
 
 {% step %}
-### Leaf Hash Structure: Compressed Account Hashes
+## Leaf Hash Structure: Compressed Account Hashes
 
 For compressed Solana accounts, the 32 byte leaf hashes effectively mirror the regular Solana account layout: `{DataHash, StateHash; Owner, Lamports`.
 
@@ -74,6 +74,8 @@ The validity proof contains one or more merkle proofs:
 * Starting with the leaf hash, the verifier calculates up the tree using these sibling hashes. The proof path is shown with three highlighted elements in a box at the bottom right: Leaf 0, Node 1, and Node 5, representing the sibling hashes needed to verify Leaf 1.
 * If the calculated root matches the on-chain root, the account is verified.
 
+<figure><img src="https://content.gitbook.com/content/GcNj6jjKQBC0HgPwNdGy/blobs/oI68euPl8TF4pMy8Sq9L/image.png" alt="Merkle tree diagram illustrating a leaf proof for Leaf 1. The tree shows a purple root node at the top, branching down through intermediate nodes (Node 4 and Node 5 in green and blue respectively) to eight leaf nodes at the bottom (Leaf 0 through Leaf 7). Leaf 1 is highlighted in green and labeled as &#x27;compressed account&#x27;. The proof path is shown with three highlighted elements in a box at the bottom right: Leaf 0, Node 1, and Node 5, representing the sibling hashes needed to verify Leaf 1&#x27;s inclusion in the tree. Caption explains that a Merkle proof consists of sibling node hashes required to calculate the final root node, with only adjacent hashes along the path to the root needed."><figcaption><p>A Merkle proof path (blue nodes) consists of all sibling node hashes required to calculate the final root node.<br>Only the adjacent hashes along the path to the root are needed.</p></figcaption></figure>
+
 For a tree with height 26, a single proof requires 26 sibling hashes (32 bytes each) plus metadata—totaling 832 bytes. The proof size grows with tree height.
 
 ZK Compression batches multiple Merkle proofs into a single zero-knowledge proof to achieve a constant 128-byte size regardless of how many accounts are verified:
@@ -92,8 +94,6 @@ Two state tree versions with different proof mechanisms are currently **supporte
 
 When using V2 trees, RPC requests automatically choose the proof mechanism.
 {% endhint %}
-
-<figure><img src="https://content.gitbook.com/content/GcNj6jjKQBC0HgPwNdGy/blobs/oI68euPl8TF4pMy8Sq9L/image.png" alt="Merkle tree diagram illustrating a leaf proof for Leaf 1. The tree shows a purple root node at the top, branching down through intermediate nodes (Node 4 and Node 5 in green and blue respectively) to eight leaf nodes at the bottom (Leaf 0 through Leaf 7). Leaf 1 is highlighted in green and labeled as &#x27;compressed account&#x27;. The proof path is shown with three highlighted elements in a box at the bottom right: Leaf 0, Node 1, and Node 5, representing the sibling hashes needed to verify Leaf 1&#x27;s inclusion in the tree. Caption explains that a Merkle proof consists of sibling node hashes required to calculate the final root node, with only adjacent hashes along the path to the root needed."><figcaption><p>A Merkle proof path (blue nodes) consists of all sibling node hashes required to calculate the final root node.<br>Only the adjacent hashes along the path to the root are needed.</p></figcaption></figure>
 
 {% endstep %}
 {% endstepper %}
