@@ -79,9 +79,9 @@ Find the source code here: [agave/sdk/account/src/lib.rs:48-60](https://github.c
 
 Each compressed account can be **identified by its hash**, regardless of whether it has an address. By definition, whenever any data of a compressed account changes, its hash changes. 
 
-That's why compressed accounts are optionally identified by an **address** as **persistent identifier**. 
+That's why an **address** can serve as optional and additional **persistent identifier**. 
 * An address is represented as 32 bytes in the format of a `PublicKey`.
-* Addresses are optional, because ensuring that the address of a new account is unique incurs additional computational overhead and the hash already serves as unique identifier.
+* Addresses are optional, because ensuring that the address of a new account is unique incurs additional computational overhead.
 
 {% hint style="info" %}
 - Use the address field wherever the state must be unique (such as for NFTs or certain PDAs) and requires a persistent identifier.
@@ -96,6 +96,7 @@ That's why compressed accounts are optionally identified by an **address** as **
 
 {% tabs %}
 {% tab label="TypeScript" %}
+
 ```typescript
 const seed = deriveAddressSeed(
   [
@@ -111,9 +112,11 @@ const address = deriveAddress(seed, addressTree);
 {% hint style="info" %}
 Learn more about address derivation for a [Typescript Client here](../client-library/typescript.md#derive-address).
 {% endhint %}
+
 {% endtab %}
 
 {% tab label="Rust" %}
+
 ```rust
 let (address, _) = derive_address(
   &[
@@ -128,6 +131,7 @@ let (address, _) = derive_address(
 {% hint style="info" %}
 Learn more about address derivation for a [Rust Client here](../client-library/rust.md#derive-address).
 {% endhint %}
+
 {% endtab %}
 {% endtabs %}
 
