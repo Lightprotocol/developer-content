@@ -5,9 +5,7 @@ description: >-
   accounts.
 ---
 
-# Lifecycle of a Transaction
-
-## Overview
+# Overview
 
 {% hint style="info" %}
 This guide assumes you are familiar with transactions on Solana. If you aren't, we recommend to read the [Solana documentation on transactions](https://solana.com/docs/core/transactions).
@@ -21,7 +19,7 @@ There are few nuances to build transactions with compressed accounts as compared
 * To read or write to a compressed account, the instruction must send the current account state on-chain and prove its validity.&#x20;
 * Each unique state tree that gets read or written to (via any compressed account) needs to be specified as per Solana's regular on-chain [account access lists](https://solana.com/docs/core/transactions#array-of-account-addresses).
 
-## Reading Compressed Accounts
+# Reading Compressed Accounts
 
 Reading compressed accounts follows a similar pattern to Solana accounts.
 
@@ -127,7 +125,7 @@ See this [read-only program example](https://github.com/Lightprotocol/program-ex
 {% endtab %}
 {% endtabs %}
 
-## Writing to Compressed Accounts
+# Writing to Compressed Accounts
 
 Writing to compressed accounts can be described more generally as:
 
@@ -154,7 +152,7 @@ See this [guide to update a compressed account](../../compressed-pdas/guides/how
 
 <figure><img src="../../.gitbook/assets/Light Protocol v2 - Batched Merkle trees (4) (1).png" alt="Diagram illustrating compressed account state updates.  On the left, under “Read Existing Account,” four stacked boxes represent: 	1.	Address – the unique identifier of the account, 	2.	Owner Program – the Solana program controlling the account, 	3.	Data – the account’s stored state, and 	4.	Validity Proof – a zero-knowledge proof verifying that the read data is valid.  An arrow in the center points to the right, labeled “Write Updated Account,” showing the same fields—Address, Owner Program, and Data′ (updated data)—indicating that only the data field changes while the validity proof ensures correctness.  This visualization explains the read-modify-write process for compressed accounts in Solana’s ZK Compression architecture, demonstrating how off-chain state updates are validated and written on-chain."><figcaption><p>Simplified: Read and Write compressed accounts</p></figcaption></figure>
 
-### On-chain Execution
+## On-chain Execution
 
 To write compressed state, a program invokes the Light System Program via CPI. The system program then does the following:
 
@@ -176,7 +174,7 @@ An RPC node then parses the transaction and compressed state and provides the re
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Take the last step and understand what the trade-offs for compressed accounts are.
 

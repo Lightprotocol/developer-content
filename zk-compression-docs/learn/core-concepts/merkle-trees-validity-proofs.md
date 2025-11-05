@@ -5,9 +5,7 @@ description: >-
   compressed accounts.
 ---
 
-# Merkle Trees and Validity Proofs
-
-## Overview
+# Overview
 
 The protocol uses two types of Merkle trees that serve different purposes:
 
@@ -20,19 +18,19 @@ The protocol maintains multiple Merkle trees to reduce write-lock contention. So
 Developers don't need to maintain or initialize Merkle trees themselves.
 {% endhint %}
 
-## State trees
+# State trees
 
 A state tree is a binary Merkle tree that stores data of millions of compressed Solana accounts in leaves for efficient cryptographic verification the integrity of all leaves in a tree.
 
 {% stepper %}
 {% step %}
-### Merkle Tree Structure
+## Merkle Tree Structure
 
 A Merkle tree compresses data by hashing adjacent leaves repeatedly into a single root hash, starting from the lowest level. The hash of a compressed Solana account is stored as a leaf in a State tree.
 {% endstep %}
 
 {% step %}
-### Merkle Root Hash
+## Merkle Root Hash
 
 Only this root hash is stored on chain as single value on chain to secure the integrity of all compressed state in a tree. The raw state can thus be stored as calldata in the much cheaper Solana ledger space while preserving Solana's security guarantees.
 
@@ -40,7 +38,7 @@ Only this root hash is stored on chain as single value on chain to secure the in
 {% endstep %}
 
 {% step %}
-### Leaf Hash Structure: Compressed Account Hashes
+## Leaf Hash Structure: Compressed Account Hashes
 
 For compressed Solana accounts, the 32 byte leaf hashes effectively mirror the regular Solana account layout: `{DataHash, StateHash; Owner, Lamports`.
 
@@ -61,7 +59,7 @@ For [details on the compressed account structure see this section](compressed-ac
 {% endstep %}
 
 {% step %}
-### Merkle and Validity Proofs
+## Merkle and Validity Proofs
 
 In state trees, a [validity proof](#user-content-fn-1)[^1] verifies that a compressed account exists in state trees with a constant 128-byte proof size. This proof must be included in every transaction once a compressed account is created to verify the on-chain state.
 
@@ -101,7 +99,7 @@ When using V2 trees, RPC requests automatically choose the proof mechanism.
 {% endstep %}
 {% endstepper %}
 
-## Address trees
+# Address trees
 
 Address trees store addresses that serve as optional, persistent identifiers for compressed accounts.
 
@@ -111,7 +109,7 @@ Every address is unique within its address tree, but the same seeds can create d
 
 {% stepper %}
 {% step %}
-### Address Tree Structure
+## Address Tree Structure
 
 Address trees store derived addresses in an indexed structure. Unlike state trees that store account hashes, address trees store the actual address values along with pointers to maintain sorted order.
 
@@ -119,13 +117,13 @@ These addresses are used only when compressed accounts require a persistent iden
 {% endstep %}
 
 {% step %}
-### Address Tree Root Hash
+## Address Tree Root Hash
 
 Like state trees, only the root hash is stored on-chain to verify all addresses in the tree. The raw addresses are stored in the Solana ledger.
 {% endstep %}
 
 {% step %}
-### Merkle and Validity Proofs
+## Merkle and Validity Proofs
 
 In address trees, validity proofs verify when creating a compressed account with an address that the address doesn't already exist in a specified address tree. This constant 128-byte proof must be included in the transaction only when creating accounts with addresses, not for subsequent compressed account interactions.
 
@@ -144,14 +142,14 @@ Unlike state trees, address trees don't support a `prove_by_index` optimization.
 {% endstep %}
 {% endstepper %}
 
-## Resources on ZK
+# Resources on ZK
 
 For those interested in learning more about the fundamentals of ZK and its applications on Solana, we recommend reading the following:
 
 * [Zero-Knowledge Proofs: An Introduction to the Fundamentals](https://www.helius.dev/blog/zero-knowledge-proofs-an-introduction-to-the-fundamentals)
 * [Zero-Knowledge Proofs: Its Applications on Solana](https://www.helius.dev/blog/zero-knowledge-proofs-its-applications-on-solana)
 
-## Next Steps
+# Next Steps
 
 Learn about the lifecycle of a transaction that interacts with compressed accounts.
 

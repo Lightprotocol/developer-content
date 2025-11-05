@@ -3,7 +3,7 @@ title: Compressed Account Model
 description: Overview to compressed accounts and comparison to Solana accounts.
 ---
 
-## Overview
+# Overview
 
 {% hint style="info" %}
 This guide assumes that you're familiar with [Solana's account model](https://solana.com/docs/core/accounts).
@@ -18,7 +18,7 @@ Compressed accounts store state and are similar to regular Solana accounts but w
 
 These differences make compressed accounts rent-free and allow the protocol to store state as calldata on the Solana ledger instead of the costly on-chain account space.
 
-## In a Nutshell
+# In a Nutshell
 
 Transactions can use compressed account data inside Solana's virtual machine as if it were stored on-chain by combining state compression and zero-knowledge proofs:
 
@@ -36,7 +36,7 @@ Transactions can use compressed account data inside Solana's virtual machine as 
 [You will learn more about Merkle trees and validity proofs in the next section](merkle-trees-validity-proofs.md). 
 {% endhint %}
 
-## Compressed Account Structure
+# Compressed Account Structure
 
 Compressed accounts include the core Solana account fields (owner, lamports, data) plus additional fields to index and store compressed state.
 
@@ -74,7 +74,7 @@ Find the source code here: [agave/sdk/account/src/lib.rs:48-60](https://github.c
 
 </details>
 
-### Address and Hash
+## Address and Hash
 
 Each compressed account can be **identified by its hash**, regardless of whether it has an address. By definition, whenever any data of a compressed account changes, its **hash changes**. 
 
@@ -161,7 +161,7 @@ let (pda, bump) = Pubkey::find_program_address(
 </details>
 
 
-### Data Field
+## Data Field
 
 The `data` field contains the compressed account's program state:
 
