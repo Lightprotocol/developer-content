@@ -95,7 +95,7 @@ Compressed account addresses are derived similar to PDAs.
 * Address tree's store addresses of compressed accounts and ensure its uniqueness.
 
 {% tabs %}
-{% tab label="TypeScript" %}
+{% tab title="TypeScript" %}
 
 ```typescript
 const seed = deriveAddressSeed(
@@ -115,7 +115,7 @@ Learn more about address derivation for a [Typescript Client here](../client-lib
 
 {% endtab %}
 
-{% tab label="Rust" %}
+{% tab title="Rust" %}
 
 ```rust
 let (address, _) = derive_address(

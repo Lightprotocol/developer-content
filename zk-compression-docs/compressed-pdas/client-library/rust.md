@@ -223,7 +223,7 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 * `queue`: Queue account pubkey of queue associated with a Merkle tree
   * Buffers updates of compressed accounts before they are added to the Merkle tree.
   * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
-* `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
+* `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion.
 * `cpi_context` (currently on devnet): Optional CPI context account for batched operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
   * First program caches its signer checks, second program reads them and combines instruction data
@@ -554,8 +554,7 @@ The returned `PackedTreeInfos` contain `.address_trees` as `Vec<PackedAddressTre
 * `address_merkle_tree_pubkey_index`: Points to the address tree account
 * `address_queue_pubkey_index`: Points to the address queue account
   * The queue buffers new addresses before they are inserted into the address tree
-* `root_index`: The Merkle root index from the validity proof
-  * Specifies the root to verify the address does not exist in the tree
+* `root_index`: The Merkle root index from the validity proof to verify the address does not exist in the tree.
 {% endtab %}
 
 {% tab title="Update, Close, Reinit, Burn" %}
@@ -575,10 +574,8 @@ The returned `PackedTreeInfos` contains `.state_trees` as `Option<PackedStateTre
 * `merkle_tree_pubkey_index`: Points to the state tree account
 * `queue_pubkey_index`: Points to the nullifier queue account
   * The queue tracks nullified (spent) account hashes to prevent double-spending
-* `leaf_index`: The leaf position in the Merkle tree from the validity proof
-  * Specifies which leaf contains your account hash to verify it exists in the tree
-* `root_index`: The Merkle root index from the validity proof
-  * Specifies the root to verify the account hash against
+* `leaf_index`: The leaf position in the Merkle tree from the validity proof to verify the compressed account it exists in the tree
+* `root_index`: The Merkle root index from the validity proof to verify the account hash against
 {% endtab %}
 {% endtabs %}
 {% endtab %}
@@ -601,8 +598,7 @@ The returned `PackedAddressTreeInfo` contains:
 * `address_merkle_tree_pubkey_index`: Points to the address tree account
 * `address_queue_pubkey_index`: Points to the address queue account
   * The queue buffers new addresses before they are inserted into the address tree
-* `root_index`: The Merkle root index from the validity proof
-  * Specifies the root to verify the address does not exist in the tree
+* `root_index`: The Merkle root index from the validity proof to verify the address does not exist in the tree
 {% endtab %}
 
 {% tab title="Update, Close, Reinit, Burn" %}
@@ -622,16 +618,14 @@ The returned `PackedStateTreeInfos` contains:
 * `merkle_tree_pubkey_index`: Points to the state tree account
 * `queue_pubkey_index`: Points to the nullifier queue account
   * The queue tracks nullified (spent) account hashes to prevent double-spending
-* `leaf_index`: The leaf position in the Merkle tree from the validity proof
-  * Specifies which leaf contains your account hash to verify it exists in the tree
-* `root_index`: The Merkle root index from the validity proof
-  * Specifies the root to verify the account hash against
+* `leaf_index`: The leaf position in the Merkle tree from the validity proof to verify the compressed account it exists in the tree
+* `root_index`: The Merkle root index from the validity proof to verify the account hash against
 {% endtab %}
 {% endtabs %}
 {% endtab %}
 {% endtabs %}
 
-**4. Add Output State Tree**
+**4. Add Output State Tree (Create only)**
 
 {% hint style="info" %}
 When packing accounts on the client side, you must specify the output state tree to store the new account hash *except* for burn instructions.

@@ -222,13 +222,17 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 * `queue`: Queue account pubkey of queue associated with a Merkle tree
   * Buffers updates of compressed accounts before they are added to the Merkle tree.
   * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
-* `treeType`: Identifies tree version (StateV1, AddressV2) and account for hash insertion
+ * `treeType`: Identifies tree version (StateV1 or V2, AddressV1 or V2). 
+  * The SDK routes to correct circuit verifier based on this.
+  * You may explicitly filter by `treeType` when selecting trees with `selectStateTreeInfo()`.
+
 * `cpiContext` (currently on devnet): Optional CPI context account for batched operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
   * First program caches its signer checks, second program reads them and combines instruction data
   * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
+  * The SDK includes this when available.
 * `nextTreeInfo`: The tree to use for the next operation when the current tree is full (may be null)
-  * When set, use this tree as output tree.
+  * The SDK determines if `nextTreeInfo` should be used for the next state transition.
   * The protocol creates new trees, once existing trees fill up.
 {% endhint %}
 {% endstep %}
@@ -560,7 +564,7 @@ const compressedAccountMeta = {
 {% endtab %}
 {% endtabs %}
 
-**4. Add Output State Tree**
+**4. Add Output State Tree (Create only)**
 
 Specify the state tree to store the new account hash.
 
