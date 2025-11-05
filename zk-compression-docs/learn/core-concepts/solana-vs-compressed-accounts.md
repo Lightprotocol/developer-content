@@ -24,10 +24,10 @@ These differences make compressed accounts rent-free and allow the protocol to s
 Transactions can use compressed account data inside Solana's virtual machine as if it were stored on-chain by combining state compression and zero-knowledge proofs:
 
 1. Millions of compressed accounts are stored as hashes in Merkle tree leaves
-2. All accounts in one Merkle tree are compressed into a root hash
+2. All accounts stored in a Merkle tree are compressed into a single root hash
 3. The root hash is stored in one Solana account for cryptographic verification
 4. Compressed account state is recorded on the Solana ledger
-5. Latest compressed account state is fetched from your RPC provider
+5. The latest compressed account state is fetched from your RPC provider
 6. Compressed account state is verified against the on-chain root hash with a validity proof
 
 {% hint style="success" %}
@@ -77,11 +77,11 @@ Find the source code here: [agave/sdk/account/src/lib.rs:48-60](https://github.c
 
 ### Address and Hash
 
-Each compressed account can be **identified by its hash**, regardless of whether it has an address. By definition, whenever any data of a compressed account changes, its hash changes. 
+Each compressed account can be **identified by its hash**, regardless of whether it has an address. By definition, whenever any data of a compressed account changes, its **hash changes**. 
 
-That's why an **address** can serve as optional and additional **persistent identifier**. 
-* An address is represented as 32 bytes in the format of a `PublicKey`.
-* Addresses are optional, because ensuring that the address of a new account is unique incurs additional computational overhead.
+An **address** can serve as **optional** and additional **persistent identifier**.
+* It's represented as 32 bytes in the format of a `PublicKey`.
+* Addresses are optional, since ensuring that the address of a new account is unique incurs additional computational overhead.
 
 {% hint style="info" %}
 - Use the address field wherever the state must be unique (such as for NFTs or certain PDAs) and requires a persistent identifier.
