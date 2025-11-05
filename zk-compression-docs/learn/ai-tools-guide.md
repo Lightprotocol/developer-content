@@ -50,43 +50,38 @@ allowed-tools: mcp__deepwiki__*
 
 # /ask-deepwiki Command
 
-Query the Light Protocol repository and Solana resources via DeepWiki MCP for precise technical answers.
+Query the Light Protocol repository and Solana resources via DeepWiki MCP for precise technical answers and help with debugging.
 
 ## Command Process
 
 When invoked, perform these steps:
 
-### Step 1: Identify Question Scope
+### Step 1: Identify Question Scope and Type
 
-Determine the question category:
-- **ZK Compression**: Programs, client SDKs, compressed accounts, state trees, validity proofs
-- **Solana fundamentals**: Accounts, PDAs, CPIs, transaction structure, runtime
-- **Anchor framework**: Macros, account constraints, context definitions, IDL
+- **ZK Compression**
+- **Solana fundamentals**
+- **Anchor framework**
 
-Note any specific components mentioned (e.g., LightAccount, ValidityProof, CPI contexts).
+Note any specific key words like debugging, error, or components mentioned (e.g., LightAccount, ValidityProof, CPI contexts).
 
 ### Step 2: Fetch Repository Context
 
 **For ZK Compression / Light Protocol questions:**
-```
-mcp__deepwiki__read_wiki_structure("Lightprotocol/light-protocol")
+
+`mcp__deepwiki__read_wiki_structure("Lightprotocol/light-protocol")`
 mcp__deepwiki__read_wiki_contents("Lightprotocol/light-protocol")
 mcp__deepwiki__ask_question("Lightprotocol/light-protocol", "your question")
-```
 
 **For general Solana questions:**
-```
+
 mcp__deepwiki__read_wiki_structure("solana-labs/solana")
 mcp__deepwiki__read_wiki_contents("solana-labs/solana")
 mcp__deepwiki__ask_question("solana-labs/solana", "your question")
-```
 
 **For Anchor framework questions:**
-```
 mcp__deepwiki__read_wiki_structure("solana-foundation/anchor")
 mcp__deepwiki__read_wiki_contents("solana-foundation/anchor")
 mcp__deepwiki__ask_question("solana-foundation/anchor", "your question")
-```
 
 **For complex questions:** Query multiple repositories if needed to provide complete context.
 
