@@ -1,12 +1,11 @@
 ---
 title: Merkle trees and Validity Proofs
 description: Learn the core concepts of state trees, address trees, and validity proofs for compressed accounts.
-hidden: true
 ---
 
 # Overview
 
-The protocol uses two types of Merkle trees:
+The protocol uses two types of Merkle trees that serve different purposes:
 
 * [**State trees**](#state-trees) store compressed account hashes
 * [**Address trees**](#address-merkle-trees) store addresses that serve as persistent identifiers
@@ -151,8 +150,8 @@ For those interested in learning more about the fundamentals of ZK and its appli
 
 Learn about the lifecycle of a transaction that interacts with compressed accounts.
 
-{% content-ref url="../lifecycle-of-a-transaction.md" %}
-[lifecycle-of-a-transaction.md](../lifecycle-of-a-transaction.md)
+{% content-ref url="transaction-lifecycle.md" %}
+[transaction-lifecycle.md](transaction-lifecycle.md)
 {% endcontent-ref %}
 
 [^1]: are succinct zero-knowledge proofs (ZKPs)

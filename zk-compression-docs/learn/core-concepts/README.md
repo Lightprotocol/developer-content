@@ -69,8 +69,8 @@ In the following sections, we'll dive into the core concepts that make ZK Compre
 * **Lifecycle of a Transaction**: Follow the journey of a ZK-compressed transaction from creation to execution.
 * **Considerations**: Discover the trade-offs and scenarios where ZK Compression may or may not be the best solution.
 
-{% content-ref url="compressed-account-model/" %}
-[compressed-account-model](compressed-account-model/)
+{% content-ref url="compressed-account-model.md" %}
+[compressed-account-model.md](compressed-account-model.md)
 {% endcontent-ref %}
 
 [^1]: The ledger is an immutable historical record of all Solana transactions signed by clients since the genesis block.

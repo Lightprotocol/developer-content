@@ -61,16 +61,4 @@ Whenever a transaction writes to a compressed account, it nullifies the previous
 
 Now you're familiar with the core concepts of ZK Compression, you're ready to take the next step!
 
-{% columns %}
-{% column %}
-{% content-ref url="../../references/whitepaper.md" %}
-[whitepaper.md](../../references/whitepaper.md)
-{% endcontent-ref %}
-{% endcolumn %}
-
-{% column %}
-{% content-ref url="broken-reference" %}
-[Broken link](broken-reference)
-{% endcontent-ref %}
-{% endcolumn %}
-{% endcolumns %}
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><h4>Compressed Tokens</h4></td><td><a href="../compressed-tokens/overview.md">overview.md</a></td></tr><tr><td><h4>Compressed PDAs</h4></td><td><a href="../compressed-pdas/create-a-program-with-compressed-pdas.md">create-a-program-with-compressed-pdas.md</a></td></tr></tbody></table>

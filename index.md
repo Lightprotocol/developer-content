@@ -128,9 +128,9 @@ zk-compression-docs/
 │  │  │  ├─ [Overview](compressed-account-model/README.md) — Overview to the Compressed Account Model, State Merkle trees, and Validity Proofs
 │  │  │  ├─ [State Merkle Trees](README.md#state-merkle-trees)
 │  │  │  └─ [Validity Proofs](README.md#validity-proofs)
-│  │  ├─ [Solana vs Compressed Accounts](learn/core-concepts/solana-vs-compressed-accounts.md) — Comparison of regular Solana accounts and compressed accounts
+│  │  ├─ [Compressed Account Model](learn/core-concepts/compressed-account-model.md) — Overview to compressed account structure and how to access compressed account data
 │  │  ├─ [Merkle Trees and Validity Proofs](learn/core-concepts/merkle-trees-validity-proofs.md) — State and address Merkle trees for compressed account storage
-│  │  ├─ [Lifecycle of a Transaction](lifecycle-of-a-transaction.md) — Overview to the lifecycle of a transaction that interacts with compressed accounts
+│  │  ├─ [Transaction Lifecycle](learn/core-concepts/transaction-lifecycle.md) — Overview to the lifecycle of a transaction that interacts with compressed accounts
 │  │  └─ [Considerations](considerations.md) — Overview to considerations of ZK Compression: larger transaction size, higher compute unit usage, and per-transaction state cost
 │  └─ [Node Operators](learn/node-operators.md) — Set up ZK Compression infrastructure. Learn how to run Forester nodes, Photon indexers and Prover
 │

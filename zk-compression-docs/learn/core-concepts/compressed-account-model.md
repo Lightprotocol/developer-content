@@ -179,86 +179,11 @@ pub struct CompressedAccountData {
   * Compressed accounts have no fixed maximum size to store data like Solana's 10 MB.
   * Still, Solana's 1,232-byte transaction limit constrains practical data size to roughly 1 KB per account.
 - `data_hash`: Hash of the `data` field (32 bytes). 
-  * When computing the compressed account hash for the state tree, the protocol uses this fixed-size hash instead of the variable-length data bytes. 
-
-## Accessing Compressed Account Data
-
-The account structure changes how compressed accounts are accessed. Still, accessing compressed accounts follows a similar pattern to regular Solana accounts.
-* The main difference is that compressed account RPC methods query an indexer instead of the ledger directly.
-* The indexer, called Photon, reconstructs compressed account state from the Solana ledger by reading transaction logs.
-
-**Reading data from a compressed account involves these steps:**
-1. Fetch the compressed account data from your RPC provider using its address or hash
-* Here you use [`get_compressed_account()`](../../resources/json-rpc-methods/getcompressedaccount.md), similar to `getAccountInfo()`.
-2. Deserialize the account's data field into the appropriate data structure
-3. To use the account in a transaction, fetch a validity proof from your RPC provider that supports ZK Compression using the account hash via `getValidityProof()`.
-* This proves either the address does not exist yet in the specified address tree (for creation) or that the account hash exists in the state tree (for updates, closure, reinitialization, burn).
-
-The proof is included in transaction instruction data for on-chain verification by the Light System Program.
-
-```rust
-// Reading compressed account from indexer
-let compressed_account = rpc
-    .get_compressed_account(address, None)
-    .await
-    .unwrap()
-    .value
-    .unwrap();
-
-// Deserialize compressed account data
-let data_account = CompressedAccountData::deserialize(
-    &mut compressed_account.data.as_ref().unwrap().data.as_slice(),
-)
-.unwrap();
-
-// Access fields
-assert_eq!(data_account.user, user.pubkey());
-assert_eq!(data_account.name, "Heinrich");
-assert_eq!(data_account.data, [1u8; 128]);
-
-// Get validity proof to use account in a transaction
-let hash = compressed_account.hash;
-
-let rpc_result = rpc
-    .get_validity_proof(vec![hash], vec![], None)
-    .await?
-    .value;
-```
-
-{% hint style="info" %}
-Find the [source code here](https://github.com/Lightprotocol/program-examples/blob/main/account-comparison/programs/account-comparison/tests/test_compressed_account.rs#L40-L52)
-{% endhint %}
-
-
-<details>
-
-<summary>Reading a Solana Account</summary>
-
-Reading data from a Solana account involves two steps:
-
-1. Fetch the account from your RPC provider using its address
-2. Deserialize the account's data field from raw bytes into the appropriate data structure, as defined by the program that owns the account.
-
-```rust
-// Reading account from chain
-let account = svm.get_account(&account_pda).unwrap();
-
-// Deserialize account data (skip first 8 bytes = discriminator)
-let data_account = AccountData::deserialize(&mut &account.data[8..]).unwrap();
-
-// Access fields
-assert_eq!(data_account.name, "Heinrich".to_string());
-assert_eq!(data_account.data, [1u8; 128]);
-```
-
-{% hint style="info" %}
-Find the source code here: [account-comparison/tests/test_solana_account.rs:31-35](https://github.com/Lightprotocol/program-examples/blob/main/account-comparison/programs/account-comparison/tests/test_solana_account.rs#L31-L35)
-{% endhint %}
-
-</details>
+  * When computing the compressed account hash for the state tree, the protocol uses this fixed-size hash instead of the variable-length data bytes.
 
 # Next Steps
-Learn how state trees store compressed accounts and address trees store addresses.
+
+Start building, or learn about the role of validity proofs and Merkle trees in the protocol.
 
 {% content-ref url="merkle-trees-validity-proofs.md" %}
 [merkle-trees-validity-proofs.md](merkle-trees-validity-proofs.md)
