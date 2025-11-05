@@ -134,6 +134,6 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 Get started with the first cookbook guide.
 
-{% content-ref url="guides/how-to-create-and-register-a-mint-account-for-compression.md" %}
-[how-to-create-and-register-a-mint-account-for-compression.md](guides/how-to-create-and-register-a-mint-account-for-compression.md)
+{% content-ref url="guides/how-to-create-compressed-token-accounts.md" %}
+[how-to-create-compressed-token-accounts.md](guides/how-to-create-compressed-token-accounts.md)
 {% endcontent-ref %}
