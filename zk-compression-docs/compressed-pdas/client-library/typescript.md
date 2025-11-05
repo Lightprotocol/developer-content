@@ -5,51 +5,6 @@ description: >-
   Includes a step-by-step implementation guide and full code examples.
 ---
 
-# Typescript
-
-The TypeScript Client SDK provides two RPC clients:
-
-* **For unit tests, use `TestRpc`.**
-  * Mock RPC instance that parses events and builds Merkle trees on-demand without persisting state.
-* **For test-validator, devnet and mainnet use `Rpc`.**
-  * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints. Find a [full list of JSON RPC methods here](https://www.zkcompression.com/resources/json-rpc-methods).
-  * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
-* `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
-
-{% hint style="success" %}
-Find [full code examples at the end](typescript.md#full-code-example) for Anchor.
-{% endhint %}
-
-## Implementation Guide
-
-{% hint style="info" %}
-Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol/3.1-javascripttypescript-sdks).
-{% endhint %}
-
-This guide covers the components of a Typescript client. Here is the complete flow:
-
-{% tabs %}
-{% tab title="Create" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-create (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-create.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Update" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-update (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-update.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Close" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-close (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-close.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Reinitialize" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-reinit (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-reinit.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Burn" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-burn (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-burn.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-{% endtabs %}
-
 {% stepper %}
 {% step %}
 ### Dependencies
