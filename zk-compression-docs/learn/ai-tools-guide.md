@@ -44,13 +44,11 @@ We recommend to create a command for Claude Code that includes the tools listed 
 ```markdown
 ---
 argument-hint: <question>
-description: Query Light Protocol repository via DeepWiki MCP with precise technical answers
+description: Query Light Protocol repository and Solana resources via DeepWiki MCP for precise technical answers and help with debugging
 allowed-tools: mcp__deepwiki__*
 ---
 
 # /ask-deepwiki Command
-
-Query the Light Protocol repository and Solana resources via DeepWiki MCP for precise technical answers and help with debugging.
 
 ## Command Process
 
