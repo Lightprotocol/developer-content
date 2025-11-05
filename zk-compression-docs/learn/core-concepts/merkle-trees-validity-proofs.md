@@ -87,12 +87,12 @@ ZK Compression batches multiple Merkle proofs into a single zero-knowledge proof
 | 8                 | 8 merkle + 1 ZK proof | 128 bytes     |
 
 {% hint style="info" %}
-Two state tree versions with different proof mechanisms are currently **supported on Devnet**:
+Two **state tree versions** with different proof mechanisms are currently supported:
 
 * **V1 state trees**: Always require the full 128-byte ZK proof
 * **V2 batched state trees**: Can use `prove_by_index` optimization that verifies the account exists with only one byte instead of 128-bytes.
 
-V2 optimizes optimize compute unit consumption by up to 70% and is currently on Devnet.
+**V2** optimizes optimize compute unit consumption by up to 70% and is **currently on Devnet**.
 
 When using V2 trees, RPC requests automatically choose the proof mechanism.
 {% endhint %}
@@ -128,16 +128,15 @@ Like state trees, only the root hash is stored on-chain to verify all addresses 
 In address trees, validity proofs verify when creating a compressed account with an address that the address doesn't already exist in a specified address tree. This constant 128-byte proof must be included in the transaction only when creating accounts with addresses, not for subsequent compressed account interactions.
 
 {% hint style="info" %}
-**Address Tree Versions**
-
-Two address tree versions are currently **supported on Devnet**:
+Two **address tree versions** are currently supported:
 
 * **V1 address trees** height 26 (\~67 million addresses).
 * **V2 batched address trees** with height 40 (\~1 trillion addresses).
 
-V2 is currently on Devnet. When using V2 trees, RPC requests automatically choose the proof mechanism.
+**V2** optimizes optimize compute unit consumption by up to 70% and is **currently on Devnet**.
 
-Unlike state trees, address trees don't support a `prove_by_index` optimization.
+When using V2 trees, RPC requests automatically choose the proof mechanism.
+
 {% endhint %}
 {% endstep %}
 {% endstepper %}
