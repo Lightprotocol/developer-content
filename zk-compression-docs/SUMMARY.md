@@ -45,9 +45,7 @@
 
 * [Core Concepts](learn/core-concepts/README.md)
   * [Compressed Account Model](learn/core-concepts/compressed-account-model.md)
-    * [Merkle Trees and Validity Proofs](learn/core-concepts/merkle-trees-validity-proofs.md)
-    * [State Merkle Trees](learn/core-concepts/compressed-account-model.md#state-merkle-trees)
-    * [Validity Proofs](learn/core-concepts/compressed-account-model.md#validity-proofs)
+  * [Merkle Trees and Validity Proofs](learn/core-concepts/merkle-trees-validity-proofs.md)
   * [Lifecycle of a Transaction](learn/core-concepts/transaction-lifecycle.md)
   * [Considerations](learn/core-concepts/considerations.md)
 * [AI Tools Guide](learn/ai-tools-guide.md)
