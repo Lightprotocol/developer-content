@@ -3,6 +3,8 @@ title: AI Tools Guide
 description: Guidance to AI tools when working with ZK Compression. Includes MCP server, DeepWiki, and AI Search guides.
 ---
 
+# For Docs
+
 * **Docs AI Search** - Search documentation with AI in the search bar.
 * **llms.txt** - Site index for LLM navigation: [https://zkcompression.com/llms.txt](https://zkcompression.com/llms.txt).
 * **Markdown Export** - Append `.md` to any page URL for raw markdown.
@@ -82,4 +84,4 @@ You can specify any public GitHub repo that is indexed with DeepWiki. When you c
 
 Start testing your AI tools with compressed tokens or PDAs.
 
-<table data-card-size="large" data-view="cards"><thead><tr><th></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><h4>Compressed Tokens</h4></td><td><a href="../compressed-tokens/">../compressed-tokens/</a></td></tr><tr><td><h4>Compressed PDAs</h4></td><td><a href="../compressed-pdas/">../compressed-pdas/</a></td></tr></tbody></table>
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><h4>Compressed Tokens</h4></td><td><a href="../compressed-tokens/overview.md">overview.md</a></td></tr><tr><td><h4>Compressed PDAs</h4></td><td><a href="../compressed-pdas/create-a-program-with-compressed-pdas.md">create-a-program-with-compressed-pdas.md</a></td></tr></tbody></table>
