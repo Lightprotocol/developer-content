@@ -9,7 +9,7 @@ Compressed tokens provide full SPL token functionality without per-account rent 
 
 Compressed token accounts store information about an individual's ownership of a specific token (mint). Different from regular token accounts, they don't require an Associated Token Account (ATA) per token holder.
 
-For example, this simplifies [token distribution](advanced-guides/create-an-airdrop.md), since you don't need to allocate a token account per recipient.
+For example, this simplifies [token distribution](implementation-guides/create-an-airdrop.md), since you don't need to allocate a token account per recipient.
 
 #### Compressed Tokens at a Glance
 

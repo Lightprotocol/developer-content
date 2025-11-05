@@ -11,9 +11,10 @@ Transactions to interact with compressed accounts fully compatible with Solana's
 
 There are three key nuances in building transactions with compressed accounts as compared to regular accounts:
 
-* Instructions must specify the list of all compressed accounts being read or written to. To read or write to a compressed account, the instruction must send the current account state on-chain and prove its validity
+* Instructions must specify the list of all compressed accounts being read or written to. 
+* To read or write to a compressed account, the instruction must send the current account state on-chain and prove its validity
 * Each unique state tree that gets read or written to (via any compressed account) needs to be specified as per Solana's regular on-chain [account access lists](https://solana.com/docs/core/transactions#array-of-account-addresses)
-* To read any compressed account state on-chain, the client must send a validity proof alongside the instruction data to the chain. Depending on your program logic, the validity proof can prove A) the validity of all specified read accounts and B) the non-existence of a specified PDA within the compressed address space, e.g., for creating a new compressed PDA account
+* To read any compressed account state on-chain, the client must send a validity proof alongside the instruction data to the chain.
 
 We can express a transaction more generally as:
 

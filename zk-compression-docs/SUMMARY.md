@@ -1,7 +1,6 @@
 # Table of contents
 
 * [Introduction](README.md)
-* [CLAUDE.md](claude.md.md)
 * [Quickstart](quickstart.md)
 * [Support](support.md)
 
@@ -51,15 +50,13 @@
     * [Validity Proofs](learn/core-concepts/compressed-account-model.md#validity-proofs)
   * [Lifecycle of a Transaction](learn/core-concepts/transaction-lifecycle.md)
   * [Considerations](learn/core-concepts/considerations.md)
-* [AI Tools Guide](references/ai-tools-guide.md)
+* [AI Tools Guide](learn/ai-tools-guide.md)
 
 ## Resources
 
 * [CLI Installation](resources/cli-installation.md)
 * [Error Cheatsheet](resources/error-cheatsheet/README.md)
   * [Debug 0x179b / 6043 / ProofVerificationFailed](resources/error-cheatsheet/debug-0x179b-6043-proofverificationfailed.md)
-  * [Debug 0x179b / 6043 / ProofVerificationFailed (new)](resources/error-cheatsheet/debug-0x179b-6043-proofverificationfailed-new.md)
-  * [Debug 0x36D2 / 14034 / InvalidCpiAccountsOffset](resources/error-cheatsheet/debug-0x36d2-14034-invalidcpiaccountsoffset.md)
 * [JSON RPC methods](resources/json-rpc-methods/README.md)
   * [getcompressedaccount](resources/json-rpc-methods/getcompressedaccount.md)
   * [getcompressedaccountsbyowner](resources/json-rpc-methods/getcompressedaccountsbyowner.md)
@@ -90,7 +87,7 @@
 ## References
 
 * [Whitepaper](references/whitepaper.md)
-* [Node Operators](learn/node-operators.md)
+* [Node Operators](references/node-operators.md)
 * [Terminology](references/terminology.md)
 * [Security](references/security.md)
 

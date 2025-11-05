@@ -13,7 +13,7 @@ description: Complete error code reference for ZK Compression. Search error code
 * Share the exact error code and a reproducer (GitHub repo / gist)
 
 {% hint style="success" %}
-For help with debugging use the [MCP Configuration](../../references/ai-tools-guide.md#mcp) or AskDevin via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol).
+For help with debugging use the [MCP Configuration](../../learn/ai-tools-guide.md#mcp) or AskDevin via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol).
 {% endhint %}
 
 ***

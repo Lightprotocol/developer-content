@@ -1,7 +1,6 @@
 ---
 title: Compressed Account Model
-description: Overview to compressed account structure and how to access compressed account data
-hidden: true
+description: Overview to compressed accounts and comparison to Solana accounts.
 ---
 
 ## Overview
@@ -34,7 +33,7 @@ Transactions can use compressed account data inside Solana's virtual machine as 
 * Merkle trees are provided by the protocol and Indexers generate validity proofs. 
 * Developers don't configure state Merkle trees or generate validity proofs.
 
-[You will learn more about Merkle trees and validity proofs in the next section](merkle-trees.md). 
+[You will learn more about Merkle trees and validity proofs in the next section](merkle-trees-validity-proofs.md). 
 {% endhint %}
 
 ## Compressed Account Structure
@@ -108,7 +107,7 @@ const address = deriveAddress(seed, addressTree);
 ```
 
 {% hint style="info" %}
-Learn more about address derivation for a [Typescript Client here](../client-library/typescript.md#derive-address).
+Learn more about address derivation for a [Typescript Client here](../../compressed-pdas/client-library/typescript.md#derive-address).
 {% endhint %}
 
 {% endtab %}
@@ -124,7 +123,7 @@ let (address, _) = derive_address(
 ```
 
 {% hint style="info" %}
-Learn more about address derivation for a [Rust Client here](../client-library/rust.md#derive-address).
+Learn more about address derivation for a [Rust Client here](../../compressed-pdas/client-library/rust.md#derive-address).
 {% endhint %}
 
 {% endtab %}
