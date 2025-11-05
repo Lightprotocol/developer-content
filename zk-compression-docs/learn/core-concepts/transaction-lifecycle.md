@@ -9,7 +9,7 @@ description: Overview to the lifecycle of a transaction that interacts with comp
 This guide assumes you are familiar with transactions on Solana. If you aren't, we recommend to read the [Solana documentation on transactions](https://solana.com/docs/core/transactions).
 {% endhint %}
 
-Transactions to interact with compressed accounts fully compatible with Solana's Transaction and Versioned Transaction formats.
+Transactions to interact with compressed accounts are fully compatible with Solana's Transaction and Versioned Transaction formats.
 
 There are three key nuances in building transactions with compressed accounts as compared to regular accounts:
 
@@ -24,9 +24,19 @@ Reading compressed accounts follows a similar pattern to Solana accounts.
 * The main difference is that compressed account RPC methods query an indexer instead of the ledger directly.
 * The indexer, called Photon, reconstructs compressed account state from the Solana ledger by reading transaction logs.
 
+The API exposed by the indexer closely mirrors existing RPC calls, with one-to-one mapping:
+
+| Solana RPC              | Photon RPC Calls                  |
+| ----------------------- | --------------------------------- |
+| getAccountInfo          | getCompressedAccount              |
+| getBalance              | getCompressedBalance              |
+| getTokenAccountsByOwner | getCompressedTokenAccountsByOwner |
+| getProgramAccounts      | getCompressedAccountsByOwner      |
+
+
 {% tabs %}
-{% tab title="Clients" %}
-Clients read compressed accounts simply with a different RPC method:
+{% tab title="**Clients**" %}
+Clients read compressed accounts similar to Solana accounts:
 
 1. Fetch the compressed account data from your RPC provider using its address or hash
    * Here you use [`getCompressedAccount()`](../../resources/json-rpc-methods/getcompressedaccount.md), similar to `getAccountInfo()`.
@@ -65,12 +75,11 @@ let account_data = deserialize(&compressed_account.data)?;
 
 {% endtab %}
 
-{% tab title="Programs" %}
-**On-chain reading within programs requires a validity proof to verify the account exists in the state tree.**
+{% tab title="**Programs**" %}
+On-chain reading within programs requires a validity proof to verify the account exists in the state tree.
 
 1. Fetch the compressed account data from your RPC provider using its address or hash
 2. Fetch a validity proof using the account hash via [`getValidityProof()`](../../resources/json-rpc-methods/getvalidityproof.md).
-   * This proves the account hash exists in the state tree.
 3. Clients pass the proof to the on-chain program in the instruction data.
 
 {% tabs %}
@@ -134,7 +143,7 @@ Here's what this looks like when updating a single compressed PDA account:
     * This proves either the address does not exist yet in the specified address tree (for creation) or that the account hash exists in the state tree (for updates, closure, reinitialization, burn).
     * The validity proof is included in transaction instruction data for on-chain verification by the Light System Program.
 
-The custom Solana program executing the state transition _Data_ -> _Data'_ requires its client to pack the instructions:
+The custom Solana program executing the state transition _Data_ -> _Data'_ requires its client to pack the instructions with:
 * `address`: persistent identifier of the compressed account (unchanged)
 * `owner program`: program ID that owns this account (unchanged)
 * `data`: current account data
