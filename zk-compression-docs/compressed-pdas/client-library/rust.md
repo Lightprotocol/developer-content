@@ -1,7 +1,11 @@
 ---
 title: Rust Client
-description: Build a Rust client to create or interact with compressed accounts and tokens. Includes a step-by-step implementation guide and full code examples.
+description: >-
+  Build a Rust client to create or interact with compressed accounts and tokens.
+  Includes a step-by-step implementation guide and full code examples.
 ---
+
+# Rust
 
 The Rust Client SDK provides two client implementations:
 
@@ -17,7 +21,7 @@ The Rust Client SDK provides two client implementations:
 Find full code examples [at the end for Anchor and native Rust](rust.md#full-code-example).
 {% endhint %}
 
-# Implementation Guide
+## Implementation Guide
 
 {% hint style="info" %}
 Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol/3.2-rust-client-sdk).
@@ -49,7 +53,7 @@ This guide covers the components of a Rust client. Here is the complete flow:
 
 {% stepper %}
 {% step %}
-## Dependencies
+### Dependencies
 
 {% tabs %}
 {% tab title="LightClient" %}
@@ -85,7 +89,7 @@ The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to An
 {% endstep %}
 
 {% step %}
-## Environment
+### Environment
 
 {% tabs %}
 {% tab title="LightClient" %}
@@ -168,7 +172,7 @@ let payer = rpc.get_payer().insecure_clone();
 {% endstep %}
 
 {% step %}
-## Tree Configuration
+### Tree Configuration
 
 Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
@@ -204,13 +208,14 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 {% endtab %}
 {% endtabs %}
 
-**Address Trees:**
- `get_address_tree_v1()` / `get_address_tree_v2()` returns `TreeInfo` with the public key and other metadata for the address tree.
+**Address Trees:** `get_address_tree_v1()` / `get_address_tree_v2()` returns `TreeInfo` with the public key and other metadata for the address tree.
+
 * `TreeInfo` is used
-    * to derive addresses and
-    * for `get_validity_proof()` to prove the address does not exist yet.
+  * to derive addresses and
+  * for `get_validity_proof()` to prove the address does not exist yet.
 
 **State Trees:**
+
 * `get_random_state_tree_info()` returns `TreeInfo` with pubkeys and metadata for a state tree to store the compressed account hash.
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
   * Account hashes can move to different state trees after each state transition.
@@ -235,13 +240,13 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 {% endstep %}
 
 {% step %}
-## Derive Address
+### Derive Address
 
 Derive a persistent address as a unique identifier for your compressed account, similar to [program-derived addresses (PDAs)](https://solana.com/docs/core/pda).
 
 * Use the derivation method that matches your address tree type from the previous step.
 * Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
-* The key difference to PDAs is that compressed accounts require an **address tree** parameter. 
+* The key difference to PDAs is that compressed accounts require an **address tree** parameter.
 
 {% hint style="info" %}
 V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
@@ -292,7 +297,7 @@ Use the same `address_tree_info.tree` for both `derive_address()` and all subseq
 {% endstep %}
 
 {% step %}
-## Validity Proof
+### Validity Proof
 
 Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
@@ -406,6 +411,7 @@ The RPC returns `ValidityProofWithContext` with
 **Supported Combinations and Maximums**
 
 The specific combinations and maximums depend on the circuit version (v1 or v2) and the proof type.
+
 * Combine multiple hashes **or** multiple addresses in a single proof, or
 * multiple hashes **and** addresses in a single combined proof.
 
@@ -415,47 +421,45 @@ These maximums are determined by the available circuit verifying keys. Different
 
 {% tabs %}
 {% tab title="V1 Circuits" %}
-
 V1 circuits can prove in a single proof
+
 * 1, 2, 3, 4, or 8 hashes,
 * 1, 2, 3, 4, or 8 addresses, or
 * multiple hashes or addresses in any combination of the below.
 
 | **Single Combined Proofs** | Any combination of |
-|---------|:---:|
-| Hashes | 1, 2, 3, 4, 8 |
-| Addresses | 1, 2, 4, 8 |
-
+| -------------------------- | :----------------: |
+| Hashes                     |    1, 2, 3, 4, 8   |
+| Addresses                  |     1, 2, 4, 8     |
 {% endtab %}
 
 {% tab title="V2 Circuits" %}
-
 V2 circuits can prove in a single proof
+
 * 1 to 20 hashes,
 * 1 to 32 addresses, or
 * multiple hashes or addresses in any combination of the below.
 
 | **Single Combined Proofs** | Any combination of |
-|---------|:---:|
-| Hashes | 1 to 4 |
-| Addresses | 1 to 4 |
-
+| -------------------------- | :----------------: |
+| Hashes                     |       1 to 4       |
+| Addresses                  |       1 to 4       |
 {% endtab %}
 {% endtabs %}
-
 {% endtab %}
 {% endtabs %}
 {% endstep %}
 
 {% step %}
-## Pack Accounts
+### Pack Accounts
 
 To optimize instruction data we pack accounts into an array:
+
 * Every packed account is assigned to an u8 index.
 * Indices are included in instruction data, instead of 32 byte pubkeys.
 * The indices point to the instructions accounts
-    * in anchor to `remainingAccounts`, and
-    * in native programs to the account info slice.
+  * in anchor to `remainingAccounts`, and
+  * in native programs to the account info slice.
 
 **1. Initialize PackedAccounts**
 
@@ -628,7 +632,7 @@ The returned `PackedStateTreeInfos` contains:
 **4. Add Output State Tree (Create only)**
 
 {% hint style="info" %}
-When packing accounts on the client side, you must specify the output state tree to store the new account hash *except* for burn instructions.
+When packing accounts on the client side, you must specify the output state tree to store the new account hash _except_ for burn instructions.
 {% endhint %}
 
 {% tabs %}
@@ -677,7 +681,7 @@ The accounts are referenced in instruction data by u8 indices in Packed structs.
 {% endstep %}
 
 {% step %}
-## Instruction Data
+### Instruction Data
 
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
@@ -855,7 +859,7 @@ Include the Merkle tree metadata packed in Step 6:
 {% endstep %}
 
 {% step %}
-## Instruction
+### Instruction
 
 Build a standard Solana `Instruction` struct with your `program_id`, `accounts`, and `data` from Step 7. Pass the `remaining_accounts` array you built in Step 6.
 
@@ -952,7 +956,7 @@ All accounts are in the array when not using Anchor.
 {% endstep %}
 
 {% step %}
-## Send Transaction
+### Send Transaction
 
 {% code overflow="wrap" %}
 ```rust
@@ -964,7 +968,7 @@ rpc.create_and_send_transaction(&[instruction],
 {% endstep %}
 {% endstepper %}
 
-# Full Code Examples
+## Full Code Examples
 
 Full Rust test examples using `light-program-test`.
 
@@ -2439,7 +2443,7 @@ pub async fn burn_compressed_account(
 {% endtab %}
 {% endtabs %}
 
-# Next Steps
+## Next Steps
 
 Start building programs to create, or interact with compressed accounts.
 

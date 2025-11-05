@@ -1,7 +1,11 @@
 ---
 title: TypeScript Client
-description: Build a Typescript client to create or interact with compressed accounts. Includes a step-by-step implementation guide and full code examples.
+description: >-
+  Build a Typescript client to create or interact with compressed accounts.
+  Includes a step-by-step implementation guide and full code examples.
 ---
+
+# Typescript
 
 The TypeScript Client SDK provides two RPC clients:
 
@@ -16,7 +20,7 @@ The TypeScript Client SDK provides two RPC clients:
 Find [full code examples at the end](typescript.md#full-code-example) for Anchor.
 {% endhint %}
 
-# Implementation Guide
+## Implementation Guide
 
 {% hint style="info" %}
 Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol/3.1-javascripttypescript-sdks).
@@ -48,7 +52,7 @@ This guide covers the components of a Typescript client. Here is the complete fl
 
 {% stepper %}
 {% step %}
-## Dependencies
+### Dependencies
 
 {% tabs %}
 {% tab title="npm" %}
@@ -91,7 +95,7 @@ pnpm add \
 {% endstep %}
 
 {% step %}
-## Environment
+### Environment
 
 {% tabs %}
 {% tab title="Rpc" %}
@@ -161,7 +165,7 @@ const testRpc = await getTestRpc(lightWasm);
 {% endstep %}
 
 {% step %}
-## Tree Configuration
+### Tree Configuration
 
 Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
@@ -191,7 +195,6 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 {% endtab %}
 
 {% tab title="V2 Trees" %}
-
 {% code overflow="wrap" %}
 ```typescript
 const addressTree = await rpc.getAddressTreeInfoV2();
@@ -202,13 +205,14 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 {% endtab %}
 {% endtabs %}
 
-**Address Trees:**
-`getDefaultAddressTreeInfo()` / `rpc.getAddressTreeInfoV2()` returns `TreeInfo` with the public key and other metadata for the address tree.
+**Address Trees:** `getDefaultAddressTreeInfo()` / `rpc.getAddressTreeInfoV2()` returns `TreeInfo` with the public key and other metadata for the address tree.
+
 * `TreeInfo` is used
-  * to derive addresses and 
+  * to derive addresses and
   * for `getValidityProofV0()` to prove the address does not exist yet.
 
 **State Trees:**
+
 * `getStateTreeInfos()` returns `TreeInfo[]` with pubkeys and metadata for all active state trees.
 * `selectStateTreeInfo()` selects a random state tree to store the compressed account hash.
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
@@ -222,10 +226,9 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 * `queue`: Queue account pubkey of queue associated with a Merkle tree
   * Buffers updates of compressed accounts before they are added to the Merkle tree.
   * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
- * `treeType`: Identifies tree version (StateV1 or V2, AddressV1 or V2). 
-  * The SDK routes to correct circuit verifier based on this.
-  * You may explicitly filter by `treeType` when selecting trees with `selectStateTreeInfo()`.
-
+* `treeType`: Identifies tree version (StateV1 or V2, AddressV1 or V2).
+* The SDK routes to correct circuit verifier based on this.
+* You may explicitly filter by `treeType` when selecting trees with `selectStateTreeInfo()`.
 * `cpiContext` (currently on devnet): Optional CPI context account for batched operations across multiple programs (may be null)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
   * First program caches its signer checks, second program reads them and combines instruction data
@@ -238,13 +241,13 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 {% endstep %}
 
 {% step %}
-## Derive Address
+### Derive Address
 
 Derive a persistent address as a unique identifier for your compressed account, similar to [program-derived addresses (PDAs)](https://solana.com/docs/core/pda).
 
 * Use the derivation method that matches your address tree type from the previous step.
 * Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
-* The key difference to PDAs is that compressed accounts require an **address tree** parameter. 
+* The key difference to PDAs is that compressed accounts require an **address tree** parameter.
 
 {% hint style="info" %}
 V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
@@ -263,10 +266,12 @@ const address = deriveAddress(seed, addressTree.tree);
 {% endcode %}
 
 **Derive the seed**:
+
 * Predefined inputs, such as strings, numbers or other account addresses
 * Specify `programId` to combine with your seeds
 
 **Then, derive the address**:
+
 * Pass the derived 32-byte `seed` from the first step
 * Specify `addressTree.tree` pubkey
 {% endtab %}
@@ -282,9 +287,11 @@ const address = deriveAddressV2(seed, addressTree.tree, programId);
 {% endcode %}
 
 **Derive the seed**:
+
 * Predefined inputs, such as strings, numbers or other account addresses
 
 **Then, derive the address**:
+
 * Pass the derived 32-byte `seed` from the first step.
 * Specify `addressTree.tree` pubkey to ensure an address is unique to an address tree. Different trees produce different addresses from identical seeds.
 * Specify `programId` in the address derivation. V2 includes it here instead of in the seed.
@@ -293,13 +300,14 @@ const address = deriveAddressV2(seed, addressTree.tree, programId);
 
 {% hint style="info" %}
 Use the same `addressTree` for both address derivation and all subsequent operations:
+
 * To create a compressed account, pass the address to `getValidityProofV0()` to prove the address does not exist yet.
 * To update/close, use the address to fetch the current account with `getCompressedAccount(address)`.
 {% endhint %}
 {% endstep %}
 
 {% step %}
-## Validity Proof
+### Validity Proof
 
 Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
@@ -398,6 +406,7 @@ The RPC returns proof result with
 **Supported Combinations and Maximums**
 
 The specific combinations and maximums depend on the circuit version (v1 or v2) and the proof type.
+
 * Combine multiple hashes **or** multiple addresses in a single proof, or
 * multiple hashes **and** addresses in a single combined proof.
 
@@ -407,47 +416,45 @@ The combinations and maximums are determined by the available circuit verifying 
 
 {% tabs %}
 {% tab title="V1 Circuits" %}
-
 V1 circuits can prove in a single proof
+
 * 1, 2, 3, 4, or 8 hashes,
 * 1, 2, 3, 4, or 8 addresses, or
 * multiple hashes or addresses in any combination of the below.
 
 | **Single Combined Proofs** | Any combination of |
-|---------|:---:|
-| Hashes | 1, 2, 3, 4, 8 |
-| Addresses | 1, 2, 4, 8 |
-
+| -------------------------- | :----------------: |
+| Hashes                     |    1, 2, 3, 4, 8   |
+| Addresses                  |     1, 2, 4, 8     |
 {% endtab %}
 
 {% tab title="V2 Circuits" %}
-
 V2 circuits can prove in a single proof
+
 * 1 to 20 hashes,
 * 1 to 32 addresses, or
 * multiple hashes or addresses in any combination of the below.
 
 | **Single Combined Proofs** | Any combination of |
-|---------|:---:|
-| Hashes | 1 to 4 |
-| Addresses | 1 to 4 |
-
+| -------------------------- | :----------------: |
+| Hashes                     |       1 to 4       |
+| Addresses                  |       1 to 4       |
 {% endtab %}
 {% endtabs %}
 {% endtab %}
 {% endtabs %}
-
 {% endstep %}
 
 {% step %}
-## Pack Accounts
+### Pack Accounts
 
 To optimize instruction data we pack accounts into an array:
+
 * Every packed account is assigned to an u8 index.
 * Indices are included in instruction data, instead of 32 byte pubkeys.
 * The indices point to the instructions accounts
-    * in anchor to `remainingAccounts`, and
-    * in native programs to the account info slice.
+  * in anchor to `remainingAccounts`, and
+  * in native programs to the account info slice.
 
 **1. Initialize PackedAccounts**
 
@@ -589,8 +596,9 @@ const { remainingAccounts } = packedAccounts.toAccountMetas();
 ```
 {% endcode %}
 
-Call `toAccountMetas()` to build the complete accounts structure for `.remainingAccounts()`. 
-* Packed struct indices reference accounts by their position in this array. 
+Call `toAccountMetas()` to build the complete accounts structure for `.remainingAccounts()`.
+
+* Packed struct indices reference accounts by their position in this array.
 * The method returns an object with a `remainingAccounts` property containing the `AccountMeta[]` array.
 
 **The method returns accounts in two sections:**
@@ -628,7 +636,7 @@ The accounts receive a sequential u8 index. Instruction data references accounts
 {% endstep %}
 
 {% step %}
-## Instruction Data
+### Instruction Data
 
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
@@ -694,7 +702,6 @@ const instructionData = {
 1. **Validity Proof**
 
 * Add and wrap the `compressedProof` you fetched to prove the account hash exists in the state tree.
-
 
 2. **Specify input hash and output state tree**
 
@@ -826,7 +833,7 @@ Include the Merkle tree metadata from the Pack Accounts section:
 {% endstep %}
 
 {% step %}
-## Instruction
+### Instruction
 
 Build the instruction with your `program_id`, `accounts`, and `data` from Step 7. Pass the accounts array you built in Step 6.
 
@@ -915,11 +922,9 @@ Pass the proof, compressed account metadata (without `outputStateTreeIndex`), an
 **What to include in `accounts`:**
 
 1. **Pass program-specific accounts** as defined by your program's IDL (signer, feepayer).
-
 2. **Add all remaining accounts** with `.remainingAccounts()`:
    * Light System accounts, added via `PackedAccounts.addSystemAccounts()`.
    * Merkle tree and queue accounts, added via `PackedAccounts.insertOrGet()`.
-
 3. **Build the instruction**:
    * Anchor converts `.accounts({ signer })` to `AccountMeta[]` using the program's IDL.
    * `.remainingAccounts()` appends the complete packed accounts array.
@@ -941,7 +946,7 @@ Pass the proof, compressed account metadata (without `outputStateTreeIndex`), an
 {% endstep %}
 
 {% step %}
-## Send Transaction
+### Send Transaction
 
 Submit the instruction to the network.
 
@@ -960,7 +965,7 @@ const signature = await sendAndConfirmTx(rpc, signedTx);
 {% endstep %}
 {% endstepper %}
 
-# Full Code Examples
+## Full Code Examples
 
 Full TypeScript test examples using local test validator with `createRpc()`.
 
@@ -2220,7 +2225,7 @@ async function burnCompressedAccount(
 {% endtab %}
 {% endtabs %}
 
-# Next Steps
+## Next Steps
 
 Start building programs to create, or interact with compressed accounts.
 

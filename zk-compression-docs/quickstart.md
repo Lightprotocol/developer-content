@@ -4,6 +4,8 @@ description: Create your first compressed token in minutes.
 icon: bolt
 ---
 
+# Quickstart
+
 With this guide you will mint compressed tokens in under 5 minutes.
 
 {% hint style="success" %}
@@ -12,7 +14,7 @@ Compressed tokens are SPL compatible and supported by leading wallets such as Ph
 
 {% stepper %}
 {% step %}
-## Install Dependencies
+### Install Dependencies
 
 {% tabs %}
 {% tab title="npm" %}
@@ -51,7 +53,7 @@ pnpm add \
 {% endstep %}
 
 {% step %}
-## Create an RPC connection
+### Create an RPC connection
 
 Run `test-connection.ts` to verify your setup:
 
@@ -71,7 +73,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-## Create and Mint Compressed Tokens
+### Create and Mint Compressed Tokens
 
 <details>
 
@@ -170,7 +172,7 @@ main().catch(console.error);
 {% endstep %}
 
 {% step %}
-## That's it!
+### That's it!
 
 You've created and minted compressed tokens. The output shows:
 
@@ -184,20 +186,20 @@ You've created and minted compressed tokens. The output shows:
 
 ***
 
-# Next Steps
+## Next Steps
 
 Get an overview of compressed tokens or build a program with compressed accounts.
 
 {% columns %}
 {% column %}
 {% content-ref url="compressed-tokens/overview.md" %}
-[compressed-tokens/overview.md](compressed-tokens/overview.md)
+[overview.md](compressed-tokens/overview.md)
 {% endcontent-ref %}
 {% endcolumn %}
 
 {% column %}
 {% content-ref url="compressed-pdas/create-a-program-with-compressed-pdas.md" %}
-[compressed-pdas/create-a-program-with-compressed-pdas.md](compressed-pdas/create-a-program-with-compressed-pdas.md)
+[create-a-program-with-compressed-pdas.md](compressed-pdas/create-a-program-with-compressed-pdas.md)
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
