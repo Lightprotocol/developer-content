@@ -52,7 +52,9 @@ allowed-tools: mcp__deepwiki__*
 
 ## Command Process
 
-When invoked, perform these steps:
+When invoked 
+1. read the entire file, and
+2. perform these steps:
 
 ### Step 1: Identify Question Scope and Type
 
