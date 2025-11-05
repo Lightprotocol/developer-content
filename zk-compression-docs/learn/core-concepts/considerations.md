@@ -13,8 +13,10 @@ Before using ZK Compression to scale your application state, consider the follow
 
 ### General Recommendation
 
-{% hint style="info" %}
-Consider which accounts in your application benefit from ZK Compression and which don't. You can use both types for different parts of your application!
+{% hint style="success" %}
+Consider which accounts in your application benefit from ZK Compression and which don't. 
+* You can use both types for different parts of your application.
+* You can decompress and compress accounts at will.
 {% endhint %}
 
 It may be preferred for an account _not_ to be permanently compressed if:
@@ -59,6 +61,6 @@ Whenever a transaction writes to a compressed account, it nullifies the previous
 
 ### Next Steps
 
-Now you're familiar with the core concepts of ZK Compression, you're ready to take the next step!
+Now you're familiar with the core concepts of ZK Compression, you're ready to take the next step and start building!
 
 <table data-card-size="large" data-view="cards"><thead><tr><th></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><h4>Compressed Tokens</h4></td><td><a href="../compressed-tokens/overview.md">overview.md</a></td></tr><tr><td><h4>Compressed PDAs</h4></td><td><a href="../compressed-pdas/create-a-program-with-compressed-pdas.md">create-a-program-with-compressed-pdas.md</a></td></tr></tbody></table>
