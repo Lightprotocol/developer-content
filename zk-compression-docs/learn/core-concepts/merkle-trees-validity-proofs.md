@@ -63,7 +63,7 @@ For [details on the compressed account structure see this section](compressed-ac
 {% step %}
 ### Merkle and Validity Proofs
 
-[Validity proofs](#user-content-fn-1)[^1] prove compressed accounts exist in state trees with a constant 128-byte proof size. This proof must be included in every transaction to verify the on-chain state.
+In state trees, a [validity proof](#user-content-fn-1)[^1] verifies that a compressed account exists in state trees with a constant 128-byte proof size. This proof must be included in every transaction once a compressed account is created to verify the on-chain state.
 
 {% hint style="success" %}
 * Developers don't need to generate validity proofs or learn about ZK to use ZK Compression.
@@ -127,7 +127,7 @@ Like state trees, only the root hash is stored on-chain to verify all addresses 
 {% step %}
 ### Merkle and Validity Proofs
 
-When creating a compressed account with an address, a validity proof verifies the address doesn't already exist in a specified address tree. The constant 128-byte proof must be included in the transaction only when creating accounts with addresses, not for every compressed account operation.
+In address trees, validity proofs verify when creating a compressed account with an address that the address doesn't already exist in a specified address tree. This constant 128-byte proof must be included in the transaction only when creating accounts with addresses, not for subsequent compressed account interactions.
 
 {% hint style="info" %}
 **Address Tree Versions**
