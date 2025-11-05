@@ -1,6 +1,7 @@
 ---
 title: Lifecycle of a Transaction
 description: Overview to the lifecycle of a transaction that interacts with compressed accounts.
+hidden: true
 ---
 
 # Overview
@@ -26,17 +27,26 @@ Reading compressed accounts follows a similar pattern to regular Solana accounts
 
 **Reading data from a compressed account involves these steps:**
 1. Fetch the compressed account data from your RPC provider using its address or hash
-* Here you use [`get_compressed_account()`](../../resources/json-rpc-methods/getcompressedaccount.md), similar to `getAccountInfo()`.
-2. Deserialize the account's data field into the appropriate data structure
-3. To use the account in a transaction, fetch a validity proof from your RPC provider that supports ZK Compression using the account hash via `getValidityProof()`.
+* Here you use [`getCompressedAccount()`](../../resources/json-rpc-methods/getcompressedaccount.md), similar to `getAccountInfo()`.
+2. To use the account in a transaction, fetch a validity proof from your RPC provider that supports ZK Compression using the account hash via [`getValidityProof()`](../../resources/json-rpc-methods/getvalidityproof.md).
 * This proves either the address does not exist yet in the specified address tree (for creation) or that the account hash exists in the state tree (for updates, closure, reinitialization, burn).
 
 The proof is included in transaction instruction data for on-chain verification by the Light System Program.
 
-{% hint style="info" %}
-Find the [source code here](https://github.com/Lightprotocol/program-examples/blob/main/account-comparison/programs/account-comparison/tests/test_compressed_account.rs#L40-L52).
-{% endhint %}
+```rust
+// 1. Fetch current account state
+let compressed_account = rpc
+    .get_compressed_account(address, None)
+    .await?
+    .value
+    .unwrap();
 
+// 2. Get validity proof using account hash
+let proof = rpc
+    .get_validity_proof(vec![compressed_account.hash], vec![], None)
+    .await?
+    .value;
+```
 
 <details>
 
@@ -47,8 +57,16 @@ In comparison, reading data from a Solana account involves two steps:
 1. Fetch the account from your RPC provider using its address
 2. Deserialize the account's data field from raw bytes into the appropriate data structure, as defined by the program that owns the account.
 
+```rust
+// 1. Fetch account from RPC
+let account = rpc.get_account(&account_address)?;
+
+// 2. Deserialize account data
+let account_data = deserialize(&account.data)?;
+```
+
 {% hint style="info" %}
-Find the [source code here](https://github.com/Lightprotocol/program-examples/blob/main/account-comparison/programs/account-comparison/tests/test_solana_account.rs#L31-L35)
+Find more [in the Solana Docs](https://solana.com/docs/intro/quick-start/reading-from-network).
 {% endhint %}
 
 </details>
