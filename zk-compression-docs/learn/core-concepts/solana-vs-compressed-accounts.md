@@ -94,20 +94,16 @@ Compressed account addresses are derived similar to PDAs.
 
 * Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
 * The key difference to regular PDAs is that compressed accounts require an **address tree** parameter. 
-* Address tree's store addresses of compressed accounts and ensure its uniqueness.
+* Address Merkle tree's store addresses of compressed accounts and ensure its uniqueness.
 
 {% tabs %}
 {% tab title="TypeScript" %}
 
 ```typescript
 const seed = deriveAddressSeed(
-  [
-    Buffer.from("account"),
-    user.publicKey.toBytes()
-  ],
-  programId
+  [customSeed, signer.publicKey.toBytes()],
+  new web3.PublicKey(programId),
 );
-
 const address = deriveAddress(seed, addressTree);
 ```
 
@@ -121,12 +117,9 @@ Learn more about address derivation for a [Typescript Client here](../client-lib
 
 ```rust
 let (address, _) = derive_address(
-  &[
-    b"account",
-    user.pubkey().as_ref()
-  ],
-  &address_tree_pubkey,
-  &program_id
+    &[b"custom_seed", keypair.pubkey().as_ref()],
+    &address_tree_info.tree,
+    &your_program::ID,
 );
 ```
 
@@ -144,10 +137,10 @@ Learn more about address derivation for a [Rust Client here](../client-library/r
 
 {% code title="derive-pda.ts" %}
 ```typescript
-const [pda] = PublicKey.findProgramAddressSync(
+const [pda, bump] = PublicKey.findProgramAddressSync(
   [
-    Buffer.from("account"),
-    user.publicKey.toBuffer()
+    Buffer.from("seed_string"),
+    publicKey.toBuffer()
   ],
   programId
 );
@@ -156,10 +149,10 @@ const [pda] = PublicKey.findProgramAddressSync(
 
 {% code title="derive-pda.rs" %}
 ```rust
-let (pda, _bump) = Pubkey::find_program_address(
+let (pda, bump) = Pubkey::find_program_address(
   &[
-    b"account",
-    user.pubkey().as_ref()
+    b"seed_string",
+    pubkey.as_ref()
   ],
   &program_id
 );
@@ -187,7 +180,6 @@ pub struct CompressedAccountData {
   * Still, Solana's 1,232-byte transaction limit constrains practical data size to roughly 1 KB per account.
 - `data_hash`: Hash of the `data` field (32 bytes). 
   * When computing the compressed account hash for the state tree, the protocol uses this fixed-size hash instead of the variable-length data bytes. 
-  * This keeps hash computation efficient and consistent regardless of data size.
 
 ## Accessing Compressed Account Data
 
