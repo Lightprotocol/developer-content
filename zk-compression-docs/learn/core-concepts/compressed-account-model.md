@@ -182,7 +182,7 @@ pub struct CompressedAccountData {
 
 # Next Steps
 
-Start building, or learn about the role of validity proofs and Merkle trees in the protocol.
+Learn about the role of validity proofs and Merkle trees in the protocol.
 
 {% content-ref url="merkle-trees-validity-proofs.md" %}
 [merkle-trees-validity-proofs.md](merkle-trees-validity-proofs.md)
