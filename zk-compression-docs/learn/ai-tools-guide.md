@@ -54,6 +54,106 @@ claude mcp add -s user -t http deepwiki https://mcp.deepwiki.com/mcp
 {% endtab %}
 {% endtabs %}
 
+<details>
+
+<summary>Copy paste this prompt to create your custom Claude Code command</summary>
+
+{% code overflow="wrap" expandable="true" %}
+```markdown
+---
+argument-hint: <question>
+description: Query Light Protocol repository via DeepWiki MCP with precise technical answers
+allowed-tools: mcp__deepwiki__*
+---
+
+# /ask-deepwiki Command
+
+Query the Light Protocol repository and Solana resources via DeepWiki MCP for precise technical answers.
+
+## Command Process
+
+When invoked, perform these steps:
+
+### Step 1: Identify Question Scope
+
+Determine the question category:
+- **ZK Compression**: Programs, client SDKs, compressed accounts, state trees, validity proofs
+- **Solana fundamentals**: Accounts, PDAs, CPIs, transaction structure, runtime
+- **Anchor framework**: Macros, account constraints, context definitions, IDL
+
+Note any specific components mentioned (e.g., LightAccount, ValidityProof, CPI contexts).
+
+### Step 2: Fetch Repository Context
+
+**For ZK Compression / Light Protocol questions:**
+```
+mcp__deepwiki__read_wiki_structure("Lightprotocol/light-protocol")
+mcp__deepwiki__read_wiki_contents("Lightprotocol/light-protocol")
+mcp__deepwiki__ask_question("Lightprotocol/light-protocol", "your question")
+```
+
+**For general Solana questions:**
+```
+mcp__deepwiki__read_wiki_structure("solana-labs/solana")
+mcp__deepwiki__read_wiki_contents("solana-labs/solana")
+mcp__deepwiki__ask_question("solana-labs/solana", "your question")
+```
+
+**For Anchor framework questions:**
+```
+mcp__deepwiki__read_wiki_structure("solana-foundation/anchor")
+mcp__deepwiki__read_wiki_contents("solana-foundation/anchor")
+mcp__deepwiki__ask_question("solana-foundation/anchor", "your question")
+```
+
+**For complex questions:** Query multiple repositories if needed to provide complete context.
+
+### Step 3: Apply Precision Rules
+
+Use technical precision in responses:
+
+**AVOID:**
+- Vague verbs: "handles", "manages", "processes", "enables", "provides"
+- Abstract terms: "operations", "management", "coordination"
+- Marketing language: "powerful", "seamless", "easy"
+- Generic descriptions: "account metadata" instead of "CompressedAccountMeta"
+
+**USE:**
+- Exact function/method names: `LightAccount::new_init()`, `derive_address()`
+- Concrete data structures: `CompressedAccountMeta`, `ValidityProof`, `PackedAddressTreeInfo`
+- Specific operations: "nullifies hash", "appends to state tree", "verifies proof"
+- Precise field names: `tree_info`, `address`, `output_state_tree_index`
+- File:line references when available from DeepWiki responses
+
+### Step 4: Verify with Public Documentation
+
+Cross-reference findings with public documentation:
+- **ZK Compression docs**: https://www.zkcompression.com/
+- **Markdown export**: Append `.md` to any docs page URL
+- **LLM index**: https://www.zkcompression.com/llms.txt
+- **Complete docs**: https://www.zkcompression.com/llms-full.txt
+- **GitHub source**: https://github.com/Lightprotocol/light-protocol
+
+### Step 5: Format Response
+
+Structure the response with:
+1. **Direct answer** - Immediate technical explanation
+2. **Technical details** - Specific implementations, data structures
+3. **Code examples** - With inline comments explaining key points
+4. **Source references** - File:line from DeepWiki or documentation URLs
+5. **Related concepts** - Connections to other components (if relevant)
+
+## Notes
+
+- DeepWiki responses include source file references - always include these
+- For implementation questions, provide runnable code examples
+- Cross-reference multiple sources when accuracy is critical
+- Ask follow-up questions to DeepWiki for clarification when needed
+```
+{% endcode %}
+
+</details>
+
 ### Tools
 
 The MCP server offers three main tools:
