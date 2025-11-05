@@ -91,6 +91,8 @@ Two state tree versions with different proof mechanisms are currently **supporte
 * **V1 state trees**: Always require the full 128-byte ZK proof
 * **V2 batched state trees**: Can use `prove_by_index` optimization that verifies the account exists with only one byte instead of 128-bytes.
 
+V2 optimizes optimize compute unit consumption by up to 70% and is currently on Devnet.
+
 When using V2 trees, RPC requests automatically choose the proof mechanism.
 {% endhint %}
 
@@ -115,7 +117,7 @@ These addresses are used only when compressed accounts require a persistent iden
 {% endstep %}
 
 {% step %}
-## Address Root Hash
+## Address Tree Root Hash
 
 Like state trees, only the root hash is stored on-chain to verify all addresses in the tree. The raw addresses are stored in the Solana ledger.
 {% endstep %}
@@ -131,7 +133,9 @@ When creating a compressed account with an address, a validity proof verifies th
 Two address tree versions are currently **supported on Devnet**:
 
 * **V1 address trees** height 26 (~67 million addresses).
-* **V2 batched address trees** with height 40 (~1 trillion addresses), with queue for batched updates.
+* **V2 batched address trees** with height 40 (~1 trillion addresses).
+
+V2 is currently on Devnet. When using V2 trees, RPC requests automatically choose the proof mechanism.
 
 Unlike state trees, address trees don't support a `prove_by_index` optimization.
 {% endhint %}
