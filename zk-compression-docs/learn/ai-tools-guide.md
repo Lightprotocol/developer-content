@@ -69,19 +69,19 @@ Note any specific key words like debugging, error, or components mentioned (e.g.
 **For ZK Compression / Light Protocol questions:**
 
 `mcp__deepwiki__read_wiki_structure("Lightprotocol/light-protocol")`
-mcp__deepwiki__read_wiki_contents("Lightprotocol/light-protocol")
-mcp__deepwiki__ask_question("Lightprotocol/light-protocol", "your question")
+`mcp__deepwiki__read_wiki_contents("Lightprotocol/light-protocol")`
+`mcp__deepwiki__ask_question("Lightprotocol/light-protocol", "your question")`
 
 **For general Solana questions:**
 
-mcp__deepwiki__read_wiki_structure("solana-labs/solana")
-mcp__deepwiki__read_wiki_contents("solana-labs/solana")
-mcp__deepwiki__ask_question("solana-labs/solana", "your question")
+`mcp__deepwiki__read_wiki_structure("solana-labs/solana")`
+`mcp__deepwiki__read_wiki_contents("solana-labs/solana")`
+`mcp__deepwiki__ask_question("solana-labs/solana", "your question")`
 
 **For Anchor framework questions:**
-mcp__deepwiki__read_wiki_structure("solana-foundation/anchor")
-mcp__deepwiki__read_wiki_contents("solana-foundation/anchor")
-mcp__deepwiki__ask_question("solana-foundation/anchor", "your question")
+`mcp__deepwiki__read_wiki_structure("solana-foundation/anchor")`
+`mcp__deepwiki__read_wiki_contents("solana-foundation/anchor")`
+`mcp__deepwiki__ask_question("solana-foundation/anchor", "your question")`
 
 **For complex questions:** Query multiple repositories if needed to provide complete context.
 
