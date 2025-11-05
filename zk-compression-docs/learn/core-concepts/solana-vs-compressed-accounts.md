@@ -89,7 +89,9 @@ That's why an **address** can serve as optional and additional **persistent iden
 {% endhint %}
 
 **Compressed Account Address Derivation**
+
 Compressed account addresses are derived similar to PDAs.
+
 * Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
 * The key difference to regular PDAs is that compressed accounts require an **address tree** parameter. 
 * Address tree's store addresses of compressed accounts and ensure its uniqueness.
