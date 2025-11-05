@@ -38,7 +38,7 @@ The API exposed by the indexer closely mirrors existing RPC calls, with one-to-o
 | getProgramAccounts      | getCompressedAccountsByOwner      |
 
 {% tabs %}
-{% tab title="**Clients**" %}
+{% tab title="Clients" %}
 Clients read compressed accounts similar to Solana accounts:
 
 1. Fetch the compressed account data from your RPC provider using its address or hash
@@ -77,7 +77,7 @@ let account_data = deserialize(&compressed_account.data)?;
 {% endtabs %}
 {% endtab %}
 
-{% tab title="**Programs**" %}
+{% tab title="Programs" %}
 On-chain reading within programs requires a validity proof to verify the account exists in the state tree.
 
 1. Fetch the compressed account data from your RPC provider using its address or hash
@@ -178,7 +178,7 @@ An RPC node then parses the transaction and compressed state and provides the re
 
 ## Next Steps
 
-Now that you Understand where ZK Compression may or may not be the best solution.
+Take the last step and understand what the trade-offs for compressed accounts are.
 
 {% content-ref url="considerations.md" %}
 [considerations.md](considerations.md)
