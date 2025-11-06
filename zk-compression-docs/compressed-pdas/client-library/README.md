@@ -8,6 +8,9 @@ hidden: true
 
 Use this guide to build a Typescript or Rust client.
 
+{% stepper %}
+{% step %}
+# 
 {% tabs %}
 {% tab title="Typescript" %}
 
@@ -169,8 +172,6 @@ This guide covers the components to build a Rust and Typescript client. Here is 
 {% endtab %}
 {% endtabs %}
 
-{% stepper %}
-{% step %}
 ### Dependencies
 
 
@@ -209,4 +210,4 @@ The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to An
 {% endhint %}
 
 {% endstep %}
-
+{% endstepper %}
