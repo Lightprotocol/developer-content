@@ -40,11 +40,15 @@ Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepw
 {% tabs %}
 {% tab title="Typescript" %}
 
-The Typescript client provides 
+The Typescript SDK consists of 
 
-1. [@lightprotocol/stateless.js](https://lightprotocol.github.io/light-protocol/stateless.js/index.html) is the core RPC client that provides the ZK Compression RPC interface to query and build transactions that create or interact with compressed accounts on Solana. 
+1. [@lightprotocol/stateless.js](https://lightprotocol.github.io/light-protocol/stateless.js/index.html): The core RPC client that provides the ZK Compression RPC interface to query and build transactions that create or interact with compressed accounts on Solana. 
 
 2. [@lightprotocol/compressed-token](https://lightprotocol.github.io/light-protocol/compressed-token/index.html) uses the stateless.js RPC interface to build transactions with compressed tokens.
+
+{% hint style="info" %}
+Use the [API documentation]( https://lightprotocol.github.io/light-protocol/) to look up specific function signatures, parameters, and return types.
+{% endhint %}
 
 ### 1. Installation
 
@@ -77,13 +81,9 @@ pnpm add \
 {% endtab %}
 {% endtabs %}
 
-{% hint style="info" %}
-Use the [API documentation]( https://lightprotocol.github.io/light-protocol/) to look up specific function signatures, parameters, and return types.
-{% endhint %}
-
 ### 2. Create an RPC Connection
 
-{% hint style="info" %}
+{% hint style="success" %}
 `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
 {% endhint %}
 
@@ -104,11 +104,13 @@ const rpc = createRpc('https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY');
 {% endtab %}
 
 {% tab title="Localnet" %}
-Start a local test-validator with the below command. It will start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001.
 
 ```bash
 light test-validator
 ```
+
+Start a start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001.
+
 {% endtab %}
 {% endtabs %}
 
@@ -121,50 +123,94 @@ const testRpc = await getTestRpc(lightWasm);
 {% endtab %}
 
 {% tab title="Rust" %}
-* **For local testing, use** [**`light-program-test`**](https://docs.rs/light-program-test)**.**
-  * Initializes a [LiteSVM](https://github.com/LiteSVM/LiteSVM) optimized for ZK Compression with auto-funded payer, local prover server and TestIndexer to generate proofs instantly. Requires Light CLI for program binaries.
-  * Use for unit and integration tests of your program or client code.
-* **For devnet and mainnet use** [**`light-client`**](https://docs.rs/light-client)
-  * `light-client` is an RPC client for compressed accounts and tokens.
-  * Connects to Photon indexer to query compressed accounts and generate validity proofs.
-* `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits for consistent usage across `light-program-test`, local test validator, and public Solana networks.
 
-### 1. Installation
+The Rust SDK consists of
 
-{% tabs %}
-{% tab title="LightClient" %}
-{% code overflow="wrap" %}
+1. [`light-client`](https://docs.rs/light-client): The RPC client that provides the ZK Compression RPC interface to query and build transactions for **compressed accounts and tokens** on Solana.
+
+2. [`light-sdk`](https://docs.rs/light-sdk): Program-side abstractions (macros, wrappers, CPI interface) to create and interact with compressed accounts in Solana programs. Similar to Anchor's `Account` pattern.
+
+**For devnet and mainnet, use `light-client`**
+* Connects to Photon indexer to query compressed accounts and generate validity proofs.
+
 ```toml
 [dependencies]
 light-client = "0.16.0"
 light-sdk = "0.16.0"
-tokio = { version = "1", features = ["full"] }
-solana-program = "2.2"
-anchor-lang = "0.31.1"
 ```
-{% endcode %}
+
+{% tabs %}
+{% tab title="Mainnet" %}
+```rust
+let config = LightClientConfig::new(
+    "https://api.mainnet-beta.solana.com".to_string(),
+    Some("https://mainnet.helius.xyz".to_string()),
+    Some("YOUR_API_KEY".to_string())
+);
+
+let mut client = LightClient::new(config).await?;
+
+client.payer = read_keypair_file("~/.config/solana/id.json")?;
+```
 {% endtab %}
 
-{% tab title="LightProgramTest" %}
-{% code overflow="wrap" %}
+{% tab title="Devnet" %}
+```rust
+let config = LightClientConfig::devnet(
+    Some("https://devnet.helius-rpc.com".to_string()),
+    Some("YOUR_API_KEY".to_string())
+);
+
+let mut client = LightClient::new(config).await?;
+
+client.payer = read_keypair_file("~/.config/solana/id.json")?;
+```
+{% endtab %}
+
+{% tab title="Localnet" %}
+```rust
+let config = LightClientConfig::local();
+
+let mut client = LightClient::new(config).await?;
+
+client.payer = read_keypair_file("~/.config/solana/id.json")?;
+```
+
+Requires running `light test-validator` locally:
+
+```bash
+light test-validator
+```
+
+Starts a start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001.
+{% endtab %}
+{% endtabs %}
+
+**For local testing, use [`light-program-test`](https://docs.rs/light-program-test)**.**
+* Initializes a [LiteSVM](https://github.com/LiteSVM/LiteSVM) optimized for ZK Compression with auto-funded payer and TestIndexer. Requires Light CLI for program binaries.
+* Use for unit and integration tests of your program or client code.
+
 ```toml
 [dev-dependencies]
 light-program-test = "0.16.0"
 light-sdk = "0.16.0"
-tokio = { version = "1", features = ["full"] }
-solana-program = "2.2"
-anchor-lang = "0.31.1"
 ```
-{% endcode %}
+
+```rust
+let config = ProgramTestConfig::new_v2(
+    true,
+    Some(vec![("program_create", program_create::ID)])
+);
+let mut rpc = LightProgramTest::new(config).await.unwrap();
+let payer = rpc.get_payer().insecure_clone();
+```
+
 {% endtab %}
 {% endtabs %}
 
-{% hint style="info" %}
-The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to Anchor's `Account`: macros, wrappers and CPI interface to create and interact with compressed accounts in Solana programs.
+{% hint style="success" %}
+`LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits for consistent usage across `light-program-test`, local test validator, and public Solana networks.
 {% endhint %}
-
-{% endtab %}
-{% endtabs %}
 
 {% endstep %}
 {% endstepper %}
