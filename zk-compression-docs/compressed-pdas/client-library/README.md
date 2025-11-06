@@ -6,11 +6,37 @@ hidden: true
 
 # Overview
 
-Use this guide to build a Typescript or Rust client.
+Use this guide to build a Typescript or Rust client. Here is the complete flow:
+
+{% tabs %}
+{% tab title="Create" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-create (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-create.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Update" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-update (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-update.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Close" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-close (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-close.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Reinitialize" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-reinit (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-reinit.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+
+{% tab title="Burn" %}
+<figure><picture><source srcset="../../.gitbook/assets/client-burn (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-burn.png" alt=""></picture><figcaption></figcaption></figure>
+{% endtab %}
+{% endtabs %}
+
+{% hint style="info" %}
+Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol/3.1-javascripttypescript-sdks).
+{% endhint %}
 
 {% stepper %}
 {% step %}
-# 
+## Installation and Setup
 {% tabs %}
 {% tab title="Typescript" %}
 
@@ -57,74 +83,41 @@ Use the [API documentation]( https://lightprotocol.github.io/light-protocol/) to
 
 ### Create an RPC Connection
 
-* **For unit tests, use `TestRpc`.**
-  * Mock RPC instance that parses events and builds Merkle trees on-demand without persisting state.
-* **For test-validator, devnet and mainnet use `Rpc`.**
+{% hint style="info" %}
+`Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
+{% endhint %}
+
+* **Use `Rpc` for test-validator, devnet and mainnet**
   * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints.
   * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
-* `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
-
-{% tabs %}
-{% tab title="Rpc" %}
-Connect to local, devnet or mainnet with `Rpc`.
-
 {% tabs %}
 {% tab title="Mainnet" %}
-{% code overflow="wrap" %}
 ```typescript
-import { createRpc } from '@lightprotocol/stateless.js';
-
 const rpc = createRpc('https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY');
 ```
-{% endcode %}
 {% endtab %}
 
 {% tab title="Devnet" %}
-{% code overflow="wrap" %}
 ```typescript
-import { createRpc } from '@lightprotocol/stateless.js';
-
 const rpc = createRpc('https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY');
 ```
-{% endcode %}
 {% endtab %}
 
 {% tab title="Localnet" %}
 Start a local test-validator with the below command. It will start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001.
 
-{% code overflow="wrap" %}
 ```bash
 light test-validator
 ```
-{% endcode %}
-
-Then connect to it:
-
-{% code overflow="wrap" %}
-```typescript
-import { createRpc } from '@lightprotocol/stateless.js';
-
-const rpc = createRpc();
-```
-{% endcode %}
 {% endtab %}
 {% endtabs %}
-{% endtab %}
 
-{% tab title="TestRpc" %}
-Set up test environment with `TestRpc`.
-
-{% code overflow="wrap" %}
+* **For unit tests, use `TestRpc`** to start a mock RPC instance that parses events and builds Merkle trees on-demand without persisting state.
 ```typescript
-import { getTestRpc } from '@lightprotocol/stateless.js';
-import { LightWasm, WasmFactory } from '@lightprotocol/hasher.rs';
-
 const lightWasm: LightWasm = await WasmFactory.getInstance();
 const testRpc = await getTestRpc(lightWasm);
 ```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
+
 {% endtab %}
 
 {% tab title="Rust" %}
@@ -137,43 +130,6 @@ const testRpc = await getTestRpc(lightWasm);
 * `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits for consistent usage across `light-program-test`, local test validator, and public Solana networks.
 {% endtab %}
 {% endtabs %}
-
-{% hint style="success" %}
-Find [full code examples at the end](add) for Anchor.
-{% endhint %}
-
-# Implementation Guide
-
-{% hint style="info" %}
-Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lightprotocol/light-protocol/3.1-javascripttypescript-sdks).
-{% endhint %}
-
-This guide covers the components to build a Rust and Typescript client. Here is the complete flow:
-
-{% tabs %}
-{% tab title="Create" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-create (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-create.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Update" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-update (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-update.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Close" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-close (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-close.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Reinitialize" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-reinit (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-reinit.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-
-{% tab title="Burn" %}
-<figure><picture><source srcset="../../.gitbook/assets/client-burn (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/client-burn.png" alt=""></picture><figcaption></figcaption></figure>
-{% endtab %}
-{% endtabs %}
-
-### Dependencies
-
 
 {% endtab %}
 
