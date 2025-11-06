@@ -6,10 +6,57 @@ hidden: true
 
 # Overview
 
-Use this guide to build a Typescript or Rust client:
+Use this guide to build a Typescript or Rust client.
 
 {% tabs %}
 {% tab title="Typescript" %}
+
+The Typescript client provides 
+
+1. [@lightprotocol/stateless.js](https://lightprotocol.github.io/light-protocol/stateless.js/index.html) is the core RPC client that provides the ZK Compression RPC interface to query and build transactions that create or interact with compressed accounts on Solana. 
+
+2. [@lightprotocol/compressed-token](https://lightprotocol.github.io/light-protocol/compressed-token/index.html) uses the stateless.js RPC interface to build transactions with compressed tokens.
+
+### Installation
+
+{% tabs %}
+{% tab title="Typescript" %}
+
+{% tabs %}
+{% tab title="npm" %}
+```bash
+npm install --save \
+    @lightprotocol/stateless.js@0.22.1-alpha.1 \
+    @lightprotocol/compressed-token@0.22.1-alpha.1 \
+    @solana/web3.js
+```
+{% endtab %}
+
+{% tab title="yarn" %}
+```bash
+yarn add \
+    @lightprotocol/stateless.js@0.22.1-alpha.1 \
+    @lightprotocol/compressed-token@0.22.1-alpha.1 \
+    @solana/web3.js
+```
+{% endtab %}
+
+{% tab title="pnpm" %}
+```bash
+pnpm add \
+    @lightprotocol/stateless.js@0.22.1-alpha.1 \
+    @lightprotocol/compressed-token@0.22.1-alpha.1 \
+    @solana/web3.js
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="info" %}
+Use the [API documentation]( https://lightprotocol.github.io/light-protocol/) to look up specific function signatures, parameters, and return types.
+{% endhint %}
+
+### Create an RPC Connection
+
 * **For unit tests, use `TestRpc`.**
   * Mock RPC instance that parses events and builds Merkle trees on-demand without persisting state.
 * **For test-validator, devnet and mainnet use `Rpc`.**
@@ -17,9 +64,67 @@ Use this guide to build a Typescript or Rust client:
   * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
 * `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
 
-{% hint style="info" %}
-Use the [API documentation]( https://lightprotocol.github.io/light-protocol/) to look up specific function signatures, parameters, and return types.
-{% endhint %}
+{% tabs %}
+{% tab title="Rpc" %}
+Connect to local, devnet or mainnet with `Rpc`.
+
+{% tabs %}
+{% tab title="Mainnet" %}
+{% code overflow="wrap" %}
+```typescript
+import { createRpc } from '@lightprotocol/stateless.js';
+
+const rpc = createRpc('https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY');
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Devnet" %}
+{% code overflow="wrap" %}
+```typescript
+import { createRpc } from '@lightprotocol/stateless.js';
+
+const rpc = createRpc('https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY');
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Localnet" %}
+Start a local test-validator with the below command. It will start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001.
+
+{% code overflow="wrap" %}
+```bash
+light test-validator
+```
+{% endcode %}
+
+Then connect to it:
+
+{% code overflow="wrap" %}
+```typescript
+import { createRpc } from '@lightprotocol/stateless.js';
+
+const rpc = createRpc();
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+{% endtab %}
+
+{% tab title="TestRpc" %}
+Set up test environment with `TestRpc`.
+
+{% code overflow="wrap" %}
+```typescript
+import { getTestRpc } from '@lightprotocol/stateless.js';
+import { LightWasm, WasmFactory } from '@lightprotocol/hasher.rs';
+
+const lightWasm: LightWasm = await WasmFactory.getInstance();
+const testRpc = await getTestRpc(lightWasm);
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 {% endtab %}
 
 {% tab title="Rust" %}
@@ -71,48 +176,6 @@ This guide covers the components to build a Rust and Typescript client. Here is 
 {% step %}
 ### Dependencies
 
-{% tabs %}
-{% tab title="Typescript" %}
-
-{% tabs %}
-{% tab title="npm" %}
-{% code overflow="wrap" %}
-```bash
-npm install --save \
-    @lightprotocol/stateless.js@0.22.1-alpha.1 \
-    @lightprotocol/compressed-token@0.22.1-alpha.1 \
-    @solana/web3.js
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="yarn" %}
-{% code overflow="wrap" %}
-```bash
-yarn add \
-    @lightprotocol/stateless.js@0.22.1-alpha.1 \
-    @lightprotocol/compressed-token@0.22.1-alpha.1 \
-    @solana/web3.js
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="pnpm" %}
-{% code overflow="wrap" %}
-```bash
-pnpm add \
-    @lightprotocol/stateless.js@0.22.1-alpha.1 \
-    @lightprotocol/compressed-token@0.22.1-alpha.1 \
-    @solana/web3.js
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
-
-{% hint style="info" %}
-* `@lightprotocol/stateless.js` provides the core SDK to create and interact with compressed accounts.
-* Add `@lightprotocol/compressed-token@0.22.1-alpha.1` to create and interact with compressed tokens.
-{% endhint %}
 
 {% endtab %}
 
