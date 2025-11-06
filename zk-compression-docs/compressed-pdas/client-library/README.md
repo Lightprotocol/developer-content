@@ -20,9 +20,6 @@ The Typescript client provides
 ### Installation
 
 {% tabs %}
-{% tab title="Typescript" %}
-
-{% tabs %}
 {% tab title="npm" %}
 ```bash
 npm install --save \
@@ -179,7 +176,6 @@ This guide covers the components to build a Rust and Typescript client. Here is 
 
 {% endtab %}
 
-{% tab title="Rust" %}
 {% tabs %}
 {% tab title="LightClient" %}
 {% code overflow="wrap" %}
@@ -211,8 +207,6 @@ anchor-lang = "0.31.1"
 {% hint style="info" %}
 The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to Anchor's `Account`: macros, wrappers and CPI interface to create and interact with compressed accounts in Solana programs.
 {% endhint %}
-{% endtab %}
-{% endtabs %}
 
 {% endstep %}
 
