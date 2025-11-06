@@ -3,7 +3,7 @@ title: Terminology
 description: Overview to terminology related to ZK Compression and Solana
 ---
 
-### Account
+##Account
 
 An entry in the Solana ledger that holds data or executable program code, stored on chain.
 
@@ -15,7 +15,7 @@ There are different kinds of accounts, including
 
 ***
 
-### Account Compression Program
+##Account Compression Program
 
 Light Protocol's program that implements state and address trees for ZK Compression. The program provides the underlying Merkle tree infrastructure used by the Light System Program to manage compressed account state transitions.
 
@@ -23,19 +23,19 @@ Light Protocol's program that implements state and address trees for ZK Compress
 
 ***
 
-### Account hash
+##Account hash
 
 A 32-byte identifier uniquely representing a compressed account's state and position within a state tree.
 
 ***
 
-### Account derivation
+##Account derivation
 
 A process to create deterministic addresses for compressed PDAs by hashing program IDs and seed values.
 
 ***
 
-### Address tree
+##Address tree
 
 A Merkle tree used by ZK Compression to derive compressed account addresses deterministically from seeds and a tree's public key.
 
@@ -43,31 +43,31 @@ Address trees are separate from state trees.
 
 ***
 
-### [Client](https://solana.com/docs/core/transactions#client)
+##[Client](https://solana.com/docs/core/transactions#client)
 
 A computer program that accesses the Solana server network [cluster](https://solana.com/docs/core/transactions#cluster).
 
 ***
 
-### [**Cluster**](https://solana.com/docs/references/terminology#cluster)
+##[**Cluster**](https://solana.com/docs/references/terminology#cluster)
 
 A set of [validators](https://solana.com/docs/references/terminology#validator) maintaining a single [ledger](https://solana.com/docs/references/terminology#ledger).
 
 ***
 
-### Compressed PDA
+##Compressed PDA
 
 Compressed accounts at Program Derived Addresses.
 
 ***
 
-### Compressed account
+##Compressed account
 
 A data structure that holds arbitrary data, represented as a 32-byte hash stored in a leaf of a state Merkle tree. Compressed accounts do not require a rent exempt balance upon creation.
 
 ***
 
-### Token mint&#x20;
+##Token mint&#x20;
 
 An SPL token mint uniquely represents a token on the Solana network and stores global metadata about the token, including `mint_authority`, `supply`, and `decimals`.
 
@@ -75,13 +75,13 @@ SPL tokens can be compressed if the mint has a token pool account set up. Anyone
 
 ***
 
-### Token Pool Account
+##Token Pool Account
 
 SPL token account that holds SPL tokens corresponding to compressed tokens in circulation. Tokens are deposited during compression and withdrawn during decompression, owned by the compressed token program's CPI authority PDA. &#x20;
 
 ***
 
-### Concurrency
+##Concurrency
 
 The ability to process multiple Merkle tree update requests simultaneously without invalidating each other, as long as they don't modify the same leaf.
 
@@ -89,31 +89,31 @@ Concurrency in ZK Compression allows parallel operations on different tree leave
 
 ***
 
-### Compressed Token
+##Compressed Token
 
 An SPL token in compressed form. Compressed tokens do not require an associated token account per holder.
 
 ***
 
-### Compressed Token account
+##Compressed Token account
 
 An account type in the Compressed Token Program to store information about an individual's ownership of a specific token (mint). Compressed token accounts do not require a rent exempt balance upon creation.
 
 ***
 
-### Compressed Token Program
+##Compressed Token Program
 
 Light Protocol's SPL-compatible token program that enables compression and decompression of token accounts. The program enforces SPL token layout standards and allows for arbitrary transitions between compressed and regular format.
 
 ***
 
-### [**Compute units**](https://solana.com/docs/references/terminology#compute-units)
+##[**Compute units**](https://solana.com/docs/references/terminology#compute-units)
 
 The smallest unit of measure for consumption of computational resources of the transactions on the Solana blockchain.
 
 ***
 
-### [**Compute unit budget**](https://solana.com/docs/references/terminology#compute-budget)
+##[**Compute unit budget**](https://solana.com/docs/references/terminology#compute-budget)
 
 The maximum number of [compute units](https://solana.com/docs/references/terminology#compute-units) consumed per transaction.
 
@@ -123,7 +123,7 @@ If the transaction exceeds its compute unit limit, it fails and no changes occur
 
 ***
 
-### Compute unit limits per block
+##Compute unit limits per block
 
 The total amount of compute units that all transactions in a single Solana block - the _blockspace_ - can collectively consume is currently set at 48 million CU.
 
@@ -131,7 +131,7 @@ The maximum compute units that can be used to modify a single account within a b
 
 ***
 
-### [Cross-program invocation (CPI)](https://solana.com/docs/core/transactions#cross-program-invocation-cpi)
+##[Cross-program invocation (CPI)](https://solana.com/docs/core/transactions#cross-program-invocation-cpi)
 
 A call from one [program](https://solana.com/docs/core/transactions#onchain-program) to another.
 
@@ -139,19 +139,19 @@ A call from one [program](https://solana.com/docs/core/transactions#onchain-prog
 
 ***
 
-### Decompression
+##Decompression
 
 The process of converting a compressed to a regular Solana account. SPL tokens are withdrawn from the token pool to an Associated Token Account and compressed token accounts are invalidated.
 
 ***
 
-### Forester node / Forester
+##Forester node / Forester
 
 A keeper node to incorporate state updates into state Merkle Trees for ZK Compression.
 
 ***
 
-### Groth16
+##Groth16
 
 A zero-knowledge SNARK that produces constant-size proofs using bilinear pairings on elliptic curves.
 
@@ -159,13 +159,13 @@ ZK Compression uses Groth16 to generate 128 byte validity proofs to verify compr
 
 ***
 
-### [**Hash**](https://solana.com/docs/references/terminology#hash)
+##[**Hash**](https://solana.com/docs/references/terminology#hash)
 
 A hash is a digital fingerprint of a sequence of bytes representing arbitrary data, while requiring far less storage space than the original data.
 
 ***
 
-### Indexer
+##Indexer
 
 A service that tracks state changes of compressed accounts on the Solana ledger and provides RPC APIs for querying compressed accounts and generating validity proofs.
 
@@ -175,7 +175,7 @@ The ZK Compression indexer is named Photon and is maintained by Helius Labs.
 
 ***
 
-### [**Instruction**](https://solana.com/docs/references/terminology#instruction)
+##[**Instruction**](https://solana.com/docs/references/terminology#instruction)
 
 A call to invoke a specific [instruction handler](https://solana.com/docs/references/terminology#instruction-handler) in a [program](https://solana.com/docs/references/terminology#program).
 
@@ -185,13 +185,13 @@ For example, compressed accounts are created or updated with the `InvokeCpiInstr
 
 ***
 
-### Leaf index
+##Leaf index
 
 The numerical position (u32) of a compressed account within a state tree, used for Merkle proof generation.
 
 ***
 
-### Light System Program
+##Light System Program
 
 ZK Compression's core program that validates compressed account state transitions by verifying validity proofs and managing compressed state changes.
 
@@ -201,7 +201,7 @@ The program enforces compressed account layout with ownership and sum checks, an
 
 ***
 
-### **Ledger**
+##**Ledger**
 
 The ledger is an immutable historical record of all Solana transactions signed by clients since the genesis block.
 
@@ -212,7 +212,7 @@ A helpful analogy to differentiate Solana ledger and state:
 
 ***
 
-### Merkle tree
+##Merkle tree
 
 A tree data structure to allow for cryptographic verification of the integrity of all leaves in a tree.
 
@@ -220,13 +220,13 @@ Each leaf on a Merkle tree is a hash of that leaf’s data. A Merkle tree compre
 
 ***
 
-### Merkle tree account
+##Merkle tree account
 
 The public key of the on-chain Merkle tree account used in ZK Compression. This identifier references the state tree that stores compressed account hashes.
 
 ***
 
-### Merkle proof
+##Merkle proof
 
 A cryptographic proof consisting of sibling node hashes required to verify that a specific leaf exists within a Merkle tree and calculate the root hash.
 
@@ -234,7 +234,7 @@ ZK Compression encodes Merkle proofs into zero-knowledge proofs (validity proofs
 
 ***
 
-### Nullification
+##Nullification
 
 The process of marking compressed accounts as spent to prevent double-spending.
 
@@ -242,13 +242,13 @@ When compressed accounts are used as inputs in transactions, their previous stat
 
 ***
 
-### Nullifier queue
+##Nullifier queue
 
 A queue where compressed accounts hashes used as input for transactions are temporarily stored to prevent double spending. A Forester node empties the queue by inserting queue elements into a state Merkle tree.
 
 ***
 
-### [**Program**](https://solana.com/docs/references/terminology#onchain-program)
+##[**Program**](https://solana.com/docs/references/terminology#onchain-program)
 
 Programs run executable code similar to smart contracts on other blockchains with optimizations specific to Solana.
 
@@ -260,13 +260,13 @@ Solana programs key characteristics include:
 
 ***
 
-### Parallelism
+##Parallelism
 
 The ability of the SVM to execute multiple transactions simultaneously, as long as they modify different regular and/or compressed accounts.
 
 ***
 
-### [**Program derived addresses (PDA)**](https://solana.com/docs/references/terminology#program-derived-account-pda)
+##[**Program derived addresses (PDA)**](https://solana.com/docs/references/terminology#program-derived-account-pda)
 
 PDAs are special account addresses derived deterministically using optional seeds, a bump seed, and a program ID.
 
@@ -274,7 +274,7 @@ They are off the Ed25519 curve, meaning they have no private key. The PDA itself
 
 ***
 
-### [**Prioritization fee**](https://solana.com/docs/references/terminology#prioritization-fee)
+##[**Prioritization fee**](https://solana.com/docs/references/terminology#prioritization-fee)
 
 An additional fee user can specify in the compute budget [instruction](https://solana.com/docs/references/terminology#instruction) to prioritize their [transactions](https://solana.com/docs/references/terminology#transaction).
 
@@ -282,7 +282,7 @@ The priority fee is derived from the compute unit limit and the comput unit pric
 
 ***
 
-### Poseidon hash
+##Poseidon hash
 
 A cryptographic hash function optimized for zero-knowledge proof systems that works natively with finite field arithmetic.
 
@@ -290,19 +290,19 @@ The Poseidon hash is designed to minimize computational complexity in ZK circuit
 
 ***
 
-### Proof verification
+##Proof verification
 
 The on-chain process of validating zero-knowledge proofs to confirm the correctness of compressed account state transitions.
 
 ***
 
-### Rent
+##Rent
 
 A fee paid in SOL for the creation of [Accounts](https://solana.com/docs/references/terminology#account) to store data on the blockchain, tied to account size. When accounts do not have enough balance to pay rent, they may be Garbage Collected.
 
 ***
 
-### [**Rent exempt**](https://solana.com/docs/references/terminology#rent-exempt)
+##[**Rent exempt**](https://solana.com/docs/references/terminology#rent-exempt)
 
 An account that maintains a minimum lamport balance proportional to the amount of data stored on the account.
 
@@ -318,7 +318,7 @@ Minimum Rent Balance = 2 × 0.00000348 SOL/byte/year × Account Size (Bytes)
 
 ***
 
-### Remote Procedure Calls (RPC)
+##Remote Procedure Calls (RPC)
 
 A bridge between users (or applications) and the blockchain to facilitate interactions and data retrieval.
 
@@ -328,13 +328,13 @@ The [ZK Compression RPC API](https://www.zkcompression.com/developers/json-rpc-m
 
 ***
 
-### [**Smart contract**](https://solana.com/docs/references/terminology#smart-contract)
+##[**Smart contract**](https://solana.com/docs/references/terminology#smart-contract)
 
 Smart contracts on Solana are called programs with key characteristics and optimizations.
 
 ***
 
-### Solana Account Model
+##Solana Account Model
 
 The native framework to store and manage data on the Solana blockchain.
 
@@ -344,13 +344,13 @@ ZK Compression extends Solana’s Account Model with Compressed Accounts.
 
 ***
 
-### [**Solana Program Library (SPL)**](https://solana.com/docs/references/terminology#solana-program-library-spl)
+##[**Solana Program Library (SPL)**](https://solana.com/docs/references/terminology#solana-program-library-spl)
 
 A [library of programs](https://spl.solana.com/) on Solana such as spl-token that facilitates tasks such as creating and using tokens.
 
 ***
 
-### State
+##State
 
 A snapshot representing the current status of all accounts and programs on Solana.
 
@@ -360,7 +360,7 @@ State is kept in RAM by validators for transaction validation.
 
 ***
 
-### State root
+##State root
 
 The root hash of a Merkle tree that serves as a cryptographic fingerprint representing all compressed accounts in the tree.
 
@@ -368,7 +368,7 @@ State roots are stored on-chain and used by the Light System Program to verify v
 
 ***
 
-### State tree
+##State tree
 
 A Merkle tree that stores compressed account hashes as leaf nodes in ZK Compression.
 
@@ -376,7 +376,7 @@ State trees organize compressed account data into a binary tree structure where 
 
 ***
 
-### State compression
+##State compression
 
 A process to lower the amount of data stored on chain using Merkle trees.
 
@@ -392,13 +392,13 @@ The process of state compression involves the following steps
 
 ***
 
-### Token account
+##Token account
 
 A token account is an account type in Solana's Token Programs that stores information about an individual's ownership of a specific token (mint). Each token account is associated with a single mint and tracks details like the token balance and owner.
 
 ***
 
-### [**Token mint**](https://solana.com/docs/references/terminology#token-mint)
+##[**Token mint**](https://solana.com/docs/references/terminology#token-mint)
 
 A [mint account](https://solana.com/docs/tokens/basics/create-mint) is an account type in Solana's Token Programs that can produce (or 'mint') tokens.
 
@@ -406,13 +406,13 @@ Different tokens are distinguished by their unique token mint addresses. Token m
 
 ***
 
-### [**Transaction**](https://solana.com/docs/references/terminology#transaction)
+##[**Transaction**](https://solana.com/docs/references/terminology#transaction)
 
 One or more [instructions](https://solana.com/docs/references/terminology#instruction) signed by a [client](https://solana.com/docs/references/terminology#client) using one or more [keypairs](https://solana.com/docs/references/terminology#keypair) and executed atomically with only two possible outcomes: success or failure.
 
 ***
 
-### Validity proof
+##Validity proof
 
 A zero-knowledge proof of compressed state included in a transaction to read or write compressed accounts.
 
@@ -426,7 +426,7 @@ The _validity proof_ is
 
 ***
 
-### Zero-knowledge proof (ZKP)
+##Zero-knowledge proof (ZKP)
 
 A cryptographic proof to verify the validity of a statement without revealing the underlying data.
 
@@ -437,7 +437,7 @@ ZK Compression uses a Groth16 SNARK zk proof
 
 ***
 
-### ZK-SNARK
+##ZK-SNARK
 
 Zero-Knowledge Succinct Non-Interactive Arguments of Knowledge, a cryptographic proof system that enables proving knowledge of information without revealing the information itself.
 
@@ -445,7 +445,7 @@ zk-SNARKs produce constant-size proofs that can be verified efficiently without 
 
 ***
 
-### ZK Compression
+##ZK Compression
 
 A generalized compression framework to compress and verify arbitrary data with zero-knowledge proofs, to
 
