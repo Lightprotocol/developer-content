@@ -87,7 +87,7 @@ Use the [API documentation]( https://lightprotocol.github.io/light-protocol/) to
 `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
 {% endhint %}
 
-* **Use `Rpc` for test-validator, devnet and mainnet**
+**Use `Rpc` for test-validator, devnet and mainnet**
   * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints.
   * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
 {% tabs %}
@@ -112,7 +112,7 @@ light test-validator
 {% endtab %}
 {% endtabs %}
 
-* **For unit tests, use `TestRpc`** to start a mock RPC instance that parses events and builds Merkle trees on-demand without persisting state.
+**For unit tests, use `TestRpc`** to start a mock RPC instance that parses events and builds Merkle trees on-demand without persisting state.
 ```typescript
 const lightWasm: LightWasm = await WasmFactory.getInstance();
 const testRpc = await getTestRpc(lightWasm);
