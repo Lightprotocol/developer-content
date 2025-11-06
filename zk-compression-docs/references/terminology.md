@@ -37,9 +37,14 @@ A process to create deterministic addresses for compressed PDAs by hashing progr
 
 ## Address tree
 
-A Merkle tree used by ZK Compression to derive compressed account addresses deterministically from seeds and a tree's public key.
+A Merkle tree that stores derived addresses that serves as optional, persistent identifiers for compressed accounts. These addresses serve as persistent identifiers that don't change when account data updates.
 
-Address trees are separate from state trees.
+Address trees are separate from state trees. Unlike state trees that store account hashes, address trees store actual address values in an indexed structure with pointers to maintain sorted order. 
+
+Two address tree versions are currently supported:
+
+* **V1 address trees**: Height 26 (~67 million addresses)
+* **V2 batched address trees**: Height 40 (~1 trillion addresses), optimizing compute unit consumption by up to 70%. V2 is currently on Devnet.
 
 ***
 
@@ -370,10 +375,14 @@ State roots are stored on-chain and used by the Light System Program to verify v
 
 ## State tree
 
-A Merkle tree that stores compressed account hashes as leaf nodes in ZK Compression.
+A Merkle tree that stores compressed account hashes as leaf nodes.
 
-State trees organize compressed account data into a binary tree structure where each parent node is the hash of its two children nodes. With a depth of 26, a single state tree can store approximately 67 million compressed accounts. The tree's root hash is stored on-chain as a cryptographic fingerprint representing all accounts in the tree.
+State trees organize compressed account data into a binary tree structure where each parent node is the hash of its two children nodes. The tree's root hash is stored on-chain as a cryptographic fingerprint representing all accounts in the tree.
 
+Two state tree versions with different proof mechanisms are currently supported:
+
+* **V1 state trees**: Always require the full 128-byte validity proof. With a depth of 26, a single V1 state tree stores approximately 67 million compressed accounts.
+* **V2 batched state trees**: Support `prove_by_index` optimization that verifies account existence with one byte instead of 128 bytes, optimizing compute unit consumption by up to 70%.
 ***
 
 ## State compression
