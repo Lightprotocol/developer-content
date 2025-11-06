@@ -54,79 +54,57 @@ Answer: $ARGUMENTS
 
 Use DeepWiki MCP to provide precise technical answers.
 
-### Step 1: Analyze Question and Create Plan
+## Step 1: Identify Repository Scope
 
-#### First, output your understanding and plan:
-- Identify the repository scope (ZK Compression/Solana/Anchor)
-- State what you'll query for
-- Show the refined technical question you'll ask DeepWiki
+1. **State understanding and plan**
 
-**Repository mapping:**
-- ZK Compression/Light Protocol → `Lightprotocol/light-protocol`
-- Solana fundamentals → `solana-labs/solana`
-- Anchor framework → `solana-foundation/anchor`
-- Complex questions → Query multiple repositories
+2. **If question is vague, ask for clarification:**
+- What specific component or feature?
+- What problem are you solving?
+- What level of detail needed (overview vs implementation)?
 
-#### Then assess if clarification is needed:
-If the question is vague, incomplete, or could have multiple interpretations, ask:
-- What specific component or feature are you working with?
-- What problem are you trying to solve?
-- What have you tried so far?
-- What level of detail do you need (overview vs implementation)?
+3. **Repository mapping:**
+- ZK Compression/Light Protocol: `Lightprotocol/light-protocol`
+- Solana fundamentals: `solana-labs/solana`
+- Anchor framework: `solana-foundation/anchor`
+- Complex questions: Query multiple repositories
 
-#### Question refinement checklist:
-- Use exact component names (`CompressedAccountMeta`, not "account metadata")
-- Use specific operations ("verifies proof", not "handles proof")
-- Include concrete function names or error messages when available
+4. **Refine question to use:**
+- Exact component names: `CompressedAccountMeta` not "account metadata"
+- Specific operations: "verifies proof" not "handles proof"
+- Concrete function names or error messages when available
 
-### Step 2: Query DeepWiki
+## Step 2: Query DeepWiki
 
-For the appropriate repository, call in sequence:
+For the identified repository, call in sequence:
 
-**For ZK Compression / Light Protocol:**
-- `mcp__deepwiki__read_wiki_structure("Lightprotocol/light-protocol")`
-- `mcp__deepwiki__read_wiki_contents("Lightprotocol/light-protocol")`
-- `mcp__deepwiki__ask_question("Lightprotocol/light-protocol", $ARGUMENTS)`
+1. `mcp__deepwiki__read_wiki_structure("repo-owner/repo-name")`
+2. `mcp__deepwiki__read_wiki_contents("repo-owner/repo-name")`
+3. `mcp__deepwiki__ask_question("repo-owner/repo-name", refined_question)`
 
-**For Solana fundamentals:**
-- `mcp__deepwiki__read_wiki_structure("solana-labs/solana")`
-- `mcp__deepwiki__read_wiki_contents("solana-labs/solana")`
-- `mcp__deepwiki__ask_question("solana-labs/solana", $ARGUMENTS)`
+Query multiple repositories if question spans different systems.
 
-**For Anchor framework:**
-- `mcp__deepwiki__read_wiki_structure("solana-foundation/anchor")`
-- `mcp__deepwiki__read_wiki_contents("solana-foundation/anchor")`
-- `mcp__deepwiki__ask_question("solana-foundation/anchor", $ARGUMENTS)`
+## Step 3: Format Response
 
-**For complex questions:** Query multiple repositories as needed.
+**Structure:**
+1. Direct answer with technical explanation
+2. Specific implementations and data structures
+3. Code examples with inline comments
+4. Source references (`file:line` from DeepWiki)
+5. Related concepts if relevant
 
-### Step 3: Format Response with Technical Precision
+**Language precision:**
 
-Structure:
-1. **Direct answer** - Immediate technical explanation
-2. **Technical details** - Specific implementations, data structures
-3. **Code examples** - With inline comments explaining key points
-4. **Source references** - File:line from DeepWiki or documentation URLs
-5. **Related concepts** - Connections to other components (if relevant)
+NEVER use vague verbs:
+- "handles", "manages", "processes", "enables", "provides"
 
-**Precision Rules:**
+ALWAYS use exact names:
+- Functions: `LightAccount::new_init()`, `derive_address()`
+- Types: `CompressedAccountMeta`, `ValidityProof`, `PackedAddressTreeInfo`
+- Operations: "nullifies hash", "appends to state tree", "verifies proof"
+- Fields: `tree_info`, `address`, `output_state_tree_index`
 
-AVOID:
-- Vague verbs: "handles", "manages", "processes", "enables", "provides"
-- Abstract terms: "operations", "management", "coordination"
-- Marketing language: "powerful", "seamless", "easy"
-- Generic descriptions: "account metadata" instead of "CompressedAccountMeta"
-
-USE:
-- Exact function/method names: `LightAccount::new_init()`, `derive_address()`
-- Concrete data structures: `CompressedAccountMeta`, `ValidityProof`, `PackedAddressTreeInfo`
-- Specific operations: "nullifies hash", "appends to state tree", "verifies proof"
-- Precise field names: `tree_info`, `address`, `output_state_tree_index`
-- File:line references from DeepWiki responses
-
-**Cross-reference with:**
-- https://www.zkcompression.com/llms-full.txt
-- https://github.com/Lightprotocol/light-protocol
+Include `file:line` references from DeepWiki responses.
 
 ## Notes
 
