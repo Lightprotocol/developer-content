@@ -46,7 +46,7 @@ The Typescript client provides
 
 2. [@lightprotocol/compressed-token](https://lightprotocol.github.io/light-protocol/compressed-token/index.html) uses the stateless.js RPC interface to build transactions with compressed tokens.
 
-### Installation
+### 1. Installation
 
 {% tabs %}
 {% tab title="npm" %}
@@ -81,7 +81,7 @@ pnpm add \
 Use the [API documentation]( https://lightprotocol.github.io/light-protocol/) to look up specific function signatures, parameters, and return types.
 {% endhint %}
 
-### Create an RPC Connection
+### 2. Create an RPC Connection
 
 {% hint style="info" %}
 `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
@@ -128,10 +128,8 @@ const testRpc = await getTestRpc(lightWasm);
   * `light-client` is an RPC client for compressed accounts and tokens.
   * Connects to Photon indexer to query compressed accounts and generate validity proofs.
 * `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits for consistent usage across `light-program-test`, local test validator, and public Solana networks.
-{% endtab %}
-{% endtabs %}
 
-{% endtab %}
+### 1. Installation
 
 {% tabs %}
 {% tab title="LightClient" %}
@@ -142,7 +140,7 @@ light-client = "0.16.0"
 light-sdk = "0.16.0"
 tokio = { version = "1", features = ["full"] }
 solana-program = "2.2"
-anchor-lang = "0.31.1" 
+anchor-lang = "0.31.1"
 ```
 {% endcode %}
 {% endtab %}
@@ -164,6 +162,9 @@ anchor-lang = "0.31.1"
 {% hint style="info" %}
 The [`light-sdk`](https://docs.rs/light-sdk) provides abstractions similar to Anchor's `Account`: macros, wrappers and CPI interface to create and interact with compressed accounts in Solana programs.
 {% endhint %}
+
+{% endtab %}
+{% endtabs %}
 
 {% endstep %}
 {% endstepper %}
