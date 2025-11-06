@@ -4,7 +4,9 @@ description: Overview to Rust and Typescript client guides. Guides include step-
 hidden: true
 ---
 
-ZK Compression provides SDK's with two RPC clients:
+# Overview
+
+Use this guide to build a Typescript or Rust client:
 
 {% tabs %}
 {% tab title="Typescript" %}
@@ -14,6 +16,10 @@ ZK Compression provides SDK's with two RPC clients:
   * `Rpc` is a thin wrapper extending Solana's web3.js `Connection` class with compression-related endpoints.
   * Connects to Photon indexer to query compressed accounts and prover service to generate validity proofs.
 * `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
+
+{% hint style="info" %}
+Use the [API documentation]( https://lightprotocol.github.io/light-protocol/) to look up specific function signatures, parameters, and return types.
+{% endhint %}
 {% endtab %}
 
 {% tab title="Rust" %}
