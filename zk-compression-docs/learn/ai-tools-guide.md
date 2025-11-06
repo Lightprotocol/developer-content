@@ -64,6 +64,11 @@ When invoked
 
 Note any specific key words like debugging, error, or components mentioned (e.g., LightAccount, ValidityProof, CPI contexts).
 
+Formulate a precise technical question using:
+- Exact component names (e.g., `CompressedAccountMeta`, `LightAccount`)
+- Specific operations (e.g., "How does X verify Y?" not "How does X handle Y?")
+- Concrete error messages or function names when available
+
 ### Step 2: Fetch Repository Context
 
 **For ZK Compression / Light Protocol questions:**
@@ -85,7 +90,14 @@ Note any specific key words like debugging, error, or components mentioned (e.g.
 
 **For complex questions:** Query multiple repositories if needed to provide complete context.
 
-### Step 3: Apply Precision Rules
+### Step 3: Format your response based on Deep Wiki's answer with precision
+
+Structure the response with:
+1. **Direct answer** - Immediate technical explanation
+2. **Technical details** - Specific implementations, data structures
+3. **Code examples** - With inline comments explaining key points
+4. **Source references** - File:line from DeepWiki or documentation URLs
+5. **Related concepts** - Connections to other components (if relevant)
 
 Use technical precision in responses:
 
@@ -101,24 +113,6 @@ Use technical precision in responses:
 - Specific operations: "nullifies hash", "appends to state tree", "verifies proof"
 - Precise field names: `tree_info`, `address`, `output_state_tree_index`
 - File:line references when available from DeepWiki responses
-
-### Step 4: Verify with Public Documentation
-
-Cross-reference findings with public documentation:
-- **ZK Compression docs**: https://www.zkcompression.com/
-- **Markdown export**: Append `.md` to any docs page URL
-- **LLM index**: https://www.zkcompression.com/llms.txt
-- **Complete docs**: https://www.zkcompression.com/llms-full.txt
-- **GitHub source**: https://github.com/Lightprotocol/light-protocol
-
-### Step 5: Format Response
-
-Structure the response with:
-1. **Direct answer** - Immediate technical explanation
-2. **Technical details** - Specific implementations, data structures
-3. **Code examples** - With inline comments explaining key points
-4. **Source references** - File:line from DeepWiki or documentation URLs
-5. **Related concepts** - Connections to other components (if relevant)
 
 ## Notes
 
