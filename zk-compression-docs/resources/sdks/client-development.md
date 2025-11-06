@@ -10,10 +10,6 @@ Build client applications that interact with ZK Compression across web, Node.js,
 * [**@lightprotocol/stateless.js**](https://www.npmjs.com/package/@lightprotocol/stateless.js) **-** Core compression SDK to create or interact with compressed accounts via RPC interface
 * [**@lightprotocol/compressed-token**](https://www.npmjs.com/package/@lightprotocol/compressed-token) **-** SDK to mint, transfer, compress/ decompress, or delegate compressed tokens
 
-{% content-ref url="../../compressed-pdas/client-library/typescript.md" %}
-[typescript.md](../../compressed-pdas/client-library/typescript.md)
-{% endcontent-ref %}
-
 ## Rust Client
 
 * For devnet and mainnet use [`light-client`](https://docs.rs/light-client)&#x20;
@@ -22,10 +18,6 @@ Build client applications that interact with ZK Compression across web, Node.js,
 * For local testing use [`light-program-test`](https://docs.rs/light-program-test)&#x20;
   * Initializes in-process Solana VM via [LiteSVM](https://github.com/LiteSVM/LiteSVM) with auto-funded payer, local prover server and in-memory indexer.&#x20;
 * `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits. Seamlessly switch between `light-program-test`, local test validator, and public Solana networks.
-
-{% content-ref url="../../compressed-pdas/client-library/rust.md" %}
-[rust.md](../../compressed-pdas/client-library/rust.md)
-{% endcontent-ref %}
 
 ### Installation
 
