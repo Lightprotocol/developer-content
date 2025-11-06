@@ -29,12 +29,10 @@ description: Overview and comparison of guides to create, update, close, reiniti
 {% endtab %}
 
 {% tab title="Reinitialize" %}
-<figure><img src="../../.gitbook/assets/Untitled (5).png" alt=""><figcaption></figcaption></figure>
-{% endtab %}
+<figure><picture><source srcset="../../.gitbook/assets/program-reinit (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-reinit.png" alt=""></picture><figcaption></figcaption></figure>{% endtab %}
 
 {% tab title="Burn" %}
-<figure><img src="../../.gitbook/assets/Untitled (6).png" alt=""><figcaption></figcaption></figure>
-{% endtab %}
+<figure><picture><source srcset="../../.gitbook/assets/program-burn (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-burn.png" alt=""></picture><figcaption></figcaption></figure>{% endtab %}
 {% endtabs %}
 
 ### Next Steps
