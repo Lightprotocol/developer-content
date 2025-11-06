@@ -37,7 +37,7 @@ The Model Context Protocol (MCP) is an open standard to connect AI apps to data 
 claude mcp add -s user -t http deepwiki https://mcp.deepwiki.com/mcp
 ```
 {% hint style="success" %}
-We recommend to create a command for Claude Code that includes the tools listed below. Simply copy paste the snippet below.
+We recommend to create a command that includes the tools listed below. Simply copy paste this snippet.
 {% endhint %}
 
 {% code overflow="wrap" expandable="true" %}

@@ -11,11 +11,11 @@ Compressed token accounts store information about an individual's ownership of a
 
 For example, this simplifies [token distribution](implementation-guides/create-an-airdrop.md), since you don't need to allocate a token account per recipient.
 
-#### Compressed Tokens at a Glance
+### Compressed Tokens at a Glance
 
 <table data-view="cards"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Rent-free tokens</strong></td><td>Create token accounts without upfront rent exempt balance.</td></tr><tr><td><strong>SPL Compatibility</strong></td><td>Compatible with SPL tokens and Solana programs.</td></tr><tr><td><strong>Wallet Support</strong></td><td>Supported by leading wallets including Phantom and Backpack.</td></tr></tbody></table>
 
-## Start building
+# Start building
 
 Developing with compressed tokens works similar SPL tokens and involves minimal setup:
 
@@ -116,17 +116,20 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 
 3. Get started with our cookbook or advanced guides for implementations
 
-### Guides
+## Guides
 
 <table><thead><tr><th width="359.98333740234375">Guide</th><th>Description</th></tr></thead><tbody><tr><td><a href="guides/how-to-create-and-register-a-mint-account-for-compression.md">How to Create and Register a Mint Account for Compression</a></td><td>Create new SPL mint with token pool for compression</td></tr><tr><td><a href="guides/how-to-create-compressed-token-accounts.md">How to Create Compressed Token Accounts</a></td><td>Create compressed and learn difference to regular token accounts</td></tr><tr><td><a href="guides/how-to-mint-compressed-tokens.md">How to Mint Compressed Tokens</a></td><td>Create new compressed tokens to existing mint</td></tr><tr><td><a href="guides/how-to-transfer-compressed-token.md">How to Transfer Compressed Tokens</a></td><td>Move compressed tokens between compressed accounts</td></tr><tr><td><a href="guides/how-to-compress-and-decompress-spl-tokens.md">How to Decompress and Compress Tokens</a></td><td>Convert SPL tokens between regular and compressed format</td></tr><tr><td><a href="guides/how-to-compress-complete-spl-token-accounts.md">How to Compress complete SPL Token Accounts</a></td><td>Compress complete SPL token accounts and reclaim rent afterwards</td></tr><tr><td><a href="guides/how-to-merge-compressed-token-accounts.md">How to Merge Compressed Accounts</a></td><td>Consolidate multiple compressed accounts of the same mint into a single compressed account</td></tr><tr><td><a href="guides/how-to-create-compressed-token-pools-for-mint-accounts.md">How to Create Token Pools for Mint Accounts</a></td><td>Create token pool for compression for existing SPL mints</td></tr><tr><td><a href="guides/how-to-approve-and-revoke-delegate-authority.md">How to Approve and Revoke Delegate Authority</a></td><td>Approve or revoke delegates for compressed token accounts</td></tr></tbody></table>
 
-### Implementation Guides
+## Advanced Guides
 
-<table><thead><tr><th width="360.35003662109375">Guide</th><th>Description</th></tr></thead><tbody><tr><td><a href="advanced-guides/create-an-airdrop.md">Create an Airdrop</a></td><td>Create an airdrop, with or without code</td></tr><tr><td><a href="advanced-guides/use-token-2022-with-compression.md">Use Token-2022 with compressed tokens</a></td><td>Create and transfer compressed tokens with Token-2022 extensions</td></tr><tr><td><a href="advanced-guides/add-wallet-support-for-compressed-tokens.md">Add Wallet Support for Compressed Tokens</a></td><td>Implement compressed token support in your wallet application</td></tr></tbody></table>
-
-## Examples
-
-<table><thead><tr><th width="230">Example</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/example-web-client">Web Client</a></td><td>Demonstrates how to use @lightprotocol/stateless.js in a browser environment to interact with the ZK Compression API</td></tr><tr><td><a href="https://github.com/Lightprotocol/example-nodejs-client">Node.js Client</a></td><td>Script to execute basic compression/decompression/transfers</td></tr><tr><td><a href="https://github.com/Lightprotocol/example-compressed-claim">Claim Implementation Airdrops</a></td><td>Demo for time-locked airdrop with compressed tokens</td></tr><tr><td><a href="https://github.com/Lightprotocol/example-token-distribution">Token Distribution</a></td><td>Token distribution example implementation for airdrops, payments, and rewards</td></tr></tbody></table>
+| Guide                                                                                   | Description                                                                                           |
+| --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [Add Wallet Support for Compressed Tokens](add-wallet-support-for-compressed-tokens.md) | Add compressed token support in your wallet application                                               |
+| [Use Token-2022 with Compression](use-token-2022-with-compression.md)                   | Create compressed Token-2022 mints with metadata and other extensions                                 |
+| [Create an Airdrop without Claim](create-an-airdrop.md)                                 | Create an airdrop that appears directly in recipients' wallets (with or without code)    |
+| [Example Airdrop with Claim](https://github.com/Lightprotocol/example-compressed-claim) | Demo for time-locked airdrop with compressed tokens                                                   |
+| [Example Web Client](https://github.com/Lightprotocol/example-web-client)               | Demonstrates how to use @lightprotocol/stateless.js in a browser environment to interact with ZK Compression |
+| [Example Node.js Client](https://github.com/Lightprotocol/example-nodejs-client)        | Script to execute basic compression/decompression/transfers                                           |
 
 ***
 
