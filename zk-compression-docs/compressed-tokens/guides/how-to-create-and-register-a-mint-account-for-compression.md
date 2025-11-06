@@ -234,10 +234,10 @@ const { mint, transactionSignature } = await createMint(
 
 ### Next Steps
 
-Learn differences to regular and how to create compressed token accounts in the next section.
+Learn how to create additional compressed token pools for your SPL mint to increase write-lock limits.
 
-{% content-ref url="how-to-create-compressed-token-accounts.md" %}
-[how-to-create-compressed-token-accounts.md](how-to-create-compressed-token-accounts.md)
+{% content-ref url="how-to-create-compressed-token-pools-for-mint-accounts.md" %}
+[how-to-create-compressed-token-pools-for-mint-accounts.md](how-to-create-compressed-token-pools-for-mint-accounts.md)
 {% endcontent-ref %}
 
 [^1]: SPL token account that holds SPL tokens corresponding to compressed tokens in circulation. Tokens are locked when compressed and withdrawn when decompressed. Owned by the compressed token program's CPI authority PDA.

@@ -285,8 +285,8 @@ const poolTx = await createTokenPool(
 
 ### Next Steps
 
-Learn how to approve and revoke delegate authority for compressed token accounts.
+Learn how to merge multiple compressed token accounts into one to simplify state management.
 
-{% content-ref url="how-to-approve-and-revoke-delegate-authority.md" %}
-[how-to-approve-and-revoke-delegate-authority.md](how-to-approve-and-revoke-delegate-authority.md)
+{% content-ref url="how-to-merge-compressed-token-accounts.md" %}
+[how-to-merge-compressed-token-accounts.md](how-to-merge-compressed-token-accounts.md)
 {% endcontent-ref %}

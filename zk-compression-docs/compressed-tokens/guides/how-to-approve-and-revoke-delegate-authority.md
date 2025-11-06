@@ -458,8 +458,8 @@ That's it! Explore more guides in our cookbook section, or check out the advance
 {% endcolumn %}
 
 {% column %}
-{% content-ref url="../implementation-guides/" %}
-[implementation-guides](../implementation-guides/)
+{% content-ref url="../advanced-guides/README.md" %}
+[README.md](../advanced-guides/README.md)
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}

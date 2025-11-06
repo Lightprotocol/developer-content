@@ -341,8 +341,8 @@ for (const mint of mints) {
 
 ### Next Steps
 
-Learn how to create additional compressed token pools for your SPL mint to increase write-lock limits.
+Learn how to approve and revoke delegate authority for compressed token accounts.
 
-{% content-ref url="how-to-create-compressed-token-pools-for-mint-accounts.md" %}
-[how-to-create-compressed-token-pools-for-mint-accounts.md](how-to-create-compressed-token-pools-for-mint-accounts.md)
+{% content-ref url="how-to-approve-and-revoke-delegate-authority.md" %}
+[how-to-approve-and-revoke-delegate-authority.md](how-to-approve-and-revoke-delegate-authority.md)
 {% endcontent-ref %}

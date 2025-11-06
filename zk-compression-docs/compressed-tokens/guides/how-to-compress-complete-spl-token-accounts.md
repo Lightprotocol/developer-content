@@ -421,8 +421,8 @@ for (const { account, owner } of tokenAccounts) {
 
 ### Next Steps
 
-Learn how to merge multiple compressed token accounts into one to simplify state management.
+Compressed tokens need an SPL mint with token pool for compression. Learn how to create and register SPL mints with token pools for compression in the next guide.
 
-{% content-ref url="how-to-merge-compressed-token-accounts.md" %}
-[how-to-merge-compressed-token-accounts.md](how-to-merge-compressed-token-accounts.md)
+{% content-ref url="how-to-create-and-register-a-mint-account-for-compression.md" %}
+[how-to-create-and-register-a-mint-account-for-compression.md](how-to-create-and-register-a-mint-account-for-compression.md)
 {% endcontent-ref %}
