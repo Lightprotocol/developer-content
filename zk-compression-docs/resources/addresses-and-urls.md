@@ -32,28 +32,28 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
   <thead>
     <tr>
       <th width="150"></th>
-      <th width="80">Devnet</th>
-      <th width="80">Mainnet</th>
+      <th width="80" style="text-align: center;">Devnet</th>
+      <th width="80" style="text-align: center;">Mainnet</th>
       <th>Public Key</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>State Tree</td>
-      <td>✓</td>
-      <td>✓</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">✓</td>
       <td><strong>smt2rJAFdyJJupwMKAqTNAJwvjhmiZ4JYGZmbVRw1Ho</strong></td>
     </tr>
     <tr>
       <td>Nullifier Queue</td>
-      <td>✓</td>
-      <td>✓</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">✓</td>
       <td><strong>nfq2hgS7NYemXsFaFUCe3EMXSDSfnZnAe27jC6aPP1X</strong></td>
     </tr>
     <tr>
       <td>CPI Context</td>
-      <td>✓</td>
-      <td>✓</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">✓</td>
       <td><strong>cpi2cdhkH5roePvcudTgUL8ppEBfTay1desGh8G8QxK</strong></td>
     </tr>
   </tbody>
@@ -65,29 +65,29 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="150"></th>
-      <th width="80">Devnet</th>
-      <th width="80">Mainnet</th>
+      <th width="150">#1</th>
+      <th width="80" style="text-align: center;">Devnet</th>
+      <th width="80" style="text-align: center;">Mainnet</th>
       <th>Public Key</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>State Tree #1</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#1 State Tree</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>bmt1LryLZUMmF7ZtqESaw7wifBXLfXHQYoE4GAmrahU</strong></td>
     </tr>
     <tr>
-      <td>Output Queue #1</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#1 Output Queue</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>oq1na8gojfdUhsfCpyjNt6h4JaDWtHf1yQj4koBWfto</strong></td>
     </tr>
     <tr>
-      <td>CPI Context #1</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#1 CPI Context</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>cpi15BoVPKgEPw5o8wc2T816GE7b378nMXnhH3Xbq4y</strong></td>
     </tr>
   </tbody>
@@ -96,29 +96,29 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="150"></th>
-      <th width="80">Devnet</th>
-      <th width="80">Mainnet</th>
+      <th width="150">#2</th>
+      <th width="80" style="text-align: center;">Devnet</th>
+      <th width="80" style="text-align: center;">Mainnet</th>
       <th>Public Key</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>State Tree #2</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#2 State Tree</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>bmt2UxoBxB9xWev4BkLvkGdapsz6sZGkzViPNph7VFi</strong></td>
     </tr>
     <tr>
-      <td>Output Queue #2</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#2 Output Queue</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>oq2UkeMsJLfXt2QHzim242SUi3nvjJs8Pn7Eac9H9vg</strong></td>
     </tr>
     <tr>
-      <td>CPI Context #2</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#2 CPI Context</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>cpi2yGapXUR3As5SjnHBAVvmApNiLsbeZpF3euWnW6B</strong></td>
     </tr>
   </tbody>
@@ -127,29 +127,29 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="150"></th>
-      <th width="80">Devnet</th>
-      <th width="80">Mainnet</th>
+      <th width="150">#3</th>
+      <th width="80" style="text-align: center;">Devnet</th>
+      <th width="80" style="text-align: center;">Mainnet</th>
       <th>Public Key</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>State Tree #3</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#3 State Tree</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>bmt3ccLd4bqSVZVeCJnH1F6C8jNygAhaDfxDwePyyGb</strong></td>
     </tr>
     <tr>
-      <td>Output Queue #3</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#3 Output Queue</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>oq3AxjekBWgo64gpauB6QtuZNesuv19xrhaC1ZM1THQ</strong></td>
     </tr>
     <tr>
-      <td>CPI Context #3</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#3 CPI Context</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>cpi3mbwMpSX8FAGMZVP85AwxqCaQMfEk9Em1v8QK9Rf</strong></td>
     </tr>
   </tbody>
@@ -158,29 +158,29 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="150"></th>
-      <th width="80">Devnet</th>
-      <th width="80">Mainnet</th>
+      <th width="150">#4</th>
+      <th width="80" style="text-align: center;">Devnet</th>
+      <th width="80" style="text-align: center;">Mainnet</th>
       <th>Public Key</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>State Tree #4</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#4 State Tree</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>bmt4d3p1a4YQgk9PeZv5s4DBUmbF5NxqYpk9HGjQsd8</strong></td>
     </tr>
     <tr>
-      <td>Output Queue #4</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#4 Output Queue</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>oq4ypwvVGzCUMoiKKHWh4S1SgZJ9vCvKpcz6RT6A8dq</strong></td>
     </tr>
     <tr>
-      <td>CPI Context #4</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#4 CPI Context</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>cpi4yyPDc4bCgHAnsenunGA8Y77j3XEDyjgfyCKgcoc</strong></td>
     </tr>
   </tbody>
@@ -189,29 +189,29 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="150"></th>
-      <th width="80">Devnet</th>
-      <th width="80">Mainnet</th>
+      <th width="150">#5</th>
+      <th width="80" style="text-align: center;">Devnet</th>
+      <th width="80" style="text-align: center;">Mainnet</th>
       <th>Public Key</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>State Tree #5</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#5 State Tree</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>bmt5yU97jC88YXTuSukYHa8Z5Bi2ZDUtmzfkDTA2mG2</strong></td>
     </tr>
     <tr>
-      <td>Output Queue #5</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#5 Output Queue</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>oq5oh5ZR3yGomuQgFduNDzjtGvVWfDRGLuDVjv9a96P</strong></td>
     </tr>
     <tr>
-      <td>CPI Context #5</td>
-      <td>✓</td>
-      <td>-</td>
+      <td>#5 CPI Context</td>
+      <td style="text-align: center;">✓</td>
+      <td style="text-align: center;">-</td>
       <td><strong>cpi5ZTjdgYpZ1Xr7B1cMLLUE81oTtJbNNAyKary2nV6</strong></td>
     </tr>
   </tbody>
