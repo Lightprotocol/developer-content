@@ -216,7 +216,7 @@ let payer = rpc.get_payer().insecure_clone();
 {% step %}
 ## Tree Configuration
 
-Before creating a compressed account, your client must fetch metadata of two Merkle trees:
+Your client must fetch metadata of two Merkle trees:
 
 * an address tree to derive and store the account address and
 * a state tree to store the compressed account hash.
@@ -286,15 +286,14 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 **Address Tree methods** return `TreeInfo` with the public key and other metadata for the address tree.
 
 * `TreeInfo` is used
-  * to derive addresses and
-  * for `getValidityProofV0()` to prove the address does not exist yet.
+  * to derive addresses
+  * for account creation in `getValidityProofV0()` to prove the address does not exist yet
+  * for account update/close/reinit/burn, it validates the address was derived correctly but doesn't modify the tree.
 
-
-**State Trees methods** return `TreeInfo[]` with pubkeys and metadata for all active state trees.
-* For Typescript, `selectStateTreeInfo()` selects a random state tree to store the compressed account hash.
-  * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
-  * Account hashes can move to different state trees after each state transition.
-  * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
+**State Trees methods** return `TreeInfo[]` with pubkeys and metadata for all active state trees and select a random state tree to store the compressed account hash. 
+    * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
+    * Account hashes can move to different state trees after each state transition.
+    * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
 
 {% hint style="info" %}
 **`TreeInfo` contains pubkeys and other metadata of a Merkle tree.**
@@ -303,16 +302,160 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 * `queue`: Queue account pubkey of queue associated with a Merkle tree
   * Buffers updates of compressed accounts before they are added to the Merkle tree.
   * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
-* `treeType`: Defaults to V1 or V2 trees, based on the feature flag.
-* `cpiContext` (currently on devnet): Optional CPI context account for batched operations across multiple programs (may be null)
+* `treeType`: Automatically set based on which tree selection method you used.
+* `cpiContext`: Optional CPI context account for batched operations across multiple programs (may be null, currently on devnet)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
-  * First program caches its signer checks, second program reads them and combines instruction data
   * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
-  * The SDK includes this when available.
-* `nextTreeInfo`: The tree to use for the next operation when the current tree is full (may be null)
-  * The SDK determines if `nextTreeInfo` should be used for the next state transition.
-  * The protocol creates new trees, once existing trees fill up.
+* `nextTreeInfo`: Next tree to use when current tree reaches ~95% capacity (may be null). 
+    * The SDK automatically switches to next tree when present. Developers don't need to handle tree rollovers manually.
+    * The protocol creates new trees, once existing trees fill up.
 {% endhint %}
+{% endstep %}
+
+{% step %}
+## Derive Address
+
+Derive a persistent address as a unique identifier for your compressed account, similar to [program-derived addresses (PDAs)](https://solana.com/docs/core/pda).
+
+* Use the derivation method that matches your address tree type from the previous step.
+* Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
+* The key difference to PDAs is that compressed accounts require an **address tree** parameter.
+
+{% hint style="info" %}
+V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
+{% endhint %}
+
+{% tabs %}
+{% tab title="Typescript" %}
+
+{% tabs %}
+{% tab title="V1 Address Trees" %}
+{% code overflow="wrap" %}
+```typescript
+const seed = deriveAddressSeed(
+  [Buffer.from('my-seed')],
+  programId
+);
+const address = deriveAddress(seed, addressTree.tree);
+```
+{% endcode %}
+
+**Derive the seed**:
+
+* Seeds are predefined inputs, such as strings, numbers or other account addresses.
+* Specify `programId` to combine with your seeds
+
+**Then, derive the address**:
+
+* Pass the derived 32-byte `seed` from the first step
+* Specify `addressTree.tree` pubkey
+{% endtab %}
+
+{% tab title="V2 Address Trees" %}
+{% code overflow="wrap" %}
+```typescript
+const seed = deriveAddressSeedV2(
+  [Buffer.from('my-seed')]
+);
+const address = deriveAddressV2(seed, addressTree.tree, programId);
+```
+{% endcode %}
+
+**Derive the seed**:
+
+* Seeds are predefined inputs, such as strings, numbers or other account addresses.
+
+**Then, derive the address**:
+
+* Pass the derived 32-byte `seed` from the first step.
+* Specify `addressTree.tree` pubkey to ensure an address is unique to an address tree. Different trees produce different addresses from identical seeds.
+* Specify `programId` in the address derivation. V2 includes it here instead of in the seed.
+{% endtab %}
+{% endtabs %}
+
+{% endtab %}
+
+{% tab title="Rust" %}
+
+{% tabs %}
+{% tab title="V1 Address Trees" %}
+{% code overflow="wrap" %}
+```rust
+use light_sdk::address::v1::derive_address;
+
+let (address, _) = derive_address(
+    &[b"my-seed"],
+    &address_tree_info.tree,
+    &program_id,
+);
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="V2 Address Trees" %}
+{% code overflow="wrap" %}
+```rust
+use light_sdk::address::v2::derive_address;
+
+let (address, _) = derive_address(
+    &[b"my-seed"],
+    &address_tree_info.tree,
+    &program_id,
+);
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+**Pass these parameters**:
+
+* `&[b"my-seed"]`: Predefined inputs, such as strings, numbers or other account addresses.
+* `&address_tree_info.tree`: Specify the tree pubkey to ensure an address is unique to this address tree. Different trees produce different addresses from identical seeds.
+* `&program_id`: Specify the program owner pubkey.
+
+{% endtab %}
+{% endtabs %}
+
+{% hint style="info" %}
+Use the same address tree for both address derivation and all subsequent operations:
+
+* To create a compressed account, pass the address to the validity proof, to prove the address does not exist yet.
+* To update/close, use the address to fetch the current account with `getCompressedAccount(address)` / `get_compressed_account(address)`.
+{% endhint %}
+
+{% endstep %}
+
+
+{% step %}
+## 
+
+{% tabs %}
+{% tab title="Typescript" %}
+
+{% endtab %}
+
+{% tab title="Rust" %}
+
+
+{% endtab %}
+{% endtabs %}
+
+{% endstep %}
+
+{% step %}
+## 
+
+{% tabs %}
+{% tab title="Typescript" %}
+
+{% endtab %}
+
+{% tab title="Rust" %}
+
+
+{% endtab %}
+{% endtabs %}
+
 {% endstep %}
 
 {% endstepper %}

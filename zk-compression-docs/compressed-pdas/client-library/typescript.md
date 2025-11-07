@@ -13,72 +13,11 @@ description: >-
 
 
 
-{% endstep %}
 
-{% step %}
-### Derive Address
 
-Derive a persistent address as a unique identifier for your compressed account, similar to [program-derived addresses (PDAs)](https://solana.com/docs/core/pda).
 
-* Use the derivation method that matches your address tree type from the previous step.
-* Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
-* The key difference to PDAs is that compressed accounts require an **address tree** parameter.
 
-{% hint style="info" %}
-V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
-{% endhint %}
 
-{% tabs %}
-{% tab title="V1 Address Trees" %}
-{% code overflow="wrap" %}
-```typescript
-const seed = deriveAddressSeed(
-  [Buffer.from('my-seed')],
-  programId
-);
-const address = deriveAddress(seed, addressTree.tree);
-```
-{% endcode %}
-
-**Derive the seed**:
-
-* Predefined inputs, such as strings, numbers or other account addresses
-* Specify `programId` to combine with your seeds
-
-**Then, derive the address**:
-
-* Pass the derived 32-byte `seed` from the first step
-* Specify `addressTree.tree` pubkey
-{% endtab %}
-
-{% tab title="V2 Address Trees" %}
-{% code overflow="wrap" %}
-```typescript
-const seed = deriveAddressSeedV2(
-  [Buffer.from('my-seed')]
-);
-const address = deriveAddressV2(seed, addressTree.tree, programId);
-```
-{% endcode %}
-
-**Derive the seed**:
-
-* Predefined inputs, such as strings, numbers or other account addresses
-
-**Then, derive the address**:
-
-* Pass the derived 32-byte `seed` from the first step.
-* Specify `addressTree.tree` pubkey to ensure an address is unique to an address tree. Different trees produce different addresses from identical seeds.
-* Specify `programId` in the address derivation. V2 includes it here instead of in the seed.
-{% endtab %}
-{% endtabs %}
-
-{% hint style="info" %}
-Use the same `addressTree` for both address derivation and all subsequent operations:
-
-* To create a compressed account, pass the address to `getValidityProofV0()` to prove the address does not exist yet.
-* To update/close, use the address to fetch the current account with `getCompressedAccount(address)`.
-{% endhint %}
 {% endstep %}
 
 {% step %}
