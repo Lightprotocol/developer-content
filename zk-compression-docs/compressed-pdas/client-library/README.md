@@ -291,9 +291,10 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
   * for account update/close/reinit/burn, it validates the address was derived correctly but doesn't modify the tree.
 
 **State Trees methods** return `TreeInfo[]` with pubkeys and metadata for all active state trees and select a random state tree to store the compressed account hash. 
-    * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
-    * Account hashes can move to different state trees after each state transition.
-    * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
+
+* Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
+* Account hashes can move to different state trees after each state transition.
+* Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
 
 {% hint style="info" %}
 **`TreeInfo` contains pubkeys and other metadata of a Merkle tree.**
@@ -340,12 +341,12 @@ const address = deriveAddress(seed, addressTree.tree);
 ```
 {% endcode %}
 
-**Derive the seed**:
+**1. Derive the seed**:
 
 * Seeds are predefined inputs, such as strings, numbers or other account addresses.
 * Specify `programId` to combine with your seeds
 
-**Then, derive the address**:
+**2. Then, derive the address**:
 
 * Pass the derived 32-byte `seed` from the first step
 * Specify `addressTree.tree` pubkey
@@ -361,15 +362,15 @@ const address = deriveAddressV2(seed, addressTree.tree, programId);
 ```
 {% endcode %}
 
-**Derive the seed**:
+**1. Derive the seed**:
 
 * Seeds are predefined inputs, such as strings, numbers or other account addresses.
 
-**Then, derive the address**:
+**2. Then, derive the address**:
 
 * Pass the derived 32-byte `seed` from the first step.
 * Specify `addressTree.tree` pubkey to ensure an address is unique to an address tree. Different trees produce different addresses from identical seeds.
-* Specify `programId` in the address derivation. V2 includes it here instead of in the seed.
+* Specify `programId` in the address derivation. V2 includes it here instead of the first step.
 {% endtab %}
 {% endtabs %}
 
