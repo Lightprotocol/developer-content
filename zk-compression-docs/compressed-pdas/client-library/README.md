@@ -290,7 +290,7 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
   * for account creation in `getValidityProofV0()` to prove the address does not exist yet
   * for account update/close/reinit/burn, it validates the address was derived correctly but doesn't modify the tree.
 
-**State Trees methods** return `TreeInfo[]` with pubkeys and metadata for all active state trees and select a random state tree to store the compressed account hash. 
+**State Trees methods** select a random state tree to store the compressed account hash. 
 
 * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
 * Account hashes can move to different state trees after each state transition.
@@ -428,15 +428,253 @@ Use the same address tree for both address derivation and all subsequent operati
 
 
 {% step %}
-## 
+### Validity Proof
+
+Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
+
+* To create a compressed account, you must prove the **address doesn't already exist** in the address tree.
+* To update or close a compressed account, you must **prove its account hash exists** in a state tree.
+* You can **combine multiple addresses and hashes in one proof** to optimize compute cost and instruction data.
+
+{% hint style="info" %}
+[Here's a full guide](https://www.zkcompression.com/resources/json-rpc-methods/getvalidityproof) to the `getValidityProofV0()` / `get_validity_proof()` method.
+{% endhint %}
 
 {% tabs %}
 {% tab title="Typescript" %}
+{% tabs %}
+{% tab title="Create" %}
+{% code overflow="wrap" %}
+```typescript
+const proof = await rpc.getValidityProofV0(
+  [],
+  [{ address: bn(address.toBytes()), tree: addressTree.tree, queue: addressTree.queue }]
+);
+```
+{% endcode %}
+
+**1. Pass these parameters**:
+
+* Leave (`[]`) empty to create compressed accounts, since no compressed account exists yet to reference.
+* Specify the new address with its tree and queue pubkeys.
+
+**2. The RPC returns**:
+
+* `compressedProof`: The proof that the address does not exist in the address tree, passed to the program in your instruction data.
+* `rootIndices`: An array with root index from the validity proof for the address tree.
+* Empty `leafIndices` array, since you do not reference an existing account, when you create a compressed account.
+{% endtab %}
+
+{% tab title="Update, Close, Reinit, Burn" %}
+{% hint style="info" %}
+These operations proof that the account hash exists in the state tree. The difference is in your program's instruction handler.
+{% endhint %}
+
+{% code overflow="wrap" %}
+```typescript
+const hash = compressedAccount.hash;
+const tree = compressedAccount.treeInfo.tree;
+const queue = compressedAccount.treeInfo.queue;
+
+const proof = await rpc.getValidityProofV0(
+  [{ hash, tree, queue }],
+  []
+);
+```
+{% endcode %}
+
+**1. Pass these parameters**:
+
+* Specify the account hash with its tree and queue pubkeys in `[{ hash, tree, queue }]`.
+* Get `tree` and `queue` from `compressedAccount.treeInfo.tree` and `compressedAccount.treeInfo.queue`.
+* (`[]`) remains empty, since the proof verifies the account hash exists in a state tree, not that the address doesn't exist in an address tree.
+
+**2. The RPC returns**:
+
+* `compressedProof`: The proof that the account hash exists in the state tree, passed to the program in your instruction data.
+* `rootIndices` and `leafIndices` arrays with proof metadata to pack accounts in the next step.
+{% endtab %}
+{% endtabs %}
 
 {% endtab %}
 
 {% tab title="Rust" %}
 
+{% tabs %}
+{% tab title="Create" %}
+{% code overflow="wrap" %}
+```rust
+let rpc_result = rpc
+    .get_validity_proof(
+        vec![],
+        vec![AddressWithTree {
+            address: *address,
+            tree: address_tree_info.tree,
+        }],
+        None,
+    )
+    .await?
+    .value;
+```
+{% endcode %}
+
+**1. Pass these parameters**:
+
+* Leave (`vec![]`) empty to create compressed accounts, since no compressed account exists yet to reference.
+* Specify in (`vec![AddressWithTree]`) the new address to create with its address tree. Rust does not have a queue field, different from Typescript.
+
+**2. The RPC returns `ValidityProofWithContext`**:
+
+* `proof` to prove that the address does not exist in the address tree, passed to the program in your instruction data.
+* `addresses` with the public key and metadata of the address tree to pack accounts in the next step.
+* An empty `accounts` field, since you do not reference an existing account, when you create a compressed account.
+{% endtab %}
+
+{% endtab %}
+
+{% tab title="Update, Close, Reinit, Burn" %}
+{% hint style="info" %}
+These operations proof that the account hash exists in the state tree. The difference is in your program's instruction handler.
+{% endhint %}
+
+{% code overflow="wrap" %}
+```rust
+let hash = compressed_account.hash;
+
+let rpc_result = rpc
+    .get_validity_proof(
+        vec![hash],
+        vec![],
+        None,
+    )
+    .await?
+    .value;
+```
+{% endcode %}
+
+**1. Pass these parameters**:
+
+* Specify in (`vec![hash]`) the hash of the existing compressed account to prove its existence in the state tree.
+* (`vec![]`) remains empty, since the proof verifies the account hash exists in a state tree, not that the address doesn't exist in an address tree.
+
+**2. The RPC returns `ValidityProofWithContext`**:
+
+* `proof` with the proof that the account hash exists in the state tree, passed to the program in your instruction data.
+* `accounts` with the public key and metadata of the state tree to pack accounts in the next step.
+* An empty `addresses` field (only needed when creating an address).
+{% endtab %}
+{% endtabs %}
+
+{% endtabs %}
+
+
+### Single Combined Proofs
+{% hint style="info" %}
+
+**Advantages of combined proofs**:
+* You only add one validity proof with 128 bytes in size instead of two to your instruction data.
+* Reduction of compute unit consumption by at least 100k CU, since combined proofs are verified in a single CPI by the Light System Program.
+
+{% endhint %}
+
+The specific combinations and maximums to combine proofs depend on the circuit version (v1 or v2) and the proof type.
+
+* Combine multiple hashes **or** multiple addresses in a single proof, or
+* multiple hashes **and** addresses in a single combined proof.
+
+{% tabs %}
+{% tab title="V1 Circuits" %}
+V1 circuits can prove in a single proof
+
+* 1, 2, 3, 4, or 8 hashes,
+* 1, 2, 3, 4, or 8 addresses, or
+* multiple hashes or addresses in any combination of the below.
+
+| **Single Combined Proofs** | Any combination of |
+| -------------------------- | :----------------: |
+| Hashes                     |    1, 2, 3, 4, 8   |
+| Addresses                  |     1, 2, 4, 8     |
+{% endtab %}
+
+{% tab title="V2 Circuits" %}
+V2 circuits can prove in a single proof
+
+* 1 to 20 hashes,
+* 1 to 32 addresses, or
+* multiple hashes or addresses in any combination of the below.
+
+| **Single Combined Proofs** | Any combination of |
+| -------------------------- | :----------------: |
+| Hashes                     |       1 to 4       |
+| Addresses                  |       1 to 4       |
+{% endtab %}
+{% endtabs %}
+
+{% hint style="info" %}
+The combinations and maximums are determined by the available circuit verifying keys. Different proof sizes require different circuits optimized for that specific combination. View the [source code here](https://github.com/Lightprotocol/light-protocol/tree/871215642b4b5b69d2bcd7eca22542346d0e2cfa/program-libs/verifier/src/verifying_keys).
+{% endhint %}
+
+{% tab title="Typescript" %}
+
+In this example we update an existing account, and create a new account in the same transaction.
+
+{% code overflow="wrap" %}
+```typescript
+const hash = compressedAccount.hash;
+const tree = compressedAccount.treeInfo.tree;
+const queue = compressedAccount.treeInfo.queue;
+
+const proof = await rpc.getValidityProofV0(
+  [{ hash, tree, queue }],
+  [{ address: bn(address.toBytes()), tree: addressTree.tree, queue: addressTree.queue }]
+);
+```
+{% endcode %}
+
+**1. Pass these parameters**:
+
+* Specify one or more existing account hashes with their tree and queue pubkeys in `[{ hash, tree, queue }]`.
+* Specify one or more new addresses with their tree and queue pubkeys in `[{ address: bn(address.toBytes()), tree, queue }]`.
+
+**2. The RPC returns:**
+
+* `compressedProof`: A single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
+* `rootIndices` and `leafIndices` arrays with proof metadata to build `PackedAddressTreeInfo` and `PackedStateTreeInfo` in the next step.
+
+{% endtab %}
+
+{% tab title="Rust" %}
+
+In this example we update an existing account, and create a new account in the same transaction.
+
+{% code overflow="wrap" %}
+```rust
+let hash = compressed_account.hash;
+
+let rpc_result = rpc
+    .get_validity_proof(
+        vec![hash],
+        vec![AddressWithTree {
+            address: *address,
+            tree: address_tree_info.tree,
+        }],
+        None,
+    )
+    .await?
+    .value;
+```
+{% endcode %}
+
+**1. Pass these parameters**:
+
+* Specify in (`vec![hash]`) one or more hashes of the existing compressed account to prove existence in the state trees.
+* Specify in (`vec![AddressWithTree]`) one or more addresses to prove non-existence in address trees.
+
+**2. The RPC returns `ValidityProofWithContext` with**
+
+* `proof`: A single combined proof, passed to the program in your instruction data.
+* `addresses` with the public key and metadata of the address tree to pack accounts in the next step.
+* `accounts` with the public key and metadata of the state tree to pack accounts in the next step.
 
 {% endtab %}
 {% endtabs %}
