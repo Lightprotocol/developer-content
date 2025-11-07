@@ -31,7 +31,7 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="100"></th>
+      <th width="150"></th>
       <th width="80">Devnet</th>
       <th width="80">Mainnet</th>
       <th>Public Key</th>
@@ -65,7 +65,7 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="100"></th>
+      <th width="150"></th>
       <th width="80">Devnet</th>
       <th width="80">Mainnet</th>
       <th>Public Key</th>
@@ -96,7 +96,7 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="100"></th>
+      <th width="150"></th>
       <th width="80">Devnet</th>
       <th width="80">Mainnet</th>
       <th>Public Key</th>
@@ -127,7 +127,7 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="100"></th>
+      <th width="150"></th>
       <th width="80">Devnet</th>
       <th width="80">Mainnet</th>
       <th>Public Key</th>
@@ -158,7 +158,7 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="100"></th>
+      <th width="150"></th>
       <th width="80">Devnet</th>
       <th width="80">Mainnet</th>
       <th>Public Key</th>
@@ -189,7 +189,7 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="100"></th>
+      <th width="150"></th>
       <th width="80">Devnet</th>
       <th width="80">Mainnet</th>
       <th>Public Key</th>
