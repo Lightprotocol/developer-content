@@ -6,26 +6,6 @@ description: >-
 ---
 
 
-
-
-
-
-
-
-
-
-
-{% step %}
-### Pack Accounts
-
-To optimize instruction data we pack accounts into an array:
-
-* Every packed account is assigned to an u8 index.
-* Indices are included in instruction data, instead of 32 byte pubkeys.
-* The indices point to the instructions accounts
-  * in anchor to `remainingAccounts`, and
-  * in native programs to the account info slice.
-
 **1. Initialize PackedAccounts**
 
 {% tabs %}

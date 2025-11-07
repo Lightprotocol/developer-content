@@ -283,21 +283,32 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 {% endtabs %}
 
 
-**Address Tree methods** return `TreeInfo` with the public key and other metadata for the address tree.
+**Address Tree methods** return `TreeInfo` of address trees with the public key and other metadata for the address tree.
 
-* `TreeInfo` is used
-  * to derive addresses
-  * for account creation in `getValidityProofV0()` to prove the address does not exist yet
-  * for account update/close/reinit/burn, it validates the address was derived correctly but doesn't modify the tree.
+Address tree `TreeInfo` is used
+1. To derive addresses of compressed accounts
+2. For `getValidityProofV0()` to prove the address does not exist yet.
+  * Used to create compressed accounts with address.
 
-**State Trees methods** select a random state tree to store the compressed account hash. 
+**State Tree methods** return an array of `TreeInfo` objects of state trees with public key and other metadata.
 
-* Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
-* Account hashes can move to different state trees after each state transition.
-* Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
+State tree `TreeInfo` is used
+1. To select a random state tree to store the compressed account hash. 
+* This reduces write-lock contention and increases throughput. 
+2. For `getValidityProofV0()` to prove the account hash exists in the state tree.
+* Used to update/close/reinit/burn a compressed account.
+* You will fetch
+3. To pack accounts (Step 4)
+*
+* You will pack accounts in Step 4.
 
 {% hint style="info" %}
-**`TreeInfo` contains pubkeys and other metadata of a Merkle tree.**
+* Account hashes can move to different state trees after each state transition.
+* Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
+{% endhint %}
+
+<details>
+<summary>Expand to learn what pubkeys and other metadata of a Merkle tree <code>TreeInfo</code> contains.</summary>
 
 * `tree`: Merkle tree account pubkey
 * `queue`: Queue account pubkey of queue associated with a Merkle tree
@@ -307,10 +318,11 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 * `cpiContext`: Optional CPI context account for batched operations across multiple programs (may be null, currently on devnet)
   * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
   * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
-* `nextTreeInfo`: Next tree to use when current tree reaches ~95% capacity (may be null). 
+* `nextTreeInfo`: Next tree to use when current tree reaches ~95% capacity (may be null).
     * The SDK automatically switches to next tree when present. Developers don't need to handle tree rollovers manually.
     * The protocol creates new trees, once existing trees fill up.
-{% endhint %}
+</details>
+
 {% endstep %}
 
 {% step %}
@@ -456,7 +468,7 @@ const proof = await rpc.getValidityProofV0(
 **1. Pass these parameters**:
 
 * Leave (`[]`) empty to create compressed accounts, since no compressed account exists yet to reference.
-* Specify the new address with its tree and queue pubkeys.
+* Specify the new address with its address tree and address queue pubkeys.
 
 **2. The RPC returns**:
 
@@ -485,8 +497,7 @@ const proof = await rpc.getValidityProofV0(
 
 **1. Pass these parameters**:
 
-* Specify the account hash with its tree and queue pubkeys in `[{ hash, tree, queue }]`.
-* Get `tree` and `queue` from `compressedAccount.treeInfo.tree` and `compressedAccount.treeInfo.queue`.
+* Specify the account hash with its state tree and nullifier queue pubkeys.
 * (`[]`) remains empty, since the proof verifies the account hash exists in a state tree, not that the address doesn't exist in an address tree.
 
 **2. The RPC returns**:
@@ -567,7 +578,7 @@ let rpc_result = rpc
 {% endtabs %}
 
 
-### Single Combined Proofs
+### Optimize with Single Combined Proofs
 {% hint style="info" %}
 
 **Advantages of combined proofs**:
@@ -633,8 +644,8 @@ const proof = await rpc.getValidityProofV0(
 
 **1. Pass these parameters**:
 
-* Specify one or more existing account hashes with their tree and queue pubkeys in `[{ hash, tree, queue }]`.
-* Specify one or more new addresses with their tree and queue pubkeys in `[{ address: bn(address.toBytes()), tree, queue }]`.
+* Specify one or more existing account hashes with their state tree and nullifier queue pubkeys.
+* Specify one or more new addresses with their address tree and address queue pubkeys.
 
 **2. The RPC returns:**
 
@@ -667,8 +678,8 @@ let rpc_result = rpc
 
 **1. Pass these parameters**:
 
-* Specify in (`vec![hash]`) one or more hashes of the existing compressed account to prove existence in the state trees.
-* Specify in (`vec![AddressWithTree]`) one or more addresses to prove non-existence in address trees.
+* Specify one or more hashes of the existing compressed account to prove existence in the state trees.
+* Specify one or more addresses to prove non-existence in address trees.
 
 **2. The RPC returns `ValidityProofWithContext` with**
 
@@ -682,7 +693,15 @@ let rpc_result = rpc
 {% endstep %}
 
 {% step %}
-## 
+## Pack Accounts
+
+To optimize instruction data we pack accounts into an array:
+
+* Every packed account is assigned to an u8 index.
+* Indices are included in instruction data, instead of 32 byte pubkeys.
+* The indices point to the instructions accounts
+  * in anchor to `remainingAccounts`, and
+  * in native programs to the account info slice.
 
 {% tabs %}
 {% tab title="Typescript" %}
