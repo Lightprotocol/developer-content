@@ -186,7 +186,7 @@ Starts a start a single-node Solana cluster, an RPC node, and a prover node at p
 {% endtab %}
 {% endtabs %}
 
-**For local testing, use [`light-program-test`](https://docs.rs/light-program-test)**.**
+**For local testing, use [`light-program-test`](https://docs.rs/light-program-test)**.
 * Initializes a [LiteSVM](https://github.com/LiteSVM/LiteSVM) optimized for ZK Compression with auto-funded payer and TestIndexer. Requires Light CLI for program binaries.
 * Use for unit and integration tests of your program or client code.
 
@@ -205,12 +205,113 @@ let mut rpc = LightProgramTest::new(config).await.unwrap();
 let payer = rpc.get_payer().insecure_clone();
 ```
 
-{% endtab %}
-{% endtabs %}
-
 {% hint style="success" %}
 `LightClient` and `LightProgramTest` implement the same [`Rpc`](https://docs.rs/light-client/latest/light_client/rpc/trait.Rpc.html) and [`Indexer`](https://docs.rs/light-client/latest/light_client/indexer/trait.Indexer.html) traits for consistent usage across `light-program-test`, local test validator, and public Solana networks.
 {% endhint %}
 
+{% endtab %}
+{% endtabs %}
+
 {% endstep %}
+{% step %}
+## Tree Configuration
+
+Before creating a compressed account, your client must fetch metadata of two Merkle trees:
+
+* an address tree to derive and store the account address and
+* a state tree to store the compressed account hash.
+
+{% hint style="success" %}
+The protocol maintains Merkle trees. You don't need to initialize custom trees.
+Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
+{% endhint %}
+
+{% hint style="info" %}
+V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
+{% endhint %}
+
+{% tabs %}
+{% tab title="Typescript" %}
+
+{% tabs %}
+{% tab title="V1 Trees" %}
+{% code overflow="wrap" %}
+```typescript
+const addressTree = getDefaultAddressTreeInfo();
+const stateTreeInfos = await rpc.getStateTreeInfos();
+const outputStateTree = selectStateTreeInfo(stateTreeInfos);
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="V2 Trees" %}
+{% code overflow="wrap" %}
+```typescript
+const addressTree = await rpc.getAddressTreeInfoV2();
+const stateTreeInfos = await rpc.getStateTreeInfos();
+const outputStateTree = selectStateTreeInfo(stateTreeInfos);
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% endtab %}
+
+{% tab title="Rust" %}
+
+{% tabs %}
+{% tab title="V1 Trees" %}
+{% code overflow="wrap" %}
+```rust
+let address_tree_info = rpc.get_address_tree_v1();
+let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="V2 Trees" %}
+{% code overflow="wrap" %}
+```rust
+let address_tree_info = rpc.get_address_tree_v2();
+let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+{% endtab %}
+{% endtabs %}
+
+
+**Address Tree methods** return `TreeInfo` with the public key and other metadata for the address tree.
+
+* `TreeInfo` is used
+  * to derive addresses and
+  * for `getValidityProofV0()` to prove the address does not exist yet.
+
+
+**State Trees methods** return `TreeInfo[]` with pubkeys and metadata for all active state trees.
+* For Typescript, `selectStateTreeInfo()` selects a random state tree to store the compressed account hash.
+  * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
+  * Account hashes can move to different state trees after each state transition.
+  * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
+
+{% hint style="info" %}
+**`TreeInfo` contains pubkeys and other metadata of a Merkle tree.**
+
+* `tree`: Merkle tree account pubkey
+* `queue`: Queue account pubkey of queue associated with a Merkle tree
+  * Buffers updates of compressed accounts before they are added to the Merkle tree.
+  * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
+* `treeType`: Defaults to V1 or V2 trees, based on the feature flag.
+* `cpiContext` (currently on devnet): Optional CPI context account for batched operations across multiple programs (may be null)
+  * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
+  * First program caches its signer checks, second program reads them and combines instruction data
+  * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
+  * The SDK includes this when available.
+* `nextTreeInfo`: The tree to use for the next operation when the current tree is full (may be null)
+  * The SDK determines if `nextTreeInfo` should be used for the next state transition.
+  * The protocol creates new trees, once existing trees fill up.
+{% endhint %}
+
 {% endstepper %}

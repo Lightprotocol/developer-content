@@ -10,80 +10,9 @@ description: >-
 
 
 
-{% step %}
-### Tree Configuration
 
-Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
-* an address tree to derive and store the account address and
-* a state tree to store the compressed account hash.
 
-{% hint style="success" %}
-The protocol maintains Merkle trees. You don't need to initialize custom trees.\
-Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
-{% endhint %}
-
-{% hint style="info" %}
-V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
-{% endhint %}
-
-{% tabs %}
-{% tab title="V1 Trees" %}
-{% code overflow="wrap" %}
-```typescript
-import { getDefaultAddressTreeInfo } from '@lightprotocol/stateless.js';
-
-const addressTree = getDefaultAddressTreeInfo();
-const stateTreeInfos = await rpc.getStateTreeInfos();
-const outputStateTree = selectStateTreeInfo(stateTreeInfos);
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="V2 Trees" %}
-{% code overflow="wrap" %}
-```typescript
-const addressTree = await rpc.getAddressTreeInfoV2();
-const stateTreeInfos = await rpc.getStateTreeInfos();
-const outputStateTree = selectStateTreeInfo(stateTreeInfos);
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
-
-**Address Trees:** `getDefaultAddressTreeInfo()` / `rpc.getAddressTreeInfoV2()` returns `TreeInfo` with the public key and other metadata for the address tree.
-
-* `TreeInfo` is used
-  * to derive addresses and
-  * for `getValidityProofV0()` to prove the address does not exist yet.
-
-**State Trees:**
-
-* `getStateTreeInfos()` returns `TreeInfo[]` with pubkeys and metadata for all active state trees.
-* `selectStateTreeInfo()` selects a random state tree to store the compressed account hash.
-  * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
-  * Account hashes can move to different state trees after each state transition.
-  * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
-
-{% hint style="info" %}
-**`TreeInfo` contains pubkeys and other metadata of a Merkle tree.**
-
-* `tree`: Merkle tree account pubkey
-* `queue`: Queue account pubkey of queue associated with a Merkle tree
-  * Buffers updates of compressed accounts before they are added to the Merkle tree.
-  * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
-* `treeType`: Identifies tree version (StateV1 or V2, AddressV1 or V2).
-* The SDK routes to correct circuit verifier based on this.
-* You may explicitly filter by `treeType` when selecting trees with `selectStateTreeInfo()`.
-* `cpiContext` (currently on devnet): Optional CPI context account for batched operations across multiple programs (may be null)
-  * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
-  * First program caches its signer checks, second program reads them and combines instruction data
-  * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
-  * The SDK includes this when available.
-* `nextTreeInfo`: The tree to use for the next operation when the current tree is full (may be null)
-  * The SDK determines if `nextTreeInfo` should be used for the next state transition.
-  * The protocol creates new trees, once existing trees fill up.
-{% endhint %}
 {% endstep %}
 
 {% step %}

@@ -7,42 +7,9 @@ description: >-
 
 
 
-{% step %}
-### Tree Configuration
 
-Before creating a compressed account, your client must fetch metadata of two Merkle trees:
 
-* an address tree to derive and store the account address and
-* a state tree to store the compressed account hash.
 
-{% hint style="success" %}
-The protocol maintains Merkle trees. You don't need to initialize custom trees.\
-Find the [addresses for Merkle trees here](https://www.zkcompression.com/resources/addresses-and-urls).
-{% endhint %}
-
-{% hint style="info" %}
-V2 is currently on Devnet. Use to optimize compute unit consumption by up to 70%.
-{% endhint %}
-
-{% tabs %}
-{% tab title="V1 Trees" %}
-{% code overflow="wrap" %}
-```rust
-let address_tree_info = rpc.get_address_tree_v1();
-let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="V2 Trees" %}
-{% code overflow="wrap" %}
-```rust
-let address_tree_info = rpc.get_address_tree_v2();
-let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
 
 **Address Trees:** `get_address_tree_v1()` / `get_address_tree_v2()` returns `TreeInfo` with the public key and other metadata for the address tree.
 
@@ -56,23 +23,6 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
   * Selecting a random state tree prevents write-lock contention on state trees and increases throughput.
   * Account hashes can move to different state trees after each state transition.
   * Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
-
-{% hint style="info" %}
-`TreeInfo` contains pubkeys and other metadata of a Merkle tree:
-
-* `tree`: Merkle tree account pubkey
-* `queue`: Queue account pubkey of queue associated with a Merkle tree
-  * Buffers updates of compressed accounts before they are added to the Merkle tree.
-  * Clients and programs do not interact with the queue. The Light System Program inserts values into the queue.
-* `tree_type`: Identifies tree version (StateV1, AddressV2) and account for hash insertion.
-* `cpi_context` (currently on devnet): Optional CPI context account for batched operations across multiple programs (may be null)
-  * Allows a single zero-knowledge proof to verify compressed accounts from different programs in one instruction
-  * First program caches its signer checks, second program reads them and combines instruction data
-  * Reduces instruction data size and compute unit costs when multiple programs interact with compressed accounts
-* `next_tree_info`: The tree to use for the next operation when the current tree is full (may be null)
-  * When set, use this tree as output tree.
-  * The protocol creates new trees, once existing trees fill up.
-{% endhint %}
 {% endstep %}
 
 {% step %}
