@@ -31,30 +31,30 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="200"></th>
-      <th width="80">Devnet</th>
-      <th width="80">Mainnet</th>
+      <th width="80"></th>
+      <th width="60">Devnet</th>
+      <th width="60">Mainnet</th>
       <th>Public Keys</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Public State Tree</td>
-      <td>-</td>
+      <td>State Tree</td>
       <td>✓</td>
-      <td><code>smt2rJAFdyJJupwMKAqTNAJwvjhmiZ4JYGZmbVRw1Ho</code></td>
+      <td>✓</td>
+      <td><strong>smt2rJAFdyJJupwMKAqTNAJwvjhmiZ4JYGZmbVRw1Ho</strong></td>
     </tr>
     <tr>
-      <td>Public Nullifier Queue</td>
-      <td>-</td>
+      <td>Nullifier Queue</td>
       <td>✓</td>
-      <td><code>nfq2hgS7NYemXsFaFUCe3EMXSDSfnZnAe27jC6aPP1X</code></td>
+      <td>✓</td>
+      <td><strong>nfq2hgS7NYemXsFaFUCe3EMXSDSfnZnAe27jC6aPP1X</strong></td>
     </tr>
     <tr>
       <td>CPI Context</td>
-      <td>-</td>
       <td>✓</td>
-      <td><code>cpi2cdhkH5roePvcudTgUL8ppEBfTay1desGh8G8QxK</code></td>
+      <td>✓</td>
+      <td><strong>cpi2cdhkH5roePvcudTgUL8ppEBfTay1desGh8G8QxK</strong></td>
     </tr>
   </tbody>
 </table>
