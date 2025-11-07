@@ -313,5 +313,6 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
   * The SDK determines if `nextTreeInfo` should be used for the next state transition.
   * The protocol creates new trees, once existing trees fill up.
 {% endhint %}
+{% endstep %}
 
 {% endstepper %}
