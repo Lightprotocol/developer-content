@@ -285,26 +285,22 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 
 **Address Tree methods** return `TreeInfo` of address trees with the public key and other metadata for the address tree.
 
-Address tree `TreeInfo` is used
-1. To derive addresses of compressed accounts
-2. For `getValidityProofV0()` to prove the address does not exist yet.
-  * Used to create compressed accounts with address.
+You will use the address tree `TreeInfo` again:
+1. In the next step to derive the address for the compressed account.
+2. In Step 4 for `getValidityProofV0()` to prove the address does not exist yet, if you create compressed accounts with address.
 
-**State Tree methods** return an array of `TreeInfo` objects of state trees with public key and other metadata.
+**State Tree methods** return an array of `TreeInfo` objects of state trees with public key and other metadata. With these methods you select a random state tree to store the compressed account hash. 
 
-State tree `TreeInfo` is used
-1. To select a random state tree to store the compressed account hash. 
-* This reduces write-lock contention and increases throughput for compressed accounts. 
-2. For `getValidityProofV0()` to prove the account hash exists in the state tree.
-* Used to update/close/reinit/burn a compressed account.
-* You will fetch
-3. To pack accounts (Step 4)
-*
-* You will pack accounts in Step 4.
+You will use the state tree `TreeInfo` again:
+1. In Step 4 for `getValidityProofV0()` to prove the account hash exists in the state tree, if you update/close/reinit/burn a compressed account.
+2. In Step 5 for packing accounts to optimize instruction data.
+* Assigns indices to accounts instead of repeating full pubkeys
+
 
 {% hint style="info" %}
 * Account hashes can move to different state trees after each state transition.
-* Best practice is to minimize different trees per transaction. Still, since trees fill up over time, programs must handle accounts from different state trees within the same transaction.
+* Since trees fill up over time, your programs must be able to handle accounts from different state trees within the same transaction.
+* **Best practice**: minimize the number of different trees per transaction. 
 {% endhint %}
 
 <details>
@@ -330,7 +326,7 @@ State tree `TreeInfo` is used
 
 Derive a persistent address as a unique identifier for your compressed account, similar to [program-derived addresses (PDAs)](https://solana.com/docs/core/pda).
 
-* Use the derivation method that matches your address tree type from the previous step.
+* Use the derivation method that matches your address tree type from the previous step (V1 or V2).
 * Like PDAs, compressed account addresses don't belong to a private key; rather, they're derived from the program that owns them.
 * The key difference to PDAs is that compressed accounts require an **address tree** parameter.
 
@@ -468,7 +464,7 @@ const proof = await rpc.getValidityProofV0(
 **1. Pass these parameters**:
 
 * Leave (`[]`) empty to create compressed accounts, since no compressed account exists yet to reference.
-* Specify the new address with its address tree and address queue pubkeys.
+* Specify the derived address with its `tree` and `queue` pubkeys from the address tree `TreeInfo`.
 
 **2. The RPC returns**:
 
@@ -497,7 +493,7 @@ const proof = await rpc.getValidityProofV0(
 
 **1. Pass these parameters**:
 
-* Specify the account hash with its state tree and nullifier queue pubkeys.
+* Specify the account `hash` along with `tree` and `queue` pubkeys from the compressed account's `TreeInfo`.
 * (`[]`) remains empty, since the proof verifies the account hash exists in a state tree, not that the address doesn't exist in an address tree.
 
 **2. The RPC returns**:
@@ -532,7 +528,7 @@ let rpc_result = rpc
 **1. Pass these parameters**:
 
 * Leave (`vec![]`) empty to create compressed accounts, since no compressed account exists yet to reference.
-* Specify in (`vec![AddressWithTree]`) the new address to create with its address tree. Rust does not have a queue field, different from Typescript.
+* Specify the new address with `tree` pubkey from the address tree `TreeInfo` in `vec![AddressWithTree]`. Rust does not have a queue field, different from Typescript.
 
 **2. The RPC returns `ValidityProofWithContext`**:
 
@@ -563,7 +559,7 @@ let rpc_result = rpc
 
 **1. Pass these parameters**:
 
-* Specify in (`vec![hash]`) the hash of the existing compressed account to prove its existence in the state tree.
+* Specify the `hash` extracted from the compressed account in `vec![hash]` to prove its existence in the state tree.
 * (`vec![]`) remains empty, since the proof verifies the account hash exists in a state tree, not that the address doesn't exist in an address tree.
 
 **2. The RPC returns `ValidityProofWithContext`**:
@@ -644,8 +640,8 @@ const proof = await rpc.getValidityProofV0(
 
 **1. Pass these parameters**:
 
-* Specify one or more existing account hashes with their state tree and nullifier queue pubkeys.
-* Specify one or more new addresses with their address tree and address queue pubkeys.
+* Specify one or more account `hash` values along with `tree` and `queue` pubkeys from the compressed account's `TreeInfo`.
+* Specify one or more derived addresses with `tree` and `queue` pubkeys from the address tree `TreeInfo`.
 
 **2. The RPC returns:**
 
@@ -678,8 +674,8 @@ let rpc_result = rpc
 
 **1. Pass these parameters**:
 
-* Specify one or more hashes of the existing compressed account to prove existence in the state trees.
-* Specify one or more addresses to prove non-existence in address trees.
+* Specify one or more `hash` values extracted from compressed accounts in `vec![hash]` to prove existence in the state trees.
+* Specify one or more addresses with `tree` pubkey from the address tree `TreeInfo` in `vec![AddressWithTree]` to prove non-existence in address trees.
 
 **2. The RPC returns `ValidityProofWithContext` with**
 
