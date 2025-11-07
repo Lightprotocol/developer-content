@@ -294,7 +294,7 @@ Address tree `TreeInfo` is used
 
 State tree `TreeInfo` is used
 1. To select a random state tree to store the compressed account hash. 
-* This reduces write-lock contention and increases throughput. 
+* This reduces write-lock contention and increases throughput for compressed accounts. 
 2. For `getValidityProofV0()` to prove the account hash exists in the state tree.
 * Used to update/close/reinit/burn a compressed account.
 * You will fetch

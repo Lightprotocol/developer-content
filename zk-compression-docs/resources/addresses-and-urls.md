@@ -27,7 +27,7 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 
 {% tabs %}
 {% tab title="V1" %}
-<table><thead><tr><th width="279">State Tree and Queue #1</th><th></th></tr></thead><tbody><tr><td>Public State Tree #1</td><td><strong>smt1NamzXdq4AMqS2fS2F1i5KTYPZRhoHgWx38d8WsT</strong></td></tr><tr><td>Public Nullifier Queue #1</td><td><strong>nfq1NvQDJ2GEgnS8zt9prAe8rjjpAW1zFkrvZoBR148</strong></td></tr></tbody></table>
+<table><thead><tr><th width="279">State Tree and Queue</th><th></th></tr></thead><tbody><tr><td>Public State Tree</td><td><strong>smt2rJAFdyJJupwMKAqTNAJwvjhmiZ4JYGZmbVRw1Ho</strong></td></tr><tr><td>Public Nullifier Queue</td><td><strong>nfq2hgS7NYemXsFaFUCe3EMXSDSfnZnAe27jC6aPP1X</strong></td></tr><tr><td>CPI Context</td><td><strong>cpi2cdhkH5roePvcudTgUL8ppEBfTay1desGh8G8QxK</strong></td></tr></tbody></table>
 {% endtab %}
 
 {% tab title="V2" %}
