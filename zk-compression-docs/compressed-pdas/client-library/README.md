@@ -530,8 +530,6 @@ let rpc_result = rpc
 * An empty `accounts` field, since you do not reference an existing account, when you create a compressed account.
 {% endtab %}
 
-{% endtab %}
-
 {% tab title="Update, Close, Reinit, Burn" %}
 {% hint style="info" %}
 These operations proof that the account hash exists in the state tree. The difference is in your program's instruction handler.
@@ -614,6 +612,7 @@ V2 circuits can prove in a single proof
 The combinations and maximums are determined by the available circuit verifying keys. Different proof sizes require different circuits optimized for that specific combination. View the [source code here](https://github.com/Lightprotocol/light-protocol/tree/871215642b4b5b69d2bcd7eca22542346d0e2cfa/program-libs/verifier/src/verifying_keys).
 {% endhint %}
 
+{% tabs %}
 {% tab title="Typescript" %}
 
 In this example we update an existing account, and create a new account in the same transaction.
@@ -675,6 +674,22 @@ let rpc_result = rpc
 * `proof`: A single combined proof, passed to the program in your instruction data.
 * `addresses` with the public key and metadata of the address tree to pack accounts in the next step.
 * `accounts` with the public key and metadata of the state tree to pack accounts in the next step.
+
+{% endtab %}
+{% endtabs %}
+
+{% endstep %}
+
+{% step %}
+## 
+
+{% tabs %}
+{% tab title="Typescript" %}
+
+{% endtab %}
+
+{% tab title="Rust" %}
+
 
 {% endtab %}
 {% endtabs %}
