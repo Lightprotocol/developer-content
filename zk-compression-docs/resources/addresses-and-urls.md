@@ -25,6 +25,10 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 
 ### State Trees & Queues & CPI Accounts
 
+{% hint style="success" %}
+**In your local test validator environment** use in Rust `TestAccounts::get_local_test_validator_accounts()` to get all pre-configured protocol, state tree, and address tree accounts.
+{% endhint %}
+
 {% tabs %}
 {% tab title="V1" %}
 
@@ -288,10 +292,97 @@ main();
 
 ***
 
-### Next Steps
+## System Accounts List
+<table data-header-hidden>
+  <thead>
+    <tr>
+      <th width="40">#</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td>
+      <td>Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>CPI Signer</td>
+      <td>
+        - PDA to sign CPI calls from your program to Light System Program<br>
+        - Verified by Light System Program during CPI<br>
+        - Derived from your program ID
+      </td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Registered Program PDA</td>
+      <td>
+        - Access control to the Account Compression Program
+      </td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td>
+      <td>
+        - Logs compressed account state to Solana ledger. Only used in v1.<br>
+        - Indexers parse transaction logs to reconstruct compressed account state
+      </td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td>
+      <td>
+        Signs CPI calls from Light System Program to Account Compression Program
+      </td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td>
+      <td>
+        - Writes to state and address tree accounts<br>
+        - Client and the account compression program do not interact directly.
+      </td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Invoking Program</td>
+      <td>
+        Your program's ID, used by Light System Program to:<br>
+        - Derive the CPI Signer PDA<br>
+        - Verify the CPI Signer matches your program ID<br>
+        - Set the owner of created compressed accounts
+      </td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td>
+      <td>
+        Solana System Program to transfer lamports
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+# Next Steps
 
 Explore all JSON RPC endpoints on Solana, best practices, and error codes.
 
 {% content-ref url="json-rpc-methods/" %}
 [json-rpc-methods](json-rpc-methods/)
 {% endcontent-ref %}
+
+
+[^1]: ​[Program ID:](https://solscan.io/account/SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7) SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7
+
+[^2]: [Program ID:](https://solscan.io/account/noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV) noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV
+
+[^3]: PDA derived from Light System Program ID with seed `b"cpi_authority"`.
+
+    [Pubkey](https://solscan.io/account/HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru): HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru
+
+[^4]: [Program ID](https://solscan.io/account/compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq): compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq
+
+[^5]: ​[Program ID](https://solscan.io/account/11111111111111111111111111111111): 11111111111111111111111111111111
