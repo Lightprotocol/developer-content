@@ -31,9 +31,9 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 <table>
   <thead>
     <tr>
-      <th width="80"></th>
-      <th width="60">Devnet</th>
-      <th width="60">Mainnet</th>
+      <th width="100"></th>
+      <th width="80">Devnet</th>
+      <th width="80">Mainnet</th>
       <th>Public Keys</th>
     </tr>
   </thead>
@@ -62,15 +62,165 @@ Find all JSON RPC Methods for ZK Compression [here](json-rpc-methods/).
 
 {% tab title="V2" %}
 
-<table><thead><tr><th width="279">State Tree and Queue #1</th><th></th></tr></thead><tbody><tr><td>Public State Merkle Tree #1</td><td><strong>bmt1LryLZUMmF7ZtqESaw7wifBXLfXHQYoE4GAmrahU</strong></td></tr><tr><td>Public Output Queue #1</td><td><strong>oq1na8gojfdUhsfCpyjNt6h4JaDWtHf1yQj4koBWfto</strong></td></tr><tr><td>CPI Context #1</td><td><strong>cpi15BoVPKgEPw5o8wc2T816GE7b378nMXnhH3Xbq4y</strong></td></tr></tbody></table>
+### State Tree and Queue #1
+<table>
+  <thead>
+    <tr>
+      <th width="100"></th>
+      <th width="80">Devnet</th>
+      <th width="80">Mainnet</th>
+      <th>Public Keys</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>State Tree</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>bmt1LryLZUMmF7ZtqESaw7wifBXLfXHQYoE4GAmrahU</strong></td>
+    </tr>
+    <tr>
+      <td>Output Queue</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>oq1na8gojfdUhsfCpyjNt6h4JaDWtHf1yQj4koBWfto</strong></td>
+    </tr>
+    <tr>
+      <td>CPI Context</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>cpi15BoVPKgEPw5o8wc2T816GE7b378nMXnhH3Xbq4y</strong></td>
+    </tr>
+  </tbody>
+</table>
 
-<table><thead><tr><th width="279">State Tree and Queue #2</th><th></th></tr></thead><tbody><tr><td>Public State Merkle Tree #2</td><td><strong>bmt2UxoBxB9xWev4BkLvkGdapsz6sZGkzViPNph7VFi</strong></td></tr><tr><td>Public Output Queue #2</td><td><strong>oq2UkeMsJLfXt2QHzim242SUi3nvjJs8Pn7Eac9H9vg</strong></td></tr><tr><td>CPI Context #2</td><td><strong>cpi2yGapXUR3As5SjnHBAVvmApNiLsbeZpF3euWnW6B</strong></td></tr></tbody></table>
+### State Tree and Queue #2
+<table>
+  <thead>
+    <tr>
+      <th width="100"></th>
+      <th width="80">Devnet</th>
+      <th width="80">Mainnet</th>
+      <th>Public Keys</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>State Tree</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>bmt2UxoBxB9xWev4BkLvkGdapsz6sZGkzViPNph7VFi</strong></td>
+    </tr>
+    <tr>
+      <td>Output Queue</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>oq2UkeMsJLfXt2QHzim242SUi3nvjJs8Pn7Eac9H9vg</strong></td>
+    </tr>
+    <tr>
+      <td>CPI Context</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>cpi2yGapXUR3As5SjnHBAVvmApNiLsbeZpF3euWnW6B</strong></td>
+    </tr>
+  </tbody>
+</table>
 
-<table><thead><tr><th width="279">State Tree and Queue #3</th><th></th></tr></thead><tbody><tr><td>Public State Merkle Tree #3</td><td><strong>bmt3ccLd4bqSVZVeCJnH1F6C8jNygAhaDfxDwePyyGb</strong></td></tr><tr><td>Public Output Queue #3</td><td><strong>oq3AxjekBWgo64gpauB6QtuZNesuv19xrhaC1ZM1THQ</strong></td></tr><tr><td>CPI Context #3</td><td><strong>cpi3mbwMpSX8FAGMZVP85AwxqCaQMfEk9Em1v8QK9Rf</strong></td></tr></tbody></table>
+### State Tree and Queue #3
+<table>
+  <thead>
+    <tr>
+      <th width="100"></th>
+      <th width="80">Devnet</th>
+      <th width="80">Mainnet</th>
+      <th>Public Keys</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>State Tree</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>bmt3ccLd4bqSVZVeCJnH1F6C8jNygAhaDfxDwePyyGb</strong></td>
+    </tr>
+    <tr>
+      <td>Output Queue</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>oq3AxjekBWgo64gpauB6QtuZNesuv19xrhaC1ZM1THQ</strong></td>
+    </tr>
+    <tr>
+      <td>CPI Context</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>cpi3mbwMpSX8FAGMZVP85AwxqCaQMfEk9Em1v8QK9Rf</strong></td>
+    </tr>
+  </tbody>
+</table>
 
-<table><thead><tr><th width="279">State Tree and Queue #4</th><th></th></tr></thead><tbody><tr><td>Public State Merkle Tree #4</td><td><strong>bmt4d3p1a4YQgk9PeZv5s4DBUmbF5NxqYpk9HGjQsd8</strong></td></tr><tr><td>Public Output Queue #4</td><td><strong>oq4ypwvVGzCUMoiKKHWh4S1SgZJ9vCvKpcz6RT6A8dq</strong></td></tr><tr><td>CPI Context #4</td><td><strong>cpi4yyPDc4bCgHAnsenunGA8Y77j3XEDyjgfyCKgcoc</strong></td></tr></tbody></table>
+### State Tree and Queue #4
+<table>
+  <thead>
+    <tr>
+      <th width="100"></th>
+      <th width="80">Devnet</th>
+      <th width="80">Mainnet</th>
+      <th>Public Keys</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>State Tree</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>bmt4d3p1a4YQgk9PeZv5s4DBUmbF5NxqYpk9HGjQsd8</strong></td>
+    </tr>
+    <tr>
+      <td>Output Queue</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>oq4ypwvVGzCUMoiKKHWh4S1SgZJ9vCvKpcz6RT6A8dq</strong></td>
+    </tr>
+    <tr>
+      <td>CPI Context</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>cpi4yyPDc4bCgHAnsenunGA8Y77j3XEDyjgfyCKgcoc</strong></td>
+    </tr>
+  </tbody>
+</table>
 
-<table><thead><tr><th width="279">State Tree and Queue #5</th><th></th></tr></thead><tbody><tr><td>Public State Merkle Tree #5</td><td><strong>bmt5yU97jC88YXTuSukYHa8Z5Bi2ZDUtmzfkDTA2mG2</strong></td></tr><tr><td>Public Output Queue #5</td><td><strong>oq5oh5ZR3yGomuQgFduNDzjtGvVWfDRGLuDVjv9a96P</strong></td></tr><tr><td>CPI Context #5</td><td><strong>cpi5ZTjdgYpZ1Xr7B1cMLLUE81oTtJbNNAyKary2nV6</strong></td></tr></tbody></table>
+### State Tree and Queue #5
+<table>
+  <thead>
+    <tr>
+      <th width="100"></th>
+      <th width="80">Devnet</th>
+      <th width="80">Mainnet</th>
+      <th>Public Keys</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>State Tree</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>bmt5yU97jC88YXTuSukYHa8Z5Bi2ZDUtmzfkDTA2mG2</strong></td>
+    </tr>
+    <tr>
+      <td>Output Queue</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>oq5oh5ZR3yGomuQgFduNDzjtGvVWfDRGLuDVjv9a96P</strong></td>
+    </tr>
+    <tr>
+      <td>CPI Context</td>
+      <td>✓</td>
+      <td>-</td>
+      <td><strong>cpi5ZTjdgYpZ1Xr7B1cMLLUE81oTtJbNNAyKary2nV6</strong></td>
+    </tr>
+  </tbody>
+</table>
 {% endtab %}
 {% endtabs %}
 
