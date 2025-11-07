@@ -563,6 +563,7 @@ let rpc_result = rpc
 {% endtab %}
 {% endtabs %}
 
+{% endtab %}
 {% endtabs %}
 
 
