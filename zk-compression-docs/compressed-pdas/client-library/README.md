@@ -51,8 +51,7 @@ The Typescript SDK consists of two packages:
 Use the [API documentation](https://lightprotocol.github.io/light-protocol/) to look up specific function signatures, parameters, and return types.
 {% endhint %}
 
-## 1. Installation
-
+**1. Installation**
 {% tabs %}
 {% tab title="npm" %}
 ```bash
@@ -82,7 +81,7 @@ pnpm add \
 {% endtab %}
 {% endtabs %}
 
-## 2. Create an RPC Connection
+**2. Create an RPC Connection**
 
 {% hint style="success" %}
 `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
