@@ -1837,7 +1837,55 @@ anchor test --skip-local-validator
 For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.com/resources/error-cheatsheet).
 {% endhint %}
 
-{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/anchor/create/programs/create/tests/test.rs" %}
+{% tabs %}
+{% tab title="Typescript" %}
+{% tabs %}
+{% tab title="Create" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/anchor/create/tests/create.ts" %}
+{% endtab %}
+
+{% tab title="Update" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/anchor/update/tests/update.ts" %}
+{% endtab %}
+
+{% tab title="Close" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/anchor/close/tests/close.ts" %}
+{% endtab %}
+
+{% tab title="Reinit" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/anchor/reinit/tests/reinit.ts" %}
+{% endtab %}
+
+{% tab title="Burn" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/anchor/burn/tests/burn.ts" %}
+{% endtab %}
+{% endtabs %}
+{% endtab %}
+
+{% tab title="Rust" %}
+{% tabs %}
+{% tab title="Create" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/native/programs/create/tests/test.rs" %}
+{% endtab %}
+
+{% tab title="Update" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/native/programs/update/tests/test.rs" %}
+{% endtab %}
+
+{% tab title="Close" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/native/programs/close/tests/test.rs" %}
+{% endtab %}
+
+{% tab title="Reinit" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/native/programs/reinit/tests/test.rs" %}
+{% endtab %}
+
+{% tab title="Burn" %}
+{% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/native/programs/burn/tests/test.rs" %}
+{% endtab %}
+{% endtabs %}
+{% endtab %}
+{% endtabs %}
 
 # Next Steps
 
