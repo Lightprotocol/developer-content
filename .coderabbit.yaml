@@ -10,6 +10,7 @@ reviews:
     - "!dist/**"
     - "src/**"
     - "zk-compression-docs/.gitbook/assets/**"
+    - "LICENSE"
 # add linters and other tools, CodeRabbit will run and check these as part of its review process. See a list of supported tools: https://docs.coderabbit.ai/tools/list
   tools:
     eslint:
