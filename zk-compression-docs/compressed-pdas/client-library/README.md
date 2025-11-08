@@ -1288,6 +1288,325 @@ Include the Merkle tree metadata from Step 5:
 
 {% tab title="Rust" %}
 
+{% tabs %}
+{% tab title="Create" %}
+
+{% tabs %}
+{% tab title="Anchor" %}
+{% code overflow="wrap" %}
+```rust
+use anchor_lang::InstructionData;
+
+let instruction_data = create::instruction::CreateAccount {
+    proof: rpc_result.proof,
+    address_tree_info: packed_accounts.address_trees[0],
+    output_state_tree_index: output_state_tree_index,
+    message,
+}
+.data();
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Native" %}
+{% code overflow="wrap" %}
+```rust
+use borsh::BorshSerialize;
+
+let instruction_data = CreateInstructionData {
+    proof: rpc_result.proof,
+    address_tree_info: packed_address_tree_info,
+    output_state_tree_index: output_state_tree_index,
+    message,
+};
+let serialized = instruction_data.try_to_vec().unwrap();
+let data = [&[InstructionType::Create as u8][..], &serialized[..]].concat();
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+**1. Validity Proof**
+
+* `proof`: Validity proof from Step 4 proving the address does not exist yet in the specified address tree.
+
+**2. Specify Merkle trees to store address and account hash**
+
+Include the Merkle tree metadata from Step 5:
+
+* `address_tree_info`: Index to the address tree account used to derive the address, from Step 5 Section 3
+* `output_state_tree_index`: Index to the state tree account that will store the compressed account hash, from Step 5 Section 4
+
+**3. Pass initial account data**
+
+* Add custom fields to your instruction struct for any initial data your program requires.
+* In this example, a `message` field defines the initial account state.
+
+{% endtab %}
+
+{% tab title="Update" %}
+
+{% tabs %}
+{% tab title="Anchor" %}
+{% code overflow="wrap" %}
+```rust
+use anchor_lang::InstructionData;
+use light_sdk::instruction::account_meta::CompressedAccountMeta;
+
+let current_account = MyCompressedAccount::deserialize(
+    &mut compressed_account.data.as_ref().unwrap().data.as_slice(),
+)?;
+
+let instruction_data = update::instruction::UpdateAccount {
+    proof: rpc_result.proof,
+    current_account,
+    account_meta: CompressedAccountMeta {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+        output_state_tree_index: packed_tree_accounts.output_tree_index,
+    },
+    new_message,
+}
+.data();
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Native" %}
+{% code overflow="wrap" %}
+```rust
+use borsh::BorshSerialize;
+
+let current_account = MyCompressedAccount::deserialize(
+    &mut compressed_account.data.as_ref().unwrap().data.as_slice(),
+)?;
+
+let instruction_data = UpdateInstructionData {
+    proof: rpc_result.proof,
+    current_account,
+    account_meta: CompressedAccountMeta {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+        output_state_tree_index: packed_tree_accounts.output_tree_index,
+    },
+    new_message,
+};
+let serialized = instruction_data.try_to_vec().unwrap();
+let data = [&[InstructionType::Update as u8][..], &serialized[..]].concat();
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+**1. Validity Proof**
+
+* `proof`: Validity proof from Step 4 proving the account hash exists in the state tree.
+
+**2. Specify input hash and output state tree**
+
+Include the Merkle tree metadata from Step 5:
+
+* `account_meta` points to the input hash and specifies the output state tree:
+  * `tree_info`: Packed indices pointing to the existing account hash that will be nullified, from Step 5 Section 3
+  * `address`: Account's derived address from Step 3
+  * `output_state_tree_index`: Index to the state tree that will store the updated account hash, from Step 5 Section 3
+
+**3. Pass current account data**
+
+* Pass the complete current account data. The program reconstructs the existing account hash from this data to verify it matches the hash in the state tree.
+* In this example, `current_account` (deserialized from fetched account) and `new_message` for the update.
+
+{% endtab %}
+
+{% tab title="Close" %}
+
+{% tabs %}
+{% tab title="Anchor" %}
+{% code overflow="wrap" %}
+```rust
+use anchor_lang::InstructionData;
+use light_sdk::instruction::account_meta::CompressedAccountMeta;
+
+let instruction_data = close::instruction::CloseAccount {
+    proof: rpc_result.proof,
+    account_meta: CompressedAccountMeta {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+        output_state_tree_index: packed_tree_accounts.output_tree_index,
+    },
+    current_message,
+}
+.data();
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Native" %}
+{% code overflow="wrap" %}
+```rust
+use borsh::BorshSerialize;
+
+let instruction_data = CloseInstructionData {
+    proof: rpc_result.proof,
+    account_meta: CompressedAccountMeta {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+        output_state_tree_index: packed_tree_accounts.output_tree_index,
+    },
+    current_message,
+};
+let serialized = instruction_data.try_to_vec().unwrap();
+let data = [&[InstructionType::Close as u8][..], &serialized[..]].concat();
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+**1. Validity Proof**
+
+* `proof`: Validity proof from Step 4 proving the account hash exists in the state tree.
+
+**2. Specify input hash and output state tree**
+
+Include the Merkle tree metadata from Step 5:
+
+* `account_meta`:
+  * `tree_info`: Packed indices to the account hash being closed, from Step 5 Section 3
+  * `address`: Account's derived address from Step 3
+  * `output_state_tree_index`: Index to the state tree that will store a hash with zero values, from Step 5 Section 3
+
+**3. Pass current account data**
+
+* Pass the complete current account data. The program reconstructs the account hash to verify it exists before closing.
+* In this example, `current_message` from the fetched account.
+
+{% endtab %}
+
+{% tab title="Reinit" %}
+
+{% tabs %}
+{% tab title="Anchor" %}
+{% code overflow="wrap" %}
+```rust
+use anchor_lang::InstructionData;
+use light_sdk::instruction::account_meta::CompressedAccountMeta;
+
+let instruction_data = reinit::instruction::ReinitAccount {
+    proof: rpc_result.proof,
+    account_meta: CompressedAccountMeta {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+        output_state_tree_index: packed_tree_accounts.output_tree_index,
+    },
+}
+.data();
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Native" %}
+{% code overflow="wrap" %}
+```rust
+use borsh::BorshSerialize;
+
+let instruction_data = ReinitInstructionData {
+    proof: rpc_result.proof,
+    account_meta: CompressedAccountMeta {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+        output_state_tree_index: packed_tree_accounts.output_tree_index,
+    },
+};
+let serialized = instruction_data.try_to_vec().unwrap();
+let data = [&[InstructionType::Reinit as u8][..], &serialized[..]].concat();
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+**1. Validity Proof**
+
+* `proof`: Validity proof from Step 4 proving the account hash exists in the state tree.
+
+**2. Specify input hash and output state tree**
+
+Include the Merkle tree metadata from Step 5:
+
+* `account_meta`:
+  * `tree_info`: Packed indices to the account hash being reinitialized, from Step 5 Section 3
+  * `address`: Account's derived address from Step 3
+  * `output_state_tree_index`: Index to the state tree that will store the reinitialized account hash, from Step 5 Section 3
+
+**3. Account data initialization**
+
+* Reinitialize creates an account with default-initialized values (e.g., `Pubkey` as all zeros, numbers as `0`, strings as empty).
+* To set custom values, update the account in the same or a separate transaction.
+
+{% endtab %}
+
+{% tab title="Burn" %}
+
+{% tabs %}
+{% tab title="Anchor" %}
+{% code overflow="wrap" %}
+```rust
+use anchor_lang::InstructionData;
+use light_sdk::instruction::account_meta::CompressedAccountMetaBurn;
+
+let instruction_data = burn::instruction::BurnAccount {
+    proof: rpc_result.proof,
+    account_meta: CompressedAccountMetaBurn {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+    },
+    current_message,
+}
+.data();
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Native" %}
+{% code overflow="wrap" %}
+```rust
+use borsh::BorshSerialize;
+
+let instruction_data = BurnInstructionData {
+    proof: rpc_result.proof,
+    account_meta: CompressedAccountMetaBurn {
+        tree_info: packed_tree_accounts.packed_tree_infos[0],
+        address: compressed_account.address.unwrap(),
+    },
+    current_message,
+};
+let serialized = instruction_data.try_to_vec().unwrap();
+let data = [&[InstructionType::Burn as u8][..], &serialized[..]].concat();
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+**1. Validity Proof**
+
+* `proof`: Validity proof from Step 4 proving the account hash exists in the state tree.
+
+**2. Specify input hash**
+
+Include the Merkle tree metadata from Step 5:
+
+* `account_meta`:
+  * `tree_info`: Packed indices to the account hash being burned, from Step 5 Section 3
+  * `address`: Account's derived address from Step 3
+  * No `output_state_tree_index` - Burn permanently removes the account with no output state
+
+**3. Pass current account data**
+
+* Pass the complete current account data for hash reconstruction before burning.
+* In this example, `current_message` from the fetched account.
+
+{% endtab %}
+{% endtabs %}
+
 {% endtab %}
 {% endtabs %}
 
