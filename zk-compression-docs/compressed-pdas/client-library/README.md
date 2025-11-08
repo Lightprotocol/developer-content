@@ -915,16 +915,6 @@ accounts.add_system_accounts(config)?;
 
 Add tree and queue accounts to the packed accounts array and retrieve indices for the instruction data. The specific trees used depend on your operation type.
 
-{% hint style="info" %}
-**Instructions Type Summary:**
-{% endhint %}
-
-| Instruction             | Address Tree             | State Tree           | Nullifier Queue | Output State Tree       |
-| ----------------------- | ------------------------ | -------------------- | --------------- | ----------------------- |
-| Create                  | ✓ (proves non-existence) | -                    | -               | ✓ (stores new hash)     |
-| Update / Close / Reinit | -                        | ✓ (proves existence) | ✓ (nullifies)   | ✓ (stores updated hash) |
-| Burn                    | -                        | ✓ (proves existence) | ✓ (nullifies)   | -                       |
-
 {% tabs %}
 {% tab title="Create" %}
 Pack the address tree and address queue used in the validity proof.
@@ -981,7 +971,7 @@ let packed_tree_accounts = rpc_result
 {% endtab %}
 
 {% tab title="Burn" %}
-Pack the state tree and nullifier queue. Burn operations have no output state tree.
+Pack the state tree and nullifier queue. Burn instructions have no output state tree.
 
 {% code overflow="wrap" %}
 ```rust
@@ -998,6 +988,16 @@ let packed_tree_accounts = rpc_result
 2. You will use `packed_tree_accounts.packed_tree_infos[0]` in your instruction
 {% endtab %}
 {% endtabs %}
+
+{% hint style="info" %}
+**Instructions Type Summary:**
+
+| Instruction             | Address Tree             | State Tree           | Nullifier Queue | Output State Tree       |
+| ----------------------- | ------------------------ | -------------------- | --------------- | ----------------------- |
+| Create                  | ✓ (proves non-existence) | -                    | -               | ✓ (stores new hash)     |
+| Update / Close / Reinit | -                        | ✓ (proves existence) | ✓ (nullifies)   | ✓ (stores updated hash) |
+| Burn                    | -                        | ✓ (proves existence) | ✓ (nullifies)   | -                       |
+{% endhint %}
 
 ### 4. Pack Output State Tree (Anchor Create Only)
 
@@ -1060,7 +1060,6 @@ Call `to_account_metas()` on your `PackedAccounts` instance
   * `packed_start`: Offset where tree accounts start
 * Native programs must include `system_start` and `packed_start` in instruction data so the program knows the account array layout
 {% endtab %}
-{% endtabs %}
 {% endtabs %}
 {% endstep %}
 
@@ -1582,9 +1581,9 @@ Include the Merkle tree metadata from Step 5:
 Build the instruction with your `program_id`, `accounts`, and `data` from Step 6. Pass the accounts array you built in Step 5.
 
 {% tabs %}
-{% tab title="Create" %}
-{% tabs %}
 {% tab title="Typescript" %}
+{% tabs %}
+{% tab title="Create" %}
 {% code overflow="wrap" %}
 ```typescript
 const instruction = await program.methods
@@ -1596,9 +1595,79 @@ const instruction = await program.methods
   .instruction();
 ```
 {% endcode %}
+
+Pass the proof, packed address tree info, output state tree index from Step 6, and initial account data (e.g., `message`) as separate parameters to `.createAccount()`.
+{% endtab %}
+
+{% tab title="Update" %}
+{% code overflow="wrap" %}
+```typescript
+const instruction = await program.methods
+  .updateAccount(proof, currentAccount, compressedAccountMeta, newMessage)
+  .accounts({
+    signer: payer.publicKey
+  })
+  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
+  .instruction();
+```
+{% endcode %}
+
+Pass the proof, current account data, compressed account metadata from Step 6, and new account data as separate parameters to `.updateAccount()`.
+{% endtab %}
+
+{% tab title="Close" %}
+{% code overflow="wrap" %}
+```typescript
+const instruction = await program.methods
+  .closeAccount(proof, compressedAccountMeta, message)
+  .accounts({
+    signer: payer.publicKey
+  })
+  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
+  .instruction();
+```
+{% endcode %}
+
+Pass the proof, compressed account metadata from Step 6, and current account data as separate parameters to `.closeAccount()`.
+{% endtab %}
+
+{% tab title="Reinit" %}
+{% code overflow="wrap" %}
+```typescript
+const instruction = await program.methods
+  .reinitAccount(proof, compressedAccountMeta)
+  .accounts({
+    signer: payer.publicKey
+  })
+  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
+  .instruction();
+```
+{% endcode %}
+
+Pass the proof and compressed account metadata from Step 6 as separate parameters to `.reinitAccount()`. No account data is passed since reinit creates default-initialized zero values.
+{% endtab %}
+
+{% tab title="Burn" %}
+{% code overflow="wrap" %}
+```typescript
+const instruction = await program.methods
+  .burnAccount(proof, compressedAccountMeta, currentMessage)
+  .accounts({
+    signer: payer.publicKey
+  })
+  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
+  .instruction();
+```
+{% endcode %}
+
+Pass the proof, compressed account metadata (without `outputStateTreeIndex`) from Step 6, and current account data as separate parameters to `.burnAccount()`.
+{% endtab %}
+{% endtabs %}
 {% endtab %}
 
 {% tab title="Rust" %}
+{% tabs %}
+{% tab title="Create" %}
 {% code overflow="wrap" %}
 ```rust
 let instruction = Instruction {
@@ -1612,29 +1681,11 @@ let instruction = Instruction {
 };
 ```
 {% endcode %}
-{% endtab %}
-{% endtabs %}
 
 Pass the proof, packed address tree info, output state tree index from Step 6, and initial account data (e.g., `message`) as separate parameters to `.createAccount()`.
 {% endtab %}
 
 {% tab title="Update" %}
-{% tabs %}
-{% tab title="Typescript" %}
-{% code overflow="wrap" %}
-```typescript
-const instruction = await program.methods
-  .updateAccount(proof, currentAccount, compressedAccountMeta, newMessage)
-  .accounts({
-    signer: payer.publicKey
-  })
-  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
-  .instruction();
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Rust" %}
 {% code overflow="wrap" %}
 ```rust
 let instruction = Instruction {
@@ -1648,29 +1699,11 @@ let instruction = Instruction {
 };
 ```
 {% endcode %}
-{% endtab %}
-{% endtabs %}
 
 Pass the proof, current account data, compressed account metadata from Step 6, and new account data as separate parameters to `.updateAccount()`.
 {% endtab %}
 
 {% tab title="Close" %}
-{% tabs %}
-{% tab title="Typescript" %}
-{% code overflow="wrap" %}
-```typescript
-const instruction = await program.methods
-  .closeAccount(proof, compressedAccountMeta, message)
-  .accounts({
-    signer: payer.publicKey
-  })
-  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
-  .instruction();
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Rust" %}
 {% code overflow="wrap" %}
 ```rust
 let instruction = Instruction {
@@ -1684,29 +1717,11 @@ let instruction = Instruction {
 };
 ```
 {% endcode %}
-{% endtab %}
-{% endtabs %}
 
 Pass the proof, compressed account metadata from Step 6, and current account data as separate parameters to `.closeAccount()`.
 {% endtab %}
 
 {% tab title="Reinit" %}
-{% tabs %}
-{% tab title="Typescript" %}
-{% code overflow="wrap" %}
-```typescript
-const instruction = await program.methods
-  .reinitAccount(proof, compressedAccountMeta)
-  .accounts({
-    signer: payer.publicKey
-  })
-  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
-  .instruction();
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Rust" %}
 {% code overflow="wrap" %}
 ```rust
 let instruction = Instruction {
@@ -1720,29 +1735,11 @@ let instruction = Instruction {
 };
 ```
 {% endcode %}
-{% endtab %}
-{% endtabs %}
 
 Pass the proof and compressed account metadata from Step 6 as separate parameters to `.reinitAccount()`. No account data is passed since reinit creates default-initialized zero values.
 {% endtab %}
 
 {% tab title="Burn" %}
-{% tabs %}
-{% tab title="Typescript" %}
-{% code overflow="wrap" %}
-```typescript
-const instruction = await program.methods
-  .burnAccount(proof, compressedAccountMeta, currentMessage)
-  .accounts({
-    signer: payer.publicKey
-  })
-  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
-  .instruction();
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Rust" %}
 {% code overflow="wrap" %}
 ```rust
 let instruction = Instruction {
@@ -1756,10 +1753,10 @@ let instruction = Instruction {
 };
 ```
 {% endcode %}
-{% endtab %}
-{% endtabs %}
 
 Pass the proof, compressed account metadata (without `outputStateTreeIndex`) from Step 6, and current account data as separate parameters to `.burnAccount()`.
+{% endtab %}
+{% endtabs %}
 {% endtab %}
 {% endtabs %}
 
