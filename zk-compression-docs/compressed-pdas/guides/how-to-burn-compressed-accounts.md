@@ -26,7 +26,7 @@ Here is the complete flow to burn compressed accounts:
 
 {% stepper %}
 {% step %}
-### Program Setup
+#### Program Setup
 
 <details>
 
@@ -78,7 +78,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 Define your compressed account struct.
 
-\#\[event] // declared as event so that it is part of the idl.#\[derive(    Clone,    Debug,    Default,    LightDiscriminator)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}#\[derive(    Debug,     Default,     Clone,     BorshSerialize,     BorshDeserialize,     LightDiscriminator,)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}
+\#\[event] // declared as event so that it is part of the idl.#\[derive( Clone, Debug, Default, LightDiscriminator)]pub struct MyCompressedAccount { pub owner: Pubkey, pub message: String,}#\[derive( Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,)]pub struct MyCompressedAccount { pub owner: Pubkey, pub message: String,}
 
 You derive
 
@@ -94,7 +94,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -147,7 +147,7 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 {% endstep %}
 
 {% step %}
-### Burn Compressed Account
+#### Burn Compressed Account
 
 Burn the compressed account permanently with `LightAccount::new_burn()`. No account can be reinitialized at this address in the future.
 
@@ -207,7 +207,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+#### Light System Program CPI
 
 The Light System Program CPI burns the compressed account permanently.
 

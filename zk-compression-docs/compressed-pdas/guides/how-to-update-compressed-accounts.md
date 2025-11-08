@@ -28,7 +28,7 @@ Here is the complete flow:
 
 {% stepper %}
 {% step %}
-### Program Setup
+#### Program Setup
 
 <details>
 
@@ -80,7 +80,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 Define your compressed account struct.
 
-\#\[event] // declared as event so that it is part of the idl.#\[derive(    Clone,    Debug,    Default,    LightDiscriminator)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}#\[derive(    Debug,     Default,     Clone,     BorshSerialize,     BorshDeserialize,     LightDiscriminator,)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}
+\#\[event] // declared as event so that it is part of the idl.#\[derive( Clone, Debug, Default, LightDiscriminator)]pub struct MyCompressedAccount { pub owner: Pubkey, pub message: String,}#\[derive( Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,)]pub struct MyCompressedAccount { pub owner: Pubkey, pub message: String,}
 
 You derive
 
@@ -96,7 +96,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -155,7 +155,7 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 {% endstep %}
 
 {% step %}
-### Update Compressed Account
+#### Update Compressed Account
 
 Load the compressed account and update it with `LightAccount::new_mut()`.
 
@@ -218,7 +218,7 @@ my_compressed_account.account.message = instruction_data.new_message;
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+#### Light System Program CPI
 
 Invoke the Light System Program to update the compressed account.
 

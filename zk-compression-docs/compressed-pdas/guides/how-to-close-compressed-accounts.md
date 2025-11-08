@@ -26,7 +26,7 @@ Here is the complete flow to close compressed accounts:
 
 {% stepper %}
 {% step %}
-### Program Setup
+#### Program Setup
 
 <details>
 
@@ -78,7 +78,7 @@ pub const LIGHT_CPI_SIGNER: CpiSigner =
 
 Define your compressed account struct.
 
-\#\[event] // declared as event so that it is part of the idl.#\[derive(    Clone,    Debug,    Default,    LightDiscriminator)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}#\[derive(    Debug,     Default,     Clone,     BorshSerialize,     BorshDeserialize,     LightDiscriminator,)]pub struct MyCompressedAccount {    pub owner: Pubkey,    pub message: String,}
+\#\[event] // declared as event so that it is part of the idl.#\[derive( Clone, Debug, Default, LightDiscriminator)]pub struct MyCompressedAccount { pub owner: Pubkey, pub message: String,}#\[derive( Debug, Default, Clone, BorshSerialize, BorshDeserialize, LightDiscriminator,)]pub struct MyCompressedAccount { pub owner: Pubkey, pub message: String,}
 
 You derive
 
@@ -94,7 +94,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-### Instruction Data
+#### Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -148,7 +148,7 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 {% endstep %}
 
 {% step %}
-### Close Compressed Account
+#### Close Compressed Account
 
 Load the compressed account and mark it as closed with `LightAccount::new_close()`.
 
@@ -213,7 +213,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_close(
 {% endstep %}
 
 {% step %}
-### Light System Program CPI
+#### Light System Program CPI
 
 Invoke the Light System Program to close the compressed account. This empty account can be reinitialized with `LightAccount::new_empty()`.
 
