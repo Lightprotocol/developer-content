@@ -30,5 +30,5 @@ knowledge_base:
   code_guidelines:
     enabled: true
     filePatterns:
-      - "zk-compression-docs/context/**"
+      - "zk-compression-docs/.context/**"
       - "**/CLAUDE.md"
