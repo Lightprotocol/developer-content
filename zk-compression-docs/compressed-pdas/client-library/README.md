@@ -865,9 +865,11 @@ The instance organizes accounts into three sections:
                                    queues
 ```
 
+{% hint style="info" %}
 * The instance maintains an internal deduplication map that assigns sequential u8 indices (0, 1, 2...) when you call `insert_or_get()`.
 * If the same pubkey is inserted multiple times, it returns the cached index.
 * For example, if the input state tree equals the output state tree, both return the same index.
+{% endhint %}
 
 ### 2. Add Light System Accounts
 
@@ -997,7 +999,7 @@ let packed_tree_accounts = rpc_result
 {% endtab %}
 {% endtabs %}
 
-## 4. Pack Output State Tree (Anchor Create Only)
+### 4. Pack Output State Tree (Anchor Create Only)
 
 For Anchor Create operations, pack the output state tree to store the new account hash.
 
