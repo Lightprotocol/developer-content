@@ -1728,10 +1728,6 @@ Pass the proof, compressed account metadata (without `outputStateTreeIndex`) fro
 {% endcode %}
 
 {% endtab %}
-
-{% tab title="Rust" %}
-
-{% endtab %}
 {% endtabs %}
 
 {% endstep %}
@@ -1756,10 +1752,6 @@ const signedTx = buildAndSignTx(
 const signature = await sendAndConfirmTx(rpc, signedTx);
 ```
 {% endcode %}
-
-{% endtab %}
-
-{% tab title="Rust" %}
 
 {% endtab %}
 {% endtabs %}
