@@ -1618,10 +1618,10 @@ Include the Merkle tree metadata from Step 5:
 Build the instruction with your `program_id`, `accounts`, and `data` from Step 6. Pass the accounts array you built in Step 5.
 
 {% tabs %}
-{% tab title="Typescript" %}
+{% tab title="Create" %}
 
 {% tabs %}
-{% tab title="Create" %}
+{% tab title="Typescript" %}
 {% code overflow="wrap" %}
 ```typescript
 const instruction = await program.methods
@@ -1633,11 +1633,32 @@ const instruction = await program.methods
   .instruction();
 ```
 {% endcode %}
+{% endtab %}
+
+{% tab title="Rust" %}
+{% code overflow="wrap" %}
+```rust
+let instruction = Instruction {
+    program_id: create::ID,
+    accounts: [
+        vec![AccountMeta::new(payer.pubkey(), true)],
+        remaining_accounts,
+    ]
+    .concat(),
+    data: instruction_data,
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 Pass the proof, packed address tree info, output state tree index from Step 6, and initial account data (e.g., `message`) as separate parameters to `.createAccount()`.
 {% endtab %}
 
 {% tab title="Update" %}
+
+{% tabs %}
+{% tab title="Typescript" %}
 {% code overflow="wrap" %}
 ```typescript
 const instruction = await program.methods
@@ -1649,11 +1670,32 @@ const instruction = await program.methods
   .instruction();
 ```
 {% endcode %}
+{% endtab %}
+
+{% tab title="Rust" %}
+{% code overflow="wrap" %}
+```rust
+let instruction = Instruction {
+    program_id: update::ID,
+    accounts: [
+        vec![AccountMeta::new(payer.pubkey(), true)],
+        remaining_accounts,
+    ]
+    .concat(),
+    data: instruction_data,
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 Pass the proof, current account data, compressed account metadata from Step 6, and new account data as separate parameters to `.updateAccount()`.
 {% endtab %}
 
 {% tab title="Close" %}
+
+{% tabs %}
+{% tab title="Typescript" %}
 {% code overflow="wrap" %}
 ```typescript
 const instruction = await program.methods
@@ -1665,11 +1707,32 @@ const instruction = await program.methods
   .instruction();
 ```
 {% endcode %}
+{% endtab %}
+
+{% tab title="Rust" %}
+{% code overflow="wrap" %}
+```rust
+let instruction = Instruction {
+    program_id: close::ID,
+    accounts: [
+        vec![AccountMeta::new(payer.pubkey(), true)],
+        remaining_accounts,
+    ]
+    .concat(),
+    data: instruction_data,
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 Pass the proof, compressed account metadata from Step 6, and current account data as separate parameters to `.closeAccount()`.
 {% endtab %}
 
 {% tab title="Reinit" %}
+
+{% tabs %}
+{% tab title="Typescript" %}
 {% code overflow="wrap" %}
 ```typescript
 const instruction = await program.methods
@@ -1681,11 +1744,32 @@ const instruction = await program.methods
   .instruction();
 ```
 {% endcode %}
+{% endtab %}
+
+{% tab title="Rust" %}
+{% code overflow="wrap" %}
+```rust
+let instruction = Instruction {
+    program_id: reinit::ID,
+    accounts: [
+        vec![AccountMeta::new(payer.pubkey(), true)],
+        remaining_accounts,
+    ]
+    .concat(),
+    data: instruction_data,
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 Pass the proof and compressed account metadata from Step 6 as separate parameters to `.reinitAccount()`. No account data is passed since reinit creates default-initialized zero values.
 {% endtab %}
 
 {% tab title="Burn" %}
+
+{% tabs %}
+{% tab title="Typescript" %}
 {% code overflow="wrap" %}
 ```typescript
 const instruction = await program.methods
@@ -1697,12 +1781,31 @@ const instruction = await program.methods
   .instruction();
 ```
 {% endcode %}
+{% endtab %}
+
+{% tab title="Rust" %}
+{% code overflow="wrap" %}
+```rust
+let instruction = Instruction {
+    program_id: burn::ID,
+    accounts: [
+        vec![AccountMeta::new(payer.pubkey(), true)],
+        remaining_accounts,
+    ]
+    .concat(),
+    data: instruction_data,
+};
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
 
 Pass the proof, compressed account metadata (without `outputStateTreeIndex`) from Step 6, and current account data as separate parameters to `.burnAccount()`.
 {% endtab %}
 {% endtabs %}
 
-**What to include in `accounts`:**
+
+**What to include:**
 
 1. **Pass program-specific accounts** as defined by your program's IDL (signer, feepayer).
 2. **Add all remaining accounts** with `.remainingAccounts()` from Step 5:
@@ -1718,24 +1821,18 @@ Pass the proof, compressed account metadata (without `outputStateTreeIndex`) fro
 {% code overflow="wrap" %}
 ```
 [0-N]
-  Program-specific accounts from .accounts()
+  Program-specific accounts
   (e.g., signer)
 [N+1-N+8]
-  Light System accounts from .remainingAccounts()
+  Light System accounts
 [N+9+]
-  Merkle trees and queues from .remainingAccounts()
+  Merkle trees and queues
 ```
 {% endcode %}
 
-{% endtab %}
-{% endtabs %}
-
 {% endstep %}
-
 {% step %}
 ## Send Transaction
-
-Submit the instruction from Step 7 to the network.
 
 {% tabs %}
 {% tab title="Typescript" %}
@@ -1754,6 +1851,17 @@ const signature = await sendAndConfirmTx(rpc, signedTx);
 {% endcode %}
 
 {% endtab %}
+
+{% tab title="Rust" %}
+
+{% code overflow="wrap" %}
+```rust
+rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
+    .await
+```
+{% endcode %}
+
+{% endtab %}
 {% endtabs %}
 
 {% endstep %}
@@ -1762,7 +1870,7 @@ const signature = await sendAndConfirmTx(rpc, signedTx);
 
 # Full Code Examples
 
-Full TypeScript test examples using local test validator with `createRpc()`.
+Full TypeScript test examples using local test validator.
 
 1. Install the Light CLI first to download program binaries:
 
