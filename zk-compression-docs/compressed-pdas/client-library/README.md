@@ -40,9 +40,9 @@ Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepw
 {% tabs %}
 {% tab title="Typescript" %}
 
-The Typescript SDK consists of 
+The Typescript SDK consists of two packages:
 
-1. [@lightprotocol/stateless.js](https://lightprotocol.github.io/light-protocol/stateless.js/index.html): The core RPC client that provides the ZK Compression RPC interface to query and build transactions that create or interact with compressed accounts on Solana. 
+1. [@lightprotocol/stateless.js](https://lightprotocol.github.io/light-protocol/stateless.js/index.html)is the core RPC client that provides the ZK Compression RPC interface to query and build transactions that create or interact with compressed accounts on Solana. 
 
 2. [@lightprotocol/compressed-token](https://lightprotocol.github.io/light-protocol/compressed-token/index.html) uses the stateless.js RPC interface to build transactions with compressed tokens.
 
@@ -620,10 +620,12 @@ V2 circuits can prove in a single proof
 The combinations and maximums are determined by the available circuit verifying keys. Different proof sizes require different circuits optimized for that specific combination. View the [source code here](https://github.com/Lightprotocol/light-protocol/tree/871215642b4b5b69d2bcd7eca22542346d0e2cfa/program-libs/verifier/src/verifying_keys).
 {% endhint %}
 
+#### Example create-and-update proof
+
+In this example we generate one proof for the update of an existing account, and the creation of a new account.
+
 {% tabs %}
 {% tab title="Typescript" %}
-
-In this example we update an existing account, and create a new account in the same transaction.
 
 {% code overflow="wrap" %}
 ```typescript
@@ -651,8 +653,6 @@ const proof = await rpc.getValidityProofV0(
 {% endtab %}
 
 {% tab title="Rust" %}
-
-In this example we update an existing account, and create a new account in the same transaction.
 
 {% code overflow="wrap" %}
 ```rust
@@ -685,6 +685,10 @@ let rpc_result = rpc
 
 {% endtab %}
 {% endtabs %}
+
+{% hint style="info" %}
+See the full [create-and-update program example with tests](https://github.com/Lightprotocol/program-examples/tree/main/create-and-update).
+{% endhint %}
 
 {% endstep %}
 
