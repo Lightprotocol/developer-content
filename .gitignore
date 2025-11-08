@@ -7,8 +7,5 @@ node_modules/
 # OS files
 .DS_Store
 
-# External repository references
-context/
-
 # Test and debug files
 **/test-stepper.md
