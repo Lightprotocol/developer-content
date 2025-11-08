@@ -38,7 +38,7 @@ const transactionSignature = await mintTo(
 
 {% stepper %}
 {% step %}
-#### Prerequisites
+## Prerequisites
 
 Make sure you have dependencies and developer environment set up!
 

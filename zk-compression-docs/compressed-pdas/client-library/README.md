@@ -561,7 +561,7 @@ let rpc_result = rpc
 {% endtab %}
 {% endtabs %}
 
-## Optimize with Single Combined Proofs
+### Optimize with Single Combined Proofs
 
 {% hint style="info" %}
 **Advantages of combined proofs**:
@@ -687,7 +687,7 @@ To optimize instruction data we pack accounts into an array:
 
 {% tabs %}
 {% tab title="Typescript" %}
-### 1. Initialize PackedAccounts
+**1. Initialize PackedAccounts**
 
 ```typescript
 const packedAccounts = new PackedAccounts();
@@ -713,7 +713,7 @@ const packedAccounts = new PackedAccounts();
 * If the same pubkey is inserted multiple times, it returns the cached index.
 * For example, if the input state tree equals the output state tree, both return the same index.
 
-## 2. Add Light System Accounts
+**2. Add Light System Accounts**
 
 Populate the `systemAccounts` section with Light System accounts. These accounts are needed for proof verification and CPI calls to update state and address trees.
 
@@ -731,7 +731,7 @@ packedAccounts.addSystemAccounts(systemAccountConfig);
 Program-specific accounts (signers, fee payer) are passed to `.accounts()` in your instruction and are not added to `PackedAccounts`.
 {% endhint %}
 
-### 3. Pack Tree Accounts from Validity Proof
+**3. Pack Tree Accounts from Validity Proof**
 
 Populate the `treeAccounts` section with tree pubkeys from the validity proof and receive u8 indices to use in instruction data.
 
@@ -787,7 +787,7 @@ const packedInputAccounts = {
 {% endtab %}
 {% endtabs %}
 
-### 4. Pack Output State Tree
+**4. Pack Output State Tree**
 
 Pack the output state tree to specify where the new or updated account state will be stored.
 
@@ -812,7 +812,7 @@ const outputStateTreeIndex =
 * **Burn**: has no output state tree
 {% endhint %}
 
-### 5. Finalize Packed Accounts
+**5. Finalize Packed Accounts**
 
 Call `toAccountMetas()` to convert packed accounts into the final array for your instruction.
 
@@ -841,7 +841,7 @@ const { remainingAccounts, systemStart, packedStart } =
 {% endtab %}
 
 {% tab title="Rust" %}
-### 1. Initialize PackedAccounts
+**1. Initialize PackedAccounts**
 
 ```rust
 let mut remaining_accounts = PackedAccounts::default();
@@ -871,7 +871,7 @@ The instance organizes accounts into three sections:
 * For example, if the input state tree equals the output state tree, both return the same index.
 {% endhint %}
 
-### 2. Add Light System Accounts
+**2. Add Light System Accounts**
 
 Populate the `system_accounts` with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) needed for proof verification and CPI calls to update state and address trees.
 
@@ -911,16 +911,17 @@ accounts.add_system_accounts(config)?;
 {% endtab %}
 {% endtabs %}
 
-### Pack Tree Accounts
+**3. Pack Tree Accounts**
 
 Add tree and queue accounts to the packed accounts array and retrieve indices for the instruction data. The specific trees used depend on your operation type.
 
 {% tabs %}
 {% tab title="Create" %}
-Pack the address tree and address queue used in the validity proof.
 
 {% tabs %}
 {% tab title="Anchor" %}
+Add the address tree and address queue pubkeys to the accounts array and retrieve their indices.
+
 {% code overflow="wrap" %}
 ```rust
 let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
@@ -934,6 +935,8 @@ let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
 {% endtab %}
 
 {% tab title="Native" %}
+Add the output state tree, address tree, and address queue pubkeys to the accounts array and retrieve their indices.
+
 {% code overflow="wrap" %}
 ```rust
 let output_state_tree_index = accounts.insert_or_get(*merkle_tree_pubkey);
@@ -952,7 +955,7 @@ let packed_address_tree_info = rpc_result.pack_tree_infos(&mut accounts).address
 {% endtab %}
 
 {% tab title="Update / Close / Reinit" %}
-Pack the state tree and nullifier queue used to prove and nullify the existing account.
+Add the state tree and nullifier queue pubkeys to the accounts array and retrieve their indices.
 
 {% code overflow="wrap" %}
 ```rust
@@ -971,7 +974,7 @@ let packed_tree_accounts = rpc_result
 {% endtab %}
 
 {% tab title="Burn" %}
-Pack the state tree and nullifier queue. Burn instructions have no output state tree.
+Add the state tree and nullifier queue pubkeys to the accounts array and retrieve their indices. Burn permanently removes the account without creating output state.
 
 {% code overflow="wrap" %}
 ```rust
@@ -984,7 +987,7 @@ let packed_tree_accounts = rpc_result
 
 1. Call `pack_tree_infos()` on the RPC result and extract `.state_trees.unwrap()`
    * Returns `PackedStateTreeInfos` with `packed_tree_infos` array (indices for state tree, nullifier queue, leaf index, root index)
-   * No `output_tree_index` field - Burn doesn't create output state
+   * No `output_tree_index` field - Burn permanently removes the account without creating output state
 2. You will use `packed_tree_accounts.packed_tree_infos[0]` in your instruction
 {% endtab %}
 {% endtabs %}
@@ -999,7 +1002,7 @@ let packed_tree_accounts = rpc_result
 | Burn                    | -                        | ✓ (proves existence) | ✓ (nullifies)   | -                       |
 {% endhint %}
 
-### 4. Pack Output State Tree (Anchor Create Only)
+**4. Pack Output State Tree (Anchor Create Only)**
 
 For Anchor Create operations, pack the output state tree to store the new account hash.
 
@@ -1024,7 +1027,7 @@ Call `pack_output_tree_index()` on the output state tree `TreeInfo`
 * Returns u8 index for the output state tree
 * This index is passed to your program instruction's `output_state_tree_index` parameter
 
-### 5. Finalize Packed Accounts
+**5. Finalize Packed Accounts**
 
 Convert packed accounts into the final array for your instruction.
 

@@ -20,19 +20,19 @@ This is how it works at a high level:
 
 {% stepper %}
 {% step %}
-### Storage of Compressed State
+## Storage of Compressed State
 
 Compressed accounts store state as call data in [Solana's ledger](#user-content-fn-1)[^1], removing rent per account.
 {% endstep %}
 
 {% step %}
-### Accessing Compressed State
+## Accessing Compressed State
 
 Transactions specify state they access (read/write) and include it in the transaction payload.
 {% endstep %}
 
 {% step %}
-### State Validation
+## State Validation
 
 Solana Programs invoke[^2] the [Light System Program](#user-content-fn-3)[^3] to update compressed state
 
@@ -42,19 +42,19 @@ Solana Programs invoke[^2] the [Light System Program](#user-content-fn-3)[^3] to
 {% endstep %}
 
 {% step %}
-### State Updates
+## State Updates
 
 The new state is recorded as a log on the Solana ledger with each transaction.
 {% endstep %}
 
 {% step %}
-### Photon RPC Nodes
+## Photon RPC Nodes
 
 [Photon RPC nodes](#user-content-fn-4)[^4] index the state changes, making the compressed account state available to clients via the ZK Compression RPC API.
 {% endstep %}
 
 {% step %}
-### Forester Nodes
+## Forester Nodes
 
 Keeper nodes that interact with the [Account Compression Program](#user-content-fn-5)[^5] to empty queues and rollover state trees.
 

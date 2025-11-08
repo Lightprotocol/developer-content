@@ -21,7 +21,7 @@ Developing with compressed PDAs works similar to regular PDAs and involves minim
 
 {% stepper %}
 {% step %}
-### Prerequisites
+## Prerequisites
 
 {% hint style="info" %}
 Required versions:
@@ -60,7 +60,7 @@ light --version
 {% endstep %}
 
 {% step %}
-### Initialize your Program
+## Initialize your Program
 
 Instantiate a template Solana program with compressed accounts with all required dependencies.
 
@@ -92,7 +92,7 @@ The `light init` command creates only Anchor-based projects . For Pinocchio prog
 {% endstep %}
 
 {% step %}
-### Build and Test
+## Build and Test
 
 Now `cd testprogram` and run:
 
