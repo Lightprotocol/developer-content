@@ -728,7 +728,8 @@ const packedAccounts = new PackedAccounts();
 ```
 
 * The instance maintains an internal deduplication map that assigns sequential u8 indices (0, 1, 2...) when you call `insertOrGet()`. 
-* If the same pubkey is inserted multiple times, it returns the cached index. * For example, if the input state tree equals the output state tree, both return the same index.
+* If the same pubkey is inserted multiple times, it returns the cached index. 
+* For example, if the input state tree equals the output state tree, both return the same index.
 
 ### 2. Add Light System Accounts
 
@@ -741,8 +742,8 @@ packedAccounts.addSystemAccounts(systemAccountConfig);
 ```
 {% endcode %}
 
-* Pass your program ID to `new SystemAccountMetaConfig(programId)` - the SDK derives the CPI signer PDA from your program ID.
-* Call `addSystemAccounts(systemAccountConfig)` - the SDK populates the `systemAccounts` section with Light System accounts.
+1. Pass your program ID to `new SystemAccountMetaConfig(programId)` to configure system accounts
+2. Call `addSystemAccounts(systemAccountConfig)` - the SDK populates `systemAccounts` with Light System accounts, including the CPI signer PDA derived from your program ID
 
 {% hint style="info" %}
 Program-specific accounts (signers, fee payer) are passed to `.accounts()` in your instruction and are not added to `PackedAccounts`.
@@ -824,52 +825,199 @@ const outputStateTreeIndex =
 * **Burn**: has no output state tree
 {% endhint %}
 
-### 5. Pass Packed Accounts to Transaction
+### 5. Finalize Packed Accounts
 
-Convert packed accounts to the final array and pass to your program instruction.
+Call `toAccountMetas()` to convert packed accounts into the final array for your instruction.
 
 {% code overflow="wrap" %}
 ```typescript
-await program.methods
-  .createAccount(
-    proof,
-    packedAddressTreeInfo,
-    outputStateTreeIndex,
-    message
-  )
-  .accounts({
-    signer: signer.publicKey,
-  }
-  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
-  .rpc();
+const { remainingAccounts, systemStart, packedStart } =
+  packedAccounts.toAccountMetas();
 ```
 {% endcode %}
 
 1. Call `toAccountMetas()` on your PackedAccounts instance
-* Returns an object with `remainingAccounts` (final ordered array), `systemStart`, and `packedStart` offsets
-2. Pass the `remainingAccounts` property to `.remainingAccounts()` in your Anchor instruction builder
-3. Send the transaction
+   * Returns an object with three fields:
+     * `remainingAccounts`: `AccountMeta[]` array containing all accounts (system accounts + tree accounts)
+     * `systemStart`: Offset indicating where system accounts start in the array (used internally by Light System Program)
+     * `packedStart`: Offset indicating where tree accounts start in the array (used internally by Light System Program)
+2. You have now prepared all components needed for the next step:
+   * `remainingAccounts` - to pass to `.remainingAccounts()` in your Anchor instruction builder
+   * From Section 3: `packedAddressTreeInfo` (Create) OR `packedInputAccounts` (Update/Close/Reinit/Burn)
+   * From Section 4: `outputStateTreeIndex` (Create/Update/Close/Reinit only - Burn has no output state tree)
+
+{% hint style="info" %}
+**Anchor programs:** Pass `remainingAccounts` to `.remainingAccounts()`. The `systemStart` and `packedStart` offsets are used internally by the Light System Program.
+
+**Native programs:** Include `systemStart` and `packedStart` in your instruction data so the program knows the account array layout.
+{% endhint %}
 
 {% endtab %}
 
 {% tab title="Rust" %}
+### 1. Initialize PackedAccounts
 
+```rust
+let mut remaining_accounts = PackedAccounts::default();
+```
+
+Creates a PackedAccounts instance that manages account deduplication and indexing for compressed account operations.
+
+The instance organizes accounts into three sections:
+
+1. **`pre_accounts`**: Program-specific accounts (signers, fee payer) - Native programs only
+2. **`system_accounts`**: [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) for proof verification and CPI calls to update state and address trees
+3. **`tree_accounts`**: State trees, address trees, and queue accounts added dynamically via `insert_or_get()`
+
+**Final array structure:**
+```
+[pre_accounts] [system_accounts] [tree_accounts]
+      ↑              ↑                ↑
+   Signers,   Light System      state trees,
+  fee payer     accounts       address trees,
+                                   queues
+```
+
+* The instance maintains an internal deduplication map that assigns sequential u8 indices (0, 1, 2...) when you call `insert_or_get()`.
+* If the same pubkey is inserted multiple times, it returns the cached index.
+* For example, if the input state tree equals the output state tree, both return the same index.
+
+### 2. Add Light System Accounts
+
+Populate the `system_accounts` with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) needed for proof verification and CPI calls to update state and address trees.
+
+{% tabs %}
+{% tab title="Anchor" %}
+{% code overflow="wrap" %}
+```rust
+let config = SystemAccountMetaConfig::new(program_create::ID);
+remaining_accounts.add_system_accounts(config)?;
+```
+{% endcode %}
+
+1. Pass your program ID to `SystemAccountMetaConfig::new(program_id)` to configure system accounts
+2. Call `add_system_accounts(config)?` - the SDK populates `system_accounts` with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts), including the CPI signer PDA derived from your program ID
+
+{% endtab %}
+
+{% tab title="Native" %}
+{% code overflow="wrap" %}
+```rust
+let config = SystemAccountMetaConfig::new(native_program::ID);
+accounts.add_pre_accounts_signer(payer.pubkey());
+accounts.add_system_accounts(config)?;
+```
+{% endcode %}
+
+1. Pass your program ID to `SystemAccountMetaConfig::new(program_id)` to derive the CPI signer PDA
+2. Call `add_pre_accounts_signer(payer.pubkey())` - Native programs must manually add the signer to `pre_accounts`
+3. Call `add_system_accounts(config)?` - the SDK populates the `system_accounts` section with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts).
 
 {% endtab %}
 {% endtabs %}
 
-{% endstep %}
+{% hint style="info" %}
+**Anchor programs:** Signers are automatically handled by Anchor's account validation. Do not add them to `pre_accounts`.
 
-{% step %}
-## 
+**Native programs:** Manually add the signer to `pre_accounts` before adding system accounts.
+{% endhint %}
+
+{% endtab %}
+{% endtabs %}
+
+
+### Pack Tree Accounts
+
+Add tree and queue accounts to the packed accounts array and retrieve indices for the instruction data. The specific trees used depend on your operation type.
+
+{% hint style="info" %}
+**Instructions Type Summary:**
+
+| Instruction | Address Tree | State Tree | Nullifier Queue | Output State Tree |
+|-----------|--------------|------------|-----------------|-------------------|
+| Create | ✓ (proves non-existence) | - | - | ✓ (stores new hash) |
+| Update / Close / Reinit | - | ✓ (proves existence) | ✓ (nullifies) | ✓ (stores updated hash) |
+| Burn | - | ✓ (proves existence) | ✓ (nullifies) | - |
+{% endhint %}
 
 {% tabs %}
-{% tab title="Typescript" %}
+{% tab title="Create" %}
+
+Pack the address tree and address queue used in the validity proof.
+
+{% tabs %}
+{% tab title="Anchor" %}
+{% code overflow="wrap" %}
+```rust
+let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
+```
+{% endcode %}
+
+1. Call `pack_tree_infos()` on the RPC result from `get_validity_proof()`
+   * Returns `PackedTreeInfos` with `.address_trees` field
+   * Contains `PackedAddressTreeInfo` with indices for address tree, address queue, and root index
+2. Pass `packed_accounts.address_trees[0]` to your program instruction's `address_tree_info` parameter in the next step.
 
 {% endtab %}
 
-{% tab title="Rust" %}
+{% tab title="Native" %}
+{% code overflow="wrap" %}
+```rust
+let output_state_tree_index = accounts.insert_or_get(*merkle_tree_pubkey);
+let packed_address_tree_info = rpc_result.pack_tree_infos(&mut accounts).address_trees[0];
+```
+{% endcode %}
 
+1. Call `insert_or_get()` with the output state tree pubkey from `merkle_tree_pubkey`
+   * Returns u8 index for the output state tree
+   * Native programs add output tree before packing tree infos
+2. Call `pack_tree_infos()` on the RPC result and extract `.address_trees[0]`
+   * Returns `PackedAddressTreeInfo` with indices for address tree and address queue
+3. Pass both `output_state_tree_index` and `packed_address_tree_info` to your program instruction in the next step.
+
+{% endtab %}
+{% endtabs %}
+
+{% endtab %}
+
+{% tab title="Update / Close / Reinit" %}
+
+Pack the state tree and nullifier queue used to prove and nullify the existing account.
+
+{% code overflow="wrap" %}
+```rust
+let packed_tree_accounts = rpc_result
+    .pack_tree_infos(&mut remaining_accounts)
+    .state_trees
+    .unwrap();
+```
+{% endcode %}
+
+1. Call `pack_tree_infos()` on the RPC result and extract `.state_trees.unwrap()`
+   * Returns `PackedStateTreeInfos` containing:
+     * `packed_tree_infos`: Array with `PackedStateTreeInfo` (indices for state tree, nullifier queue, leaf index, root index)
+     * `output_tree_index`: u8 index for output state tree to store the compressed account hash
+2. You will use both fields in your program instruction in the next step
+
+{% endtab %}
+
+{% tab title="Burn" %}
+
+Pack the state tree and nullifier queue. Burn operations have no output state tree.
+
+{% code overflow="wrap" %}
+```rust
+let packed_tree_accounts = rpc_result
+    .pack_tree_infos(&mut remaining_accounts)
+    .state_trees
+    .unwrap();
+```
+{% endcode %}
+
+1. Call `pack_tree_infos()` on the RPC result and extract `.state_trees.unwrap()`
+   * Returns `PackedStateTreeInfos` with `packed_tree_infos` array (indices for state tree, nullifier queue, leaf index, root index)
+   * No `output_tree_index` field - Burn doesn't create output state
+2. You will use `packed_tree_infos[0]` in your program instruction in the next step
 
 {% endtab %}
 {% endtabs %}
