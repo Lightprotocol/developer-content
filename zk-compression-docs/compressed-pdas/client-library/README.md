@@ -6,9 +6,7 @@ description: >-
 hidden: true
 ---
 
-# Client Library
-
-## Overview
+# Overview
 
 Use this guide to build a Typescript or Rust client. Here is the complete flow:
 
@@ -40,7 +38,7 @@ Ask anything via [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepw
 
 {% stepper %}
 {% step %}
-### Installation and Setup
+## Installation and Setup
 
 {% tabs %}
 {% tab title="Typescript" %}
@@ -53,7 +51,7 @@ The Typescript SDK consists of two packages:
 Use the [API documentation](https://lightprotocol.github.io/light-protocol/) to look up specific function signatures, parameters, and return types.
 {% endhint %}
 
-#### 1. Installation
+## 1. Installation
 
 {% tabs %}
 {% tab title="npm" %}
@@ -84,7 +82,7 @@ pnpm add \
 {% endtab %}
 {% endtabs %}
 
-#### 2. Create an RPC Connection
+## 2. Create an RPC Connection
 
 {% hint style="success" %}
 `Rpc` and `TestRpc` implement the same `CompressionApiInterface` for consistent usage across `TestRpc`, local test validator, and public Solana networks.
@@ -216,7 +214,7 @@ let payer = rpc.get_payer().insecure_clone();
 {% endstep %}
 
 {% step %}
-### Tree Configuration
+## Tree Configuration
 
 Your client must fetch metadata of two Merkle trees:
 
@@ -321,7 +319,7 @@ You will use the state tree `TreeInfo` again:
 {% endstep %}
 
 {% step %}
-### Derive Address
+## Derive Address
 
 Derive a persistent address as a unique identifier for your compressed account, similar to [program-derived addresses (PDAs)](https://solana.com/docs/core/pda).
 
@@ -429,7 +427,7 @@ Use the same address tree for both address derivation and all subsequent operati
 {% endstep %}
 
 {% step %}
-#### Validity Proof
+## Validity Proof
 
 Fetch a validity proof from your RPC provider that supports ZK Compression (Helius, Triton, ...). The proof type depends on the operation:
 
@@ -563,7 +561,7 @@ let rpc_result = rpc
 {% endtab %}
 {% endtabs %}
 
-#### Optimize with Single Combined Proofs
+## Optimize with Single Combined Proofs
 
 {% hint style="info" %}
 **Advantages of combined proofs**:
@@ -677,7 +675,7 @@ See the full [create-and-update program example with tests](https://github.com/L
 {% endstep %}
 
 {% step %}
-### Pack Accounts
+## Pack Accounts
 
 To optimize instruction data we pack accounts into an array:
 
@@ -689,7 +687,7 @@ To optimize instruction data we pack accounts into an array:
 
 {% tabs %}
 {% tab title="Typescript" %}
-#### 1. Initialize PackedAccounts
+## 1. Initialize PackedAccounts
 
 ```typescript
 const packedAccounts = new PackedAccounts();
@@ -715,7 +713,7 @@ const packedAccounts = new PackedAccounts();
 * If the same pubkey is inserted multiple times, it returns the cached index.
 * For example, if the input state tree equals the output state tree, both return the same index.
 
-#### 2. Add Light System Accounts
+## 2. Add Light System Accounts
 
 Populate the `systemAccounts` section with Light System accounts. These accounts are needed for proof verification and CPI calls to update state and address trees.
 
@@ -733,7 +731,7 @@ packedAccounts.addSystemAccounts(systemAccountConfig);
 Program-specific accounts (signers, fee payer) are passed to `.accounts()` in your instruction and are not added to `PackedAccounts`.
 {% endhint %}
 
-#### 3. Pack Tree Accounts from Validity Proof
+## 3. Pack Tree Accounts from Validity Proof
 
 Populate the `treeAccounts` section with tree pubkeys from the validity proof and receive u8 indices to use in instruction data.
 
@@ -789,7 +787,7 @@ const packedInputAccounts = {
 {% endtab %}
 {% endtabs %}
 
-#### 4. Pack Output State Tree
+## 4. Pack Output State Tree
 
 Pack the output state tree to specify where the new or updated account state will be stored.
 
@@ -814,7 +812,7 @@ const outputStateTreeIndex =
 * **Burn**: has no output state tree
 {% endhint %}
 
-#### 5. Finalize Packed Accounts
+## 5. Finalize Packed Accounts
 
 Call `toAccountMetas()` to convert packed accounts into the final array for your instruction.
 
@@ -843,7 +841,7 @@ const { remainingAccounts, systemStart, packedStart } =
 {% endtab %}
 
 {% tab title="Rust" %}
-#### 1. Initialize PackedAccounts
+## 1. Initialize PackedAccounts
 
 ```rust
 let mut remaining_accounts = PackedAccounts::default();
@@ -871,7 +869,7 @@ The instance organizes accounts into three sections:
 * If the same pubkey is inserted multiple times, it returns the cached index.
 * For example, if the input state tree equals the output state tree, both return the same index.
 
-#### 2. Add Light System Accounts
+## 2. Add Light System Accounts
 
 Populate the `system_accounts` with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) needed for proof verification and CPI calls to update state and address trees.
 
@@ -911,7 +909,7 @@ accounts.add_system_accounts(config)?;
 {% endtab %}
 {% endtabs %}
 
-#### Pack Tree Accounts
+## Pack Tree Accounts
 
 Add tree and queue accounts to the packed accounts array and retrieve indices for the instruction data. The specific trees used depend on your operation type.
 
@@ -999,7 +997,7 @@ let packed_tree_accounts = rpc_result
 {% endtab %}
 {% endtabs %}
 
-#### 4. Pack Output State Tree (Anchor Create Only)
+## 4. Pack Output State Tree (Anchor Create Only)
 
 For Anchor Create operations, pack the output state tree to store the new account hash.
 
@@ -1024,7 +1022,7 @@ Call `pack_output_tree_index()` on the output state tree `TreeInfo`
 * Returns u8 index for the output state tree
 * This index is passed to your program instruction's `output_state_tree_index` parameter
 
-#### 5. Finalize Packed Accounts
+## 5. Finalize Packed Accounts
 
 Convert packed accounts into the final array for your instruction.
 
@@ -1064,7 +1062,7 @@ Call `to_account_metas()` on your `PackedAccounts` instance
 {% endstep %}
 
 {% step %}
-### Instruction Data
+## Instruction Data
 
 Build your instruction data with the validity proof, tree account indices, and complete account data.
 
@@ -1576,7 +1574,7 @@ Include the Merkle tree metadata from Step 5:
 {% endstep %}
 
 {% step %}
-### Instruction
+## Instruction
 
 Build the instruction with your `program_id`, `accounts`, and `data` from Step 6. Pass the accounts array you built in Step 5.
 
@@ -1773,23 +1771,11 @@ Pass the proof, compressed account metadata (without `outputStateTreeIndex`) fro
    * `.remainingAccounts()` appends the complete packed accounts array
    * Returns `TransactionInstruction` with `programId`, merged `keys`, and serialized instruction `data`
 
-**Final account array:**
-
-{% code overflow="wrap" %}
-```
-[0-N]
-  Program-specific accounts
-  (e.g., signer)
-[N+1-N+8]
-  Light System accounts
-[N+9+]
-  Merkle trees and queues
-```
 {% endcode %}
 {% endstep %}
 
 {% step %}
-### Send Transaction
+## Send Transaction
 
 {% tabs %}
 {% tab title="Typescript" %}
@@ -1819,7 +1805,7 @@ rpc.create_and_send_transaction(&[instruction], &payer.pubkey(), &[payer])
 {% endstep %}
 {% endstepper %}
 
-## Full Code Examples
+# Full Code Examples
 
 Full TypeScript test examples using local test validator.
 
@@ -1853,7 +1839,7 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 
 {% @github-files/github-code-block url="https://github.com/Lightprotocol/program-examples/blob/add-basic-operations-examples/basic-operations/anchor/create/programs/create/tests/test.rs" %}
 
-## Next Steps
+# Next Steps
 
 Start building programs to create, or interact with compressed accounts.
 
