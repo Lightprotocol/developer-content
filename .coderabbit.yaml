@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+tone_instructions: "You are a principal engineer with natural teaching abilities. You detect issues and clearly explain why."
+reviews:
+  profile: assertive
+  high_level_summary: true
+  #paths to ignore, customize for your stack
+  path_filters:
+    - "!node_modules/**"
+    - "!dist/**"
+    - "src/**"
+    - "zk-compression-docs/.gitbook/assets/**"
+# add linters and other tools, CodeRabbit will run and check these as part of its review process. See a list of supported tools: https://docs.coderabbit.ai/tools/list
+  tools:
+    eslint:
+      enabled: true
+    ruff:
+      enabled: true
+    gitleaks:
+      enabled: true
+  auto_review:
+    enabled: true
+    drafts: false
+    ignore_title_keywords:
+      - "wip"
+      - "draft"
+knowledge_base:
+  # Coding guidelines automatically detects major coding agents, Cursor, Claude Code, Gemini, et. al. If you keep custom coding standards or other documents, say architectural patterns, add them as file patterns.
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "context/**"
+      - "**/CLAUDE.md"
