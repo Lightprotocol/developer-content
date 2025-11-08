@@ -124,7 +124,7 @@ const testRpc = await getTestRpc(lightWasm);
 
 {% tab title="Rust" %}
 
-The Rust SDK consists of
+Rust combines tokens in the client library, and has a separate SDK for program-side development:
 
 1. [`light-client`](https://docs.rs/light-client): The RPC client that provides the ZK Compression RPC interface to query and build transactions for **compressed accounts and tokens** on Solana.
 
@@ -701,6 +701,150 @@ To optimize instruction data we pack accounts into an array:
 
 {% tabs %}
 {% tab title="Typescript" %}
+
+### 1. Initialize PackedAccounts
+
+```typescript
+const packedAccounts = new PackedAccounts();
+```
+
+`PackedAccounts` creates a helper instance with three empty account sections that you populate in the following steps:
+
+1. **`preAccounts`**: Program-specific accounts like signers or fee payer
+2. **`systemAccounts`**: [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) for proof verification and CPI calls to update state and address trees
+3. **`treeAccounts`**: State trees, address trees, and queue accounts from validity proof
+
+**Final array structure:**
+```
+[preAccounts] [systemAccounts] [treeAccounts]
+      ↑              ↑                ↑
+   Signers,   Light System      state trees,
+  fee payer     accounts       address trees,
+                                   queues
+```
+
+* The instance maintains an internal deduplication map that assigns sequential u8 indices (0, 1, 2...) when you call `insertOrGet()`. 
+* If the same pubkey is inserted multiple times, it returns the cached index. * For example, if the input state tree equals the output state tree, both return the same index.
+
+### 2. Add Light System Accounts
+
+Populate the `systemAccounts` section with Light System accounts. These accounts are needed for proof verification and CPI calls to update state and address trees.
+
+{% code overflow="wrap" %}
+```typescript
+const systemAccountConfig = new SystemAccountMetaConfig(programId);
+packedAccounts.addSystemAccounts(systemAccountConfig);
+```
+{% endcode %}
+
+* Pass your program ID to `new SystemAccountMetaConfig(programId)` - the SDK derives the CPI signer PDA from your program ID.
+* Call `addSystemAccounts(systemAccountConfig)` - the SDK populates the `systemAccounts` section with Light System accounts.
+
+{% hint style="info" %}
+Program-specific accounts (signers, fee payer) are passed to `.accounts()` in your instruction and are not added to `PackedAccounts`.
+{% endhint %}
+
+### 3. Pack Tree Accounts from Validity Proof
+
+Populate the `treeAccounts` section with tree pubkeys from the validity proof and receive u8 indices to use in instruction data.
+
+{% tabs %}
+{% tab title="Create" %}
+{% code overflow="wrap" %}
+```typescript
+const addressMerkleTreePubkeyIndex =
+  packedAccounts.insertOrGet(addressTree);
+const addressQueuePubkeyIndex =
+  packedAccounts.insertOrGet(addressQueue);
+
+const packedAddressTreeInfo = {
+  rootIndex: proofRpcResult.rootIndices[0],
+  addressMerkleTreePubkeyIndex,  // u8 index: 0
+  addressQueuePubkeyIndex,        // u8 index: 1
+};
+```
+{% endcode %}
+
+1. Call `insertOrGet()` with the address tree and address queue pubkeys from `addressTree` TreeInfo
+* Each call returns a sequential index starting from 0 (first call returns 0, second returns 1)
+2. Store the returned indices in `PackedAddressTreeInfo` instead of the full 32-byte pubkeys
+3. Pass `packedAddressTreeInfo` to your program instruction
+
+{% endtab %}
+
+{% tab title="Update, Close, Reinit, Burn" %}
+{% code overflow="wrap" %}
+```typescript
+const tree = compressedAccount.treeInfo.tree;
+const queue = compressedAccount.treeInfo.queue;
+
+const merkleTreePubkeyIndex = packedAccounts.insertOrGet(tree);
+const queuePubkeyIndex = packedAccounts.insertOrGet(queue);
+
+const packedInputAccounts = {
+  merkleTreePubkeyIndex,  // u8 index: 0
+  queuePubkeyIndex,       // u8 index: 1
+  leafIndex: proofRpcResult.leafIndices[0],
+  rootIndex: proofRpcResult.rootIndices[0],
+};
+```
+{% endcode %}
+
+1. Call `insertOrGet()` with the state tree and queue pubkeys from the compressed account's `compressedAccount.treeInfo`
+* Each call returns a sequential index starting from 0 (first call returns 0, second returns 1)
+2. Store the returned indices along with `leafIndex` and `rootIndex` from the validity proof
+3. Pass these indices to your program instruction
+
+{% endtab %}
+{% endtabs %}
+
+### 4. Pack Output State Tree
+
+Pack the output state tree to specify where the new or updated account state will be stored.
+
+{% code overflow="wrap" %}
+```typescript
+const outputStateTreeIndex =
+  packedAccounts.insertOrGet(outputStateTree);
+```
+{% endcode %}
+
+1. Call `insertOrGet()` with the output state tree pubkey from `outputStateTree` TreeInfo
+* Returns the u8 index (continues sequential numbering from previous `insertOrGet()` calls)
+2. Pass `outputStateTreeIndex` to your program instruction
+
+{% hint style="info" %}
+**Difference in Instructions:**
+* **Create**: Output state tree stores the new account hash
+* **Update/Close/Reinit**: Output state tree stores the updated account hash (may be same tree as input or different)
+* **Burn**: has no output state tree
+{% endhint %}
+
+### 5. Pass Packed Accounts to Transaction
+
+Convert packed accounts to the final array and pass to your program instruction.
+
+{% code overflow="wrap" %}
+```typescript
+await program.methods
+  .createAccount(
+    proof,
+    packedAddressTreeInfo,
+    outputStateTreeIndex,
+    message
+  )
+  .accounts({
+    signer: signer.publicKey,
+  }
+  .remainingAccounts(packedAccounts.toAccountMetas().remainingAccounts)
+  .rpc();
+```
+{% endcode %}
+
+1. Call `toAccountMetas()` on your PackedAccounts instance
+* Returns an object with `remainingAccounts` (final ordered array), `systemStart`, and `packedStart` offsets
+2. Pass the `remainingAccounts` property to `.remainingAccounts()` in your Anchor instruction builder
+3. Send the transaction
 
 {% endtab %}
 

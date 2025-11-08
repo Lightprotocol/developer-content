@@ -8,47 +8,7 @@ description: >-
 
 
 
-**1. Initialize PackedAccounts**
 
-{% code overflow="wrap" %}
-```typescript
-import { PackedAccounts, SystemAccountMetaConfig } from '@lightprotocol/stateless.js';
-
-const packedAccounts = new PackedAccounts();
-```
-{% endcode %}
-
-`PackedAccounts` creates the accounts array that you'll pass to `.remainingAccounts()`. It automatically:
-
-* Assigns pubkeys sequential u8 indices, and
-* deduplicates pubkeys to make sure each unique pubkey appears only once in the array.
-* For example, if the input state tree is the same as the output state tree, both reference the same pubkey and return the same index.
-
-**2. Add Light System Accounts**
-
-Add the Light System accounts your program needs to create and interact with compressed accounts.
-
-{% code overflow="wrap" %}
-```typescript
-const systemAccountConfig = new SystemAccountMetaConfig(programId);
-packedAccounts.addSystemAccounts(systemAccountConfig);
-```
-{% endcode %}
-
-* Pass your program ID in `new SystemAccountMetaConfig(programId)` to derive the CPI signer PDA
-* Call `addSystemAccounts(systemAccountConfig)` - the SDK will add 8 Light System accounts in the sequence below
-
-{% hint style="info" %}
-Program-specific accounts (signers, fee payer) are passed to `.accounts()`, not added to `remainingAccounts`.
-{% endhint %}
-
-<details>
-
-<summary><em>System Accounts List</em></summary>
-
-<table data-header-hidden><thead><tr><th width="40">#</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>1</td><td><a data-footnote-ref href="#user-content-fn-1">​Light System Program​</a></td><td>Verifies validity proofs, compressed account ownership checks, cpis the account compression program to update tree accounts</td></tr><tr><td>2</td><td>CPI Signer</td><td>- PDA to sign CPI calls from your program to Light System Program<br>- Verified by Light System Program during CPI<br>- Derived from your program ID</td></tr><tr><td>3</td><td>Registered Program PDA</td><td>- Access control to the Account Compression Program</td></tr><tr><td>4</td><td><a data-footnote-ref href="#user-content-fn-2">​Noop Program​</a></td><td>- Logs compressed account state to Solana ledger. Only used in v1.<br>- Indexers parse transaction logs to reconstruct compressed account state</td></tr><tr><td>5</td><td><a data-footnote-ref href="#user-content-fn-3">​Account Compression Authority​</a></td><td>Signs CPI calls from Light System Program to Account Compression Program</td></tr><tr><td>6</td><td><a data-footnote-ref href="#user-content-fn-4">​Account Compression Program​</a></td><td>- Writes to state and address tree accounts<br>- Client and program do not directly interact with this program</td></tr><tr><td>7</td><td>Invoking Program</td><td>Your program's ID, used by Light System Program to:<br>- Derive the CPI Signer PDA<br>- Verify the CPI Signer matches your program ID<br>- Set the owner of created compressed accounts</td></tr><tr><td>8</td><td><a data-footnote-ref href="#user-content-fn-5">​System Program​</a></td><td>Solana System Program to transfer lamports</td></tr></tbody></table>
-
-</details>
 
 **3. Pack Tree Accounts from Validity Proof**
 
