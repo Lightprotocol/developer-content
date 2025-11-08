@@ -687,7 +687,7 @@ To optimize instruction data we pack accounts into an array:
 
 {% tabs %}
 {% tab title="Typescript" %}
-## 1. Initialize PackedAccounts
+### 1. Initialize PackedAccounts
 
 ```typescript
 const packedAccounts = new PackedAccounts();
@@ -731,7 +731,7 @@ packedAccounts.addSystemAccounts(systemAccountConfig);
 Program-specific accounts (signers, fee payer) are passed to `.accounts()` in your instruction and are not added to `PackedAccounts`.
 {% endhint %}
 
-## 3. Pack Tree Accounts from Validity Proof
+### 3. Pack Tree Accounts from Validity Proof
 
 Populate the `treeAccounts` section with tree pubkeys from the validity proof and receive u8 indices to use in instruction data.
 
@@ -787,7 +787,7 @@ const packedInputAccounts = {
 {% endtab %}
 {% endtabs %}
 
-## 4. Pack Output State Tree
+### 4. Pack Output State Tree
 
 Pack the output state tree to specify where the new or updated account state will be stored.
 
@@ -812,7 +812,7 @@ const outputStateTreeIndex =
 * **Burn**: has no output state tree
 {% endhint %}
 
-## 5. Finalize Packed Accounts
+### 5. Finalize Packed Accounts
 
 Call `toAccountMetas()` to convert packed accounts into the final array for your instruction.
 
@@ -841,7 +841,7 @@ const { remainingAccounts, systemStart, packedStart } =
 {% endtab %}
 
 {% tab title="Rust" %}
-## 1. Initialize PackedAccounts
+### 1. Initialize PackedAccounts
 
 ```rust
 let mut remaining_accounts = PackedAccounts::default();
@@ -869,7 +869,7 @@ The instance organizes accounts into three sections:
 * If the same pubkey is inserted multiple times, it returns the cached index.
 * For example, if the input state tree equals the output state tree, both return the same index.
 
-## 2. Add Light System Accounts
+### 2. Add Light System Accounts
 
 Populate the `system_accounts` with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) needed for proof verification and CPI calls to update state and address trees.
 
@@ -909,7 +909,7 @@ accounts.add_system_accounts(config)?;
 {% endtab %}
 {% endtabs %}
 
-## Pack Tree Accounts
+### Pack Tree Accounts
 
 Add tree and queue accounts to the packed accounts array and retrieve indices for the instruction data. The specific trees used depend on your operation type.
 
@@ -1022,7 +1022,7 @@ Call `pack_output_tree_index()` on the output state tree `TreeInfo`
 * Returns u8 index for the output state tree
 * This index is passed to your program instruction's `output_state_tree_index` parameter
 
-## 5. Finalize Packed Accounts
+### 5. Finalize Packed Accounts
 
 Convert packed accounts into the final array for your instruction.
 
@@ -1058,6 +1058,7 @@ Call `to_account_metas()` on your `PackedAccounts` instance
   * `packed_start`: Offset where tree accounts start
 * Native programs must include `system_start` and `packed_start` in instruction data so the program knows the account array layout
 {% endtab %}
+{% endtabs %}
 {% endtabs %}
 {% endstep %}
 
