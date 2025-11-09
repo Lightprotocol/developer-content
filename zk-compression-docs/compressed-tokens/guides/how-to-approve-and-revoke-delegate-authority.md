@@ -8,24 +8,12 @@ The `approve()` and `revoke()` functions grant and remove delegate spending auth
 Before we approve or revoke delegates, we need:
 
 * compressed token accounts to delegate or revoke delegation from, and
-* an SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`
+* an SPL mint with a token pool for compression. This token pool can be created for new SPL mints via [`createMint()`](how-to-create-and-register-a-mint-account-for-compression.md) or added to existing SPL mints via [`createTokenPool()`](how-to-create-compressed-token-pools-for-mint-accounts.md).
 
-The functions perform opposite operations:
-
-1. `approve()` consumes input account and creates delegated account with spending limit for delegate and change account for owner, and
-2. `revoke()` consumes delegated accounts and creates output account under owner control without delegation.
-
-{% code title="function-manage-delegates.ts" %}
+{% tabs %}
+{% tab title="approve()" %}
 ```typescript
-import { approve, revoke } from '@lightprotocol/compressed-token';
-import { Keypair, PublicKey } from '@solana/web3.js';
-
-const mint = new PublicKey("YOUR_EXISTING_MINT_ADDRESS");
-const delegate = Keypair.generate();
-const amount = 500_000_000;
-const owner = payer;
-
-// Approve delegate
+// Approve delegate for spending up to the specified amount
 const approveSignature = await approve(
     rpc,
     payer,
@@ -34,7 +22,11 @@ const approveSignature = await approve(
     owner,
     delegate.publicKey, // delegate account
 );
+```
+{% endtab %}
 
+{% tab title="revoke()" %}
+```typescript
 // Get delegated accounts for revocation
 const delegatedAccounts = await rpc.getCompressedTokenAccountsByDelegate(
     delegate.publicKey,
@@ -49,13 +41,14 @@ const revokeSignature = await revoke(
     owner,
 );
 ```
-{% endcode %}
+{% endtab %}
+{% endtabs %}
 
-#### Full Code Example
+# Full Code Example
 
 {% stepper %}
 {% step %}
-#### Prerequisites
+## Prerequisites
 
 Make sure you have dependencies and developer environment set up!
 
@@ -154,24 +147,25 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-#### Approving Delegates
+## Approve / Revoke Delegates
 
-Run this script to approve delegate authority for compressed tokens!
+{% tabs %}
+{% tab title="Approve Delegate" %}
+Approve delegate authority for compressed tokens. The delegate can spend up to the approved amount.
 
 <pre class="language-typescript" data-title="approve-delegates.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
 // 2. Create mint and token pool with initial tokens
 // 3. Call approve() with mint, amount, owner, delegate
 // 4. Verify delegation via getCompressedTokenAccountsByDelegate
 
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { Keypair } from '@solana/web3.js';
 import { createRpc } from '@lightprotocol/stateless.js';
-import { 
-    createMint, 
-    mintTo, 
-    approve 
+import {
+    createMint,
+    mintTo,
+    approve
 } from '@lightprotocol/compressed-token';
 import BN from 'bn.js';
-import * as fs from 'fs';
 
 async function approveDelegates() {
     // Step 1: Setup funded payer and connect to local validator
@@ -204,9 +198,9 @@ async function approveDelegates() {
 
     console.log("Initial tokens minted:", initialAmount / 1_000_000_000, "tokens");
     console.log("Token owner:", tokenOwner.publicKey.toBase58());
-    
-    // Generate delegate address and define amount to approve for delegation    
-    const delegate = Keypair.generate();    
+
+    // Generate delegate address and define amount to approve for delegation
+    const delegate = Keypair.generate();
     const delegateAmount = 500_000_000; // 0.5 tokens
 
 <strong>    // Step 3: Call approve() with mint, amount, owner, delegate
@@ -239,17 +233,7 @@ async function approveDelegates() {
         console.log("Verified delegation:", delegatedBalance.toNumber() / 1_000_000_000, "tokens");
     }
 
-    // Save state for revoke step
-    const approveState = {
-        mint: mint.toBase58(),
-        tokenOwner: Array.from(tokenOwner.secretKey),
-        delegate: Array.from(delegate.secretKey),
-        delegatePublicKey: delegate.publicKey.toBase58(),
-        payer: Array.from(payer.secretKey)
-    };
-    fs.writeFileSync('./approve-state.json', JSON.stringify(approveState, null, 2));
-
-    return { 
+    return {
         mint,
         tokenOwner,
         delegate: delegate.publicKey,
@@ -260,65 +244,107 @@ async function approveDelegates() {
 
 approveDelegates().catch(console.error);
 </code></pre>
-{% endstep %}
+{% endtab %}
 
-{% step %}
-#### Revoking Delegates
+{% tab title="Approve and Revoke" %}
+Approve delegation, then revoke it in a single script.
 
-Remove delegate authority from previously approved accounts.
+<pre class="language-typescript" data-title="approve-and-revoke-delegates.ts" data-overflow="wrap"><code class="lang-typescript">// Complete workflow: approve and revoke delegation
+// 1. Setup and create mint with initial tokens
+// 2. Approve delegation
+// 3. Verify delegation exists
+// 4. Revoke delegation
+// 5. Verify delegation removed
 
-<pre class="language-typescript" data-title="revoke-delegates.ts" data-overflow="wrap"><code class="lang-typescript">// Continue from approve setup - revoke delegate authority
-// 1. Get delegated accounts to revoke via getCompressedTokenAccountsByDelegate
-// 2. Call revoke() with delegated accounts and token owner - remove delegate authority and return control to owner
-// 3. Verify delegation removed via getCompressedTokenAccountsByDelegate
-
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { Keypair } from '@solana/web3.js';
 import { createRpc } from '@lightprotocol/stateless.js';
-import { revoke } from '@lightprotocol/compressed-token';
+import {
+    createMint,
+    mintTo,
+    approve,
+    revoke
+} from '@lightprotocol/compressed-token';
 import BN from 'bn.js';
-import * as fs from 'fs';
 
-async function revokeDelegates() {
-    if (!fs.existsSync('./approve-state.json')) {
-        console.log("No delegated accounts found to revoke. Please run 'npx tsx approve.ts' first.");
-        return;
-    }
-
-    // Load approve state
-    const state = JSON.parse(fs.readFileSync('./approve-state.json', 'utf8'));
+async function approveAndRevokeDelegates() {
+    // Step 1: Setup funded payer and connect to local validator
     const rpc = createRpc(); // defaults to localhost:8899
-    const payer = Keypair.fromSecretKey(new Uint8Array(state.payer));
-    const mint = new PublicKey(state.mint);
-    const tokenOwner = Keypair.fromSecretKey(new Uint8Array(state.tokenOwner));
-    const delegate = new PublicKey(state.delegatePublicKey);
+    const payer = Keypair.generate();
+    const airdropSignature = await rpc.requestAirdrop(payer.publicKey, 1000000000); // 1 SOL
+    await rpc.confirmTransaction(airdropSignature);
 
-<strong>    // Step 1: Get delegated accounts to revoke via getCompressedTokenAccountsByDelegate
-</strong><strong>    const delegateAccounts = await rpc.getCompressedTokenAccountsByDelegate(
-</strong><strong>        delegate,
+    // Create SPL mint with token pool and mint initial tokens
+    const { mint } = await createMint(
+        rpc,
+        payer,
+        payer.publicKey, // mint authority
+        9 // decimals
+    );
+
+    console.log("SPL mint with token pool created:", mint.toBase58());
+
+    const tokenOwner = Keypair.generate();
+    const initialAmount = 1_000_000_000; // 1 token with 9 decimals
+
+    await mintTo(
+        rpc,
+        payer,
+        mint, // SPL mint with token pool for compression
+        tokenOwner.publicKey, // recipient
+        payer, // mint authority
+        initialAmount
+    );
+
+    console.log("Initial tokens minted:", initialAmount / 1_000_000_000, "tokens");
+    console.log("Token owner:", tokenOwner.publicKey.toBase58());
+
+    // Generate delegate and define delegation amount
+    const delegate = Keypair.generate();
+    const delegateAmount = 500_000_000; // 0.5 tokens
+
+<strong>    // Step 2: Approve delegation
+</strong><strong>    console.log("\n--- Approving Delegation ---");
+</strong><strong>    const approveTx = await approve(
+</strong><strong>        rpc,
+</strong><strong>        payer,
+</strong><strong>        mint,
+</strong><strong>        delegateAmount,
+</strong><strong>        tokenOwner,
+</strong><strong>        delegate.publicKey
+</strong><strong>    );
+</strong>
+    console.log("Delegate approved");
+    console.log("Delegate:", delegate.publicKey.toBase58());
+    console.log("Approved amount:", delegateAmount / 1_000_000_000, "tokens");
+    console.log("Transaction:", approveTx);
+
+<strong>    // Step 3: Verify delegation exists
+</strong><strong>    const delegateAccountsBefore = await rpc.getCompressedTokenAccountsByDelegate(
+</strong><strong>        delegate.publicKey,
 </strong><strong>        { mint }
 </strong><strong>    );
-</strong>    const delegatedBalanceBefore = delegateAccounts.items.reduce(
+</strong>
+    const delegatedBalance = delegateAccountsBefore.items.reduce(
         (sum, account) => sum.add(account.parsed.amount),
         new BN(0)
     );
-    console.log("Delegated balance:", delegatedBalanceBefore.toNumber() / 1_000_000_000, "tokens");
+    console.log("Verified delegation:", delegatedBalance.toNumber() / 1_000_000_000, "tokens");
 
-    console.log("Revoke Delegate");
-<strong>    // Step 2: Call revoke() with delegated accounts and token owner
-</strong><strong>    // Remove delegate authority and return control to owner
+<strong>    // Step 4: Revoke delegation
+</strong><strong>    console.log("\n--- Revoking Delegation ---");
 </strong><strong>    const revokeTx = await revoke(
 </strong><strong>        rpc,
 </strong><strong>        payer,
-</strong><strong>        delegateAccounts.items, // delegated accounts to revoke
-</strong><strong>        tokenOwner, // owner of compressed tokens
+</strong><strong>        delegateAccountsBefore.items, // delegated accounts to revoke
+</strong><strong>        tokenOwner,
 </strong><strong>    );
 </strong>
     console.log("Delegate revoked!");
     console.log("Transaction:", revokeTx);
 
-<strong>    // Step 3: Verify delegation removed via getCompressedTokenAccountsByDelegate
+<strong>    // Step 5: Verify delegation removed
 </strong><strong>    const delegateAccountsAfter = await rpc.getCompressedTokenAccountsByDelegate(
-</strong><strong>        delegate,
+</strong><strong>        delegate.publicKey,
 </strong><strong>        { mint }
 </strong><strong>    );
 </strong>
@@ -331,28 +357,21 @@ async function revokeDelegates() {
         new BN(0)
     );
 
-    console.log("\nFinal balances:");
-    console.log("Delegated accounts:", delegateAccountsAfter.items.length);
+    console.log("\n--- Final State ---");
+    console.log("Delegated accounts remaining:", delegateAccountsAfter.items.length);
     console.log("Owner balance after revocation:", ownerBalance.toNumber() / 1_000_000_000, "tokens");
 
     return {
+        approveTransaction: approveTx,
         revokeTransaction: revokeTx,
         finalOwnerBalance: ownerBalance
     };
 }
 
-revokeDelegates().catch(console.error);
+approveAndRevokeDelegates().catch(console.error);
 </code></pre>
-{% endstep %}
-
-{% step %}
-**Success!**
-
-You've successfully approved and revoked delegation for compressed tokens. The output shows:
-
-* **Approval completion**: Delegate authority granted for specified token amount.
-* **Delegation verification**: Confirmed delegate accounts exist with correct amounts.
-* **Revocation completion**: Delegate authority removed and tokens returned to owner.
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 {% endstepper %}
 
@@ -379,7 +398,7 @@ if (delegateAccounts.items.length === 0) {
 
 </details>
 
-### Advanced Configuration
+## Advanced Configuration
 
 <details>
 
@@ -446,7 +465,7 @@ for (const delegate of delegates) {
 
 </details>
 
-### Next Steps
+# Next Steps
 
 That's it! Explore more guides in our cookbook section, or check out the advanced guides.
 
