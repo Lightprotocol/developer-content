@@ -5,7 +5,6 @@ description: >-
   examples.
 ---
 
-# How to Update Compressed Accounts
 
 Compressed accounts are updated via CPI to the Light System Program.
 
@@ -632,7 +631,7 @@ pub fn update(
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Build a client for your program or learn how to close compressed accounts.
 

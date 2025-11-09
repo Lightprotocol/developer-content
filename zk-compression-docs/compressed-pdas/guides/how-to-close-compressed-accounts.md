@@ -3,8 +3,6 @@ title: How to Close Compressed Accounts
 description: Guide to close compressed accounts in Solana programs with full code examples.
 ---
 
-# How to Close Compressed Accounts
-
 Compressed accounts are closed via CPI to the Light System Program.
 
 Closing a compressed account
@@ -17,16 +15,16 @@ Closing a compressed account
 Find [full code examples at the end](how-to-close-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-## Implementation Guide
+# Implementation Guide
 
-This guide will cover the components of a Solana program that closes compressed accounts.\
+This guide will cover the components of a Solana program that closes compressed accounts.
 Here is the complete flow to close compressed accounts:
 
 <figure><picture><source srcset="../../.gitbook/assets/programßclose.png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-close.png" alt=""></picture><figcaption></figcaption></figure>
 
 {% stepper %}
 {% step %}
-#### Program Setup
+## Program Setup
 
 <details>
 
@@ -94,7 +92,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-#### Instruction Data
+## Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -148,7 +146,7 @@ Clients fetch the current account with `getCompressedAccount()` and populate `Co
 {% endstep %}
 
 {% step %}
-#### Close Compressed Account
+## Close Compressed Account
 
 Load the compressed account and mark it as closed with `LightAccount::new_close()`.
 
@@ -593,7 +591,7 @@ fn close(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightS
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Build a client for your program or learn how to reinitialize compressed accounts.
 

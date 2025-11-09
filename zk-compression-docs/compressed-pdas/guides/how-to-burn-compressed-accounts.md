@@ -3,7 +3,6 @@ title: How to Burn Compressed Accounts
 description: Guide to burn compressed accounts in Solana programs with full code examples.
 ---
 
-# How to Burn Compressed Accounts
 
 Compressed accounts are permanently burned via CPI to the Light System Program.
 
@@ -26,7 +25,7 @@ Here is the complete flow to burn compressed accounts:
 
 {% stepper %}
 {% step %}
-#### Program Setup
+## Program Setup
 
 <details>
 
@@ -94,7 +93,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-#### Instruction Data
+## Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -147,7 +146,7 @@ Burn does not specify an output state tree. `CompressedAccountMetaBurn` omits `o
 {% endstep %}
 
 {% step %}
-#### Burn Compressed Account
+## Burn Compressed Account
 
 Burn the compressed account permanently with `LightAccount::new_burn()`. No account can be reinitialized at this address in the future.
 
@@ -207,7 +206,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_burn(
 {% endstep %}
 
 {% step %}
-#### Light System Program CPI
+## Light System Program CPI
 
 The Light System Program CPI burns the compressed account permanently.
 
@@ -588,7 +587,7 @@ fn burn(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), LightSd
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Build a client for your program or get an overview on all compressed account operations.
 

@@ -5,8 +5,6 @@ description: >-
   examples.
 ---
 
-# How to Reinitialize Compressed Accounts
-
 Compressed accounts are reinitialized via CPI to the Light System Program.
 
 An empty compressed account can be reinitialized
@@ -20,14 +18,14 @@ Find [full code examples at the end](how-to-reinitialize-compressed-accounts.md#
 
 ## Implementation Guide
 
-This guide will cover the components of a Solana program that reinitializes compressed accounts.\
+This guide will cover the components of a Solana program that reinitializes compressed accounts.
 Here is the complete flow to reinitialize compressed accounts:
 
 <figure><picture><source srcset="../../.gitbook/assets/program-reinit (1).png" media="(prefers-color-scheme: dark)"><img src="../../.gitbook/assets/program-reinit.png" alt=""></picture><figcaption></figcaption></figure>
 
 {% stepper %}
 {% step %}
-#### Program Setup
+## Program Setup
 
 <details>
 
@@ -95,7 +93,7 @@ The traits listed above are required for `LightAccount`. `LightAccount` wraps `M
 {% endstep %}
 
 {% step %}
-#### Instruction Data
+## Instruction Data
 
 Define the instruction data with the following parameters:
 
@@ -142,7 +140,7 @@ Reinitialization does not require `current_value` parameters. `new_empty()` auto
 {% endstep %}
 
 {% step %}
-#### Reinitialize Closed Account
+## Reinitialize Closed Account
 
 Reinitialize the closed account with `LightAccount::new_empty()`.
 
@@ -200,7 +198,7 @@ let my_compressed_account = LightAccount::<MyCompressedAccount>::new_empty(
 {% endstep %}
 
 {% step %}
-#### Light System Program CPI
+## Light System Program CPI
 
 Invoke the Light System Program to reinitialize the compressed account.
 
@@ -286,7 +284,7 @@ LightSystemProgramCpi::new_cpi(LIGHT_CPI_SIGNER, instruction_data.proof)
 {% endstep %}
 {% endstepper %}
 
-## Full Code Example
+# Full Code Example
 
 The counter programs below implement all steps from this guide. Make sure you have your [developer environment](https://www.zkcompression.com/compressed-pdas/create-a-program-with-compressed-pdas#start-building) set up first.
 
@@ -644,7 +642,7 @@ fn reinit(accounts: &[AccountInfo], instruction_data: &[u8]) -> Result<(), Light
 {% endtab %}
 {% endtabs %}
 
-## Next Steps
+# Next Steps
 
 Build a client for your program or learn how to burn compressed accounts.
 

@@ -5,8 +5,6 @@ description: >-
   examples.
 ---
 
-# How to Create Compressed Accounts
-
 Compressed accounts and addresses are created via CPI to the Light System Program.
 
 * Compressed and regular Solana accounts share the same functionality and are fully composable.
@@ -19,7 +17,7 @@ Compressed accounts and addresses are created via CPI to the Light System Progra
 Find [full code examples at the end](how-to-create-compressed-accounts.md#full-code-example) for Anchor and native Rust.
 {% endhint %}
 
-## Implementation Guide
+# Implementation Guide
 
 This guide will cover the components of a Solana program that creates compressed accounts.\
 Here is the complete flow:
@@ -670,10 +668,11 @@ pub fn create(
 }
 ```
 {% endcode %}
+
 {% endtab %}
 {% endtabs %}
 
-### Next Steps
+# Next Steps
 
 Build a client for your program or learn how to update compressed accounts.
 
