@@ -18,7 +18,7 @@ Leading Solana Wallets like Phantom and Backpack already support compressed toke
 {% tabs %}
 {% tab title="Code Snippets" %}
 
-## Display Compressed Token Balances
+### Display Compressed Token Balances
 
 ```javascript
 import { Rpc, createRpc } from '@lightprotocol/stateless.js';
@@ -33,7 +33,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 })();
 ```
 
-## Get Transaction History
+### Get Transaction History
 
 ```javascript
 import { Rpc, createRpc } from '@lightprotocol/stateless.js';
@@ -53,7 +53,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 })();
 ```
 
-## Send Compressed Tokens
+### Send Compressed Tokens
 
 ```typescript
 import {
@@ -124,7 +124,7 @@ const amount = bn(1e8);
 
 {% stepper %}
 {% step %}
-## **Prerequisites**
+### **Prerequisites**
 
 Make sure you have dependencies and developer environment set up!
 
@@ -217,7 +217,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-## Display Compressed Token Balances
+### Display Compressed Token Balances
 
 This example fetches and displays all compressed token balances for a wallet address.
 
@@ -242,7 +242,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 {% endstep %}
 
 {% step %}
-## Get Transaction History
+### Get Transaction History
 
 This example retrieves compression transaction signatures and detailed transaction information for wallet transaction history display.
 
@@ -277,7 +277,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 {% endstep %}
 
 {% step %}
-## Send Compressed Tokens
+### Send Compressed Tokens
 
 First, set up a test mint to and mint 10 compressed tokens to your filesystem wallet.
 
