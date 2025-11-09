@@ -258,7 +258,6 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 {% tab title="V1 Trees" %}
 {% code overflow="wrap" %}
 ```rust
-// Returns hardcoded tree info for local/test networks
 let address_tree_info = rpc.get_address_tree_v1();
 let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 ```
