@@ -909,9 +909,9 @@ accounts.add_system_accounts(config)?;
 {% endtabs %}
 
 {% hint style="info" %}
-**Anchor programs:** Signers are automatically handled by Anchor's account validation. Do not add them to `pre_accounts`.
+**Anchor programs:** Signers are validated automatically by Anchor's account validation. Do not add them to `pre_accounts`.
 
-**Native programs:** Manually add the signer to `pre_accounts` before adding system accounts.
+**Native programs:** Add the signer pubkey to `pre_accounts` before adding system accounts.
 {% endhint %}
 
 ### 3. Pack Tree Accounts
@@ -1064,6 +1064,7 @@ Call `to_account_metas()` on your `PackedAccounts` instance
 {% endtab %}
 {% endtabs %}
 
+{% endtab %}
 {% endtabs %}
 {% endstep %}
 
