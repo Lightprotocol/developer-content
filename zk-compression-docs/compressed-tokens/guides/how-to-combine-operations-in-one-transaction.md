@@ -1,13 +1,11 @@
 ---
-title: How to Combine Operations in One Transaction
-description: Complete guide to combine multiple compressed token operations in a single transaction with instruction-level APIs.
-hidden: true
+title: How to Combine Instructions in One Transaction
+description: Guide to combine multiple instructions in a single transaction. Full code example for token pool creation and for first-time compression of existing SPL tokens.
 ---
 
-Combine multiple operations in a single transaction for create mint, mint tokens, and transfer.
+The SDK provides instruction-level APIs that return instructions without sending transactions. Combine these instructions to build custom transactions with multiple instructions.
 
-The SDK provides instruction-level APIs that return instructions without sending transactions. Combine these instructions to build custom transactions with multiple operations.
-
+This guide demonstrates creating a token pool and compressing existing SPL tokens in a single transaction.
 
 # Full Code Example
 
@@ -112,137 +110,15 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-## Create Mint + Mint Tokens
+## Create Token Pool + Compress
 
-Run this script to create a mint and mint tokens in a single transaction.
-
-<pre class="language-typescript" data-title="create-and-mint.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
-// 2. Build instructions for create mint and mint tokens
-// 3. Combine instructions in one transaction with buildAndSignTx()
-// 4. Verify via getCompressedTokenAccountsByOwner
-
-import {
-    Keypair,
-    ComputeBudgetProgram,
-} from '@solana/web3.js';
-import { createRpc, buildAndSignTx, sendAndConfirmTx, selectStateTreeInfo } from '@lightprotocol/stateless.js';
-import { CompressedTokenProgram } from '@lightprotocol/compressed-token';
-import { MINT_SIZE, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import BN from 'bn.js';
-
-async function createMintAndMintTokens() {
-    // Step 1: Setup funded payer and connect to local validator
-    const rpc = createRpc(); // defaults to localhost:8899
-    const payer = Keypair.generate();
-    const airdropSignature = await rpc.requestAirdrop(payer.publicKey, 1000000000); // 1 SOL
-    await rpc.confirmTransaction(airdropSignature);
-
-<strong>    // Step 2: Build instructions for create mint and mint tokens
-</strong>    const mintKeypair = Keypair.generate();
-    const recipient = Keypair.generate();
-
-    // Get rent exemption for mint account
-    const rentExemptBalance = await rpc.getMinimumBalanceForRentExemption(MINT_SIZE);
-
-    // Get create mint instructions (returns array of instructions)
-    const createMintIxs = await CompressedTokenProgram.createMint({
-        feePayer: payer.publicKey,
-        mint: mintKeypair.publicKey,
-        decimals: 9,
-        authority: payer.publicKey,
-        freezeAuthority: null,
-        rentExemptBalance,
-        tokenProgramId: TOKEN_PROGRAM_ID,
-    });
-
-    // Get state tree info for minting
-    const outputStateTreeInfo = selectStateTreeInfo(await rpc.getStateTreeInfos());
-
-    // Derive token pool PDA that will be created (index 0)
-    const [tokenPoolPda, bump] = CompressedTokenProgram.deriveTokenPoolPdaWithIndex(
-        mintKeypair.publicKey,
-        0
-    );
-
-    // Build token pool info for instruction
-    const tokenPoolInfo = {
-        mint: mintKeypair.publicKey,
-        tokenPoolPda,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        balance: new BN(0),
-        isInitialized: false, // Will be initialized in this transaction
-        poolIndex: 0,
-        bump,
-    };
-
-    // Get mint instruction
-    const mintToIx = await CompressedTokenProgram.mintTo({
-        feePayer: payer.publicKey,
-        mint: mintKeypair.publicKey,
-        authority: payer.publicKey,
-        amount: 1_000_000_000, // 1 token with 9 decimals
-        toPubkey: recipient.publicKey,
-        outputStateTreeInfo,
-        tokenPoolInfo,
-    });
-
-<strong>    // Step 3: Combine all instructions in one transaction
-</strong>    const { blockhash } = await rpc.getLatestBlockhash();
-
-    const allInstructions = [
-        ComputeBudgetProgram.setComputeUnitLimit({ units: 1_200_000 }),
-        ...createMintIxs, // Spread array of create mint instructions
-        mintToIx,         // Add mint instruction
-    ];
-
-    const tx = buildAndSignTx(
-        allInstructions,
-        payer,
-        blockhash,
-        [mintKeypair] // Additional signer for mint account
-    );
-
-    const txId = await sendAndConfirmTx(rpc, tx);
-
-    console.log("Mint address:", mintKeypair.publicKey.toBase58());
-    console.log("Recipient:", recipient.publicKey.toBase58());
-    console.log("Transaction:", txId);
-
-    // Step 4: Verify via getCompressedTokenAccountsByOwner
-    const tokenAccounts = await rpc.getCompressedTokenAccountsByOwner(
-        recipient.publicKey,
-        { mint: mintKeypair.publicKey }
-    );
-
-    if (tokenAccounts.items.length > 0) {
-        const balance = tokenAccounts.items[0].parsed.amount;
-        console.log("Verified balance:", balance.toNumber() / 1_000_000_000, "tokens");
-    }
-
-    return {
-        transactionSignature: txId,
-        mint: mintKeypair.publicKey,
-        recipient: recipient.publicKey,
-    };
-}
-
-createMintAndMintTokens().catch(console.error);
-</code></pre>
-{% endstep %}
-
-{% step %}
-## Mint + Transfer
-
-Run this script to mint and transfer tokens in a single transaction.
-
-<pre class="language-typescript" data-title="mint-and-transfer.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup with existing mint
-// 2. Build instructions for mint and transfer
+<pre class="language-typescript" data-title="create-pool-and-compress.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup: Create regular SPL token and mint to ATA
+// 2. Build instructions for create token pool and compress
 // 3. Combine instructions in one transaction
-// 4. Verify both recipient balances
+// 4. Verify compressed balance
 
 import {
     Keypair,
-    PublicKey,
     ComputeBudgetProgram,
 } from '@solana/web3.js';
 import {
@@ -251,107 +127,149 @@ import {
     sendAndConfirmTx,
     selectStateTreeInfo,
 } from '@lightprotocol/stateless.js';
-import { CompressedTokenProgram, getTokenPoolInfos, selectTokenPoolInfo, createMint } from '@lightprotocol/compressed-token';
+import { CompressedTokenProgram } from '@lightprotocol/compressed-token';
+import {
+    createMint,
+    getOrCreateAssociatedTokenAccount,
+    mintTo,
+    TOKEN_PROGRAM_ID,
+} from '@solana/spl-token';
 import BN from 'bn.js';
 
-async function mintAndTransfer() {
-    // Step 1: Setup with existing mint
+async function createPoolAndCompress() {
+    // Step 1: Setup - Create regular SPL token and mint to ATA
     const rpc = createRpc();
     const payer = Keypair.generate();
     const airdropSignature = await rpc.requestAirdrop(payer.publicKey, 1000000000);
     await rpc.confirmTransaction(airdropSignature);
 
-    // Create mint first (needed for token pool)
-    const { mint } = await createMint(
+    // Create regular SPL token mint
+    const mint = await createMint(
         rpc,
         payer,
         payer.publicKey,
-        9
+        null,
+        9,
+        undefined,
+        undefined,
+        TOKEN_PROGRAM_ID
     );
 
-    console.log("Mint created:", mint.toBase58());
+    // Create ATA and mint tokens to it
+    const ata = await getOrCreateAssociatedTokenAccount(
+        rpc,
+        payer,
+        mint,
+        payer.publicKey,
+        undefined,
+        undefined,
+        undefined,
+        TOKEN_PROGRAM_ID
+    );
 
-    const firstRecipient = Keypair.generate();
-    const secondRecipient = Keypair.generate();
+    await mintTo(
+        rpc,
+        payer,
+        mint,
+        ata.address,
+        payer,
+        1_000_000_000, // 1 token with 9 decimals
+        undefined,
+        undefined,
+        TOKEN_PROGRAM_ID
+    );
 
-<strong>    // Step 2: Build instructions for mint and transfer
+    console.log("Regular SPL token created:", mint.toBase58());
+    console.log("ATA balance:", 1, "token");
+
+<strong>    // Step 2: Build instructions for create token pool and compress
 </strong>    const outputStateTreeInfo = selectStateTreeInfo(await rpc.getStateTreeInfos());
-    const tokenPoolInfo = selectTokenPoolInfo(await getTokenPoolInfos(rpc, mint));
 
-    // Mint 2 tokens to first recipient
-    const mintToIx = await CompressedTokenProgram.mintTo({
+    // Derive token pool PDA
+    const tokenPoolPda = CompressedTokenProgram.deriveTokenPoolPda(mint);
+
+    // Create token pool instruction
+    const createTokenPoolIx = await CompressedTokenProgram.createTokenPool({
         feePayer: payer.publicKey,
         mint,
-        authority: payer.publicKey,
-        amount: 2_000_000_000, // 2 tokens
-        toPubkey: firstRecipient.publicKey,
-        outputStateTreeInfo,
-        tokenPoolInfo,
+        tokenProgram: TOKEN_PROGRAM_ID,
     });
 
-    // Transfer 1 token from first to second recipient
-    const transferIx = await CompressedTokenProgram.transfer({
-        feePayer: payer.publicKey,
-        mint,
-        authority: firstRecipient.publicKey,
-        amount: 1_000_000_000, // 1 token
-        toAddress: secondRecipient.publicKey,
+    // Manually construct TokenPoolInfo for first-time compression
+    const tokenPoolInfo = {
+        mint: mint,
+        tokenPoolPda: tokenPoolPda,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        isInitialized: true, // Set to true even though pool will be created in this tx
+        balance: new BN(0),
+        poolIndex: 0,
+        bump: 0, // Placeholder value
+    };
+
+    // Create compress instruction
+    const compressIx = await CompressedTokenProgram.compress({
         outputStateTreeInfo,
-        rpc,
+        tokenPoolInfo,
+        payer: payer.publicKey,
+        owner: payer.publicKey,
+        source: ata.address,
+        toAddress: payer.publicKey,
+        amount: new BN(1_000_000_000),
+        mint,
     });
 
 <strong>    // Step 3: Combine instructions in one transaction
 </strong>    const { blockhash } = await rpc.getLatestBlockhash();
 
     const allInstructions = [
-        ComputeBudgetProgram.setComputeUnitLimit({ units: 1_500_000 }),
-        mintToIx,
-        transferIx,
+        ComputeBudgetProgram.setComputeUnitLimit({ units: 1_000_000 }),
+        createTokenPoolIx,
+        compressIx,
     ];
 
     const tx = buildAndSignTx(
         allInstructions,
         payer,
         blockhash,
-        [firstRecipient] // First recipient must sign transfer
+        []
     );
 
     const txId = await sendAndConfirmTx(rpc, tx);
 
-    console.log("Mint and transfer Transaction:", txId);
+    console.log("Token pool created and tokens compressed");
+    console.log("Transaction:", txId);
 
-    // Step 4: Verify both recipient balances
-    const firstRecipientAccounts = await rpc.getCompressedTokenAccountsByOwner(
-        firstRecipient.publicKey,
+    // Step 4: Verify compressed balance
+    const compressedAccounts = await rpc.getCompressedTokenAccountsByOwner(
+        payer.publicKey,
         { mint }
     );
 
-    const secondRecipientAccounts = await rpc.getCompressedTokenAccountsByOwner(
-        secondRecipient.publicKey,
-        { mint }
-    );
-
-    const firstBalance = firstRecipientAccounts.items.reduce(
+    const compressedBalance = compressedAccounts.items.reduce(
         (sum, account) => sum.add(account.parsed.amount),
         new BN(0)
     );
 
-    const secondBalance = secondRecipientAccounts.items.reduce(
-        (sum, account) => sum.add(account.parsed.amount),
-        new BN(0)
-    );
+    console.log("Compressed balance:", compressedBalance.toNumber() / 1_000_000_000, "tokens");
 
-    console.log("\nFinal balances:");
-    console.log("First recipient:", firstBalance.toNumber() / 1_000_000_000, "tokens");
-    console.log("Second recipient:", secondBalance.toNumber() / 1_000_000_000, "tokens");
-
-    return { transactionSignature: txId, mint };
+    return {
+        transactionSignature: txId,
+        mint,
+        compressedBalance: compressedBalance.toNumber(),
+    };
 }
 
-mintAndTransfer().catch(console.error);
+createPoolAndCompress().catch(console.error);
 </code></pre>
 {% endstep %}
+
 {% endstepper %}
 
 # Next Steps
+
+Learn how to transfer compressed tokens.
+
+{% content-ref url="how-to-transfer-compressed-token.md" %}
+[how-to-transfer-compressed-token.md](how-to-transfer-compressed-token.md)
+{% endcontent-ref %}
 
