@@ -118,7 +118,7 @@ Start a start a single-node Solana cluster, an RPC node, and a prover node at po
 
 ```typescript
 const lightWasm: LightWasm = await WasmFactory.getInstance();
-const testRpc = await getTestRpc(lightWasm);
+const testRpc = await TestRpc.create(lightWasm);
 ```
 {% endtab %}
 
@@ -258,6 +258,7 @@ const outputStateTree = selectStateTreeInfo(stateTreeInfos);
 {% tab title="V1 Trees" %}
 {% code overflow="wrap" %}
 ```rust
+// Returns hardcoded tree info for local/test networks
 let address_tree_info = rpc.get_address_tree_v1();
 let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 ```
@@ -720,12 +721,12 @@ Populate the `systemAccounts` section with Light System accounts. These accounts
 
 {% code overflow="wrap" %}
 ```typescript
-const systemAccountConfig = new SystemAccountMetaConfig(programId);
+const systemAccountConfig = SystemAccountMetaConfig.new(programId);
 packedAccounts.addSystemAccounts(systemAccountConfig);
 ```
 {% endcode %}
 
-1. Pass your program ID to `new SystemAccountMetaConfig(programId)` to configure system accounts
+1. Pass your program ID to `SystemAccountMetaConfig.new(programId)` to configure system accounts
 2. Call `addSystemAccounts(systemAccountConfig)` - the SDK populates `systemAccounts` with Light System accounts, including the CPI signer PDA derived from your program ID
 
 {% hint style="info" %}
