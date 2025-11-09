@@ -36,8 +36,8 @@
   * [Reinitialize Compressed Accounts](compressed-pdas/guides/how-to-reinitialize-compressed-accounts.md)
   * [Burn Compressed Accounts](compressed-pdas/guides/how-to-burn-compressed-accounts.md)
 * [Client Library](compressed-pdas/client-library/README.md)
-  * [Rust](compressed-pdas/client-library/rust.md)
-  * [Typescript](compressed-pdas/client-library/typescript.md)
+  * [Typescript](compressed-pdas/client-library/README.md#installation-and-setup)
+  * [Rust](compressed-pdas/client-library/README.md#installation-and-setup)
 * [Program Examples](compressed-pdas/program-examples.md)
 
 ## Learn
