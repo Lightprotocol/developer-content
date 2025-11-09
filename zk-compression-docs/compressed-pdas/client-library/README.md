@@ -123,7 +123,7 @@ const testRpc = await getTestRpc(lightWasm);
 {% endtab %}
 
 {% tab title="Rust" %}
-Rust has only one client library, and a separate SDK for program-side development:
+Rust offers one client library, and a separate SDK for program-side development:
 
 1. [`light-client`](https://docs.rs/light-client): The RPC client that provides the ZK Compression RPC interface to query and build transactions for **compressed accounts and tokens** on Solana.
 2. [`light-sdk`](https://docs.rs/light-sdk): Program-side abstractions (macros, wrappers, CPI interface) to create and interact with compressed accounts in Solana programs. Similar to Anchor's `Account` pattern.
@@ -692,9 +692,9 @@ To optimize instruction data we pack accounts into an array:
 const packedAccounts = new PackedAccounts();
 ```
 
-`PackedAccounts` creates a helper instance with three empty account sections that you populate in the following steps:
+`PackedAccounts` creates a helper instance with three empty account sections:
 
-1. **`preAccounts`**: Program-specific accounts like signers or fee payer
+1. **`preAccounts`**: Program-specific accounts like signers or fee payer.
 2. **`systemAccounts`**: [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) for proof verification and CPI calls to update state and address trees
 3. **`treeAccounts`**: State trees, address trees, and queue accounts from validity proof
 
@@ -708,9 +708,11 @@ const packedAccounts = new PackedAccounts();
                                    queues
 ```
 
+{% hint style="info" %}
 * The instance maintains an internal deduplication map that assigns sequential u8 indices (0, 1, 2...) when you call `insertOrGet()`.
 * If the same pubkey is inserted multiple times, it returns the cached index.
 * For example, if the input state tree equals the output state tree, both return the same index.
+{% endhint %}
 
 ### 2. Add Light System Accounts
 
@@ -856,7 +858,7 @@ Creates a PackedAccounts instance that manages account deduplication and indexin
 
 The instance organizes accounts into three sections:
 
-1. **`pre_accounts`**: Program-specific accounts (signers, fee payer) - Native programs only
+1. **`pre_accounts`**: Program-specific accounts (signers, fee payer)
 2. **`system_accounts`**: [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) for proof verification and CPI calls to update state and address trees
 3. **`tree_accounts`**: State trees, address trees, and queue accounts added dynamically via `insert_or_get()`
 
@@ -880,39 +882,15 @@ The instance organizes accounts into three sections:
 
 Populate the `system_accounts` with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) needed for proof verification and CPI calls to update state and address trees.
 
-{% tabs %}
-{% tab title="Anchor" %}
 {% code overflow="wrap" %}
 ```rust
-let config = SystemAccountMetaConfig::new(program_create::ID);
+let config = SystemAccountMetaConfig::new(program::ID);
 remaining_accounts.add_system_accounts(config)?;
 ```
 {% endcode %}
 
 1. Pass your program ID to `SystemAccountMetaConfig::new(program_id)` to configure system accounts
-2. Call `add_system_accounts(config)?` - the SDK populates `system_accounts` with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts), including the CPI signer PDA derived from your program ID
-{% endtab %}
-
-{% tab title="Native" %}
-{% code overflow="wrap" %}
-```rust
-let config = SystemAccountMetaConfig::new(native_program::ID);
-accounts.add_pre_accounts_signer(payer.pubkey());
-accounts.add_system_accounts(config)?;
-```
-{% endcode %}
-
-1. Pass your program ID to `SystemAccountMetaConfig::new(program_id)` to derive the CPI signer PDA
-2. Call `add_pre_accounts_signer(payer.pubkey())` - Native programs must manually add the signer to `pre_accounts`
-3. Call `add_system_accounts(config)?` - the SDK populates the `system_accounts` section with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts).
-{% endtab %}
-{% endtabs %}
-
-{% hint style="info" %}
-**Anchor programs:** Signers are validated automatically by Anchor's account validation. Do not add them to `pre_accounts`.
-
-**Native programs:** Add the signer pubkey to `pre_accounts` before adding system accounts.
-{% endhint %}
+2. Call `add_system_accounts(config)?` - the SDK populates `system_accounts` with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts), including the CPI signer PDA derived from your program ID.
 
 ### 3. Pack Tree Accounts
 
@@ -920,9 +898,6 @@ Add tree and queue accounts to the packed accounts array and retrieve indices fo
 
 {% tabs %}
 {% tab title="Create" %}
-
-{% tabs %}
-{% tab title="Anchor" %}
 Add the address tree and address queue pubkeys to the accounts array and retrieve their indices.
 
 {% code overflow="wrap" %}
@@ -935,26 +910,6 @@ let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
    * Returns `PackedTreeInfos` with `.address_trees` field
    * Contains `PackedAddressTreeInfo` with indices for address tree, address queue, and root index
 2. You will use `packed_accounts.address_trees[0]` in your instruction
-{% endtab %}
-
-{% tab title="Native" %}
-Add the output state tree, address tree, and address queue pubkeys to the accounts array and retrieve their indices.
-
-{% code overflow="wrap" %}
-```rust
-let output_state_tree_index = accounts.insert_or_get(*merkle_tree_pubkey);
-let packed_address_tree_info = rpc_result.pack_tree_infos(&mut accounts).address_trees[0];
-```
-{% endcode %}
-
-1. Call `insert_or_get()` with the output state tree pubkey from `merkle_tree_pubkey`
-   * Returns u8 index for the output state tree
-   * Native programs add output tree before packing tree infos
-2. Call `pack_tree_infos()` on the RPC result and extract `.address_trees[0]`
-   * Returns `PackedAddressTreeInfo` with indices for address tree and address queue
-3. You will use both `output_state_tree_index` and `packed_address_tree_info` in your instruction
-{% endtab %}
-{% endtabs %}
 {% endtab %}
 
 {% tab title="Update / Close / Reinit" %}
@@ -1005,11 +960,10 @@ let packed_tree_accounts = rpc_result
 
 ### 4. Pack Output State Tree (Anchor Create Only)
 
-For Anchor Create operations, pack the output state tree to store the new account hash.
+For Anchor Create instructions, pack the output state tree to store the new account hash.
 
 {% hint style="info" %}
 * **Anchor Create**: Requires separate `pack_output_tree_index()` call (shown below)
-* **Native Create**: Already done via `insert_or_get()` in Step 3
 * **Update/Close/Reinit**: `output_tree_index` already included in `PackedStateTreeInfos` from Step 3
 * **Burn**: No output state tree
 {% endhint %}
@@ -1030,8 +984,6 @@ Call `pack_output_tree_index()` on the output state tree `TreeInfo`
 
 Convert packed accounts into the final array for your instruction.
 
-{% tabs %}
-{% tab title="Anchor" %}
 {% code overflow="wrap" %}
 ```rust
 let (remaining_accounts, _, _) = remaining_accounts.to_account_metas();
@@ -1045,24 +997,6 @@ Call `to_account_metas()` on your `PackedAccounts` instance
   * `system_start`: Offset where system accounts start (used internally by Light System Program)
   * `packed_start`: Offset where tree accounts start (used internally by Light System Program)
 * Pass `remaining_accounts` to `.remaining_accounts()` in your Anchor instruction builder
-{% endtab %}
-
-{% tab title="Native" %}
-{% code overflow="wrap" %}
-```rust
-let (account_metas, system_start, packed_start) = accounts.to_account_metas();
-```
-{% endcode %}
-
-Call `to_account_metas()` on your `PackedAccounts` instance
-
-* Returns a tuple with three elements:
-  * `account_metas`: `Vec<AccountMeta>` containing all accounts
-  * `system_start`: Offset where system accounts start
-  * `packed_start`: Offset where tree accounts start
-* Native programs must include `system_start` and `packed_start` in instruction data so the program knows the account array layout
-{% endtab %}
-{% endtabs %}
 
 {% endtab %}
 {% endtabs %}
