@@ -23,13 +23,13 @@ Maps documentation pages to source code and examples.
 
 ## Key Repositories
 
-- **light-protocol**: https://github.com/Lightprotocol/light-protocol
-- **photon**: https://github.com/helius-labs/photon
-- **program-examples**: https://github.com/Lightprotocol/program-examples
+- **light-protocol**: <https://github.com/Lightprotocol/light-protocol>
+- **photon**: <https://github.com/helius-labs/photon>
+- **program-examples**: <https://github.com/Lightprotocol/program-examples>
 
 ## Compressed Tokens
 
-```
+```text
 Compressed Tokens
   ├── Overview (compressed-tokens/overview.md)
   │   └── src: https://github.com/Lightprotocol/light-protocol/tree/main/js/compressed-token
@@ -88,7 +88,7 @@ Compressed Tokens
 
 ## Compressed PDAs
 
-```
+```text
 Compressed PDAs
   ├── Create a Program with Compressed PDAs (compressed-pdas/create-a-program-with-compressed-pdas.md)
   │   ├── src: https://github.com/Lightprotocol/light-protocol/tree/main/sdk-libs/sdk
@@ -150,7 +150,7 @@ Compressed PDAs
 
 ## Learn
 
-```
+```text
 Learn
   ├── Core Concepts (learn/core-concepts/README.md)
   │   ├── Compressed Account Model (compressed-account-model.md)
@@ -180,7 +180,7 @@ Learn
 
 ## Resources
 
-```
+```text
 Resources
   ├── CLI Installation (cli-installation.md)
   │   ├── CLI source: https://github.com/Lightprotocol/light-protocol/tree/main/cli
@@ -274,12 +274,15 @@ Resources
 
 ## References
 
-├── Whitepaper (references/whitepaper.md)
-│   └── PDF: https://github.com/Lightprotocol/light-protocol/blob/main/light_paper_v0.1.0.pdf
-├── Node Operators (references/node-operators.md)
-│   ├── Photon indexer: https://github.com/helius-labs/photon
-│   ├── Prover: https://github.com/Lightprotocol/light-protocol/tree/main/light-prover
-│   └── Forester: https://github.com/Lightprotocol/light-protocol/tree/main/forester
-├── Terminology (references/terminology.md)
-└── Security (references/security.md)
-    └── audits: https://github.com/Lightprotocol/light-protocol/tree/main/audits
+```text
+References
+  ├── Whitepaper (references/whitepaper.md)
+  │   └── PDF: <https://github.com/Lightprotocol/light-protocol/blob/main/light_paper_v0.1.0.pdf>
+  ├── Node Operators (references/node-operators.md)
+  │   ├── Photon indexer: <https://github.com/helius-labs/photon>
+  │   ├── Prover: <https://github.com/Lightprotocol/light-protocol/tree/main/light-prover>
+  │   └── Forester: <https://github.com/Lightprotocol/light-protocol/tree/main/forester>
+  ├── Terminology (references/terminology.md)
+  └── Security (references/security.md)
+      └── audits: <https://github.com/Lightprotocol/light-protocol/tree/main/audits>
+```
