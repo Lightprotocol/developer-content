@@ -9,6 +9,7 @@ reviews:
     - "!node_modules/**"
     - "!dist/**"
     - "src/**"
+    - "zk-compression-docs/**"
     - "LICENSE"
 
   # Custom review instructions for specific paths
