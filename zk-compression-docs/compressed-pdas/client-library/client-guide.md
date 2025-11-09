@@ -719,10 +719,12 @@ const packedAccounts = new PackedAccounts();
 Populate the `systemAccounts` section with Light System accounts. These accounts are needed for proof verification and CPI calls to update state and address trees.
 
 {% code overflow="wrap" %}
+
 ```typescript
 const systemAccountConfig = SystemAccountMetaConfig.new(programId);
 packedAccounts.addSystemAccounts(systemAccountConfig);
 ```
+
 {% endcode %}
 
 1. Pass your program ID to `SystemAccountMetaConfig.new(programId)` to configure system accounts
