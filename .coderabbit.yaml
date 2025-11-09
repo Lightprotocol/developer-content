@@ -32,3 +32,4 @@ knowledge_base:
     filePatterns:
       - "zk-compression-docs/.context/**"
       - "**/CLAUDE.md"
+      - ".claude/skills/gitbook-assistant/**"
