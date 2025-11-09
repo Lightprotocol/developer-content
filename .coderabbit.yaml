@@ -9,8 +9,33 @@ reviews:
     - "!node_modules/**"
     - "!dist/**"
     - "src/**"
-    - "zk-compression-docs/**"
     - "LICENSE"
+
+  # Custom review instructions for specific paths
+  path_instructions:
+    - path: "zk-compression-docs/**/*.md"
+      instructions: |
+        When reviewing documentation changes:
+        1. Verify that all source code references in the documentation exist and are accurate
+        2. Check CLAUDE.md to ensure the page-to-source-code mapping is updated if new pages are added
+        3. Confirm that code examples match the actual implementation in the linked source files
+        4. Validate that GitHub URLs in the documentation tree are correct and accessible
+
+    - path: "zk-compression-docs/CLAUDE.md"
+      instructions: |
+        When reviewing CLAUDE.md changes:
+        1. Verify that all referenced source code files exist in the light-protocol repository
+        2. Ensure all GitHub URLs are valid and point to the correct files
+        3. Check that the ASCII tree structure is consistent and properly formatted
+        4. Confirm that new documentation pages have corresponding entries in this mapping file
+
+  # General review instructions
+  review_instructions: |
+    Cross-verify documentation with source code:
+    - Use CLAUDE.md as the source of truth for page-to-code mappings
+    - When source code files are modified, check if corresponding documentation needs updates
+    - When documentation is added/modified, verify the source code references are accurate
+
 # add linters and other tools, CodeRabbit will run and check these as part of its review process. See a list of supported tools: https://docs.coderabbit.ai/tools/list
   tools:
     eslint:
@@ -32,4 +57,3 @@ knowledge_base:
     filePatterns:
       - "zk-compression-docs/.context/**"
       - "**/CLAUDE.md"
-      - ".claude/skills/gitbook-assistant/**"

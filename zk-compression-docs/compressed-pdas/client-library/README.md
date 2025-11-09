@@ -840,11 +840,6 @@ const { remainingAccounts, systemStart, packedStart } =
    * From Section 3: `packedAddressTreeInfo` (Create) OR `packedInputAccounts` (Update/Close/Reinit/Burn)
    * From Section 4: `outputStateTreeIndex` (Create/Update/Close/Reinit only - Burn has no output state tree)
 
-{% hint style="info" %}
-**Anchor programs:** Pass `remainingAccounts` to `.remainingAccounts()`. The `systemStart` and `packedStart` offsets are used internally by the Light System Program.
-
-**Native programs:** Include `systemStart` and `packedStart` in your instruction data so the program knows the account array layout.
-{% endhint %}
 {% endtab %}
 
 {% tab title="Rust" %}
