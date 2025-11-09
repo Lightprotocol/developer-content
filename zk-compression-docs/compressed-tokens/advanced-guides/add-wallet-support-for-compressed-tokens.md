@@ -13,6 +13,8 @@ description: Guide to add Compressed Token Support to Your Wallet Application
 Leading Solana Wallets like Phantom and Backpack already support compressed tokens.
 {% endhint %}
 
+# Integration Steps
+
 {% tabs %}
 {% tab title="Code Snippets" %}
 
@@ -636,9 +638,7 @@ If `getCompressedTokenBalancesByOwnerV2` returns empty:
 
 </details>
 
-
-
-Next Steps
+# Next Steps
 
 {% content-ref url="../../../zk-compression-docs/compressed-tokens/guides/" %}
 [guides](../../../zk-compression-docs/compressed-tokens/guides/)
