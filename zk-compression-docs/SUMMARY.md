@@ -19,10 +19,10 @@
   * [Approve and Revoke Delegate Authority](compressed-tokens/guides/how-to-approve-and-revoke-delegate-authority.md)
 * [Advanced Guides](compressed-tokens/advanced-guides/README.md)
   * [Combine Instructions in One Transaction](compressed-tokens/advanced-guides/how-to-combine-operations-in-one-transaction.md)
-  * [Add Wallet Support for Compressed Tokens](compressed-tokens/advanced-guides/add-wallet-support-for-compressed-tokens.md)
-  * [Use Token 2022 with Compression](compressed-tokens/advanced-guides/use-token-2022-with-compression.md)
   * [Create an Airdrop without Claim](compressed-tokens/advanced-guides/create-an-airdrop.md)
   * [Create an Airdrop with Claim](https://github.com/Lightprotocol/example-compressed-claim)
+  * [Add Wallet Support for Compressed Tokens](compressed-tokens/advanced-guides/add-wallet-support-for-compressed-tokens.md)
+  * [Use Token 2022 with Compression](compressed-tokens/advanced-guides/use-token-2022-with-compression.md)
   * [Example Web Client](https://github.com/Lightprotocol/example-web-client)
   * [Example Node.js Client](https://github.com/Lightprotocol/example-nodejs-client)
 

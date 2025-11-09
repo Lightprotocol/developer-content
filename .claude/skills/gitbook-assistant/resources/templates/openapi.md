@@ -89,7 +89,7 @@ x-rpc-method-name: "getCompressedAccount"
 
 ## Notes
 
-- The URL between tags is required (duplicate of src parameter)
+- The URL between tags is required (mirrors the src parameter value for parsing)
 - OpenAPI spec can be JSON or YAML format
 - GitBook will render interactive API documentation
 - Supports OpenAPI 2.0 (Swagger) and 3.0+ specifications
