@@ -7,26 +7,20 @@ The `mergeTokenAccounts()` function consolidates multiple compressed accounts of
 
 The function
 
-1. consumes multiple input compressed token accounts (up to 8 accounts), and
-2. creates a single output compressed account with combined balance for the owner.
+1. consumes multiple compressed token accounts (up to 8 accounts), and
+2. creates a single output compressed token account with combined balance for the owner.
 
 Before we merge compressed accounts, we need
 
-* multiple compressed token accounts of the same mint owned by the same wallet, and
-* SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`.
+* Multiple compressed token accounts of the same mint owned by the same wallet, and
+* an SPL mint with a token pool for compression. This token pool can be created for new SPL mints via [`createMint()`](how-to-create-and-register-a-mint-account-for-compression.md) or added to existing SPL mints via [`createTokenPool()`](how-to-create-compressed-token-pools-for-mint-accounts.md).
 
 {% hint style="success" %}
-State trees where compressed account's are stored, are append only. `mergeTokenAccounts()` reduces account fragmentation to simplify balance calculations from `getCompressedTokenAccountsByOwner`
+State trees where compressed account's are stored, are append only. `mergeTokenAccounts()` reduces account fragmentation to simplify balance calculations from `getCompressedTokenAccountsByOwner`.
 {% endhint %}
 
 {% code title="function-merge-accounts.ts" %}
 ```typescript
-import { mergeTokenAccounts } from '@lightprotocol/compressed-token';
-import { Keypair, PublicKey } from '@solana/web3.js';
-
-const mint = new PublicKey("YOUR_MINT_ADDRESS");
-const owner = payer;
-
 // Combines multiple compressed token accounts into single compressed account
 const transactionSignature = await mergeTokenAccounts(
     rpc,
@@ -37,11 +31,11 @@ const transactionSignature = await mergeTokenAccounts(
 ```
 {% endcode %}
 
-### Full Code Example
+# Full Code Example
 
 {% stepper %}
 {% step %}
-#### Prerequisites
+## Prerequisites
 
 Make sure you have dependencies and developer environment set up!
 
@@ -140,7 +134,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-#### Merging Compressed Accounts
+## Merging Compressed Accounts
 
 Run this script to merge multiple compressed token accounts into one!
 
@@ -242,18 +236,9 @@ async function mergeCompressedAccounts() {
 mergeCompressedAccounts().catch(console.error);
 </code></pre>
 {% endstep %}
-
-{% step %}
-**Success!**
-
-You've merged multiple compressed token accounts. The output shows:
-
-* **Account consolidation**: Multiple accounts merged into a single account
-* **Unified Balance**: Total account balance maintained across the merge
-{% endstep %}
 {% endstepper %}
 
-### Troubleshooting
+## Troubleshooting
 
 <details>
 
@@ -280,7 +265,7 @@ console.log(`Found ${accounts.items.length} accounts to merge`);
 
 </details>
 
-### Advanced Configuration
+## Advanced Configuration
 
 <details>
 
@@ -339,7 +324,7 @@ for (const mint of mints) {
 
 </details>
 
-### Next Steps
+# Next Steps
 
 Learn how to approve and revoke delegate authority for compressed token accounts.
 

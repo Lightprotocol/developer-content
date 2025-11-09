@@ -7,8 +7,8 @@ The `transfer()` function moves compressed tokens between accounts. Unlike regul
 
 Before we can transfer compressed tokens, we need:
 
-* An SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`, and
-* a source compressed token account with sufficient balance for the transfer amount.&#x20;
+* An SPL mint with a token pool for compression. This token pool can be created for new SPL mints via [`createMint()`](how-to-create-and-register-a-mint-account-for-compression.md) or added to existing SPL mints via [`createTokenPool()`](how-to-create-compressed-token-pools-for-mint-accounts.md)., and
+* a source compressed token account with sufficient balance for the transfer amount.
 
 {% hint style="success" %}
 Regular SPL token accounts can be compressed in the same transaction with `compress_or_decompress_amount`, if needed.
@@ -16,30 +16,23 @@ Regular SPL token accounts can be compressed in the same transaction with `compr
 
 {% code title="function-transfer-compressed-tokens.ts" %}
 ```typescript
-  import { transfer } from '@lightprotocol/compressed-token';
-  import { PublicKey } from '@solana/web3.js';
-
-  // Use existing mint with token pool for compression to transfer compressed tokens
-  const mint = new PublicKey("MINT_ADDRESS");
-  const recipient = new PublicKey("RECIPIENT_WALLET_ADDRESS");
-  const amount = 1_000_000_000; // 1 token (9 decimals)
-
-  // Transfer compressed tokens
-  const transactionSignature = await transfer(
-      rpc,
-      payer,
-      mint, // SPL mint with token pool for compression
-      amount,
-      payer,
-      recipient, // destination address (toAddress parameter)
+// Transfer compressed tokens
+const transactionSignature = await transfer(
+    rpc,
+    payer,
+    mint, // SPL mint with token pool for compression
+    amount,
+    payer,
+    recipient, // destination address (toAddress parameter)
+)
 ```
 {% endcode %}
 
-### Full Code Example
+# Full Code Example
 
 {% stepper %}
 {% step %}
-#### Prerequisites
+## Prerequisites
 
 Make sure you have dependencies and developer environment set up!
 
@@ -138,7 +131,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-#### Transferring Compressed Tokens
+## Transferring Compressed Tokens
 
 Run this script to transfer compressed tokens to a recipient!
 
@@ -227,19 +220,9 @@ async function transferCompressedTokens() {
 transferCompressedTokens().catch(console.error);
 </code></pre>
 {% endstep %}
-
-{% step %}
-**Success!**
-
-You've successfully created and transferred compressed tokens. The output shows:
-
-* **Transfer confirmation**: Tokens moved from sender to recipient
-* **Amount verification**: Exact tokens transferred with decimal precision
-* **Balance verification**: Both sender and recipient balances confirmed
-{% endstep %}
 {% endstepper %}
 
-### Troubleshooting
+## Troubleshooting
 
 <details>
 
@@ -311,7 +294,7 @@ if (transferAmount > maxTransferPerTx) {
 
 </details>
 
-### Advanced Configuration
+## Advanced Configuration
 
 <details>
 
@@ -380,7 +363,7 @@ await transferDelegated(
 
 </details>
 
-### Next Steps
+# Next Steps
 
 Learn how compress and decompress SPL Tokens.
 

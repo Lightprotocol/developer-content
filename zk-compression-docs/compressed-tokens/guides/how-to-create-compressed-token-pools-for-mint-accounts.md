@@ -9,25 +9,11 @@ The `createTokenPool()` function registers an existing SPL mint with the compres
 The token pool account itself requires rent, but individual compressed token accounts are rent-free.
 {% endhint %}
 
-The function
-
-1. registers an existing SPL mint with the compressed token program, and
-2. create token pool PDA with `createTokenPoolInstruction`, the omnibus account that holds SPL tokens corresponding to compressed tokens in circulation.
-
 Before we create a token pool, we need an existing SPL mint account.
-
-{% hint style="success" %}
-**Best Practice:** Each mint supports a maximum of 4 token pools total. During compression/decompression operations, token pools get write-locked. Use `addTokenPools()` to create additional pools that increase per-block write-lock capacity.
-{% endhint %}
 
 {% code title="function-create-token-pool.ts" %}
 ```typescript
-import { createTokenPool } from '@lightprotocol/compressed-token';
-import { PublicKey } from '@solana/web3.js';
-
-const mint = new PublicKey("YOUR_EXISTING_SPL_MINT_ADDRESS");
-
-// Registers existing SPL mint with compressed token program, creates token pool account
+// Creates token pool account for existing SPL mint
 const transactionSignature = await createTokenPool(
     rpc,
     payer,
@@ -36,7 +22,11 @@ const transactionSignature = await createTokenPool(
 ```
 {% endcode %}
 
-### Full Code Example
+{% hint style="success" %}
+**Best Practice:** Each mint supports a maximum of 4 token pools total. During compression/decompression operations, token pools get write-locked. Use `addTokenPools()` to create additional pools that increase per-block write-lock capacity.
+{% endhint %}
+
+# Full Code Example
 
 {% stepper %}
 {% step %}
@@ -139,7 +129,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-#### Creating Token Pools
+## Create Token Pool
 
 Run this script to create token pools for an SPL mint!
 
@@ -208,19 +198,9 @@ async function createTokenPools() {
 createTokenPools().catch(console.error);
 </code></pre>
 {% endstep %}
-
-{% step %}
-**Success!**
-
-You've created multiple token pools for an SPL mint. The output shows:
-
-* **Token pool creation**: Omnibus account registered for compression/decompression.
-* **Additional pools**: Multiple pools created for increased write-lock limit per block.
-* **Transaction confirmations**: All pool creation operations confirmed on-chain.
-{% endstep %}
 {% endstepper %}
 
-### Troubleshooting
+## Troubleshooting
 
 <details>
 
@@ -236,7 +216,7 @@ console.log("Token pool created:", poolTx);
 
 </details>
 
-### Advanced Configuration
+## Advanced Configuration
 
 <details>
 
@@ -283,7 +263,7 @@ const poolTx = await createTokenPool(
 
 </details>
 
-### Next Steps
+# Next Steps
 
 Learn how to merge multiple compressed token accounts into one to simplify state management.
 

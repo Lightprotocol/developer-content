@@ -7,41 +7,29 @@ description: Complete guide to create and register an SPL token mint account for
 The mint account itself requires rent (like regular SPL mints), but individual compressed token accounts are rent-free.
 {% endhint %}
 
-Compressed tokens use an SPL mint that is registered with the compressed token program. Connect an existing SPL mint with `createTokenPool()` or use `createMint()` to create a new one from scratch.
+Compressed tokens use an SPL mint that is registered with the compressed token program. Connect an existing SPL mint with [`createTokenPool()`](how-to-create-compressed-token-pools-for-mint-accounts.md) or use `createMint()` to create a new one from scratch.
 
-The `createMint()` function performs three operations:
-
-1. Create a standard SPL mint account `createMintAccountInstruction`,
-2. initialize the mint `initializeMintInstruction` to set authority, decimals, etc., and
-3. create a token pool PDA with `createTokenPoolInstruction`, the [omnibus account](#user-content-fn-1)[^1] for compression and decompression of tokens.
+{% code title="function-create-mint.ts" %}
+```typescript
+// Create SPL mint with token pool for compression
+const { mint, transactionSignature } = await createMint(
+    rpc,
+    payer,
+    mintAuthority.publicKey,
+    decimals,
+);
+```
+{% endcode %}
 
 {% hint style="success" %}
 **Best Practice:** Each mint supports a maximum of 4 token pools total. During compression/decompression operations, token pools get write-locked. Use `addTokenPools()` to create additional pools that increase per-block write-lock capacity.
 {% endhint %}
 
-{% code title="function-create-mint.ts" %}
-```typescript
-  import { createMint } from '@lightprotocol/compressed-token';
-
-  const decimals = 9;
-  const mintAuthority = payer;
-  const freezeAuthority = null; // optional
-
-  // Create SPL mint with token pool for compression
-  const { mint, transactionSignature } = await createMint(
-      rpc,
-      payer,
-      mintAuthority.publicKey,
-      decimals,
-  );
-```
-{% endcode %}
-
-### Full Code Example
+# Full Code Example
 
 {% stepper %}
 {% step %}
-#### Prerequisites
+## Prerequisites
 
 Make sure you have dependencies and developer environment set up!
 
@@ -140,7 +128,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-#### Create SPL Mint with Token Pool for Compression
+## Create SPL Mint with Token Pool for Compression
 
 Run this script to create a mint account with token pool for compression.
 
@@ -177,18 +165,9 @@ async function createCompressedMint() {
 createCompressedMint().catch(console.error);
 </code></pre>
 {% endstep %}
-
-{% step %}
-**Success!**
-
-You've just created and registered a mint account with token pool for ZK Compression. The output shows:
-
-* Mint address
-* Transaction signature
-{% endstep %}
 {% endstepper %}
 
-### Advanced Configurations
+## Advanced Configurations
 
 <details>
 
@@ -232,12 +211,10 @@ const { mint, transactionSignature } = await createMint(
 
 </details>
 
-### Next Steps
+# Next Steps
 
 Learn how to create additional compressed token pools for your SPL mint to increase write-lock limits.
 
 {% content-ref url="how-to-create-compressed-token-pools-for-mint-accounts.md" %}
 [how-to-create-compressed-token-pools-for-mint-accounts.md](how-to-create-compressed-token-pools-for-mint-accounts.md)
 {% endcontent-ref %}
-
-[^1]: SPL token account that holds SPL tokens corresponding to compressed tokens in circulation. Tokens are locked when compressed and withdrawn when decompressed. Owned by the compressed token program's CPI authority PDA.

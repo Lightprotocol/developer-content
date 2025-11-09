@@ -51,7 +51,7 @@ const transactionSignature = await compressSplTokenAccount(
   source to a specified recipient. Use for transfers and precise amounts. [Here is how](how-to-compress-and-decompress-spl-tokens.md).
 {% endhint %}
 
-### Full Code Example
+# Full Code Example
 
 {% stepper %}
 {% step %}
@@ -252,7 +252,7 @@ compressFullAccount().catch(console.error);
 {% endstep %}
 {% endstepper %}
 
-### Troubleshooting
+## Troubleshooting
 
 <details>
 
@@ -313,7 +313,7 @@ const compressTx = await compressSplTokenAccount(
 
 </details>
 
-### Advanced Configuration
+## Advanced Configuration
 
 <details>
 

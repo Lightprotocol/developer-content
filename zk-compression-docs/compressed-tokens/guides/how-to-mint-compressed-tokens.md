@@ -5,23 +5,10 @@ description: Complete guide to mint compressed tokens with mintTo(), troubleshoo
 
 The `mintTo()` function creates compressed token accounts for recipients and increases the mint's token supply. Only the mint authority can perform this operation.
 
-The `mintTo()` function
-
-1. Mints SPL tokens to token pool PDA, the [omnibus account](#user-content-fn-1)[^1] for compression and decompression of tokens
-2. Create compressed accounts containing mint, owner, and amount for each recipient
-
-Before minting compressed tokens, you need an SPL mint registered with the compressed token program via `createMint()` for a new mint, or `createTokenPool()` for an existing mint.
+Before minting compressed tokens, you need an SPL mint with a token pool for compression. This token pool can be created for new SPL mints via [`createMint()`](how-to-create-and-register-a-mint-account-for-compression.md) or added to existing SPL mints via [`createTokenPool()`](how-to-create-compressed-token-pools-for-mint-accounts.md).
 
 {% code title="function-mint-compressed-tokens.ts" %}
 ```typescript
-import { mintTo } from '@lightprotocol/compressed-token';
-import { PublicKey } from '@solana/web3.js';
-
-// Use existing mint with token pool for compression to mint compressed tokens
-const mint = new PublicKey("MINT_ADDRESS");
-const recipient = new PublicKey("RECIPIENT_WALLET_ADDRESS");
-const amount = 1_000_000_000; // 1 token (9 decimals)
-
 // Mint compressed tokens - mints SPL tokens to pool, creates compressed token accounts
 const transactionSignature = await mintTo(
     rpc,
@@ -34,7 +21,7 @@ const transactionSignature = await mintTo(
 ```
 {% endcode %}
 
-### Full Code Example
+# Full Code Example
 
 {% stepper %}
 {% step %}
@@ -206,18 +193,9 @@ async function mintCompressedTokens() {
 mintCompressedTokens().catch(console.error);
 </code></pre>
 {% endstep %}
-
-{% step %}
-**Success!**
-
-You've successfully minted compressed tokens. The output shows:
-
-* **Compressed token supply**: Increased the total supply of your mint
-* **Compressed token balance**
-{% endstep %}
 {% endstepper %}
 
-### Troubleshooting
+## Troubleshooting
 
 <details>
 
@@ -269,7 +247,7 @@ const amounts = [100, 200, 300]; // 3 amounts for 3 recipients
 
 </details>
 
-### Advanced Configuration
+## Advanced Configuration
 
 <details>
 
@@ -323,7 +301,7 @@ const transactionSignature = await approveAndMintTo(
 
 </details>
 
-### Next Steps
+# Next Steps
 
 Learn how to transfer compressed tokens you just minted.
 
