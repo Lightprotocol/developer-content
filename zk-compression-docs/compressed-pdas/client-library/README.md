@@ -686,7 +686,7 @@ To optimize instruction data we pack accounts into an array:
 
 {% tabs %}
 {% tab title="Typescript" %}
-**1. Initialize PackedAccounts**
+### 1. Initialize PackedAccounts
 
 ```typescript
 const packedAccounts = new PackedAccounts();
@@ -712,7 +712,7 @@ const packedAccounts = new PackedAccounts();
 * If the same pubkey is inserted multiple times, it returns the cached index.
 * For example, if the input state tree equals the output state tree, both return the same index.
 
-**2. Add Light System Accounts**
+### 2. Add Light System Accounts
 
 Populate the `systemAccounts` section with Light System accounts. These accounts are needed for proof verification and CPI calls to update state and address trees.
 
@@ -730,7 +730,7 @@ packedAccounts.addSystemAccounts(systemAccountConfig);
 Program-specific accounts (signers, fee payer) are passed to `.accounts()` in your instruction and are not added to `PackedAccounts`.
 {% endhint %}
 
-**3. Pack Tree Accounts from Validity Proof**
+### 3. Pack Tree Accounts from Validity Proof
 
 Populate the `treeAccounts` section with tree pubkeys from the validity proof and receive u8 indices to use in instruction data.
 
@@ -786,7 +786,15 @@ const packedInputAccounts = {
 {% endtab %}
 {% endtabs %}
 
-**4. Pack Output State Tree**
+#### Tree Accounts by Instructions Type
+
+| Instruction             | Address Tree             | State Tree           | Nullifier Queue | Output State Tree       |
+| ----------------------- | ------------------------ | -------------------- | --------------- | ----------------------- |
+| Create                  | ✓ (proves non-existence) | -                    | -               | ✓ (stores new hash)     |
+| Update / Close / Reinit | -                        | ✓ (proves existence) | ✓ (nullifies)   | ✓ (stores updated hash) |
+| Burn                    | -                        | ✓ (proves existence) | ✓ (nullifies)   | -                       |
+
+### 4. Pack Output State Tree
 
 Pack the output state tree to specify where the new or updated account state will be stored.
 
@@ -804,14 +812,12 @@ const outputStateTreeIndex =
 2. Pass `outputStateTreeIndex` to your program instruction
 
 {% hint style="info" %}
-**Difference in Instructions:**
-
-* **Create**: Output state tree stores the new account hash
-* **Update/Close/Reinit**: Output state tree stores the updated account hash (may be same tree as input or different)
-* **Burn**: has no output state tree
+* **Create**: Stores new account hash in output state tree
+* **Update/Close/Reinit**: Stores updated account hash in output state tree (may be same tree as input or different)
+* **Burn**: No output state tree
 {% endhint %}
 
-**5. Finalize Packed Accounts**
+### 5. Finalize Packed Accounts
 
 Call `toAccountMetas()` to convert packed accounts into the final array for your instruction.
 
@@ -840,7 +846,7 @@ const { remainingAccounts, systemStart, packedStart } =
 {% endtab %}
 
 {% tab title="Rust" %}
-**1. Initialize PackedAccounts**
+### 1. Initialize PackedAccounts
 
 ```rust
 let mut remaining_accounts = PackedAccounts::default();
@@ -870,7 +876,7 @@ The instance organizes accounts into three sections:
 * For example, if the input state tree equals the output state tree, both return the same index.
 {% endhint %}
 
-**2. Add Light System Accounts**
+### 2. Add Light System Accounts
 
 Populate the `system_accounts` with [Light System accounts](https://www.zkcompression.com/resources/addresses-and-urls#system-accounts) needed for proof verification and CPI calls to update state and address trees.
 
@@ -907,10 +913,8 @@ accounts.add_system_accounts(config)?;
 
 **Native programs:** Manually add the signer to `pre_accounts` before adding system accounts.
 {% endhint %}
-{% endtab %}
-{% endtabs %}
 
-**3. Pack Tree Accounts**
+### 3. Pack Tree Accounts
 
 Add tree and queue accounts to the packed accounts array and retrieve indices for the instruction data. The specific trees used depend on your operation type.
 
@@ -991,23 +995,19 @@ let packed_tree_accounts = rpc_result
 {% endtab %}
 {% endtabs %}
 
-{% hint style="info" %}
-**Instructions Type Summary:**
+#### Tree Accounts by Instructions Type
 
 | Instruction             | Address Tree             | State Tree           | Nullifier Queue | Output State Tree       |
 | ----------------------- | ------------------------ | -------------------- | --------------- | ----------------------- |
 | Create                  | ✓ (proves non-existence) | -                    | -               | ✓ (stores new hash)     |
 | Update / Close / Reinit | -                        | ✓ (proves existence) | ✓ (nullifies)   | ✓ (stores updated hash) |
 | Burn                    | -                        | ✓ (proves existence) | ✓ (nullifies)   | -                       |
-{% endhint %}
 
-**4. Pack Output State Tree (Anchor Create Only)**
+### 4. Pack Output State Tree (Anchor Create Only)
 
 For Anchor Create operations, pack the output state tree to store the new account hash.
 
 {% hint style="info" %}
-**Why this step varies:**
-
 * **Anchor Create**: Requires separate `pack_output_tree_index()` call (shown below)
 * **Native Create**: Already done via `insert_or_get()` in Step 3
 * **Update/Close/Reinit**: `output_tree_index` already included in `PackedStateTreeInfos` from Step 3
@@ -1026,7 +1026,7 @@ Call `pack_output_tree_index()` on the output state tree `TreeInfo`
 * Returns u8 index for the output state tree
 * This index is passed to your program instruction's `output_state_tree_index` parameter
 
-**5. Finalize Packed Accounts**
+### 5. Finalize Packed Accounts
 
 Convert packed accounts into the final array for your instruction.
 
@@ -1062,6 +1062,8 @@ Call `to_account_metas()` on your `PackedAccounts` instance
   * `packed_start`: Offset where tree accounts start
 * Native programs must include `system_start` and `packed_start` in instruction data so the program knows the account array layout
 {% endtab %}
+{% endtabs %}
+
 {% endtabs %}
 {% endstep %}
 
