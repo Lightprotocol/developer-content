@@ -18,6 +18,7 @@
   * [How to Merge Compressed Token Accounts](compressed-tokens/guides/how-to-merge-compressed-token-accounts.md)
   * [How to approve and revoke delegate authority](compressed-tokens/guides/how-to-approve-and-revoke-delegate-authority.md)
 * [Advanced Guides](compressed-tokens/advanced-guides/README.md)
+  * [How to Combine Instructions in One Transaction](compressed-tokens/guides/how-to-combine-operations-in-one-transaction.md)
   * [Add Wallet Support for Compressed Tokens](compressed-tokens/advanced-guides/add-wallet-support-for-compressed-tokens.md)
   * [Use Token 2022 with Compression](compressed-tokens/advanced-guides/use-token-2022-with-compression.md)
   * [Create an Airdrop without Claim](compressed-tokens/advanced-guides/create-an-airdrop.md)
