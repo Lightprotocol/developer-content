@@ -5,68 +5,55 @@ description: Complete guide to compress SPL tokens with compress() and decompres
 
 The `compress()` and `decompress()` functions convert SPL tokens between compressed and regular format.
 
-The functions perform opposite operations:
-
-1. `compress()` locks SPL tokens in a token pool account and creates compressed accounts, and
-2. `decompress()` withdraws SPL tokens from the token pool to an Associated Token Account and invalidates compressed accounts.
-
 Before we convert formats, we need:
 
-* An SPL mint registered with the compressed token program via `createMint()` or `createTokenPool()`,&#x20;
-* for `compress()` SPL tokens in an Associated Token Account, or
-* for `decompress()` compressed token accounts with sufficient balance.
+* An SPL mint with a token pool for compression. This token pool can be created for new SPL mints via [`createMint()`](how-to-create-and-register-a-mint-account-for-compression.md) or added to existing SPL mints via [`createTokenPool()`](how-to-create-compressed-token-pools-for-mint-accounts.md).
+* For `compress()` SPL tokens in an Associated Token Account, or
+* For `decompress()` compressed token accounts with sufficient balance.
+
+{% tabs %}
+{% tab title="compress()" %}
+```typescript
+// Compress SPL tokens to compressed tokens
+const compressionSignature = await compress(
+    rpc,
+    payer,
+    mint, // SPL mint with token pool for compression
+    amount,
+    payer, // owner of SPL tokens
+    tokenAccount.address, // source SPL token account (sourceTokenAccount parameter)
+    recipient, // recipient owner address (toAddress parameter)
+);
+```
+{% endtab %}
+
+{% tab title="decompress()" %}
+```typescript
+// Decompress compressed tokens to SPL tokens
+const transactionSignature = await decompress(
+    rpc,
+    payer,
+    mint, // SPL mint with token pool for compression
+    amount,
+    payer, // owner of compressed tokens
+    tokenAccount.address, // destination token account (toAddress parameter)
+);
+```
+{% endtab %}
+{% endtabs %}
 
 {% hint style="success" %}
 **Function Difference and Best Practice:**
 
-* `compress(amount, sourceTokenAccount, toAddress)` compresses specific amounts from\
-  source to a specified recipient. Use for transfers and precise amounts.
+* `compress(amount, sourceTokenAccount, toAddress)` compresses specific amounts from source to a specified recipient. Use for transfers and precise amounts.
 * `compressSplTokenAccount(tokenAccount, remainingAmount)` compresses the entire SPL token account balance minus optional remaining amount only to the same owner. Use to migrate complete token accounts with optional partial retention. [Here is how](how-to-compress-complete-spl-token-accounts.md).
 {% endhint %}
-
-{% code title="function-decompress-compress.ts" %}
-```typescript
-  import { decompress, compress } from '@lightprotocol/compressed-token';
-  import { PublicKey } from '@solana/web3.js';
-  import { getOrCreateAssociatedTokenAccount } from '@solana/spl-token';
-
-  const mint = new PublicKey("YOUR_EXISTING_MINT_ADDRESS");
-  const recipient = new PublicKey("RECIPIENT_WALLET_ADDRESS");
-  const amount = 1_000_000_000; // 1 token (9 decimals)
-
-  // Create ATA for decompressed tokens
-  const tokenAccount = await getOrCreateAssociatedTokenAccount(
-      rpc, payer, mint, payer.publicKey
-  );
-
-  // Decompress compressed tokens to SPL tokens
-  const transactionSignature = await decompress(
-      rpc,
-      payer,
-      mint, // SPL mint with token pool for compression
-      amount,
-      payer, // owner of compressed tokens
-      tokenAccount.address, // destination token account (toAddress parameter)
-  );
-
-  // Compress SPL tokens to compressed tokens
-  const compressionSignature = await compress(
-      rpc,
-      payer,
-      mint, // SPL mint with token pool for compression
-      amount,
-      payer, // owner of SPL tokens
-      tokenAccount.address, // source SPL token account (sourceTokenAccount parameter)
-      recipient, // recipient owner address (toAddress parameter)
-  );
-```
-{% endcode %}
 
 ### Full Code Example
 
 {% stepper %}
 {% step %}
-#### Prerequisites
+## Prerequisites
 
 Make sure you have dependencies and developer environment set up!
 
@@ -165,132 +152,56 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-#### Decompress Tokens
+## Compress / Decompress Tokens
 
-Convert compressed tokens to regular SPL tokens.
+{% tabs %}
+{% tab title="Compress Tokens" %}
+Compress SPL tokens to compressed format.
 
-<pre class="language-typescript" data-title="decompress-tokens.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
-// 2. Create SPL mint with token pool and mint initial compressed tokens
-// 3. Call decompress() to convert compressed tokens to SPL tokens
-// 4. Verify decompressed balance via getTokenAccountBalance
+<pre class="language-typescript" data-title="compress-tokens.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
+// 2. Create SPL mint with token pool and mint SPL tokens to ATA
+// 3. Call compress() to convert SPL tokens to compressed format
+// 4. Verify balances via getTokenAccountBalance and getCompressedTokenAccountsByOwner
 
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { Keypair } from '@solana/web3.js';
 import { createRpc } from '@lightprotocol/stateless.js';
-import { 
-    createMint, 
-    mintTo, 
-    decompress
+import {
+    createMint,
+    compress
 } from '@lightprotocol/compressed-token';
-import { 
+import {
     getOrCreateAssociatedTokenAccount,
-    TOKEN_PROGRAM_ID 
+    mintTo as splMintTo,
+    TOKEN_PROGRAM_ID
 } from '@solana/spl-token';
-import * as fs from 'fs';
-import * as os from 'os';
+import BN from 'bn.js';
 
-async function decompressTokens() {
+async function compressTokens() {
     // Step 1: Setup funded payer and connect to local validator
     const rpc = createRpc(); // defaults to localhost:8899
     const payer = Keypair.generate();
     const airdropSignature = await rpc.requestAirdrop(payer.publicKey, 1000000000); // 1 SOL
     await rpc.confirmTransaction(airdropSignature);
 
-    // Step 2: Create SPL mint with token pool and mint initial compressed tokens
+    // Step 2: Create SPL mint with token pool and mint SPL tokens to ATA
     const { mint } = await createMint(rpc, payer, payer.publicKey, 9);
     console.log("Mint with token pool created:", mint.toBase58());
 
     const tokenOwner = Keypair.generate();
-    const compressedAmount = 1_000_000_000; // 1 token with 9 decimals
-    await mintTo(rpc, payer, mint, tokenOwner.publicKey, payer, compressedAmount);
-    console.log("Compressed tokens minted:", compressedAmount / 1_000_000_000, "tokens");
-
-    // Create or get Associated Token Account for decompression
     const tokenAccount = await getOrCreateAssociatedTokenAccount(
         rpc, payer, mint, tokenOwner.publicKey, false, TOKEN_PROGRAM_ID
     );
 
-    const decompressAmount = 500_000_000; // 0.5 tokens
-    console.log("Decompress Tokens");
-
-<strong>    // Step 3: Call decompress() to convert to SPL tokens
-</strong><strong>    // Withdraw SPL tokens from omnibus pool and burn compressed tokens
-</strong><strong>    const decompressTx = await decompress(
-</strong><strong>        rpc,
-</strong><strong>        payer,
-</strong><strong>        mint, // SPL mint with token pool for compression
-</strong><strong>        decompressAmount, // amount to decompress
-</strong><strong>        tokenOwner, // owner of compressed tokens
-</strong><strong>        tokenAccount.address, // destination token account (toAddress parameter)
-</strong><strong>    );
-</strong>
-    console.log("Tokens decompressed:", decompressAmount / 1_000_000_000, "tokens");
-    console.log("Transaction:", decompressTx);
-
-    // Verify decompressed balance in SPL token account
-    const tokenBalance = await rpc.getTokenAccountBalance(tokenAccount.address);
-    console.log("SPL token balance:", tokenBalance.value.uiAmount);
-
-    // Save state for compress step
-    const state = {
-        mint: mint.toBase58(),
-        tokenOwner: Array.from(tokenOwner.secretKey),
-        tokenAccount: tokenAccount.address.toBase58(),
-        payer: Array.from(payer.secretKey)
-    };
-    fs.writeFileSync('./shared-state.json', JSON.stringify(state, null, 2));
-
-    return { 
-        mint,
-        tokenOwner,
-        tokenAccount: tokenAccount.address,
-        decompressTransaction: decompressTx
-    };
-}
-
-decompressTokens().catch(console.error);
-</code></pre>
-{% endstep %}
-
-{% step %}
-#### Compress Tokens
-
-Continue from the previous step to compress regular SPL tokens back to compressed format.
-
-<pre class="language-typescript" data-title="compress-tokens.ts" data-overflow="wrap"><code class="lang-typescript">// Continue from Step 1 - compress SPL tokens
-// 1. Call compress() to convert SPL tokens to compressed format
-// 2. Verify balances via getTokenAccountBalance and getCompressedTokenAccountsByOwner
-
-import { Keypair, PublicKey } from '@solana/web3.js';
-import { createRpc } from '@lightprotocol/stateless.js';
-import { compress } from '@lightprotocol/compressed-token';
-import { 
-    mintTo as splMintTo,
-    TOKEN_PROGRAM_ID 
-} from '@solana/spl-token';
-import BN from 'bn.js';
-import * as fs from 'fs';
-
-async function compressTokens() {
-    if (!fs.existsSync('./shared-state.json')) {
-        console.log("No SPL tokens found. Please run 'npx tsx decompress.ts first.");
-        return;
-    }
-
-    const state = JSON.parse(fs.readFileSync('./shared-state.json', 'utf8'));
-    const rpc = createRpc(); // defaults to localhost:8899
-    const payer = Keypair.fromSecretKey(new Uint8Array(state.payer));
-    const mint = new PublicKey(state.mint);
-    const tokenOwner = Keypair.fromSecretKey(new Uint8Array(state.tokenOwner));
-    const tokenAccount = new PublicKey(state.tokenAccount);
+    // Mint SPL tokens to the ATA
+    const splAmount = 1_000_000_000; // 1 token with 9 decimals
+    await splMintTo(rpc, payer, mint, tokenAccount.address, payer, splAmount, [], undefined, TOKEN_PROGRAM_ID);
+    console.log("SPL tokens minted:", splAmount / 1_000_000_000, "tokens");
 
     console.log("Compress Tokens");
 
-    // Add SPL tokens to account for compression
-    await splMintTo(rpc, payer, mint, tokenAccount, payer, 300_000_000, [], undefined, TOKEN_PROGRAM_ID);
-    
     const compressAmount = 400_000_000; // 0.4 tokens
 
-<strong>    // Step 1: Call compress() to convert to compressed format
+<strong>    // Step 3: Call compress() to convert to compressed format
 </strong><strong>    // Lock SPL tokens to pool account and mint compressed tokens
 </strong><strong>    const compressTx = await compress(
 </strong><strong>        rpc,
@@ -298,20 +209,20 @@ async function compressTokens() {
 </strong><strong>        mint, // SPL mint with token pool for compression
 </strong><strong>        compressAmount, // amount to compress
 </strong><strong>        tokenOwner, // owner of SPL tokens
-</strong><strong>        tokenAccount, // source token account
+</strong><strong>        tokenAccount.address, // source token account
 </strong><strong>        tokenOwner.publicKey, // recipient for compressed tokens
 </strong><strong>    );
 </strong>
     console.log("Compressed amount:", compressAmount / 1_000_000_000, "tokens");
     console.log("Transaction:", compressTx);
 
-    // Step 2: Verify balances via getTokenAccountBalance and getCompressedTokenAccountsByOwner
-    const finalTokenBalance = await rpc.getTokenAccountBalance(tokenAccount);
+    // Step 4: Verify balances via getTokenAccountBalance and getCompressedTokenAccountsByOwner
+    const finalTokenBalance = await rpc.getTokenAccountBalance(tokenAccount.address);
     const finalCompressedAccounts = await rpc.getCompressedTokenAccountsByOwner(
         tokenOwner.publicKey,
         { mint }
     );
-    
+
     // Calculate total compressed balance
     const finalCompressedBalance = finalCompressedAccounts.items.reduce(
         (sum, account) => sum.add(account.parsed.amount),
@@ -322,7 +233,7 @@ async function compressTokens() {
     console.log("Regular SPL tokens:", finalTokenBalance.value.uiAmount);
     console.log("Compressed tokens:", finalCompressedBalance.toNumber() / 1_000_000_000);
 
-    return { 
+    return {
         compressTransaction: compressTx,
         finalCompressedBalance,
         finalSplBalance: finalTokenBalance.value.amount
@@ -331,20 +242,129 @@ async function compressTokens() {
 
 compressTokens().catch(console.error);
 </code></pre>
-{% endstep %}
+{% endtab %}
 
-{% step %}
-**Success!**
+{% tab title="Compress and Decompress" %}
+Compress SPL tokens and decompress in one script.
 
-You've decompressed and compressed tokens. The output shows:
+<pre class="language-typescript" data-title="compress-and-decompress-tokens.ts" data-overflow="wrap"><code class="lang-typescript">// 1. Setup funded payer and connect to local validator
+// 2. Create SPL mint with token pool and mint SPL tokens to ATA
+// 3. Compress SPL tokens to compressed format
+// 4. Decompress compressed tokens back to SPL format
+// 5. Verify final balances
 
-* **Decompression**: Compressed tokens converted to regular SPL tokens in your Associated Token Account
-* **Compression**: Regular SPL tokens converted to compressed tokens
-* **Balance verification**: Both operations confirmed with token amounts
+import { Keypair } from '@solana/web3.js';
+import { createRpc } from '@lightprotocol/stateless.js';
+import {
+    createMint,
+    compress,
+    decompress
+} from '@lightprotocol/compressed-token';
+import {
+    getOrCreateAssociatedTokenAccount,
+    mintTo as splMintTo,
+    TOKEN_PROGRAM_ID
+} from '@solana/spl-token';
+import BN from 'bn.js';
+
+async function compressAndDecompressTokens() {
+    // Step 1: Setup funded payer and connect to local validator
+    const rpc = createRpc(); // defaults to localhost:8899
+    const payer = Keypair.generate();
+    const airdropSignature = await rpc.requestAirdrop(payer.publicKey, 1000000000); // 1 SOL
+    await rpc.confirmTransaction(airdropSignature);
+
+    // Step 2: Create SPL mint with token pool and mint SPL tokens to ATA
+    const { mint } = await createMint(rpc, payer, payer.publicKey, 9);
+    console.log("Mint with token pool created:", mint.toBase58());
+
+    const tokenOwner = Keypair.generate();
+    const tokenAccount = await getOrCreateAssociatedTokenAccount(
+        rpc, payer, mint, tokenOwner.publicKey, false, TOKEN_PROGRAM_ID
+    );
+
+    // Mint SPL tokens to the ATA
+    const splAmount = 1_000_000_000; // 1 token with 9 decimals
+    await splMintTo(rpc, payer, mint, tokenAccount.address, payer, splAmount, [], undefined, TOKEN_PROGRAM_ID);
+    console.log("SPL tokens minted:", splAmount / 1_000_000_000, "tokens");
+
+    console.log("\n=== Compress Tokens ===");
+
+    const compressAmount = 600_000_000; // 0.6 tokens
+
+<strong>    // Step 3: Compress SPL tokens
+</strong><strong>    const compressTx = await compress(
+</strong><strong>        rpc,
+</strong><strong>        payer,
+</strong><strong>        mint,
+</strong><strong>        compressAmount,
+</strong><strong>        tokenOwner,
+</strong><strong>        tokenAccount.address,
+</strong><strong>        tokenOwner.publicKey,
+</strong><strong>    );
+</strong>
+    console.log("Compressed amount:", compressAmount / 1_000_000_000, "tokens");
+    console.log("Compress transaction:", compressTx);
+
+    // Verify compressed balance
+    const compressedAccounts = await rpc.getCompressedTokenAccountsByOwner(
+        tokenOwner.publicKey,
+        { mint }
+    );
+    const compressedBalance = compressedAccounts.items.reduce(
+        (sum, account) => sum.add(account.parsed.amount),
+        new BN(0)
+    );
+    console.log("Compressed balance:", compressedBalance.toNumber() / 1_000_000_000, "tokens");
+
+    console.log("\n=== Decompress Tokens ===");
+
+    const decompressAmount = 300_000_000; // 0.3 tokens
+
+<strong>    // Step 4: Decompress compressed tokens back to SPL format
+</strong><strong>    const decompressTx = await decompress(
+</strong><strong>        rpc,
+</strong><strong>        payer,
+</strong><strong>        mint,
+</strong><strong>        decompressAmount,
+</strong><strong>        tokenOwner,
+</strong><strong>        tokenAccount.address,
+</strong><strong>    );
+</strong>
+    console.log("Decompressed amount:", decompressAmount / 1_000_000_000, "tokens");
+    console.log("Decompress transaction:", decompressTx);
+
+    // Step 5: Verify final balances
+    const finalTokenBalance = await rpc.getTokenAccountBalance(tokenAccount.address);
+    const finalCompressedAccounts = await rpc.getCompressedTokenAccountsByOwner(
+        tokenOwner.publicKey,
+        { mint }
+    );
+    const finalCompressedBalance = finalCompressedAccounts.items.reduce(
+        (sum, account) => sum.add(account.parsed.amount),
+        new BN(0)
+    );
+
+    console.log("\n=== Final Balances ===");
+    console.log("Regular SPL tokens:", finalTokenBalance.value.uiAmount);
+    console.log("Compressed tokens:", finalCompressedBalance.toNumber() / 1_000_000_000);
+
+    return {
+        compressTransaction: compressTx,
+        decompressTransaction: decompressTx,
+        finalCompressedBalance,
+        finalSplBalance: finalTokenBalance.value.amount
+    };
+}
+
+compressAndDecompressTokens().catch(console.error);
+</code></pre>
+{% endtab %}
+{% endtabs %}
 {% endstep %}
 {% endstepper %}
 
-### Troubleshooting
+## Troubleshooting
 
 <details>
 
@@ -403,7 +423,7 @@ const compressTx = await compress(
 
 </details>
 
-### Advanced Configurations
+## Advanced Configurations
 
 <details>
 
@@ -485,7 +505,7 @@ await decompressDelegated(
 
 </details>
 
-### Next Steps
+# Next Steps
 
 Learn how to compress complete token accounts in one transaction and reclaim rent afterwards.
 
