@@ -1,13 +1,124 @@
 ---
 title: Add Wallet Support for Compressed Tokens
-description: Complete guide to add Compressed Token Support to Your Wallet Application
+description: Guide to add Compressed Token Support to Your Wallet Application
 ---
+
+# Best Practices
+
+* **Clear UI Indicators —** Provide clear visual distinctions between compressed and uncompressed SPL tokens
+* **Transaction History** — Provide detailed transaction histories for compressed tokens
+* **Decompression and Compression** — Provide a clear path for users to convert between compressed and uncompressed tokens when needed
 
 {% hint style="success" %}
 Leading Solana Wallets like Phantom and Backpack already support compressed tokens.
 {% endhint %}
 
-# Integration Steps
+{% tabs %}
+{% tab title="Code Snippets" %}
+
+## Display Compressed Token Balances
+
+```javascript
+import { Rpc, createRpc } from '@lightprotocol/stateless.js';
+import { PublicKey } from '@solana/web3.js';
+
+const connection: Rpc = createRpc();
+const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
+
+(async () => {
+    const balances = await connection.getCompressedTokenBalancesByOwnerV2(publicKey);
+    console.log(balances);
+})();
+```
+
+## Get Transaction History
+
+```javascript
+import { Rpc, createRpc } from '@lightprotocol/stateless.js';
+import { PublicKey } from '@solana/web3.js';
+
+const connection: Rpc = createRpc();
+const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
+
+(async () => {
+    const signatures = await connection.getCompressionSignaturesForOwner(publicKey);
+    console.log(signatures);
+
+    if (signatures.items.length > 0) {
+        const parsedTransaction = await connection.getTransactionWithCompressionInfo(signatures.items[0].signature);
+        console.log(parsedTransaction);
+    }
+})();
+```
+
+## Send Compressed Tokens
+
+```typescript
+import {
+  Rpc,
+  createRpc,
+  bn,
+  dedupeSigner,
+  sendAndConfirmTx,
+  buildAndSignTx,
+} from "@lightprotocol/stateless.js";
+import {
+  CompressedTokenProgram,
+  selectMinCompressedTokenAccountsForTransfer,
+} from "@lightprotocol/compressed-token";
+import { ComputeBudgetProgram, Keypair, PublicKey } from "@solana/web3.js";
+
+const connection: Rpc = createRpc();
+const mint = new PublicKey("MINT_ADDRESS");
+const payer = PAYER_KEYPAIR;
+const owner = payer;
+const recipient = Keypair.generate();
+const amount = bn(1e8);
+
+(async () => {
+  const compressedTokenAccounts =
+    await connection.getCompressedTokenAccountsByOwner(owner.publicKey, { mint });
+
+  if (compressedTokenAccounts.items.length === 0) {
+    console.log("No compressed token accounts found");
+    return;
+  }
+
+  const [inputAccounts] = selectMinCompressedTokenAccountsForTransfer(
+    compressedTokenAccounts.items,
+    amount
+  );
+
+  const proof = await connection.getValidityProof(
+    inputAccounts.map((account) => account.compressedAccount.hash)
+  );
+
+  const ix = await CompressedTokenProgram.transfer({
+    payer: payer.publicKey,
+    inputCompressedTokenAccounts: inputAccounts,
+    toAddress: recipient.publicKey,
+    amount,
+    recentInputStateRootIndices: proof.rootIndices,
+    recentValidityProof: proof.compressedProof,
+  });
+
+  const { blockhash } = await connection.getLatestBlockhash();
+  const additionalSigners = dedupeSigner(payer, [owner]);
+  const signedTx = buildAndSignTx(
+    [ComputeBudgetProgram.setComputeUnitLimit({ units: 300_000 }), ix],
+    payer,
+    blockhash,
+    additionalSigners
+  );
+
+  const transferTxId = await sendAndConfirmTx(connection, signedTx);
+  console.log(`Transaction: ${transferTxId}`);
+})();
+```
+
+{% endtab %}
+
+{% tab title="End-to-End Guide" %}
 
 {% stepper %}
 {% step %}
@@ -164,7 +275,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 {% endstep %}
 
 {% step %}
-#### Send Compressed Tokens
+## Send Compressed Tokens
 
 First, set up a test mint to and mint 10 compressed tokens to your filesystem wallet.
 
@@ -333,20 +444,13 @@ const amount = bn(1e8);
 </code></pre>
 {% endstep %}
 
-{% step %}
-#### Success!
-
-You've integrated compressed token support into your wallet!
-
-Your wallet now can
-
-* Display compressed token balances
-* Show transaction history
-* Send compressed tokens
-{% endstep %}
 {% endstepper %}
 
-### Advanced Integrations
+{% endtab %}
+
+{% endtabs %}
+
+## Advanced Integrations
 
 Use these integrations to let users convert between regular and compressed format as needed.
 
@@ -519,7 +623,7 @@ const amount = 1e5; // 100K tokens to compress
 
 </details>
 
-### Common Errors
+## Common Errors
 
 <details>
 
@@ -532,17 +636,9 @@ If `getCompressedTokenBalancesByOwnerV2` returns empty:
 
 </details>
 
-### Best Practices
 
-* **Clear UI Indicators —** Provide clear visual distinctions between compressed and uncompressed SPL tokens
-* **Transaction History** — Provide detailed transaction histories for compressed tokens
-* **Decompression and Compression** — Provide a clear path for users to convert between compressed and uncompressed tokens when needed
 
-***
-
-### Next Steps
-
-Explore more guides in our cookbook section.
+Next Steps
 
 {% content-ref url="../../../zk-compression-docs/compressed-tokens/guides/" %}
 [guides](../../../zk-compression-docs/compressed-tokens/guides/)
