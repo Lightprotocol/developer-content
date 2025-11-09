@@ -7,11 +7,11 @@ description: Overview and comparison of guides to create, update, close, reiniti
 
 | Guide                                                                                 | Description                                                                  |
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [How to Create Compressed Accounts](how-to-create-compressed-accounts.md)             | Create compressed accounts with address                                    |
-| [How to Update Compressed Accounts](how-to-update-compressed-accounts.md)             | Update compressed accounts                                                   |
-| [How to Close Compressed Accounts](how-to-close-compressed-accounts.md)               | Close compressed accounts, retain the address                                |
-| [How to Reinitialize Compressed Accounts](how-to-reinitialize-compressed-accounts.md) | Reinitialize closed compressed accounts with the same address and new values |
-| [How to Burn Compressed Accounts](how-to-burn-compressed-accounts.md)                 | Burn compressed accounts and their address permanently                       |
+| [Create Compressed Accounts](how-to-create-compressed-accounts.md)             | Create compressed accounts with address                                    |
+| [Update Compressed Accounts](how-to-update-compressed-accounts.md)             | Update compressed accounts                                                   |
+| [Close Compressed Accounts](how-to-close-compressed-accounts.md)               | Close compressed accounts, retain the address                                |
+| [Reinitialize Compressed Accounts](how-to-reinitialize-compressed-accounts.md) | Reinitialize closed compressed accounts with the same address and new values |
+| [Burn Compressed Accounts](how-to-burn-compressed-accounts.md)                 | Burn compressed accounts and their address permanently                       |
 
 ### Complete Flow Overview
 
