@@ -594,8 +594,8 @@ Build a client for your program or get an overview on all compressed account ope
 
 {% columns %}
 {% column %}
-{% content-ref url="../client-library/" %}
-[client-library](../client-library/)
+{% content-ref url="../client-library/README.md" %}
+[README.md](../client-library/README.md)
 {% endcontent-ref %}
 {% endcolumn %}
 

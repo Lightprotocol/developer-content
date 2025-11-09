@@ -638,8 +638,8 @@ Build a client for your program or learn how to close compressed accounts.
 
 {% columns %}
 {% column %}
-{% content-ref url="../client-library/" %}
-[client-library](../client-library/)
+{% content-ref url="../client-library/README.md" %}
+[README.md](../client-library/README.md)
 {% endcontent-ref %}
 {% endcolumn %}
 

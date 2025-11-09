@@ -56,7 +56,6 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 ### Send Compressed Tokens
 
 {% expand title="Full Code Example" %}
-
 ```typescript
 import {
   Rpc,
@@ -119,7 +118,6 @@ const amount = bn(1e8);
   console.log(`Transaction: ${transferTxId}`);
 })();
 ```
-
 {% endexpand %}
 
 {% endtab %}
