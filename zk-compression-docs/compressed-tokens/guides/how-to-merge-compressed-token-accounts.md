@@ -1,5 +1,5 @@
 ---
-title: How to Merge Compressed Token Accounts
+title: Merge Compressed Token Accounts
 description: Complete guide to merge multiple compressed token accounts into a single account with mergeTokenAccounts(), troubleshooting and advanced configurations.
 ---
 

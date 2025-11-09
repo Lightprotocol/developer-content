@@ -3,19 +3,15 @@ title: Add Wallet Support for Compressed Tokens
 description: Complete guide to add Compressed Token Support to Your Wallet Application
 ---
 
-### What you will do
-
-With this guide you will add Compressed Token Support to Your Wallet Application.
-
 {% hint style="success" %}
 Leading Solana Wallets like Phantom and Backpack already support compressed tokens.
 {% endhint %}
 
-### Integration Steps
+# Integration Steps
 
 {% stepper %}
 {% step %}
-#### **Prerequisites**
+## **Prerequisites**
 
 Make sure you have dependencies and developer environment set up!
 
@@ -108,7 +104,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-#### Display Compressed Token Balances
+## Display Compressed Token Balances
 
 This example fetches and displays all compressed token balances for a wallet address.
 
@@ -133,7 +129,7 @@ const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
 {% endstep %}
 
 {% step %}
-#### Get Transaction History
+## Get Transaction History
 
 This example retrieves compression transaction signatures and detailed transaction information for wallet transaction history display.
 

@@ -1,5 +1,5 @@
 ---
-title: How to Transfer Compressed Tokens
+title: Transfer Compressed Tokens
 description: Complete guide to transfer compressed SPL tokens between compressed or regular accounts with `transfer()`, troubleshooting and advanced configurations.
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: How to Compress Complete SPL Token Accounts
+title: Compress Complete SPL Token Accounts
 description: Complete guide to compress complete SPL Token Accounts with compressSplTokenAccount() for account migration and to reclaim rent afterwards.
 ---
 

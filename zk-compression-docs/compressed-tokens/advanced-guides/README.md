@@ -5,6 +5,7 @@ description: Reference table to implementation guides. Guides for airdrops, usin
 
 | Guide                                                                                   | Description                                                                                           |
 | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [Combine Instructions in One Transaction](../guides/how-to-combine-operations-in-one-transaction.md) | Combine multiple instructions in a single transaction using instruction-level APIs                    |
 | [Add Wallet Support for Compressed Tokens](add-wallet-support-for-compressed-tokens.md) | Add compressed token support in your wallet application                                               |
 | [Use Token-2022 with Compression](use-token-2022-with-compression.md)                   | Create compressed Token-2022 mints with metadata and other extensions                                 |
 | [Create an Airdrop without Claim](create-an-airdrop.md)                                 | Create an airdrop that appears directly in recipients' wallets (with or without code)    |

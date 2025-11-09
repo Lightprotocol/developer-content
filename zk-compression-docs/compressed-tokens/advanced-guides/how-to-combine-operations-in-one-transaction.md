@@ -1,5 +1,5 @@
 ---
-title: How to Combine Instructions in One Transaction
+title: Combine Instructions in One Transaction
 description: Guide to combine multiple instructions in a single transaction. Full code example for token pool creation and for first-time compression of existing SPL tokens.
 ---
 

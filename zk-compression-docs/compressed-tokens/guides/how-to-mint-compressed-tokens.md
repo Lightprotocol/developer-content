@@ -1,5 +1,5 @@
 ---
-title: How to Mint Compressed Tokens
+title: Mint Compressed Tokens
 description: Complete guide to mint compressed tokens with mintTo(), troubleshooting, and advanced configurations.
 ---
 

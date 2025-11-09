@@ -1,5 +1,5 @@
 ---
-title: How to Create Compressed Token Pools for Mint Accounts
+title: Create Compressed Token Pools for Mint Accounts
 description: Complete guide to create and manage token pools for compressed tokens for SPL mints with `createTokenPool()`, troubleshooting and advanced configurations.
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: How to Create and Register a Mint Account for Compression
+title: Create and Register a Mint Account for Compression
 description: Complete guide to create and register an SPL token mint account for compression with createMint(), troubleshooting and advanced configurations.
 ---
 

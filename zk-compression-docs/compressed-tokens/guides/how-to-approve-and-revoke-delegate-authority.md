@@ -1,5 +1,5 @@
 ---
-title: How to Approve and Revoke Delegate Authority
+title: Approve and Revoke Delegate Authority
 description: Complete guide to manage delegate authority for compressed tokens with `approve()` and `revoke()`, troubleshooting and advanced configurations.
 ---
 
