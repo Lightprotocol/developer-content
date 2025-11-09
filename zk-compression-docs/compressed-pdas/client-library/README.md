@@ -123,7 +123,7 @@ const testRpc = await getTestRpc(lightWasm);
 {% endtab %}
 
 {% tab title="Rust" %}
-Rust combines tokens in the client library, and has a separate SDK for program-side development:
+Rust has only one client library, and a separate SDK for program-side development:
 
 1. [`light-client`](https://docs.rs/light-client): The RPC client that provides the ZK Compression RPC interface to query and build transactions for **compressed accounts and tokens** on Solana.
 2. [`light-sdk`](https://docs.rs/light-sdk): Program-side abstractions (macros, wrappers, CPI interface) to create and interact with compressed accounts in Solana programs. Similar to Anchor's `Account` pattern.
