@@ -117,6 +117,9 @@ Include `file:line` references from DeepWiki responses.
 {% endtab %}
 
 {% tab title="Most Clients (Windsurf, Cursor, ...)" %}
+
+Add this to your settings JSON.
+
 ```json
 {
   "mcpServers": {

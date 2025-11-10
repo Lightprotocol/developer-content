@@ -3,7 +3,13 @@ title: Create an Airdrop
 description: Complete guide to create an airdrop – with or without code. Access to cost calculation and best practices. ZK compression is the most efficient way to distribute SPL tokens.
 ---
 
-### Cost Comparison
+# Guides
+
+There are two ways to use ZK Compression to distribute your SPL tokens.
+
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th></th><th data-hidden data-card-cover data-type="image">Cover image</th><th data-hidden data-card-target data-type="content-ref"></th><th data-hidden data-card-cover-dark data-type="image">Cover image (dark)</th></tr></thead><tbody><tr><td><h4>No-Code Airdrop Tool</h4></td><td>Use <strong>Airship by Helius Labs</strong> to airdrop to up to 200,000 recipients via Webapp.</td><td><a href="https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FE0oE3REMOZ17k0DWPx8v%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-42.png?alt=media&#x26;token=9d16dff6-d33d-48d4-878c-ee7708f994bc">https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FE0oE3REMOZ17k0DWPx8v%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-42.png?alt=media&#x26;token=9d16dff6-d33d-48d4-878c-ee7708f994bc</a></td><td><a href="https://www.helius.dev/docs/airship/getting-started">https://www.helius.dev/docs/airship/getting-started</a></td><td><a href="https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FcuP7pwOZ9tTKHmwAp1ZG%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-65.png?alt=media&#x26;token=10132d8a-8141-474a-8011-c0cef25a146c">https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FcuP7pwOZ9tTKHmwAp1ZG%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-65.png?alt=media&#x26;token=10132d8a-8141-474a-8011-c0cef25a146c</a></td></tr><tr><td><h4>Custom Programmatic Airdrop</h4></td><td>Create a <strong>programmatic</strong> <strong>airdrop</strong> with this guide for more control.</td><td><a href="https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FTqUkWv52GGezXThrQx5X%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-41.png?alt=media&#x26;token=d7dd12c0-453e-4056-a98f-dff2d68cd976">https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FTqUkWv52GGezXThrQx5X%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-41.png?alt=media&#x26;token=d7dd12c0-453e-4056-a98f-dff2d68cd976</a></td><td><a href="create-an-airdrop.md#programmatic-airdrop">#programmatic-airdrop</a></td><td><a href="https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FN9pPsKMGlPFLJifzp1ob%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-68.png?alt=media&#x26;token=83e89c0d-f782-4c31-85b0-39a8c8575308">https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FN9pPsKMGlPFLJifzp1ob%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-68.png?alt=media&#x26;token=83e89c0d-f782-4c31-85b0-39a8c8575308</a></td></tr></tbody></table>
+
+## Cost Comparison
 
 {% hint style="info" %}
 You can use the [Airship Calculator ](https://airship.helius.dev/calculator)to anticipate the cost of your airdrop.
@@ -13,17 +19,15 @@ You can use the [Airship Calculator ](https://airship.helius.dev/calculator)to a
 
 _\*\* assuming $200 per SOL_
 
-### Guides
+# Programmatic Airdrop
 
-There are two ways to use ZK Compression to distribute your SPL tokens.
+Choose your implementation based on your needs:
 
-<table data-card-size="large" data-view="cards"><thead><tr><th></th><th></th><th data-hidden data-card-cover data-type="image">Cover image</th><th data-hidden data-card-target data-type="content-ref"></th><th data-hidden data-card-cover-dark data-type="image">Cover image (dark)</th></tr></thead><tbody><tr><td><h4>No-Code Airdrop Tool</h4></td><td>Use <strong>Airship by Helius Labs</strong> to airdrop to up to 200,000 recipients via Webapp.</td><td><a href="https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FE0oE3REMOZ17k0DWPx8v%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-42.png?alt=media&#x26;token=9d16dff6-d33d-48d4-878c-ee7708f994bc">https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FE0oE3REMOZ17k0DWPx8v%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-42.png?alt=media&#x26;token=9d16dff6-d33d-48d4-878c-ee7708f994bc</a></td><td><a href="https://www.helius.dev/docs/airship/getting-started">https://www.helius.dev/docs/airship/getting-started</a></td><td><a href="https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FcuP7pwOZ9tTKHmwAp1ZG%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-65.png?alt=media&#x26;token=10132d8a-8141-474a-8011-c0cef25a146c">https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FcuP7pwOZ9tTKHmwAp1ZG%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-65.png?alt=media&#x26;token=10132d8a-8141-474a-8011-c0cef25a146c</a></td></tr><tr><td><h4>Custom Programmatic Airdrop</h4></td><td>Create a <strong>programmatic</strong> <strong>airdrop</strong> with this guide for more control.</td><td><a href="https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FTqUkWv52GGezXThrQx5X%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-41.png?alt=media&#x26;token=d7dd12c0-453e-4056-a98f-dff2d68cd976">https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FTqUkWv52GGezXThrQx5X%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-41.png?alt=media&#x26;token=d7dd12c0-453e-4056-a98f-dff2d68cd976</a></td><td><a href="create-an-airdrop.md#programmatic-airdrop">#programmatic-airdrop</a></td><td><a href="https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FN9pPsKMGlPFLJifzp1ob%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-68.png?alt=media&#x26;token=83e89c0d-f782-4c31-85b0-39a8c8575308">https://1579626568-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FGcNj6jjKQBC0HgPwNdGy%2Fuploads%2FN9pPsKMGlPFLJifzp1ob%2FLight%20Protocol%20v2%20-%20Batched%20Merkle%20trees-68.png?alt=media&#x26;token=83e89c0d-f782-4c31-85b0-39a8c8575308</a></td></tr></tbody></table>
-
-### Programmatic Airdrop
-
-#### What you will do
-
-By the end of this guide you will have a fully functioning programmatic airdrop.
+| Tab | Best For | What You'll Get | Time |
+|----------|----------|-----------------|------|
+| **Implementation Steps** | First-time users, learning | Step-by-step LocalNet tutorial | 20 min |
+| **Simple Airdrop** | <10,000 recipients | Production-ready single script | 10 min |
+| **Large-scale Airdrop** | 10,000+ recipients | Batched system with retry logic | 15 min |
 
 The high-level overview is this:
 
@@ -32,11 +36,18 @@ The high-level overview is this:
 3. Build transactions from these instruction batches, then sign, send, and confirm them.
 4. Tokens will appear in the recipients wallets automatically, or you can implement a claim function.
 
-#### Get started
+{% tabs %}
+{% tab title="Implementation Steps" %}
+
+Learn ZK Compression airdrop concepts with a hands-on LocalNet example.
+
+{% hint style="info" %}
+**What you'll build:** A test airdrop sending compressed tokens to 3 recipients on your local validator.
+{% endhint %}
 
 {% stepper %}
 {% step %}
-**Preqrequisites to Initialize Airdrop Project**
+## Prerequisites 
 
 Make sure you have dependencies and developer environment set up!
 
@@ -49,7 +60,7 @@ System Requirements
 
 <details>
 
-<summary>Prerequisites &#x26; Setup</summary>
+<summary>Prerequisites & Setup</summary>
 
 #### Dependencies
 
@@ -136,7 +147,7 @@ console.log("RPC Endpoint:", RPC_ENDPOINT);
 {% endstep %}
 
 {% step %}
-**Mint SPL tokens to your wallet**
+## Mint SPL tokens to your wallet
 
 Run this `mint-spl-tokens.ts` to mint SPL tokens to your wallet.
 
@@ -204,7 +215,7 @@ const payer = Keypair.fromSecretKey(Buffer.from(secretKey));
 {% endstep %}
 
 {% step %}
-#### Execute the Airdrop
+## Execute the Airdrop
 
 Next, distribute the SPL tokens to all recipients.
 
@@ -334,28 +345,25 @@ const owner = payer;
   return txId;
 })();
 </code></pre>
-{% endstep %}
 
-{% step %}
-#### Success!
-
-You've executed an airdrop with compressed tokens.
 {% endstep %}
 {% endstepper %}
 
-***
+{% endtab %}
 
-### Next Steps
-
-You're ready to deploy an airdrop on devnet or mainnet.
+{% tab title="Simple Airdrop" %}
 
 {% hint style="success" %}
-You can use an existing mint or create a new one with `createMint`.
+For small airdrops (<10,000 recipients). [View ](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/simple-airdrop.ts)[the source code here](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/simple-airdrop.ts).
 {% endhint %}
 
-1. Configure your environment variables
+{% stepper %}
+{% step %}
+### Environment Setup
 
-{% code title="example.env" %}
+Configure your environment variables:
+
+{% code title=".env" %}
 ```bash
 RPC_ENDPOINT=https://devnet.helius-rpc.com?api-key=YOUR_API_KEY
 PAYER_KEYPAIR=YOUR_BASE58_ENCODED_PRIVATE_KEY
@@ -363,21 +371,23 @@ MINT_ADDRESS=YOUR_MINT_ADDRESS
 ```
 {% endcode %}
 
-2. Mint SPL tokens to your wallet, as shown in the guide above. See the [source code here](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/mint.ts).
-3. Choose below between the
-   1. Simple Airdrop Script for <10,000 recipients, and
-   2. Script for large-scale Airdrops with batched operations
-4. Add the variables to your airdrop script & execute the airdrop!
+{% endstep %}
 
-#### A. Simple Airdrop
+{% step %}
+### Mint SPL Tokens
 
-{% hint style="success" %}
-For small airdrops (<10,000 recipients). [View ](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/simple-airdrop.ts)[the source code here](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/simple-airdrop.ts).
+Mint SPL tokens to your wallet for distribution. See the [mint script example](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/mint.ts).
+
+{% hint style="info" %}
+You can also use an existing mint if you already have one.
 {% endhint %}
+{% endstep %}
 
-<details>
+{% step %}
+### Execute Airdrop
 
-<summary>Simple Airdrop</summary>
+Run the airdrop script with your configured environment:
+
 
 ```typescript
 // 1. Load environment and select compression infrastructure with getStateTreeInfos() and getTokenPoolInfos()
@@ -490,20 +500,50 @@ import { MINT_ADDRESS, PAYER_KEYPAIR, RPC_ENDPOINT } from '../constants';
 })();
 ```
 
-</details>
+{% endstep %}
+{% endstepper %}
 
-#### B. Large-scale Airdrop with Batched Operations
+{% endtab %}
+
+{% tab title="Airdrop with Batched Instructions" %}
 
 {% hint style="success" %}
-For large-scale airdrops (10,000+ recipients) we recommend to batch operations efficiently.\
+For large-scale airdrops (10,000+ recipients) we recommend to batched instructions.\
 [View the source code here.](https://github.com/Lightprotocol/example-token-distribution/tree/main/src/optimized-airdrop)
 {% endhint %}
 
-1. **create-instructions.ts** - Process recipients in chunks, create batched CompressedTokenProgram.compress() instructions with optimized compute limits
+{% stepper %}
+{% step %}
+### Environment Setup
 
-<details>
+Configure your environment variables:
 
-<summary>create-instructions.ts</summary>
+{% code title=".env" %}
+```bash
+RPC_ENDPOINT=https://devnet.helius-rpc.com?api-key=YOUR_API_KEY
+PAYER_KEYPAIR=YOUR_BASE58_ENCODED_PRIVATE_KEY
+MINT_ADDRESS=YOUR_MINT_ADDRESS
+```
+{% endcode %}
+
+{% endstep %}
+
+{% step %}
+### Mint SPL Tokens
+
+Mint SPL tokens to your wallet for distribution. See the [mint script example](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/mint.ts).
+
+{% hint style="info" %}
+You can also use an existing mint if you already have one.
+{% endhint %}
+{% endstep %}
+
+{% step %}
+### Create Instructions
+
+Process recipients in chunks and create batched instructions with optimized compute limits.
+
+{% code title="create-instructions.ts" overflow="wrap" expandable="true" %}
 
 ```typescript
 // 1. Process recipients in chunks with selectStateTreeInfo() and selectTokenPoolInfo() for each batch
@@ -613,15 +653,15 @@ export async function createAirdropInstructions({
   return instructionBatches;
 }
 ```
+{% endcode %}
+{% endstep %}
 
-</details>
+{% step %}
+### Update Blockhash
 
-2. **update-blockhash.ts** - Maintain fresh blockhashes with background refresh loop using getLatestBlockhash() every 30 seconds
+Maintain fresh blockhashes with background refresh loop using `getLatestBlockhash()` every 30 seconds.
 
-<details>
-
-<summary>update-blockhash.ts</summary>
-
+{% code title="update-blockhash.ts" overflow="wrap" expandable="true" %}
 ```typescript
 import { Rpc } from "@lightprotocol/stateless.js";
 
@@ -663,14 +703,15 @@ export async function updateBlockhash(
   })();
 }
 ```
+{% endcode %}
+{% endstep %}
 
-</details>
+{% step %}
+### Sign and Send
 
-3. **sign-and-send.ts** - Execute batched transactions with VersionedTransaction, retry logic, and sendAndConfirmTx() confirmation
+Execute batched transactions with `VersionedTransaction`, retry logic, and `sendAndConfirmTx()` confirmation.
 
-<details>
-
-<summary>sign-and-send.ts</summary>
+{% code title="sign-and-send.ts" overflow="wrap" expandable="true" %}
 
 ```typescript
 // 1. Initialize blockhash updates with updateBlockhash() and get address lookup table with getAddressLookupTable()
@@ -788,16 +829,16 @@ export async function* signAndSendAirdropBatches(
   abortController.abort();
 }
 ```
+{% endcode %}
+{% endstep %}
 
-</details>
+{% step %}
+### Main Airdrop File
 
-4. **airdrop.ts** - Finally, put it all together in your main file:
+Put it all together in the main airdrop file.
 
-<details>
+{% code title="airdrop.ts" overflow="wrap" expandable="true" %}
 
-<summary>airdrop.ts (entrypoint file)</summary>
-
-{% code title="airdrop.ts" %}
 ```typescript
 // 1. Create compressed mint with createMint(), mint supply with mintTo(), get infrastructure with getStateTreeInfos() and getTokenPoolInfos()
 // 2. Generate batched compression instructions with createAirdropInstructions() - create CompressedTokenProgram.compress() calls
@@ -923,24 +964,28 @@ const recipients = [
 })();
 ```
 {% endcode %}
+{% endstep %}
+{% endstepper %}
 
-</details>
+{% endtab %}
+{% endtabs %}
 
 ***
 
-### Advanced Features
+## Advanced Features
 
 **Decompress / Claim**
 
 {% hint style="info" %}
-Solana Wallets like Phantom and Backpack already support compressed tokens.\
-Still, you can let users decompress to SPL via your Frontend to customize claims. Here's how:point\_down:
+Solana Wallets like Phantom and Backpack already support compressed tokens.
+Still, you can let users decompress to SPL via your Frontend to customize claims.
 {% endhint %}
 
-<details>
+* Full Example on Github to [create an Airdrop with Claim](https://github.com/Lightprotocol/example-compressed-claim).
 
-<summary><strong>Decompress SPL Tokens</strong></summary>
+* Decompress SPL Tokens with this script.
 
+{% code expandable="true" %}
 ```typescript
 import {
   bn,
@@ -1030,20 +1075,19 @@ const connection: Rpc = createRpc(RPC_ENDPOINT);
 })();
 
 ```
-
-</details>
+{% endcode %}
 
 Tip: Set priority fees dynamically for decompression. Learn more [here](https://docs.helius.dev/guides/sending-transactions-on-solana#summary).
 
-#### Native Swap via Jup-API <a href="#native-swap-via-jup-api" id="native-swap-via-jup-api"></a>
+## Native Swap via Jup-API <a href="#native-swap-via-jup-api" id="native-swap-via-jup-api"></a>
 
 If you have a custom FE, you can let users swap compressed tokens using the Jup-API. A reference implementation is available [here](https://github.com/Lightprotocol/example-jupiter-swap-node).
 
 ***
 
-### Next Steps
+# Next Steps
 
-Explore more guides in our cookbook section.
+Explore more guides in our cookbook.
 
 {% content-ref url="../../../zk-compression-docs/compressed-tokens/guides/" %}
 [guides](../../../zk-compression-docs/compressed-tokens/guides/)
