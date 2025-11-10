@@ -11,11 +11,11 @@ Compressed PDAs provide full functionality of accounts at PDAs, without per-acco
 
 Compressed PDAs are derived using a specific program address and seed, like regular PDAs. Custom programs invoke the [Light System program](#user-content-fn-1)[^1] to create and update accounts, instead of the System program.
 
-#### Compressed PDAs at a Glance
+### Compressed PDAs at a Glance
 
 <table data-view="cards"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Rent free PDAs</strong></td><td>Create accounts at program-derived addresses without upfront rent exempt balance.</td></tr><tr><td><strong>Full PDA Functionality</strong></td><td>Persistent unique identification and program ownership.</td></tr><tr><td><strong>Composable</strong></td><td>CPI support between compressed and regular PDAs.</td></tr></tbody></table>
 
-## Start Building
+# Start Building
 
 Developing with compressed PDAs works similar to regular PDAs and involves minimal setup:
 
@@ -110,7 +110,7 @@ cargo test-sbf
 {% endstep %}
 {% endstepper %}
 
-### Common Errors
+## Common Errors
 
 <details>
 
@@ -187,11 +187,11 @@ Caused by:
 
 </details>
 
-## Program Examples
+# Program Examples
 
 <table><thead><tr><th width="250">Example</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/anchor">basic-operations/anchor</a></td><td>Anchor programs to create, update, close, reinitialize and burn compressed accounts with Rust and TypeScript tests</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/basic-operations/native-rust">basic-operations/native-rust</a></td><td>Native Solana program implementation to create, update, close, reinitialize and burn compressed accounts with Rust tests</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/counter/anchor">Counter (Anchor)</a></td><td>Full compressed account lifecycle (create, increment, decrement, reset, close) using Anchor framework</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/counter/native">Counter (Native)</a></td><td>Native Solana program implementation with Rust tests</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/counter/pinocchio">Counter (Pinocchio)</a></td><td>Pinocchio implementation using light-sdk-pinocchio with Rust tests</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/create-and-update">Create-and-Update</a></td><td>Create new compressed accounts and update existing ones within a single instruction and one validity proof</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/read-only">Read-Only</a></td><td>Create compressed accounts and read them on-chain</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/account-comparison">Account Comparison</a></td><td>Compare compressed accounts with standard Solana accounts</td></tr><tr><td><a href="https://github.com/Lightprotocol/program-examples/tree/main/zk-id">ZK-ID</a></td><td>Program that uses zero-knowledge proofs for identity verification with compressed accounts</td></tr></tbody></table>
 
-## Next Steps
+# Next Steps
 
 Start building with compressed accounts using our guides or program examples.
 
