@@ -499,36 +499,15 @@ import { MINT_ADDRESS, PAYER_KEYPAIR, RPC_ENDPOINT } from '../constants';
 {% tab title="Airdrop with Batched Instructions" %}
 
 {% hint style="success" %}
-For large-scale airdrops (10,000+ recipients) we recommend to batched instructions.\
+For large-scale airdrops (10,000+ recipients) we recommend batched instructions.\
 [View the source code here.](https://github.com/Lightprotocol/example-token-distribution/tree/main/src/optimized-airdrop)
 {% endhint %}
 
-{% stepper %}
-{% step %}
-### Environment Setup
-
-Configure your environment variables:
-
-{% code title=".env" %}
-```bash
-RPC_ENDPOINT=https://devnet.helius-rpc.com?api-key=YOUR_API_KEY
-PAYER_KEYPAIR=YOUR_BASE58_ENCODED_PRIVATE_KEY
-MINT_ADDRESS=YOUR_MINT_ADDRESS
-```
-{% endcode %}
-
-{% endstep %}
-
-{% step %}
-### Mint SPL Tokens
-
-Mint SPL tokens to your wallet for distribution. See the [mint script example](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/mint.ts).
-
 {% hint style="info" %}
-You can also use an existing mint if you already have one.
+This implementation creates the mint and executes the airdrop in a single operation. You only need to configure your RPC endpoint and payer keypair.
 {% endhint %}
-{% endstep %}
 
+{% stepper %}
 {% step %}
 ### Create Instructions
 
