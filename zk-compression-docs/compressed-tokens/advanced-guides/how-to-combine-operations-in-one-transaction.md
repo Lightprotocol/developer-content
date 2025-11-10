@@ -269,7 +269,7 @@ createPoolAndCompress().catch(console.error);
 
 Learn how to transfer compressed tokens.
 
-{% content-ref url="how-to-transfer-compressed-token.md" %}
-[how-to-transfer-compressed-token.md](how-to-transfer-compressed-token.md)
+{% content-ref url="../guides/how-to-transfer-compressed-token.md" %}
+[how-to-transfer-compressed-token.md](../guides/how-to-transfer-compressed-token.md)
 {% endcontent-ref %}
 
