@@ -278,14 +278,14 @@ let output_state_tree_info = rpc.get_random_state_tree_info().unwrap();
 
 **Address Tree methods** return `TreeInfo` of address trees with the public key and other metadata for the address tree.
 
-You will use the address tree `TreeInfo` again:
+Use the address tree `TreeInfo`:
 
-1. In the next step to derive the address for the compressed account.
+1. In Step 3 to derive the address for the compressed account.
 2. In Step 4 for `getValidityProofV0()` to prove the address does not exist yet, if you create compressed accounts with address.
 
 **State Tree methods** return an array of `TreeInfo` objects of state trees with public key and other metadata. With these methods you select a random state tree to store the compressed account hash.
 
-You will use the state tree `TreeInfo` again:
+Use the state tree `TreeInfo`:
 
 1. In Step 4 for `getValidityProofV0()` to prove the account hash exists in the state tree, if you update/close/reinit/burn a compressed account.
 2. In Step 5 for packing accounts to optimize instruction data.
@@ -489,7 +489,7 @@ const proof = await rpc.getValidityProofV0(
 **2. The RPC returns**:
 
 * `compressedProof`: The proof that the account hash exists in the state tree, passed to the program in your instruction data.
-* `rootIndices` and `leafIndices` arrays with proof metadata to pack accounts in the next step.
+* `rootIndices` and `leafIndices` arrays with proof metadata to pack accounts (Step 5).
 {% endtab %}
 {% endtabs %}
 {% endtab %}
@@ -521,7 +521,7 @@ let rpc_result = rpc
 **2. The RPC returns `ValidityProofWithContext`**:
 
 * `proof` to prove that the address does not exist in the address tree, passed to the program in your instruction data.
-* `addresses` with the public key and metadata of the address tree to pack accounts in the next step.
+* `addresses` with the public key and metadata of the address tree to pack accounts (Step 5).
 * An empty `accounts` field, since you do not reference an existing account, when you create a compressed account.
 {% endtab %}
 
@@ -553,7 +553,7 @@ let rpc_result = rpc
 **2. The RPC returns `ValidityProofWithContext`**:
 
 * `proof` with the proof that the account hash exists in the state tree, passed to the program in your instruction data.
-* `accounts` with the public key and metadata of the state tree to pack accounts in the next step.
+* `accounts` with the public key and metadata of the state tree to pack accounts (Step 5).
 * An empty `addresses` field (only needed when creating an address).
 {% endtab %}
 {% endtabs %}
@@ -633,7 +633,7 @@ const proof = await rpc.getValidityProofV0(
 **2. The RPC returns:**
 
 * `compressedProof`: A single combined proof that verifies both the account hash exists in the state tree and the address does not exist in the address tree, passed to the program in your instruction data.
-* `rootIndices` and `leafIndices` arrays with proof metadata to build `PackedAddressTreeInfo` and `PackedStateTreeInfo` in the next step.
+* `rootIndices` and `leafIndices` arrays with proof metadata to build `PackedAddressTreeInfo` and `PackedStateTreeInfo` (Step 5).
 {% endtab %}
 
 {% tab title="Rust" %}
@@ -663,8 +663,8 @@ let rpc_result = rpc
 **2. The RPC returns `ValidityProofWithContext` with**
 
 * `proof`: A single combined proof, passed to the program in your instruction data.
-* `addresses` with the public key and metadata of the address tree to pack accounts in the next step.
-* `accounts` with the public key and metadata of the state tree to pack accounts in the next step.
+* `addresses` with the public key and metadata of the address tree to pack accounts (Step 5).
+* `accounts` with the public key and metadata of the state tree to pack accounts (Step 5).
 {% endtab %}
 {% endtabs %}
 
@@ -759,8 +759,8 @@ const packedAddressTreeInfo = {
 
 * Each call returns a sequential index starting from 0 (first call returns 0, second returns 1)
 
-2. Store the returned indices in `PackedAddressTreeInfo` instead of the full 32-byte pubkeys
-3. Pass `packedAddressTreeInfo` to your program instruction
+2. Pass the `packedAddressTreeInfo` in your instruction data (Step 6)
+
 {% endtab %}
 
 {% tab title="Update, Close, Reinit, Burn" %}
@@ -785,8 +785,7 @@ const packedInputAccounts = {
 
 * Each call returns a sequential index starting from 0 (first call returns 0, second returns 1)
 
-2. Store the returned indices along with `leafIndex` and `rootIndex` from the validity proof
-3. Pass these indices to your program instruction
+2. Pass the returned indices along with `leafIndex` and `rootIndex` from the validity proof in your instruction data (Step 6)
 {% endtab %}
 {% endtabs %}
 
@@ -813,7 +812,7 @@ const outputStateTreeIndex =
 
 * Returns the u8 index (continues sequential numbering from previous `insertOrGet()` calls)
 
-2. Pass `outputStateTreeIndex` to your program instruction
+2. Pass `outputStateTreeIndex` in your instruction data (Step 6)
 
 {% hint style="info" %}
 * **Create**: Stores new account hash in output state tree
@@ -906,7 +905,7 @@ let packed_accounts = rpc_result.pack_tree_infos(&mut remaining_accounts);
 1. Call `pack_tree_infos()` on the RPC result from `get_validity_proof()`
    * Returns `PackedTreeInfos` with `.address_trees` field
    * Contains `PackedAddressTreeInfo` with indices for address tree, address queue, and root index
-2. You will use `packed_accounts.address_trees[0]` in your instruction
+2. Use `packed_accounts.address_trees[0]` in your instruction data (Step 6)
 {% endtab %}
 
 {% tab title="Update / Close / Reinit" %}
@@ -925,7 +924,7 @@ let packed_tree_accounts = rpc_result
    * Returns `PackedStateTreeInfos` containing:
      * `packed_tree_infos`: Array with `PackedStateTreeInfo` (indices for state tree, nullifier queue, leaf index, root index)
      * `output_tree_index`: u8 index for output state tree to store the compressed account hash
-2. You will use both `packed_tree_accounts.packed_tree_infos[0]` and `packed_tree_accounts.output_tree_index` in your instruction
+2. Use both `packed_tree_accounts.packed_tree_infos[0]` and `packed_tree_accounts.output_tree_index` in your instruction data (Step 6)
 {% endtab %}
 
 {% tab title="Burn" %}
@@ -943,7 +942,7 @@ let packed_tree_accounts = rpc_result
 1. Call `pack_tree_infos()` on the RPC result and extract `.state_trees.unwrap()`
    * Returns `PackedStateTreeInfos` with `packed_tree_infos` array (indices for state tree, nullifier queue, leaf index, root index)
    * No `output_tree_index` field - Burn permanently removes the account without creating output state
-2. You will use `packed_tree_accounts.packed_tree_infos[0]` in your instruction
+2. Use `packed_tree_accounts.packed_tree_infos[0]` in your instruction data (Step 6)
 {% endtab %}
 {% endtabs %}
 
@@ -961,8 +960,8 @@ For Anchor Create instructions, pack the output state tree to store the new acco
 
 {% hint style="info" %}
 * **Anchor Create**: Requires separate `pack_output_tree_index()` call (shown below)
-* **Update/Close/Reinit**: `output_tree_index` already included in `PackedStateTreeInfos` from Step 3
-* **Burn**: No output state tree
+* **Update/Close/Reinit**: `output_tree_index` already includes this in `PackedStateTreeInfos` from Step 3
+* **Burn**: Has no output state tree
 {% endhint %}
 
 {% code overflow="wrap" %}
