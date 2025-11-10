@@ -109,8 +109,7 @@ const rpc = createRpc('https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY');
 ```bash
 light test-validator
 ```
-
-Start a start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001.
+Start a single-node Solana cluster, an RPC node, and a prover node at ports 8899, 8784, and 3001.
 {% endtab %}
 {% endtabs %}
 
