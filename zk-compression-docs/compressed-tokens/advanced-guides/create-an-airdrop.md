@@ -25,23 +25,14 @@ Choose your implementation based on your needs:
 
 | Tab | Best For | What You'll Get | Time |
 |----------|----------|-----------------|------|
-| **Implementation Steps** | First-time users, learning | Step-by-step LocalNet tutorial | 20 min |
+| **Implementation Steps** | First-time users, learning | Step-by-step Localnet tutorial | 20 min |
 | **Simple Airdrop** | <10,000 recipients | Production-ready single script | 10 min |
-| **Large-scale Airdrop** | 10,000+ recipients | Batched system with retry logic | 15 min |
-
-The high-level overview is this:
-
-1. Mint and send the to-be-airdropped SPL tokens to a wallet you control.
-2. Create batches of instructions based on a list of recipients and amounts.
-3. Build transactions from these instruction batches, then sign, send, and confirm them.
-4. Tokens will appear in the recipients wallets automatically, or you can implement a claim function.
+| **Airdrop with Batched Instructions** | 10,000+ recipients | Batched system with retry logic | 15 min |
 
 {% tabs %}
 {% tab title="Implementation Steps" %}
 
-Learn ZK Compression airdrop concepts with a hands-on LocalNet example.
-
-{% hint style="info" %}
+{% hint style="success" %}
 **What you'll build:** A test airdrop sending compressed tokens to 3 recipients on your local validator.
 {% endhint %}
 
@@ -354,7 +345,7 @@ const owner = payer;
 {% tab title="Simple Airdrop" %}
 
 {% hint style="success" %}
-For small airdrops (<10,000 recipients). [View ](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/simple-airdrop.ts)[the source code here](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/simple-airdrop.ts).
+For small airdrops (<10,000 recipients). [View the source code here](https://github.com/Lightprotocol/example-token-distribution/blob/main/src/simple-airdrop/simple-airdrop.ts).
 {% endhint %}
 
 {% stepper %}
@@ -974,8 +965,6 @@ const recipients = [
 
 ## Advanced Features
 
-**Decompress / Claim**
-
 {% hint style="info" %}
 Solana Wallets like Phantom and Backpack already support compressed tokens.
 Still, you can let users decompress to SPL via your Frontend to customize claims.
@@ -983,7 +972,7 @@ Still, you can let users decompress to SPL via your Frontend to customize claims
 
 * Full Example on Github to [create an Airdrop with Claim](https://github.com/Lightprotocol/example-compressed-claim).
 
-* Decompress SPL Tokens with this script.
+* Add decompression of SPL Tokens with this script.
 
 {% code expandable="true" %}
 ```typescript
