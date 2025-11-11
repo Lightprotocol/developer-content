@@ -105,12 +105,19 @@ Flag text that provides no actionable information:
   - Bad: "Pass the required parameters" (which parameters? what are they?)
   - Bad: "Use the correct tree" (which tree? how to identify it?)
   - Bad: "Set up the accounts" (which accounts? what configuration?)
-- [ ] **Circular definitions**
+- [ ] **Circular definitions that don't explain purpose or usage**
   - Bad: "The mint authority is the authority that can mint"
+    → Why bad: Restates the term without explaining what it controls or why it exists
   - Bad: "Address trees store addresses"
+    → Why bad: Describes data structure without explaining developer purpose
+  - Good: "Address trees store derived addresses that serve as persistent identifiers for compressed accounts"
+    → Why good: Explains both the data structure AND its role in the system
   - Bad: "Compressed accounts are accounts that are compressed"
+    → Why bad: Tautology with zero information
+  - Good: "Compressed accounts are data structures represented as 32-byte hashes stored in Merkle trees, requiring no rent"
+    → Why good: Explains representation, storage mechanism, and key benefit
 
-**Guideline:** Every sentence should provide NEW information or clarify a concept. If removing the sentence doesn't change understanding, it's likely vague.
+**Guideline:** Every definition must answer "What does the developer USE this for?" or "What PROBLEM does this solve?" If removing the sentence doesn't change understanding, it's likely vague.
 
 ### Confusing Terminology Mixing
 
@@ -125,6 +132,36 @@ Flag text that mixes abstraction levels or uses inconsistent terminology:
 - [ ] **Marketing language in technical docs**
   - Bad: "Revolutionary state compression technology"
   - Good: "ZK Compression reduces on-chain storage costs by storing account data in Merkle trees"
+
+### Always-Flag Marketing Words
+
+These words are never acceptable in technical documentation. Always flag and suggest concrete replacements:
+
+- [ ] **"enables"** → Replace with concrete action verb
+  - Bad: "This enables token operations"
+  - Good: "This creates, transfers, and burns compressed tokens"
+  - Bad: "enables compression"
+  - Good: "compresses token accounts"
+
+- [ ] **"comprehensive"** → Replace with specific list
+  - Bad: "Comprehensive token support"
+  - Good: "Supports SPL token compression, decompression, and transfers"
+
+- [ ] **"powerful"** → Remove or replace with measurable benefit
+  - Bad: "Powerful compression features"
+  - Good: "Reduces storage cost by 1000x"
+
+- [ ] **"flexible"** → Explain actual options
+  - Bad: "Flexible account configuration"
+  - Good: "Configure account size from 32 bytes to 10KB"
+
+- [ ] **"operations" (without specifying which)** → List specific operations
+  - Bad: "Supports compressed account operations"
+  - Good: "Create, update, close, and burn compressed accounts"
+  - Bad: "enables various operations"
+  - Good: "mints, transfers, and burns compressed tokens"
+
+**Guideline:** Use concrete verbs that describe actual operations. Replace "enables X" with "does X" or "creates X". Every capability claim must specify WHAT the developer can do.
 
 ## Context-Specific Guidelines
 

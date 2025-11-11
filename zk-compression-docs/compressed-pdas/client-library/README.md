@@ -489,7 +489,7 @@ const proof = await rpc.getValidityProofV0(
 
 **1. Pass these parameters**:
 
-* Leave (`[]`) empty to create compressed accounts, since no compressed account exists yet to reference.
+* Leave (`[]`) empty to create compressed accounts since no compressed account exists yet to reference.
 * Specify the derived address with its `tree` and `queue` pubkeys from the address tree `TreeInfo`.
 
 **2. The RPC returns**:
@@ -555,14 +555,14 @@ let rpc_result = rpc
 
 **1. Pass these parameters**:
 
-* Leave (`vec![]`) empty to create compressed accounts, since no compressed account exists yet to reference.
+* Leave (`vec![]`) empty to create compressed accounts since no compressed account exists yet to reference.
 * Specify the new address with `tree` pubkey from the address tree `TreeInfo` in `vec![AddressWithTree]`. Rust does not have a queue field, different from Typescript.
 
 **2. The RPC returns `ValidityProofWithContext`**:
 
 * `proof` to prove that the address does not exist in the address tree, passed to the program in your instruction data.
 * `addresses` with the public key and metadata of the address tree to pack accounts (Step 5).
-* An empty `accounts` field, since you do not reference an existing account, when you create a compressed account.
+* An empty `accounts` field since you do not reference an existing account, when you create a compressed account.
 {% endtab %}
 
 {% tab title="Update, Close, Reinit, Burn" %}
@@ -650,7 +650,7 @@ The combinations and maximums are determined by the available circuit verifying 
 
 ### Example create-and-update proof
 
-In this example we generate one proof for the update of an existing account, and the creation of a new account.
+In this example, we generate one proof for the update of an existing account and the creation of a new account.
 
 {% tabs %}
 {% tab title="Typescript" %}
@@ -722,7 +722,7 @@ See the full [create-and-update program example with tests](https://github.com/L
 {% step %}
 ## Pack Accounts
 
-To optimize instruction data we pack accounts into an array:
+To optimize instruction data, we pack accounts into an array:
 
 * Every packed account is assigned to an u8 index.
 * Indices are included in instruction data, instead of 32 byte pubkeys.
@@ -1081,7 +1081,7 @@ Build your instruction data with the validity proof, tree account indices, and c
 {% hint style="info" %}
 Compressed account data must be passed in instruction data because only the Merkle root hash is stored on-chain. Regular accounts store full data on-chain for programs to read directly.
 
-The program hashes this data and the Light System Program verifies the hash against the root in a Merkle tree account.
+The program hashes this data, and the Light System Program verifies the hash against the root in a Merkle tree account.
 {% endhint %}
 
 {% tabs %}
@@ -1692,7 +1692,7 @@ const instruction = await program.methods
 
 {% endcode %}
 
-Pass the proof and compressed account metadata from Step 6 as separate parameters to `.reinitAccount()`. No account data is passed since reinit creates default-initialized zero values.
+Pass the proof and compressed account metadata from Step 6 as separate parameters to `.reinitAccount()`. No account data is passed, since reinit creates default-initialized zero values.
 {% endtab %}
 
 {% tab title="Burn" %}
@@ -1794,7 +1794,7 @@ let instruction = Instruction {
 
 {% endcode %}
 
-Pass the proof and compressed account metadata from Step 6 as separate parameters to `.reinitAccount()`. No account data is passed since reinit creates default-initialized zero values.
+Pass the proof and compressed account metadata from Step 6 as separate parameters to `.reinitAccount()`. No account data is passed, since reinit creates default-initialized zero values.
 {% endtab %}
 
 {% tab title="Burn" %}
@@ -1961,7 +1961,7 @@ For help with debugging, see the [Error Cheatsheet](https://www.zkcompression.co
 
 # Next Steps
 
-Start building programs to create, or interact with compressed accounts.
+Start building programs to create or interact with compressed accounts.
 
 {% content-ref url="../guides/" %}
 [guides](../guides/)
