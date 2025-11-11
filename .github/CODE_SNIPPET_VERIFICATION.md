@@ -31,6 +31,15 @@ CodeRabbit uses this checklist to verify that code examples accurately reflect t
 - [ ] Verify `borsh` imports for native Rust programs
   - Common imports: `BorshSerialize`, `BorshDeserialize`
 
+## Package Version Validation
+
+### Alpha and Beta Versions
+
+- [ ] **Alpha/beta versions are intentional and correct**
+  - Do NOT flag pre-release versions (e.g., `0.22.1-alpha.1`) as incorrect
+  - Do NOT suggest replacing with stable versions
+  - Alpha/beta versions contain necessary features not yet in stable releases
+
 ## API Method Verification
 
 ### TypeScript SDK Methods
