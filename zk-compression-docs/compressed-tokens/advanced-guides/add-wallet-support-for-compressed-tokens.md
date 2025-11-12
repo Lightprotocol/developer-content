@@ -29,44 +29,33 @@ import * as os from 'os';
 // 1. Setup RPC connection to local test validator
 // 2. Call getCompressedTokenBalancesByOwnerV2() to fetch compressed token balances per mint
 // 3. Display results with balance amounts and mint addresses
+const connection: Rpc = createRpc();
 
-const connection: Rpc = createRpc(); // defaults to localhost:8899
-
-// Load wallet from filesystem
 const walletPath = `${os.homedir()}/.config/solana/id.json`;
 const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf8'));
 const payer = Keypair.fromSecretKey(Buffer.from(secretKey));
-const publicKey = payer.publicKey;
 
 (async () => {
-    // Fetch compressed token balances for wallet address
-    // Returns balance for owner per mint - can optionally apply filter: {mint, limit, cursor}
-    const balances = await connection.getCompressedTokenBalancesByOwnerV2(publicKey);
-
-    console.log(`\nMint Address ${publicKey.toString()}:\n`);
+    const balances = await connection.getCompressedTokenBalancesByOwnerV2(payer.publicKey);
 
     if (balances.value.items.length === 0) {
         console.log("No compressed token balances found");
-    } else {
-        for (const item of balances.value.items) {
-            const balanceValue = typeof item.balance === 'string'
-                ? parseInt(item.balance, 16)
-                : item.balance;
+        return;
+    }
 
-            // Fetch mint info to get decimals
-            try {
-                const mintInfo = await connection.getAccountInfo(new PublicKey(item.mint));
-                if (mintInfo && mintInfo.data) {
-                    const decimals = mintInfo.data[44];
-                    console.log(`Compressed Token Balance: ${balanceValue / Math.pow(10, decimals)} tokens`);
-                }
-            } catch (e) {
-                console.log(`Could not fetch mint info: ${e}`);
-            }
-        }
+    for (const item of balances.value.items) {
+        const balanceValue = typeof item.balance === 'string'
+            ? parseInt(item.balance, 16)
+            : item.balance;
+
+        const mintInfo = await connection.getAccountInfo(new PublicKey(item.mint));
+        const decimals = mintInfo.data[44];
+        const formattedBalance = balanceValue / Math.pow(10, decimals);
+
+        console.log(`Mint: ${item.mint}`);
+        console.log(`Balance: ${formattedBalance} tokens\n`);
     }
 })();
-
 ```
 
 ### Get Transaction History
@@ -79,7 +68,7 @@ const connection: Rpc = createRpc();
 const publicKey = new PublicKey('<add-pubkey>');
 
 (async () => {
-    const signatures = await connection.getCompressionSignaturesForOwner(publicKey);
+    const signatures = await connection.getCompressionSignaturesForTokenOwner(publicKey);
     console.log(signatures);
 
     if (signatures.items.length > 0) {
@@ -244,7 +233,7 @@ Follow these steps to create an RPC Connection. Replace \<your\_api\_key> with y
 import { createRpc } from "@lightprotocol/stateless.js";
 
 // Helius exposes Solana and Photon RPC endpoints through a single URL
-const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<your_api_key>";
+const RPC_ENDPOINT = "https://devnet.helius-rpc.com/?api-key=<your_api_key>";
 const connection = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
 
 console.log("Connection created!");
@@ -265,45 +254,31 @@ import { Keypair, PublicKey } from '@solana/web3.js';
 import * as fs from 'fs';
 import * as os from 'os';
 
-// 1. Setup RPC connection to local test validator
-// 2. Call getCompressedTokenBalancesByOwnerV2() to fetch compressed token balances per mint
-// 3. Display results with balance amounts and mint addresses
+const connection: Rpc = createRpc();
 
-const connection: Rpc = createRpc(); // defaults to localhost:8899
-
-// Load wallet from filesystem
 const walletPath = `${os.homedir()}/.config/solana/id.json`;
 const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf8'));
 const payer = Keypair.fromSecretKey(Buffer.from(secretKey));
-const publicKey = payer.publicKey;
 
 (async () => {
-    // Fetch compressed token balances for wallet address
-    // Returns balance for owner per mint - can optionally apply filter: {mint, limit, cursor}
-    const balances = await connection.getCompressedTokenBalancesByOwnerV2(publicKey);
-
-    console.log(`\nMint Address ${publicKey.toString()}:\n`);
+    const balances = await connection.getCompressedTokenBalancesByOwnerV2(payer.publicKey);
 
     if (balances.value.items.length === 0) {
         console.log("No compressed token balances found");
-    } else {
-        for (const item of balances.value.items) {
-            const balanceValue = typeof item.balance === 'string'
-                ? parseInt(item.balance, 16)
-                : item.balance;
+        return;
+    }
 
-            // Fetch mint info to get decimals
-            try {
-                const mintInfo = await connection.getAccountInfo(new PublicKey(item.mint));
-                if (mintInfo && mintInfo.data) {
-                    // SPL Token mint decimals are at offset 44
-                    const decimals = mintInfo.data[44];
-                    console.log(`Compressed Token Balance: ${balanceValue / Math.pow(10, decimals)} tokens`);
-                }
-            } catch (e) {
-                console.log(`Could not fetch mint info: ${e}`);
-            }
-        }
+    for (const item of balances.value.items) {
+        const balanceValue = typeof item.balance === 'string'
+            ? parseInt(item.balance, 16)
+            : item.balance;
+
+        const mintInfo = await connection.getAccountInfo(new PublicKey(item.mint));
+        const decimals = mintInfo.data[44];
+        const formattedBalance = balanceValue / Math.pow(10, decimals);
+
+        console.log(`Mint: ${item.mint}`);
+        console.log(`Balance: ${formattedBalance} tokens\n`);
     }
 })();
 ```
@@ -312,33 +287,26 @@ const publicKey = payer.publicKey;
 {% step %}
 ### Get Transaction History
 
-This example retrieves compression transaction signatures and detailed transaction information for wallet transaction history display.
+This example retrieves compression transaction signatures to display transaction history of the wallet.
 
 ```javascript
 import { Rpc, createRpc } from '@lightprotocol/stateless.js';
 import { PublicKey } from '@solana/web3.js';
 
-// 1. Setup RPC connection and fetch compression transaction signatures using getCompressionSignaturesForOwner()
-// 2. Retrieve detailed transaction data with getTransactionWithCompressionInfo() including pre/post balances
-// 3. Display transaction history with signature list and balance changes
-
-const connection: Rpc = createRpc(); // defaults to localhost:8899
-const publicKey = new PublicKey('CLEuMG7pzJX9xAuKCFzBP154uiG1GaNo4Fq7x6KAcAfG');
+const connection: Rpc = createRpc();
+const publicKey = new PublicKey('FWwR2s4TwpWN3nkCzVfhuPrpePG8kNzBXAxEbNsaDFNu');
 
 (async () => {
-    // Fetch compression transaction signatures for wallet address
-    // Returns confirmed signatures for compression transactions involving the specified account owner
-    const signatures = await connection.getCompressionSignaturesForOwner(publicKey);
-    console.log(signatures);
+    const signatures = await connection.getCompressionSignaturesForTokenOwner(publicKey);
 
-    // Check if any signatures exist before trying to access them
     if (signatures.items.length > 0) {
-        // Retrieve detailed transaction information with compression data
-        // Returns pre- and post-compressed token balances grouped by owner
-        const parsedTransaction = await connection.getTransactionWithCompressionInfo(signatures.items[0].signature);
-        console.log(parsedTransaction);
+        signatures.items.forEach((sig, index) => {
+            console.log(`${index + 1}. ${sig.signature}`);
+            console.log(`   Slot: ${sig.slot}`);
+            console.log(`   Time: ${new Date(sig.blockTime * 1000).toISOString()}`);
+        });
     } else {
-        console.log("No compression transactions found for this address");
+        console.log("No transactions found");
     }
 })();
 ```
