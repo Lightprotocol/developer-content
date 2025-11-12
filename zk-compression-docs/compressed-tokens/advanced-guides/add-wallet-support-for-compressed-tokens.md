@@ -52,7 +52,7 @@ const publicKey = new PublicKey('FWwR2s4TwpWN3nkCzVfhuPrpePG8kNzBXAxEbNsaDFNu');
 
 ### Get Transaction History
 
-```javascript
+```typescript
 import { Rpc, createRpc } from '@lightprotocol/stateless.js';
 import { PublicKey } from '@solana/web3.js';
 
@@ -74,6 +74,51 @@ const publicKey = new PublicKey('FWwR2s4TwpWN3nkCzVfhuPrpePG8kNzBXAxEbNsaDFNu');
     }
 })();
 ```
+
+<details>
+
+<summary>Get full transaction history on devnet or mainnet with getTransactionWithCompressionInfo</summary>
+
+```typescript
+import { Rpc, createRpc } from '@lightprotocol/stateless.js';
+import { PublicKey } from '@solana/web3.js';
+
+const RPC_ENDPOINT = process.env.RPC_ENDPOINT || 'https://devnet.helius-rpc.com?api-key=<your-api-key>';
+
+const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
+const publicKey = new PublicKey('FWwR2s4TwpWN3nkCzVfhuPrpePG8kNzBXAxEbNsaDFNu');
+
+(async () => {
+    try {
+        const signatures = await connection.getCompressionSignaturesForTokenOwner(publicKey);
+
+        if (signatures.items.length === 0) {
+            console.log("No transactions found");
+            return;
+        }
+
+        console.log(`Latest Transaction:`);
+        console.log(`Signature: ${signatures.items[0].signature}`);
+        console.log(`Slot: ${signatures.items[0].slot}`);
+
+        const txInfo = await connection.getTransactionWithCompressionInfo(signatures.items[0].signature);
+
+        if (!txInfo) {
+            console.log('Transaction not found or has no compression info');
+            return;
+        }
+
+        if (txInfo.compressionInfo) {
+            console.log(`\nClosed Accounts: ${txInfo.compressionInfo.closedAccounts.length}`);
+            console.log(`Opened Accounts: ${txInfo.compressionInfo.openedAccounts.length}`);
+        }
+    } catch (error) {
+        console.error('Error fetching transaction history:', error);
+    }
+})();
+```
+
+</details>
 
 ### Send Compressed Tokens
 
