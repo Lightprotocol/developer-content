@@ -22,21 +22,13 @@ Leading Solana Wallets like Phantom and Backpack already support compressed toke
 
 ```javascript
 import { Rpc, createRpc } from '@lightprotocol/stateless.js';
-import { Keypair, PublicKey } from '@solana/web3.js';
-import * as fs from 'fs';
-import * as os from 'os';
+import { PublicKey } from '@solana/web3.js';
 
-// 1. Setup RPC connection to local test validator
-// 2. Call getCompressedTokenBalancesByOwnerV2() to fetch compressed token balances per mint
-// 3. Display results with balance amounts and mint addresses
 const connection: Rpc = createRpc();
-
-const walletPath = `${os.homedir()}/.config/solana/id.json`;
-const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf8'));
-const payer = Keypair.fromSecretKey(Buffer.from(secretKey));
+const publicKey = new PublicKey('FWwR2s4TwpWN3nkCzVfhuPrpePG8kNzBXAxEbNsaDFNu');
 
 (async () => {
-    const balances = await connection.getCompressedTokenBalancesByOwnerV2(payer.publicKey);
+    const balances = await connection.getCompressedTokenBalancesByOwnerV2(publicKey);
 
     if (balances.value.items.length === 0) {
         console.log("No compressed token balances found");
@@ -65,15 +57,20 @@ import { Rpc, createRpc } from '@lightprotocol/stateless.js';
 import { PublicKey } from '@solana/web3.js';
 
 const connection: Rpc = createRpc();
-const publicKey = new PublicKey('<add-pubkey>');
+const publicKey = new PublicKey('FWwR2s4TwpWN3nkCzVfhuPrpePG8kNzBXAxEbNsaDFNu');
 
 (async () => {
     const signatures = await connection.getCompressionSignaturesForTokenOwner(publicKey);
-    console.log(signatures);
 
     if (signatures.items.length > 0) {
-        const parsedTransaction = await connection.getTransactionWithCompressionInfo(signatures.items[0].signature);
-        console.log(parsedTransaction);
+        console.log(`Signatures:`);
+        signatures.items.forEach((sig, index) => {
+            console.log(`${index + 1}. ${sig.signature}`);
+            console.log(`   Slot: ${sig.slot}`);
+            console.log(`   Time: ${new Date(sig.blockTime * 1000).toISOString()}`);
+        });
+    } else {
+        console.log("No transactions found");
     }
 })();
 ```
@@ -291,15 +288,21 @@ This example retrieves compression transaction signatures to display transaction
 
 ```javascript
 import { Rpc, createRpc } from '@lightprotocol/stateless.js';
-import { PublicKey } from '@solana/web3.js';
+import { Keypair } from '@solana/web3.js';
+import * as fs from 'fs';
+import * as os from 'os';
 
 const connection: Rpc = createRpc();
-const publicKey = new PublicKey('FWwR2s4TwpWN3nkCzVfhuPrpePG8kNzBXAxEbNsaDFNu');
+
+const walletPath = `${os.homedir()}/.config/solana/id.json`;
+const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf8'));
+const payer = Keypair.fromSecretKey(Buffer.from(secretKey));
 
 (async () => {
-    const signatures = await connection.getCompressionSignaturesForTokenOwner(publicKey);
+    const signatures = await connection.getCompressionSignaturesForTokenOwner(payer.publicKey);
 
     if (signatures.items.length > 0) {
+        console.log(`Signatures:`);
         signatures.items.forEach((sig, index) => {
             console.log(`${index + 1}. ${sig.signature}`);
             console.log(`   Slot: ${sig.slot}`);
