@@ -1,0 +1,159 @@
+---
+title: Overview
+description: Compressed tokens provide full SPL token functionality without per-account rent cost.
+---
+
+
+| Creation             | Regular SPL Token | Compressed Token      | Cost Reduction |
+|:---------------------|:------------------|:----------------------|:---------------|
+| 100 Token Accounts   | ~ 0.2 SOL         | **~ 0.00004 SOL**     | **5000x**      |
+
+Compressed token accounts store information about an individual's ownership of a specific token (mint). Different from regular token accounts, they don't require an Associated Token Account (ATA) per token holder.
+
+For example, this simplifies [token distribution](https://github.com/Lightprotocol/developer-content/blob/main/zk-compression-docs/compressed-tokens/implementation-guides/create-an-airdrop.md), since you don't need to allocate a token account per recipient.
+
+**Compressed Tokens at a Glance**
+
+<CardGroup cols={3}>
+  <Card title="Rent-free tokens">
+    Create token accounts without upfront rent exempt balance.
+  </Card>
+  <Card title="SPL Compatibility">
+    Compatible with SPL tokens and Solana programs.
+  </Card>
+  <Card title="Wallet Support">
+    Supported by leading wallets including Phantom and Backpack.
+  </Card>
+</CardGroup>
+
+## Start building
+
+Developing with compressed tokens works similar SPL tokens and involves minimal setup:
+
+<Steps>
+  <Step>
+Install dependencies
+
+<CodeGroup>
+```bash npm
+npm install --save-dev typescript tsx @types/node && \
+npm install --save \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @solana/spl-token
+```
+
+```bash yarn
+yarn add --dev typescript tsx @types/node && \
+yarn add \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @solana/spl-token
+```
+
+```bash pnpm
+pnpm add --save-dev typescript tsx @types/node && \
+pnpm add \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @solana/spl-token
+```
+</CodeGroup>
+</Step>
+
+<Step>
+Set up your developer environment
+
+  <Accordion title="Setup Developer Environment">
+  By default, all guides use Localnet.
+
+  ```bash
+  # Install the development CLI
+  npm install @lightprotocol/zk-compression-cli
+  ```
+
+  ```bash
+  # Start a local test validator
+  light test-validator
+
+  ## ensure you have the Solana CLI accessible in your system PATH
+  ```
+
+  ```typescript
+  // createRpc() defaults to local test validator endpoints
+  import {
+    Rpc,
+    createRpc,
+  } from "@lightprotocol/stateless.js";
+
+  const connection: Rpc = createRpc();
+
+  async function main() {
+    let slot = await connection.getSlot();
+    console.log(slot);
+
+    let health = await connection.getIndexerHealth(slot);
+    console.log(health);
+    // "Ok"
+  }
+
+  main();
+  ```
+
+  **Alternative: Using Devnet**
+
+  Replace `<your-api-key>` with your actual API key. [Get your API key here](https://www.helius.dev/zk-compression), if you don't have one yet.
+
+  ```typescript
+  import { createRpc } from "@lightprotocol/stateless.js";
+
+  // Helius exposes Solana and Photon RPC endpoints through a single URL
+  const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<your_api_key>";
+  const connection = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
+
+  console.log("Connection created!");
+  console.log("RPC Endpoint:", RPC_ENDPOINT);
+  ```
+
+  </Accordion>
+
+</Step>
+
+  <Step>
+  Get started with our cookbook or advanced guides for implementations
+  </Step>
+</Steps>
+
+## Guides
+
+| Guide                                                                                                      | Description                                                               |
+| :---------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| [Create and Register a Mint Account for Compression](/compressed-tokens/guides/how-to-create-and-register-a-mint-account-for-compression)      | Create new SPL mint with token pool for compression                       |
+| [Create Compressed Token Accounts](/compressed-tokens/guides/how-to-create-compressed-token-accounts)                         | Create compressed and learn difference to regular token accounts           |
+| [Mint Compressed Tokens](/compressed-tokens/guides/how-to-mint-compressed-tokens)                                             | Create new compressed tokens to existing mint                              |
+| [Transfer Compressed Tokens](/compressed-tokens/guides/how-to-transfer-compressed-token)                                      | Move compressed tokens between compressed accounts                         |
+| [Decompress and Compress Tokens](/compressed-tokens/guides/how-to-compress-and-decompress-spl-tokens)                         | Convert SPL tokens between regular and compressed format                   |
+| [Compress Complete SPL Token Accounts](/compressed-tokens/guides/how-to-compress-complete-spl-token-accounts)                 | Compress complete SPL token accounts and reclaim rent afterwards           |
+| [Merge Compressed Accounts](/compressed-tokens/guides/how-to-merge-compressed-token-accounts)                                 | Consolidate multiple compressed accounts of the same mint into one         |
+| [Create Token Pools for Mint Accounts](/compressed-tokens/guides/how-to-create-compressed-token-pools-for-mint-accounts)      | Create token pool for compression for existing SPL mints                   |
+| [Approve and Revoke Delegate Authority](/compressed-tokens/guides/how-to-approve-and-revoke-delegate-authority)               | Approve or revoke delegates for compressed token accounts                  |
+
+
+### Advanced Guides
+
+| Guide                                                                                                                                                                                      | Description                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| [Add Wallet Support for Compressed Tokens](https://github.com/Lightprotocol/developer-content/blob/main/zk-compression-docs/compressed-tokens/add-wallet-support-for-compressed-tokens.md) | Add compressed token support in your wallet application                                                      |
+| [Use Token-2022 with Compression](https://github.com/Lightprotocol/developer-content/blob/main/zk-compression-docs/compressed-tokens/use-token-2022-with-compression.md)                   | Create compressed Token-2022 mints with metadata and other extensions                                        |
+| [Create an Airdrop without Claim](https://github.com/Lightprotocol/developer-content/blob/main/zk-compression-docs/compressed-tokens/create-an-airdrop.md)                                 | Create an airdrop that appears directly in recipients' wallets (with or without code)                        |
+| [Example Airdrop with Claim](https://github.com/Lightprotocol/example-compressed-claim)                                                                                                    | Demo for time-locked airdrop with compressed tokens                                                          |
+| [Example Web Client](https://github.com/Lightprotocol/example-web-client)                                                                                                                  | Demonstrates how to use @lightprotocol/stateless.js in a browser environment to interact with ZK Compression |
+| [Example Node.js Client](https://github.com/Lightprotocol/example-nodejs-client)                                                                                                           | Script to execute basic compression/decompression/transfers                                                  |
+
+
+## Next Steps
+
+Get started with the first cookbook guide.
