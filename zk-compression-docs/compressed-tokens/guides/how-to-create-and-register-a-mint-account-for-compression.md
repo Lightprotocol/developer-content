@@ -51,7 +51,7 @@ npm install \
 **Alternatives:**
 
 ```bash
-yarn add --dd typescript tsx @types/node &&
+yarn add --dev typescript tsx @types/node &&
 yarn add \
     @lightprotocol/stateless.js \
     @lightprotocol/compressed-token \
