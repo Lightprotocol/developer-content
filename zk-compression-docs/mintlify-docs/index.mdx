@@ -1,0 +1,145 @@
+---
+title: Introduction
+description: Solana account primitive for tokens and PDAs at a fraction of the cost - scale to millions of users without sacrificing L1 performance and security.
+icon: book-open
+---
+
+<Frame>
+  ![](/images/banner-image.png)
+</Frame>
+
+ZK Compression is a Solana account primitive that lets you create tokens and PDAs at a fraction of the cost. Scale your application to millions of users without sacrificing L1 performance and security guarantees.
+
+| Creation                | Regular Account   | Compressed Account     | Cost Reduction |
+|:-------------------------|:------------------|:-----------------------|:----------------|
+| 100-byte PDA Account    | 0.0016 SOL       | **~ 0.00001 SOL**     | **160x**       |
+| 100 Token Accounts      | ~ 0.2 SOL        | **~ 0.00004 SOL**     | **5000x**      |
+
+### Core Features
+
+<CardGroup cols={3}>
+  <Card title="Rent-free Accounts">
+    Create accounts without paying upfront rent.
+  </Card>
+  <Card title="L1 Performance">
+    Execution and data availability on Solana.
+  </Card>
+  <Card title="Fully Composable">
+    Compatible with existing programs and accounts.
+  </Card>
+</CardGroup>
+
+
+### Start Building
+
+<CardGroup cols={3}>
+  <Card title="Quick Start" href="/quickstart" icon="bolt">
+  Test compressed tokens in less than 5 minutes.
+  </Card>
+  <Card
+    title="Compressed Tokens"
+    href="/compressed-tokens/overview"
+    icon="coins"
+    iconType="solid"
+  >
+    Create SPL-compatible tokens 5000x cheaper.
+  </Card>
+  <Card
+    title="Compressed PDAs"
+    href="/compressed-pdas/create-a-program-with-compressed-pdas"
+    icon="user"
+    iconType="solid"
+  >
+    Store your app state in accounts with 98% less cost.
+  </Card>
+</CardGroup>
+
+
+### What is ZK Compression?
+
+ZK Compression is a framework that reduces the storage cost of Solana accounts by combining generalized state compression and <Tooltip tip="A cryptographic proof to verify the validity of a statement without revealing the underlying data. ZK Compression uses a Groth16 SNARK zk proof with a constant 128 bytes size">zero-knowledge proofs</Tooltip>.
+
+
+<Steps>
+  <Step title="State Compression">
+    Instead of storing account data in millions of on-chain accounts, state compression stores account data on the <Tooltip tip="The ledger is an immutable historical record of all Solana transactions signed by clients since the genesis block.">Solana ledger</Tooltip> with cryptographic security. Only a small fingerprint is stored on-chain. This fingerprint allows transactions to use the account data inside Solana's virtual machine as if it were stored on-chain.
+  </Step>
+  <Step title="ZK">
+    The protocol uses small zero-knowledge proofs (validity proofs) to verify the integrity of the compressed accounts. By default, this is all done under the hood. You can fetch validity proofs from RPC providers that support ZK Compression.
+  </Step>
+</Steps>
+
+### Using AI to work with ZK Compression
+
+Integrate ZK Compression in your existing AI workflow by following the steps below.
+
+| Tool                | Description                                                                  | Link                                 |
+|:---------------------|:------------------------------------------------------------------------------|:--------------------------------------|
+| DeepWiki/AskDevin   | Query the Light Protocol codebase and documentation in natural language       | <a href="https://deepwiki.com/Lightprotocol/light-protocol"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" style={{marginTop: 0, marginBottom: 0}} /></a> |
+| MCP                 | Connect AI tools to the Light Protocol repository via Model Context Protocol  | [Setup Guide](https://www.zkcompression.com/references/ai-tools-guide#mcp) |
+| Docs AI Search      | Search documentation with AI in the search bar.                               | Available throughout the documentation |
+
+<Check>
+**AI powered navigation**: Use AI search to quickly find information, get code examples, and learn complex topics. Available throughout our documentation.
+</Check>
+
+
+<Frame>
+  <iframe src="https://drive.google.com/file/d/1-oxTqNMQX8LqP8FYSCDiG3YzIixnPbiN/preview" width="100%" height="100%" allow="autoplay" className="rounded-xl aspect-video"></iframe>
+</Frame>
+
+### Resources
+<CardGroup cols={3}>
+  <Card
+    title="RPC Methods"
+    href="/resources/json-rpc-methods"
+    icon="router"
+    iconType="solid"
+  >
+    Browse ZK Compression's JSON RPC methods.
+  </Card>
+  <Card
+    title="SDKs"
+    href="/resources/sdks"
+    icon="code"
+    iconType="solid"
+  >
+    Explore our TypeScript and Rust SDKs.
+  </Card>
+  <Card
+    title="CLI Installation"
+    href="/resources/cli-installation"
+    icon="terminal"
+    iconType="solid"
+  >
+    Install the ZK Compression CLI for local development.
+  </Card>
+</CardGroup>
+
+### Learn & Community
+<CardGroup cols={3}>
+  <Card
+    title="Start Learning"
+    href="/learn/core-concepts"
+    icon="graduation-cap"
+    iconType="solid"
+  >
+    Learn about ZK Compression's core concepts.
+  </Card>
+  <Card
+    title="Security"
+    href="/references/security"
+    icon="shield-halved"
+    iconType="solid"
+  >
+    Read our external audit and formal verification reports.
+  </Card>
+  <Card
+    title="Discord"
+    href="https://discord.com/invite/CYvjBgzRFP"
+    icon="discord"
+    iconType="solid"
+  >
+    Join our Discord for support and discussions.
+  </Card>
+</CardGroup>

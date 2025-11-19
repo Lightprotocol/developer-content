@@ -1,0 +1,188 @@
+---
+title: Quick Start
+description: Create your first compressed token in minutes.
+icon: bolt
+---
+
+
+With this guide you will mint compressed tokens in under 5 minutes.
+
+<Check>
+Compressed tokens are SPL compatible and supported by leading wallets such as Phantom or Backpack.
+</Check>
+
+<Steps>
+<Step title="Install Dependencies">
+
+<Tabs>
+<Tab title="npm">
+```bash
+npm install --save-dev typescript tsx @types/node &&
+npm install \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @solana/spl-token
+```
+</Tab>
+
+<Tab title="yarn">
+```bash
+yarn add --dev typescript tsx @types/node &&
+yarn add \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @solana/spl-token
+```
+</Tab>
+
+<Tab title="pnpm">
+```bash
+pnpm add --save-dev typescript tsx @types/node &&
+pnpm add \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @solana/spl-token
+```
+</Tab>
+</Tabs>
+</Step>
+<Step title="Create an RPC connection">
+
+Run `test-connection.ts` to verify your setup:
+
+<Check>
+Replace `<api_key>` with your actual API key before running! Get one [here](https://www.helius.dev/zk-compression), if you don't have one yet.
+</Check>
+
+```typescript test-connection.ts
+import { createRpc } from "@lightprotocol/stateless.js";
+
+// Helius exposes Solana and Photon RPC endpoints through a single URL
+<strong>const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=&#x3C;api_key>";
+</strong>const connection = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
+
+console.log("Connection created");
+console.log("RPC Endpoint:", RPC_ENDPOINT);
+```
+</Step>
+<Step title="Create and Mint Compressed Tokens">
+
+<Accordion title="Generate your keypair, if you don't have one yet.">
+
+<Steps>
+<Step>
+Install Solana
+
+```bash
+sh -c "$(curl -sSfL https://release.anza.xyz/v3.0.0/install)"
+```
+</Step>
+<Step>
+Then run the command below to create a keypair at `.config/solana/id.json`
+
+```bash
+solana-keygen new
+```
+</Step>
+<Step>
+Fund wallet with devnet SOL
+
+```bash
+# Check current balance
+solana balance --url devnet
+
+# Airdrop 1 SOL to your default wallet
+solana airdrop 1 --url devnet
+
+# or use https://faucet.solana.com/
+```
+
+</Step>
+</Steps>
+</Accordion>
+
+Run `quickstart.ts` with the following code:
+
+```typescript quickstart.ts highlight={17, 25-30, 37-45 } expandable
+// ZK Compression Quickstart - DevNet
+// 1. Load wallet and connect to DevNet via Helius RPC
+// 2. Create SPL mint with token pool for compression via createMint()
+// 3. Mint compressed tokens to recipient account via mintTo()
+// 4. Verify compressed token balance via getCompressedTokenAccountsByOwner
+
+import { createRpc } from "@lightprotocol/stateless.js";
+import { createMint, mintTo } from "@lightprotocol/compressed-token";
+import { Keypair } from "@solana/web3.js";
+import { readFileSync } from "fs";
+import { homedir } from "os";
+
+// Step 1: Load wallet from filesystem
+const payer = Keypair.fromSecretKey(new Uint8Array(JSON.parse(readFileSync(`${homedir()}/.config/solana/id.json`, "utf8"))));
+
+// Helius exposes Solana and compression RPC endpoints through a single URL
+const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<API_KEY>";
+const connection = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
+
+const main = async () => {
+
+  try {
+    // Step 2: Create SPL mint with token pool for compression
+    console.log("\nCreating SPL mint with token pool for compression");
+    const { mint, transactionSignature } = await createMint(
+      connection,
+      payer,
+      payer.publicKey, // mintAuthority
+      9
+    );
+
+    console.log(`Mint address: ${mint.toBase58()}`);
+    console.log(`Create mint transaction: https://explorer.solana.com/tx/${transactionSignature}?cluster=devnet`);
+
+    // Step 3: Mint compressed tokens to recipient account
+    console.log("\nMinting compressed token...");
+    const mintAmount = 1000000000; // mintAmount with decimals
+    const mintToTxId = await mintTo(
+      connection,
+      payer,
+      mint, // SPL mint with token pool for compression
+      payer.publicKey, // recipient.publicKey
+      payer, // mintAuthority
+      mintAmount
+    );
+
+    console.log(`Compressed Token minted ${mintAmount / 1e9} token`);
+    console.log(`Transaction: https://explorer.solana.com/tx/${mintToTxId}?cluster=devnet`);
+
+    // Step 4: Verify compressed token balance via getCompressedTokenAccountsByOwner
+    const tokenAccounts = await connection.getCompressedTokenAccountsByOwner(
+      payer.publicKey,
+      { mint } // SPL mint with token pool for compression
+    );
+
+  } catch (error: any) {
+    console.error("Error:", error.message);
+  }
+};
+
+main().catch(console.error);
+```
+</Step>
+<Step title="That's it!">
+
+
+You've created and minted compressed tokens. The output shows:
+
+* Mint address
+* Create mint transaction link
+* Minted token amount
+* Mint transaction link
+* Compressed token balance
+</Step>
+</Steps>
+
+## Next Steps
+
+Get an overview of compressed tokens or build a program with compressed accounts.

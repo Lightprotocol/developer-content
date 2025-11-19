@@ -1,0 +1,366 @@
+---
+title: Compress Complete SPL Token Accounts
+description: "Complete guide to compress complete SPL Token Accounts with compressSplTokenAccount() for account migration and to reclaim rent afterwards."
+---
+
+The `compressSplTokenAccount` function compresses the balance of an SPL token account, with an optional `remainingAmount` parameter to leave tokens in the original account.
+
+Before compressing SPL token accounts, you need:
+
+* An SPL mint with a token pool for compression. This token pool can be created for new SPL mints via [`createMint()`](/compressed-tokens/guides/how-to-create-and-register-a-mint-account-for-compression), and
+* SPL token account (ATA) with tokens to compress.
+
+After compression, empty token accounts can now be closed to reclaim rent with [`closeAccount()`](https://solana.com/developers/cookbook/tokens/close-token-accounts).
+
+<CodeGroup>
+```typescript compressSplTokenAccount()
+// Compress entire SPL token account balance
+const transactionSignature = await compressSplTokenAccount(
+    rpc,
+    payer,
+    mint, // SPL mint with token pool for compression
+    owner,
+    tokenAccount, // SPL token account to compress
+);
+```
+
+```typescript partialCompression()
+// Compress account while keeping some tokens in SPL format
+const transactionSignature = await compressSplTokenAccount(
+    rpc,
+    payer,
+    mint, // SPL mint with token pool for compression
+    owner,
+    tokenAccount, // SPL token account to compress
+    remainingAmount, // amount to keep in SPL format
+);
+```
+</CodeGroup>
+
+<Check>
+**Function Difference and Best Practice:**
+
+* `compressSplTokenAccount(tokenAccount, remainingAmount)` compresses the entire SPL token\
+  account balance minus optional remaining amount only to the same owner. Use to migrate complete token\
+  accounts with optional partial retention.
+* `compress(amount, sourceTokenAccount, toAddress)` compresses specific amounts from\
+  source to a specified recipient. Use for transfers and precise amounts. [Here is how](/compressed-tokens/guides/how-to-compress-and-decompress-spl-tokens).
+</Check>
+
+## Full Code Example
+
+<Steps>
+<Step title="Prerequisites">
+Make sure you have dependencies and developer environment set up!
+
+<Accordion title="Prerequisites & Setup">
+
+**Dependencies**
+
+```bash
+npm install --save-dev typescript tsx @types/node && \
+npm install --save \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @solana/spl-token
+```
+
+**Alternatives:**
+
+```bash
+yarn add --dev typescript tsx @types/node && \
+yarn add \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @solana/spl-token
+```
+
+```bash
+pnpm add --save-dev typescript tsx @types/node && \
+pnpm add \
+    @lightprotocol/stateless.js \
+    @lightprotocol/compressed-token \
+    @solana/web3.js \
+    @solana/spl-token
+```
+
+**Developer Environment**
+
+By default, this guide uses Localnet.
+
+```bash
+# Install the development CLI
+npm install @lightprotocol/zk-compression-cli
+```
+
+```bash
+# Start a local test validator
+light test-validator
+
+## ensure you have the Solana CLI accessible in your system PATH
+```
+
+```typescript
+// createRpc() defaults to local test validator endpoints
+import {
+  Rpc,
+  createRpc,
+} from "@lightprotocol/stateless.js";
+
+const connection: Rpc = createRpc();
+
+async function main() {
+  let slot = await connection.getSlot();
+  console.log(slot);
+
+  let health = await connection.getIndexerHealth(slot);
+  console.log(health);
+  // "Ok"
+}
+
+main();
+```
+
+**Alternative: Using Devnet**
+
+Follow these steps to create an RPC Connection. Replace `<your-api-key>` with your actual API key.
+
+<Info>
+[Get your API key here](https://www.helius.dev/zk-compression), if you don't have one yet.
+</Info>
+
+```typescript
+import { createRpc } from "@lightprotocol/stateless.js";
+
+// Helius exposes Solana and Photon RPC endpoints through a single URL
+const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<your_api_key>";
+const connection = createRpc(RPC_ENDPOINT, RPC_ENDPOINT, RPC_ENDPOINT);
+
+console.log("Connection created!");
+console.log("RPC Endpoint:", RPC_ENDPOINT);
+```
+
+</Accordion>
+</Step>
+<Step title="Compress SPL Token Accounts">
+
+Compress entire SPL token account balance.
+
+```typescript compress-full-account.ts highlight={48-55} expandable
+// 1. Setup funded payer and connect to local validator
+// 2. Create SPL mint with token pool and mint SPL tokens to ATA
+// 3. Call compressSplTokenAccount() to compress entire account
+// 4. Verify balances and rent reclaim eligibility
+
+import { Keypair } from '@solana/web3.js';
+import { createRpc, bn } from '@lightprotocol/stateless.js';
+import {
+    createMint,
+    compressSplTokenAccount
+} from '@lightprotocol/compressed-token';
+import {
+    createAssociatedTokenAccount,
+    mintTo,
+    TOKEN_PROGRAM_ID
+} from '@solana/spl-token';
+
+async function compressFullAccount() {
+    // Step 1: Setup funded payer and connect to local validator
+    const rpc = createRpc(); // defaults to localhost:8899
+    const payer = Keypair.generate();
+    const airdropSignature = await rpc.requestAirdrop(payer.publicKey, 1000000000); // 1 SOL
+    await rpc.confirmTransaction(airdropSignature);
+
+    // Step 2: Create SPL mint with token pool and mint SPL tokens to ATA
+    const { mint } = await createMint(rpc, payer, payer.publicKey, 9);
+    console.log("Mint with token pool created:", mint.toBase58());
+
+    const tokenOwner = Keypair.generate();
+    const tokenAccount = await createAssociatedTokenAccount(
+        rpc,
+        payer,
+        mint,
+        tokenOwner.publicKey
+    );
+    console.log("SPL token account created:", tokenAccount.toBase58());
+
+    // Mint SPL tokens to the ATA
+    const splAmount = 2_000_000_000; // 2 tokens with 9 decimals
+    await mintTo(rpc, payer, mint, tokenAccount, payer, splAmount);
+    console.log("SPL tokens minted:", splAmount / 1_000_000_000, "tokens");
+
+    // Check balances before compression
+    const splBalanceBefore = await rpc.getTokenAccountBalance(tokenAccount);
+    console.log("\nBefore Compression:");
+    console.log("SPL token balance:", Number(splBalanceBefore.value.amount) / 1_000_000_000, "tokens");
+
+    // Step 3: Compress entire SPL token account
+    const compressTx = await compressSplTokenAccount(
+        rpc,
+        payer,
+        mint, // SPL mint with token pool for compression
+        tokenOwner,
+        tokenAccount, // SPL token account to compress
+    );
+
+    console.log("SPL token account compressed!");
+    console.log("Transaction:", compressTx);
+
+    // Step 4: Verify balances and rent reclaim eligibility
+    const splBalanceAfter = await rpc.getTokenAccountBalance(tokenAccount);
+    const compressedAccountsAfter = await rpc.getCompressedTokenAccountsByOwner(
+        tokenOwner.publicKey,
+        { mint }
+    );
+
+    const totalCompressed = compressedAccountsAfter.items.reduce(
+        (sum, account) => sum.add(account.parsed.amount),
+        bn(0)
+    );
+
+    console.log("\nAfter Compression:");
+    console.log("SPL token balance:", Number(splBalanceAfter.value.amount) / 1_000_000_000, "tokens");
+    console.log("Compressed accounts:", compressedAccountsAfter.items.length);
+    console.log("Total compressed balance:", totalCompressed.toNumber() / 1_000_000_000, "tokens");
+
+    if (Number(splBalanceAfter.value.amount) === 0) {
+        console.log("\nSPL token account is now empty and can be closed to reclaim rent!");
+    }
+
+    return {
+        compressTransaction: compressTx,
+        tokenAccount,
+        splBalanceAfter: Number(splBalanceAfter.value.amount),
+        compressedBalance: totalCompressed.toNumber()
+    };
+}
+
+compressFullAccount().catch(console.error);
+```
+</Step>
+</Steps>
+
+### Troubleshooting
+
+<AccordionGroup>
+<Accordion title="Insufficient balance in token account">
+
+The token account doesn't have enough tokens for the operation.
+
+```typescript
+// Check token account balance before compression
+const balance = await rpc.getTokenAccountBalance(tokenAccount);
+
+if (Number(balance.value.amount) === 0) {
+    console.log("Token account is empty");
+    return;
+}
+
+console.log("Available balance:", Number(balance.value.amount));
+
+// Proceed with compression
+const compressTx = await compressSplTokenAccount(
+    rpc,
+    payer,
+    mint,
+    owner,
+    tokenAccount,
+);
+```
+
+</Accordion>
+
+<Accordion title="Remaining amount exceeds balance">
+
+The `remainingAmount` parameter exceeds the current account balance.
+
+```typescript
+const balance = await rpc.getTokenAccountBalance(tokenAccount);
+const availableAmount = Number(balance.value.amount);
+const remainingAmount = bn(500_000_000); // 0.5 tokens
+
+if (remainingAmount.gt(bn(availableAmount))) {
+    console.log(`Cannot leave ${remainingAmount.toString()} tokens`);
+    console.log(`Available balance: ${availableAmount}`);
+    throw new Error("Remaining amount exceeds balance");
+}
+
+// Use valid remaining amount
+const compressTx = await compressSplTokenAccount(
+    rpc,
+    payer,
+    mint,
+    owner,
+    tokenAccount,
+    remainingAmount, // must be <= balance
+);
+```
+
+</Accordion>
+</AccordionGroup>
+
+### Advanced Configuration
+
+<AccordionGroup>
+<Accordion title="Partial Account Compression">
+
+Compress most tokens while leaving some in SPL format:
+
+```typescript
+import { bn } from '@lightprotocol/stateless.js';
+
+// Leave 100 tokens (0.1 with 9 decimals) in SPL account
+const remainingAmount = bn(100_000_000);
+
+const compressTx = await compressSplTokenAccount(
+    rpc,
+    payer,
+    mint,
+    owner,
+    tokenAccount,
+    remainingAmount, // amount to keep in SPL format
+);
+
+// Account will retain remainingAmount tokens
+```
+
+</Accordion>
+
+<Accordion title="Compress Multiple Accounts">
+
+Compress several token accounts for the same mint:
+
+```typescript
+const tokenAccounts = [
+    { account: new PublicKey("ACCOUNT_1"), owner: owner1 },
+    { account: new PublicKey("ACCOUNT_2"), owner: owner2 },
+    { account: new PublicKey("ACCOUNT_3"), owner: owner3 },
+];
+
+// Compress each account
+for (const { account, owner } of tokenAccounts) {
+    console.log(`Compressing account: ${account.toBase58()}`);
+
+    try {
+        const compressTx = await compressSplTokenAccount(
+            rpc,
+            payer,
+            mint,
+            owner,
+            account,
+        );
+        console.log(`Compressed: ${compressTx}`);
+    } catch (error) {
+        console.log(`Failed: ${error.message}`);
+    }
+}
+```
+
+</Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+Compressed tokens need an SPL mint with token pool for compression. Learn how to create and register SPL mints with token pools for compression in the next guide.

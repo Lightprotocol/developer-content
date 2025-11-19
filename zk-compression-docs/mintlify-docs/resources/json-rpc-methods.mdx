@@ -1,0 +1,221 @@
+---
+title: JSON RPC Methods
+description: Overview of all available ZK compression JSON RPC endpoints on Solana, best practices, and error codes.
+sidebarTitle: "Overview"
+---
+
+<Info>
+[Helius Labs](https://github.com/helius-labs) maintains the canonical RPC API and [Photon indexer implementation](https://github.com/helius-labs/photon).
+</Info>
+
+Interact with compressed accounts directly with the ZK Compression JSON RPC API. It's a thin wrapper extending [Solana's web3.js `Connection` class](https://solana-labs.github.io/solana-web3.js/classes/Connection.html) with compression-related endpoints.
+
+The API exposed by the indexer closely mirrors existing RPC calls, with one-to-one mapping:
+
+| Solana RPC              | Photon RPC Calls                  |
+| :---------------------- | :------------------------------- |
+| getAccountInfo          | getCompressedAccount              |
+| getBalance              | getCompressedBalance              |
+| getTokenAccountsByOwner | getCompressedTokenAccountsByOwner |
+| getProgramAccounts      | getCompressedAccountsByOwner      |
+
+### Creating an RPC Connection
+
+
+<Check>
+<div style={{display: "flex", alignItems: "center", padding: 0, margin: 0}}>
+  <span style={{margin: 0, padding: 0, marginLeft: "8px"}}>Ask anything about the ZK Compression RPC API via</span>
+  <a href="https://deepwiki.com/Lightprotocol/light-protocol/3.3-rpc-and-indexer-integration" style={{padding: 0, margin: 0, display: "inline-block"}}>
+    <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" style={{padding:0, margin:0, verticalAlign: "middle"}} />
+  </a>
+</div>
+</Check>
+
+Connect to a specific RPC endpoint
+
+<Tabs>
+<Tab title="Mainnet">
+```typescript highlight={6-7}
+import {
+  Rpc,
+  createRpc,
+} from "@lightprotocol/stateless.js";
+
+// Helius exposes Solana and Photon RPC endpoints through a single URL
+const RPC_ENDPOINT = "https://mainnet.helius-rpc.com?api-key=<api_key>";
+const PHOTON_ENDPOINT = RPC_ENDPOINT;
+const PROVER_ENDPOINT = RPC_ENDPOINT;
+const connection: Rpc = createRpc(RPC_ENDPOINT, PHOTON_ENDPOINT, PROVER_ENDPOINT)
+
+console.log("connection", connection);
+```
+</Tab>
+
+<Tab title="Devnet">
+```typescript highlight={6-7}
+import {
+  Rpc,
+  createRpc,
+} from "@lightprotocol/stateless.js";
+
+// Helius exposes Solana and Photon RPC endpoints through a single URL
+const RPC_ENDPOINT = "https://devnet.helius-rpc.com?api-key=<api_key>";
+const PHOTON_ENDPOINT = RPC_ENDPOINT;
+const PROVER_ENDPOINT = RPC_ENDPOINT;
+const connection: Rpc = createRpc(RPC_ENDPOINT, PHOTON_ENDPOINT, PROVER_ENDPOINT)
+
+console.log("connection", connection);
+```
+</Tab>
+</Tabs>
+
+#### Best Practices
+
+| Best Practice         | Description                                                                                                    |
+|:----------------------|:----------------------------------------------------------------------------------------------------------------|
+| **Commitment Levels**| Use appropriate commitment levels: `processed` (fastest), `confirmed` (balanced), `finalized` (most reliable)  |
+| **Rate Limiting**    | Implement retry logic and respect rate limits. Public endpoints: 100 req/s, Private: 1000+ req/s               |
+| **Batch Requests**   | Use batch requests when possible to improve efficiency and reduce API calls                                     |
+| **Caching**          | Cache frequently accessed data to reduce API calls and improve performance                                      |
+
+#### Error Codes
+
+| Code   | Message              | Description                                  |
+| :------ | :-------------------- | :-------------------------------------------- |
+| -32600 | Invalid Request      | The JSON sent is not a valid Request object  |
+| -32601 | Method not found     | The method does not exist / is not available |
+| -32602 | Invalid params       | Invalid method parameter(s)                  |
+| -32603 | Internal error       | Internal JSON-RPC error                      |
+| -32000 | Account not found    | The compressed account was not found         |
+| -32001 | Invalid account hash | The provided account hash is invalid         |
+
+### Mainnet ZK Compression JSON RPC Methods
+
+<CardGroup>
+  <Card
+    title="GetCompressedAccount"
+    href="/resources/json-rpc-methods/getcompressedaccount"
+  >
+    Retrieves information about a specific compressed account by its address or hash.
+  </Card>
+  <Card
+    title="GetCompressedAccountsByOwner"
+    href="/resources/json-rpc-methods/getcompressedaccountsbyowner"
+  >
+    Returns all compressed accounts owned by a specific address.
+  </Card>
+  <Card
+    title="GetCompressedBalance"
+    href="/resources/json-rpc-methods/getcompressedbalance"
+  >
+    Retrieves the balance of a compressed account.
+  </Card>
+  <Card
+    title="GetCompressedBalanceByOwner"
+    href="/resources/json-rpc-methods/getcompressedbalancebyowner"
+  >
+    Gets the total balance of all compressed accounts owned by an address.
+  </Card>
+  <Card
+    title="GetCompressedMintTokenHolders"
+    href="/resources/json-rpc-methods/getcompressedminttokenholders"
+  >
+    Lists all holders of a specific compressed token mint.
+  </Card>
+  <Card
+    title="GetCompressedTokenAccountBalance"
+    href="/resources/json-rpc-methods/getcompressedtokenaccountbalance"
+  >
+    Retrieves the token balance of a compressed token account.
+  </Card>
+  <Card
+    title="GetCompressedTokenAccountsByDelegate"
+    href="/resources/json-rpc-methods/getcompressedtokenaccountbydelegate"
+  >
+    Returns all compressed token accounts delegated to a specific address.
+  </Card>
+  <Card
+    title="GetCompressedTokenAccountsByOwner"
+    href="/resources/json-rpc-methods/getcompressedtokenaccountsbyowner"
+  >
+    Lists all compressed token accounts owned by a specific address.
+  </Card>
+  <Card
+    title="GetCompressedTokenBalancesByOwner"
+    href="/resources/json-rpc-methods/getcompressedtokenbalancesbyowner"
+  >
+    Retrieves all token balances for compressed accounts owned by an address.
+  </Card>
+  <Card
+    title="GetCompressionSignaturesForAccount"
+    href="/resources/json-rpc-methods/getcompressionsignaturesforaccount"
+  >
+    Returns signatures for transactions involving a compressed account.
+  </Card>
+  <Card
+    title="GetCompressionSignaturesForAddress"
+    href="/resources/json-rpc-methods/getcompressionsignaturesforaddress"
+  >
+    Retrieves signatures for transactions involving a specific address.
+  </Card>
+  <Card
+    title="GetCompressionSignaturesForOwner"
+    href="/resources/json-rpc-methods/getcompressionsignaturesforowner"
+  >
+    Returns signatures for transactions where an address is the owner.
+  </Card>
+  <Card
+    title="GetCompressionSignaturesForTokenOwner"
+    href="/resources/json-rpc-methods/getcompressionsignaturesfortokenowner"
+  >
+    Lists signatures for transactions involving tokens owned by an address.
+  </Card>
+  <Card
+    title="GetIndexerHealth"
+    href="/resources/json-rpc-methods/getindexerhealth"
+  >
+    Returns the health status of the compression indexer.
+  </Card>
+  <Card
+    title="GetIndexerSlot"
+    href="/resources/json-rpc-methods/getindexerslot"
+  >
+    Retrieves the current slot of the compression indexer.
+  </Card>
+  <Card
+    title="GetLatestCompressionSignatures"
+    href="/resources/json-rpc-methods/getlatestcompressionsignatures"
+  >
+    Returns the most recent transaction signatures related to compression.
+  </Card>
+  <Card
+    title="GetLatestNon-VotingSignatures"
+  href="/resources/json-rpc-methods/getlatestnonvotingsignatures"
+  >
+    Retrieves recent non-voting transaction signatures.
+  </Card>
+  <Card
+    title="GetMultipleCompressedAccounts"
+    href="/resources/json-rpc-methods/getmultiplecompressedaccounts"
+  >
+    Retrieves multiple compressed accounts in a single request.
+  </Card>
+  <Card
+    title="GetMultipleNewAddressProofs"
+    href="/resources/json-rpc-methods/getmultiplenewaddressproofs"
+  >
+    Returns proofs that the new addresses are not taken already and can be created.
+  </Card>
+  <Card
+    title="GetTransactionWithCompressionInfo"
+    href="/resources/json-rpc-methods/gettransactionwithcompressioninfo"
+  >
+    Returns transaction details with additional compression-related information.
+  </Card>
+  <Card
+    title="GetValidityProof"
+    href="/resources/json-rpc-methods/getvalidityproof"
+  >
+    Retrieves a validity proof for compressed data.
+  </Card>
+</CardGroup>

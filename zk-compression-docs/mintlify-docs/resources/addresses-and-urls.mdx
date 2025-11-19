@@ -1,0 +1,177 @@
+---
+title: "Addresses and URLs"
+description: "Overview to all of ZK Compression's RPC URLs, Program IDs & Accounts and Lookup Tables."
+---
+
+### RPC URLs
+
+<Tabs>
+<Tab title="Mainnet">
+| Network | Service | URL |
+|:-|:-|:-|
+| Mainnet | Network Address (RPC) | `https://mainnet.helius-rpc.com?api-key=&#x3C;api_key>` |
+| Mainnet | Photon RPC API | `https://mainnet.helius-rpc.com?api-key=&#x3C;api_key>` |
+</Tab>
+
+<Tab title="Devnet">
+| Network | Service | URL |
+|:-|:-|:-|
+| Devnet | Network Address (RPC) | `https://devnet.helius-rpc.com?api-key=&#x3C;api_key>` |
+| Devnet | Photon RPC API | `https://devnet.helius-rpc.com?api-key=&#x3C;api_key>` |
+</Tab>
+</Tabs>
+
+<Info>
+Find all JSON RPC Methods for ZK Compression [here](/resources/json-rpc-methods).
+</Info>
+
+### Program IDs
+
+| | |
+|:-|:-|
+| Light System Program | **SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7** |
+| Compressed Token Program | **cTokenmWW8bLPjZEBAUgYy3zKxQZW6VKi7bqNFEVv3m** |
+| Account Compression Program | **compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq** |
+
+### State Trees & Queues & CPI Accounts
+
+<Check>
+**In your local test validator environment** use in Rust `TestAccounts::get_local_test_validator_accounts()` to get all pre-configured protocol, state tree, and address tree accounts.
+</Check>
+
+<Tabs>
+<Tab title="V1">
+
+| | Devnet | Mainnet | Public Key |
+|:-|:-:|:-:|:-|
+| State Tree | ✓ | ✓ | **smt2rJAFdyJJupwMKAqTNAJwvjhmiZ4JYGZmbVRw1Ho** |
+| Nullifier Queue | ✓ | ✓ | **nfq2hgS7NYemXsFaFUCe3EMXSDSfnZnAe27jC6aPP1X** |
+| CPI Context | ✓ | ✓ | **cpi2cdhkH5roePvcudTgUL8ppEBfTay1desGh8G8QxK** |
+
+</Tab>
+
+<Tab title="V2">
+
+| | Devnet | Mainnet | Public Key |
+|:-|:-:|:-:|:-|
+| #1 State Tree | ✓ | - | **bmt1LryLZUMmF7ZtqESaw7wifBXLfXHQYoE4GAmrahU** |
+| #1 Output Queue | ✓ | - | **oq1na8gojfdUhsfCpyjNt6h4JaDWtHf1yQj4koBWfto** |
+| #1 CPI Context | ✓ | - | **cpi15BoVPKgEPw5o8wc2T816GE7b378nMXnhH3Xbq4y** |
+
+| | Devnet | Mainnet | Public Key |
+|:-|:-:|:-:|:-|
+| #2 State Tree | ✓ | - | **bmt2UxoBxB9xWev4BkLvkGdapsz6sZGkzViPNph7VFi** |
+| #2 Output Queue | ✓ | - | **oq2UkeMsJLfXt2QHzim242SUi3nvjJs8Pn7Eac9H9vg** |
+| #2 CPI Context | ✓ | - | **cpi2yGapXUR3As5SjnHBAVvmApNiLsbeZpF3euWnW6B** |
+
+| | Devnet | Mainnet | Public Key |
+|:-|:-:|:-:|:-|
+| #3 State Tree | ✓ | - | **bmt3ccLd4bqSVZVeCJnH1F6C8jNygAhaDfxDwePyyGb** |
+| #3 Output Queue | ✓ | - | **oq3AxjekBWgo64gpauB6QtuZNesuv19xrhaC1ZM1THQ** |
+| #3 CPI Context | ✓ | - | **cpi3mbwMpSX8FAGMZVP85AwxqCaQMfEk9Em1v8QK9Rf** |
+
+| | Devnet | Mainnet | Public Key |
+|:-|:-:|:-:|:-|
+| #4 State Tree | ✓ | - | **bmt4d3p1a4YQgk9PeZv5s4DBUmbF5NxqYpk9HGjQsd8** |
+| #4 Output Queue | ✓ | - | **oq4ypwvVGzCUMoiKKHWh4S1SgZJ9vCvKpcz6RT6A8dq** |
+| #4 CPI Context | ✓ | - | **cpi4yyPDc4bCgHAnsenunGA8Y77j3XEDyjgfyCKgcoc** |
+
+| | Devnet | Mainnet | Public Key |
+|:-|:-:|:-:|:-|
+| #5 State Tree | ✓ | - | **bmt5yU97jC88YXTuSukYHa8Z5Bi2ZDUtmzfkDTA2mG2** |
+| #5 Output Queue | ✓ | - | **oq5oh5ZR3yGomuQgFduNDzjtGvVWfDRGLuDVjv9a96P** |
+| #5 CPI Context | ✓ | - | **cpi5ZTjdgYpZ1Xr7B1cMLLUE81oTtJbNNAyKary2nV6** |
+
+</Tab>
+</Tabs>
+
+### Address Trees & Queues
+
+<Tabs>
+<Tab title="V1">
+| Address Tree #1 | |
+|:-|:-|
+| Address Tree #1 | **amt1Ayt45jfbdw5YSo7iz6WZxUmnZsQTYXy82hVwyC2** |
+| Address Queue #1 | **aq1S9z4reTSQAdgWHGD2zDaS39sjGrAxbR31vxJ2F4F** |
+</Tab>
+
+<Tab title="V2">
+| Address Tree | |
+|:-|:-|
+| Address Tree  | **amt2kaJA14v3urZbZvnc5v2np8jqvc4Z8zDep5wbtzx** |
+</Tab>
+</Tabs>
+
+### Token Escrow PDA
+
+| | |
+|:-|:-|
+| Token Escrow Owner PDA | **GXtd2izAiMJPwMEjfgTRH3d7k9mjn4Jq3JrWFv9gySYy** |
+
+### Lookup Tables
+
+<Info>
+[Lookup tables](https://solana.com/docs/advanced/lookup-tables) reduce your transaction size. We provide pre-initialized lookup tables that cover the Light's program IDs and accounts:
+</Info>
+
+| | |
+|:-|:-|
+| Lookup Table #1 (Mainnet) | **9NYFyEqPkyXUhkerbGHXUXkvb4qpzeEdHuGpgbgpH1NJ** |
+| Lookup Table #1 (Devnet) | **qAJZMgnQJ8G6vA3WRcjD9Jan1wtKkaCFWLWskxJrR5V** |
+
+We provide a helper function below if you need to extend a custom lookup table.
+
+<Accordion title="ExtendLookUpTables.ts">
+
+```typescript
+import { Rpc, confirmTx, createRpc } from "@lightprotocol/stateless.js";
+import { createTokenProgramLookupTable } from "@lightprotocol/compressed-token";
+import { Keypair, PublicKey} from "@solana/web3.js";
+import { RPC_ENDPOINT } from "./constants";
+const payer = Keypair.generate();
+const authority = payer;
+const additionalTokenMints : PublicKey[] = [];
+const additionalAccounts : PublicKey[] = [];
+
+// Localnet
+const connection: Rpc = createRpc();
+
+const main = async () => {
+  /// airdrop lamports to pay gas and rent
+  await confirmTx(
+    connection,
+    await connection.requestAirdrop(payer.publicKey, 1e7)
+  );
+
+  /// Create LUT
+  const { address } = await createTokenProgramLookupTable(
+    connection,
+    payer,
+    authority,
+    additionalTokenMints,
+    additionalAccounts
+  );
+
+  console.log("Created lookup table:", address.toBase58());
+};
+
+main();
+```
+
+</Accordion>
+
+## System Accounts List
+|  | Name | Description |
+|:-|:-|:-|
+| 1 | <Tooltip tip="SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7" cta="Program ID" href="https://solscan.io/account/SySTEM1eSU2p4BGQfQpimFEWWSC1XDFeun3Nqzz3rT7">Light System Program</Tooltip> | Verifies validity proofs, compressed account ownership checks, and CPIs the Account Compression Program to update tree accounts. |
+| 2 | **CPI Signer** | - PDA to sign CPI calls from your program to the Light System Program.<br/>- Verified by the Light System Program during CPI.<br/>- Derived from your program ID. |
+| 3 | **Registered Program PDA** | - Provides access control to the Account Compression Program. |
+| 4 | <Tooltip tip="noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV" cta="Program ID" href="https://solscan.io/account/noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV">Noop Program</Tooltip> | - Logs compressed account state to the Solana ledger (used only in v1).<br/>- Indexers parse transaction logs to reconstruct compressed account state. |
+| 5 | <Tooltip tip="PDA derived from Light System Program ID with seed b 'cpi_authority'.HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru" cta="Program ID" href="https://solscan.io/account/HZH7qSLcpAeDqCopVU4e5XkhT9j3JFsQiq8CmruY3aru">Account Compression Authority</Tooltip> | Signs CPI calls from the Light System Program to the Account Compression Program. |
+| 6 | <Tooltip tip="compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq" cta="Program ID" href="https://solscan.io/account/compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq">Account Compression Program</Tooltip> | - Writes to state and address tree accounts.<br/>- Clients and the Account Compression Program do not interact directly — handled internally. |
+| 7 | **Invoking Program** | Your program’s ID, used by the Light System Program to:<br/>- Derive the CPI Signer PDA.<br/>- Verify the CPI Signer matches your program ID.<br/>- Set the owner of created compressed accounts. |
+| 8 | <Tooltip tip="11111111111111111111111111111111" cta="Program ID" href="https://solscan.io/account/11111111111111111111111111111111">System Program</Tooltip> | Solana System Program used to transfer lamports. |
+
+## Next Steps
+
+Explore all JSON RPC endpoints on Solana, best practices, and error codes.
